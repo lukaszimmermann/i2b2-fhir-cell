@@ -12,6 +12,28 @@
  		 <version>3.1.0</version>
   	<scope>provided</scope>
 	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context</artifactId>
+		<version>4.1.2.RELEASE</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+		<version>4.1.2.RELEASE</version>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-web</artifactId>
+		<version>4.1.2.RELEASE</version>
+	</dependency>
+<dependency>
+	<groupId>org.springframework</groupId>
+	<artifactId>spring-webmvc</artifactId>
+	<version>4.1.2.RELEASE</version>
+</dependency>
+
+	
   </dependencies>
   
   <build>
@@ -20,6 +42,13 @@
   			<groupId>org.kohsuke.jetty</groupId>
   			<artifactId>jetty-maven-plugin</artifactId>
   			<version>7.0.0pre1</version>
+  			<configuration>
+  				<httpConnector>
+  					<host>127.0.0.1</host>
+  					<port>9090</port>
+  				</httpConnector>
+  			</configuration>
+  			
   		</plugin>
   		<plugin>
   			<groupId>org.apache.maven.plugins</groupId>
