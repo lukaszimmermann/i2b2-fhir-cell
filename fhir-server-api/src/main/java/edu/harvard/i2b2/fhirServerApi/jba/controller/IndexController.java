@@ -6,10 +6,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class IndexController {
 
-	@RequestMapping("/trim")
+	@RequestMapping("/index")
 	public String index(){
 		//return "Hi from index controller";
 		System.out.println("got TRIM");
-		return "/WEB-INF/jsp/index.jsp";
+		//return "/WEB-INF/jsp/index.jsp";
+		return "index";
 	}
 }

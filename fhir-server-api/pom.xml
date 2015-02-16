@@ -27,13 +27,42 @@
 		<artifactId>spring-web</artifactId>
 		<version>4.1.2.RELEASE</version>
 	</dependency>
-<dependency>
-	<groupId>org.springframework</groupId>
-	<artifactId>spring-webmvc</artifactId>
-	<version>4.1.2.RELEASE</version>
-</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc</artifactId>
+		<version>4.1.2.RELEASE</version>
+	</dependency>
 
-	
+ 	
+
+  
+  	<dependency>
+  		<groupId>org.apache.tiles</groupId>
+  		<artifactId>tiles-core</artifactId>
+  		<version>3.0.3</version>
+  	</dependency>
+
+
+  	<dependency>
+  		<groupId>org.apache.tiles</groupId>
+  		<artifactId>tiles-jsp</artifactId>
+  		<version>3.0.3</version>
+  	</dependency>
+
+
+
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-api</artifactId>
+  		<version>1.5.8</version>
+  	</dependency>
+
+
+  	<dependency>
+  		<groupId>org.slf4j</groupId>
+  		<artifactId>slf4j-log4j12</artifactId>
+  		<version>1.5.8</version>
+  	</dependency>
   </dependencies>
   
   <build>
