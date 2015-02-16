@@ -7,6 +7,9 @@
 <title>Insert title here</title>
 </head>
 <body>
+
 Hello from index jsp
+ 
+ 
 </body>
 </html>
