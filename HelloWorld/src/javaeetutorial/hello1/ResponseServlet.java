@@ -21,7 +21,7 @@ public class ResponseServlet extends HttpServlet {
 						// then write the data of the response
 						String username = request.getParameter("username"); 
 						if (username != null && username.length()> 0) {
-						out.println("<h2>Hello, " + username + "!</h2>"); }
+						out.println("<h2>Hello ResponseServlet, " + username + "!</h2>"); }
 						
 					} 
 	}		
