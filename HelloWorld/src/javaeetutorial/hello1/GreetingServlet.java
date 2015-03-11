@@ -27,7 +27,7 @@ public class GreetingServlet extends HttpServlet {
 		+ "<img src=\"duke.waving.gif\" "
 		+ "alt=\"Duke waving his hand\">"
 		+ "<form method=\"get\">"
-		+ "<h2>Hello, my name is Luke. What's yours?</h2>" + "<input title=\"My name is: \"type=\"text\" "
+		+ "<h2>Hello, my name is GreetingServletLuke. What's yours?</h2>" + "<input title=\"My name is: \"type=\"text\" "
 		+ "name=\"username\" size=\"25\">"
 		+ "<p></p>"
 		+ "<input type=\"submit\" value=\"Submit\">" + "<input type=\"reset\" value=\"Reset\">" + "</form>");
