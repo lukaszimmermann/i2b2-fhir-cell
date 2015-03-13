@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.glassfish.javaeetutorial</groupId>
+    <artifactId>hello-webclient</artifactId>
+    <name>hello-webclient</name>
+    <description>A simple web service client for helloservice.</description>
+   <version>1.0 </version> 
+
+<properties>
+        <jaxws-maven-plugin.version>2.2</jaxws-maven-plugin.version>
+    </properties>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>${jaxws-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <wsdlFiles>
+                                <wsdlFile>HelloWebServiceService.wsdl</wsdlFile>
+                            </wsdlFiles>
+                            <wsdlLocation>http://phs000714.local:8080/HelloWorld/HelloWebServiceService?wsdl</wsdlLocation>
+                            <packageName>javaeetutorial.helloservice.endpoint</packageName>
+                        </configuration>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
