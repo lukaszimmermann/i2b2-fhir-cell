@@ -123,19 +123,7 @@ public class PatientDb {
 			e.printStackTrace();
 		}
 
-		/*feed.setId("fhir-api on i2b2");
-		feed.setTitle("Patient search");
-		feed.setSubtitle("Feed subtitle");
-		feed.setUpdated(new Date());
-		feed.addAuthor("i2b2");
-		feed.addLink("http://i2b2.harvard.edu/fhir-api");
-		for(Patient p:patients){
-			Entry entry = feed.addEntry();
-			entry.setId(p.getId());
-			entry.setContent(getPatient(p.getId()).toString());
-		}*/
-		//return "<xml><Patient><id>100</id></Patient></xml>";
-		  return swriter.toString();
+			  return swriter.toString();
 	}
 	
 	
