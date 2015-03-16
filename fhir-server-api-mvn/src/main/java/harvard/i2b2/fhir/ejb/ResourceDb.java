@@ -97,6 +97,32 @@ public class ResourceDb {
 		}
 		  return swriter.toString();
 	}
+
+	public Object getParticularResourceOld(Class c, String id) {
+		 
+		StringWriter swriter=new StringWriter();
+		 try {
+			  JAXBContext jaxbContext = JAXBContext.newInstance(c);
+			  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+			  jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			  for(Resource p:resources){
+				  if(c.isInstance(p) && p.getId().equals(id)){
+					jaxbMarshaller.marshal(p, swriter);
+				}
+			  }
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		  return swriter.toString();
+	}
 	
-	
+	public List<Resource> getParticularResource(Class c, String id) {
+		List<Resource> Rresources=new ArrayList<Resource>();
+		for(Resource p:resources){
+			  if(c.isInstance(p) && p.getId().equals(id)){
+				  Rresources.add(p);
+			  }
+		  }
+		return Rresources;
+	}
 }
