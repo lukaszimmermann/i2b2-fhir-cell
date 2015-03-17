@@ -19,6 +19,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.writer.Writer;
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 
 @Startup
@@ -35,15 +36,16 @@ public class ResourceDb {
 	
 	@Lock(LockType.WRITE)
 	public String addResource(Resource p, Class c){
+		
 		if (p.getId()==null) {
-			p.setId(Integer.toString(resources.size()));
+			p.setId(Integer.toString(getResourceTypeCount(c)));
 		}
 		
 		if (getResource(p.getId(),c)!=null) {
 				throw new RuntimeException("resource with id:"+p.getId()+" already exists");
 		}
 		resources.add(p);
-		System.out.println("Put resource:"+p.getClass().getSimpleName()+"/"+p.getId());
+		System.out.println("Put resource:"+c.cast(p).getClass().getSimpleName()+"/"+p.getId());
 		System.out.println("resources size:"+resources.size());
 		return p.getId();
 	}
@@ -61,6 +63,19 @@ public class ResourceDb {
 			}
 		}
 		return null;
+	}
+	
+	@Lock(LockType.READ)
+	public int getResourceTypeCount( Class c){
+		System.out.println("EJB searching for resource type:"+c.getSimpleName());
+		System.out.println("resources size:"+resources.size());
+		int count=0;
+		
+		for(Resource p:resources){
+			if(!c.isInstance(p)) continue;
+			count++;
+		}
+		return count;
 	}
 	
 	public void removeResource(Resource p1){
@@ -97,32 +112,12 @@ public class ResourceDb {
 		}
 		  return swriter.toString();
 	}
-
-	public Object getParticularResourceOld(Class c, String id) {
-		 
-		StringWriter swriter=new StringWriter();
-		 try {
-			  JAXBContext jaxbContext = JAXBContext.newInstance(c);
-			  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			  jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			  for(Resource p:resources){
-				  if(c.isInstance(p) && p.getId().equals(id)){
-					jaxbMarshaller.marshal(p, swriter);
-				}
-			  }
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		  return swriter.toString();
-	}
 	
-	public List<Resource> getParticularResource(Class c, String id) {
-		List<Resource> Rresources=new ArrayList<Resource>();
-		for(Resource p:resources){
-			  if(c.isInstance(p) && p.getId().equals(id)){
-				  Rresources.add(p);
-			  }
+	public Resource getParticularResource(Class c, String id) {
+		for(Resource r:resources){
+			  if(c.isInstance(r) && r.getId().equals(id)){
+				  return r;			  }
 		  }
-		return Rresources;
+		return null;
 	}
 }

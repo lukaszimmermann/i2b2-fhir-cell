@@ -17,7 +17,13 @@
     		<artifactId>abdera-bundle</artifactId>
     		<version>1.1.1</version> 
  		 </dependency>
-	</dependencies>
+  	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20140107</version>
+	</dependency>
+  	
+    </dependencies>
     <build>
         <finalName>fhir-server-api-mvn</finalName>
     </build>
