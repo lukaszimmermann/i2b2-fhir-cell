@@ -75,11 +75,11 @@ public class ResourceWebservice {
 			if (Class.forName(targetClassName, false, loader) != null){
 				Class c= Class.forName(targetClassName);
 				//String msg=(String) resourcedb.getParticularResource(c,id);
-				List<Resource> rs=resourcedb.getParticularResource(c,id);
-				String msg=(String) getResourcesToXml(c,rs.get(0));
+				Resource r=resourcedb.getParticularResource(c,id);
+				String msg=(String) getResourcesToXml(c,r);
 				if(acceptHeader.equals("application/json")){
 					//msg=getXmlToJson(msg);
-					msg=getResourcesToJson(c,rs.get(0));
+					msg=getResourcesToJson(c,r);
 				}
 				return Response.ok(msg, MediaType.APPLICATION_XML).build();
 				
