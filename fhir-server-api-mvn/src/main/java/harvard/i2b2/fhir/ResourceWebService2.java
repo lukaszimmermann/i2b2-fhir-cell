@@ -2,10 +2,16 @@ package harvard.i2b2.fhir;
 
 import harvard.i2b2.fhir.ejb.ResourceDb;
 
+import java.io.File;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
+
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.Init;
+import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -13,6 +19,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,14 +28,21 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
+
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.instance.validation.Validator;
 import org.json.XML;
 
 @Path("res")
 public class ResourceWebService2 {
 	@EJB
 	ResourceDb resourcedb;
+	
+	@javax.ws.rs.core.Context 
+	ServletContext context;
+	
+	Validator v;
 
 	@GET
 	@Path("{resourceName:[a-z]+}/{id:[0-9]+}")
@@ -76,16 +90,25 @@ public class ResourceWebService2 {
 	@Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	@Path("{resourceName:[a-z]+}")
 	public Response putParticularResource(@PathParam("resourceName") String resourceName, Object r){
-		System.out.println("putting  particular resource2:<"+resourceName+">");
+		try{
+			System.out.println("putting  particular resource2:<"+resourceName+">");
+			System.out.println("object:"+r.toString());
+			System.out.println("putting  particular resource2:<"+(Resource) r);
+		
 		Class c=getResourceClass(resourceName);
-		if(c!=null){
+		String id=resourcedb.addResource((Resource)r,c);
+		if(c!=null && id!=null){
 			return Response.created(
-					URI.create(resourceName+"/"+resourcedb.addResource((Resource)r,c))
+					URI.create(resourceName+"/")
 					).build();
 		}else{
 			return Response.status(Status.BAD_REQUEST).build();
 		}
-	}
+		}catch(Exception e){
+			e.printStackTrace();
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+		}
 	
 	
 	
@@ -98,6 +121,30 @@ public class ResourceWebService2 {
 			System.out.println("Class Not Found for FHIR resource:"+resourceName);
 			return null;
 		}
+	}
+	
+	@POST
+	@Path("123validate")
+	public String validate(String input){
+		System.out.println("running validator for input:"+input);
+		try {	
+			v.setSource(input);
+				v.process();
+			return v.getOutcome().toString();
+		} catch (Exception e) {
+			//e.printStackTrace();
+			return "error:"+e.getMessage();
+		}
+		
+	}
+
+	@PostConstruct
+	private void init(){
+		v= new Validator();
+		//System.out.println("P:"+context.getRealPath("/validation.zip"));
+		v.setDefinitions(context.getRealPath("/validation.zip"));
+		System.out.println(v.getDefinitions());
+		System.out.println("ready");
 	}
 	
 	private static String xmlToJson(String xmlStr) {
@@ -119,6 +166,7 @@ public class ResourceWebService2 {
 			}
 		return strw.toString();
 	}
+	
 	
 	
 }

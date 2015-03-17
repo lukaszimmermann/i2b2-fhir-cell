@@ -36,6 +36,14 @@ public class ResourceDb {
 	
 	@Lock(LockType.WRITE)
 	public String addResource(Resource p, Class c){
+		System.out.println("EJB Putting resource:"+c.getSimpleName());
+		try{
+			System.out.println("EJB Put resource:"+c.cast(p).getClass().getSimpleName());
+			System.out.println("EJB resources size:"+resources.size());
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 		
 		if (p.getId()==null) {
 			p.setId(Integer.toString(getResourceTypeCount(c)));
@@ -44,11 +52,11 @@ public class ResourceDb {
 		if (getResource(p.getId(),c)!=null) {
 				throw new RuntimeException("resource with id:"+p.getId()+" already exists");
 		}
+		
 		resources.add(p);
-		System.out.println("Put resource:"+c.cast(p).getClass().getSimpleName()+"/"+p.getId());
-		System.out.println("resources size:"+resources.size());
+		System.out.println("EJB resources (after adding) size:"+resources.size());
 		return p.getId();
-	}
+		}
 	
 	@Lock(LockType.READ)
 	public Resource getResource(String id, Class c){

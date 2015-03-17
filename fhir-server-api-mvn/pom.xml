@@ -22,6 +22,15 @@
 		<artifactId>json</artifactId>
 		<version>20140107</version>
 	</dependency>
+
+  	<dependency>
+  		<groupId>org.hl7.fhir.tools</groupId>
+  		<artifactId>validator</artifactId>
+  		<version>1.0</version>
+  		<!--  <scope>system</scope>
+    	<systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath>
+  	-->
+  	</dependency>
   	
     </dependencies>
     <build>
@@ -32,6 +41,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
+    
     <dependencyManagement>
     	<dependencies>
     		<dependency>
