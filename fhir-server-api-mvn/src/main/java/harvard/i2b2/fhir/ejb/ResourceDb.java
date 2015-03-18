@@ -101,16 +101,26 @@ public class ResourceDb {
 		for(Resource p:getAll(c)){
 			for(String k:qp.keySet()){
 				Object returnValue=null;
+				String returnStr=null;
 				try {
 					String methodName=k.substring(0,1).toUpperCase()+k.subSequence(1, k.length());
 					System.out.println("searching for parameter:"+k+" with value "+qp.getFirst(k));
 					Method method =
 						    c.getMethod("get"+methodName, null);
-					returnValue = method.invoke(null);
+					returnValue = method.invoke(p);
+					Class returnType= method.getReturnType();
+					if(returnType==org.hl7.fhir.String.class){
+						org.hl7.fhir.String s1=(org.hl7.fhir.String)returnValue;
+						returnStr=s1.getValue();
+					}
+					
 				} catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
-				if (returnValue.toString().contains(qp.getFirst(k))){
+				System.out.println("returnStr:"+returnStr);
+				System.out.println("qp.getFirst(k):"+qp.getFirst(k));
+				
+				if (returnStr.toString().contains(qp.getFirst(k))){
 					list.add(p);
 			}
 		  }
