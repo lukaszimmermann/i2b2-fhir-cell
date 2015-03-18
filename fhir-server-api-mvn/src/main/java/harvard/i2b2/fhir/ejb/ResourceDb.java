@@ -3,6 +3,8 @@ package harvard.i2b2.fhir.ejb;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -89,7 +92,44 @@ public class ResourceDb {
 	public void removeResource(Resource p1){
 			resources.remove(p1);
 	}
-
+	
+	@Lock(LockType.READ)
+	public List<Resource> getQueried(Class c,
+			MultivaluedMap<String,String> qp//Query Parameters
+			)  {
+		List<Resource> list=new ArrayList<Resource>();
+		for(Resource p:getAll(c)){
+			for(String k:qp.keySet()){
+				Object returnValue=null;
+				try {
+					String methodName=k.substring(0,1).toUpperCase()+k.subSequence(1, k.length());
+					System.out.println("searching for parameter:"+k+" with value "+qp.getFirst(k));
+					Method method =
+						    c.getMethod("get"+methodName, null);
+					returnValue = method.invoke(null);
+				} catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+				if (returnValue.toString().contains(qp.getFirst(k))){
+					list.add(p);
+			}
+		  }
+		}
+		return list;
+	}
+	
+	@Lock(LockType.READ)
+	public List<Resource> getAll(Class c)  {
+		List<Resource> list=new ArrayList<Resource>();
+		for(Resource p:resources){
+		  if(c.isInstance(p)){
+					list.add(p);
+			}
+		}
+		return list;
+	}
+	
+/*
 	@Lock(LockType.READ)
 	public String getall(Class c)  {
 		Abdera abdera = new Abdera();
@@ -120,7 +160,7 @@ public class ResourceDb {
 		}
 		  return swriter.toString();
 	}
-	
+*/	
 	public Resource getParticularResource(Class c, String id) {
 		for(Resource r:resources){
 			  if(c.isInstance(r) && r.getId().equals(id)){
