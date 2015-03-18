@@ -3,10 +3,12 @@ package harvard.i2b2.fhir;
 import harvard.i2b2.fhir.ejb.ResourceDb;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -20,11 +22,14 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -32,6 +37,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
+import org.apache.abdera.Abdera;
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.instance.validation.Validator;
@@ -108,14 +117,14 @@ public class ResourceWebService2 {
 				Class c = getResourceClass(resourceName);
 				if (c == null)
 				throw new RuntimeException("class not found for resource:"+ resourceName);
-			/*r
-				if(!isValid(r)){
+			
+				if(!isValid(xml)){
+					String errorMsg=_validate(xml);
 					return Response.status(Status.BAD_REQUEST).header("xreason",
-							validate(r.toString())
-							//v.getOutcome().toString()
+							errorMsg
+							//v.getOutcome().toString()//@TODO avoid double validation_process
 							).build();
 				}	
-			*/
 				String id = resourcedb.addResource((Resource) r, c);
 				if (id != null) {
 					return Response.created(URI.create(resourceName + "/"+id)).build();
@@ -129,6 +138,64 @@ public class ResourceWebService2 {
 			}
 	}
 
+	@GET
+	@Path("{resourceName:" + RESOURCE_LIST + "}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public String getResourceBundle(
+			@PathParam("resourceName") String resourceName,
+			@HeaderParam("accept") String acceptHeader,
+			@Context UriInfo uriInfo) {
+		
+			MultivaluedMap<String,String> q= uriInfo.getQueryParameters();
+			
+		
+			Abdera abdera = new Abdera();
+			Writer writer1 = abdera.getWriterFactory().getWriter();//.getWriter("prettyxml");
+			Feed feed = abdera.newFeed();
+			 
+			StringWriter swriter=new StringWriter();
+			  try {
+				  Class c = getResourceClass(resourceName);
+				  feed.setId(uriInfo.getRequestUri().toString());
+				  feed.setTitle(c.getSimpleName()+" bundle");
+				  feed.setUpdated(new Date());
+				  JAXBContext jaxbContext = JAXBContext.newInstance(c);
+				  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+				  jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				  
+				  StringWriter rwriter=new StringWriter();
+				  //for(Resource r:resourcedb.getAll(c)){
+				  for(Resource r:resourcedb.getQueried(c,q)){
+					  if(c.isInstance(r)){
+						Entry entry = feed.addEntry();
+						entry.setId(r.getId());
+						jaxbMarshaller.marshal(r, rwriter);
+						entry.setContent(rwriter.toString(),"application/xml");
+						rwriter.getBuffer().setLength(0);//reset String writer
+					  }
+					}
+				writer1.writeTo(feed,swriter);
+			} catch (IOException|JAXBException e) {
+				e.printStackTrace();
+			}
+			return swriter.toString();
+	}
+			
+	@POST
+	@Path("_validate")
+	public String _validate(String input) {
+		System.out.println("running validator for input:" + input);
+		try {
+			v.setSource(input);
+			v.process();
+			return v.getOutcome().toString();
+		} catch (Exception e) {
+			// e.printStackTrace();
+			return  e.getMessage();
+		}
+
+	}
+	
 	private Class getResourceClass(String resourceName) {
 		ClassLoader loader = this.getClass().getClassLoader();
 		String targetClassName = "org.hl7.fhir."
@@ -142,25 +209,11 @@ public class ResourceWebService2 {
 			return null;
 		}
 	}
-
-	@POST
-	@Path("_validate")
-	public String validate(String input) {
-		System.out.println("running validator for input:" + input);
-		try {
-			v.setSource(input);
-			v.process();
-			return v.getOutcome().toString();
-		} catch (Exception e) {
-			// e.printStackTrace();
-			return "error:" + e.getMessage();
-		}
-
-	}
 	
-	public boolean isValid(Object r) {
+	public boolean isValid(String xml) {
 		try {
-			v.setSource(r.toString());
+			System.out.println("setting source:"+xml);
+			v.setSource(xml);
 			v.process();
 			return true;
 		} catch (Exception e) {
@@ -172,7 +225,7 @@ public class ResourceWebService2 {
 	@PostConstruct
 	private void init() {
 		v = new Validator();
-		// System.out.println("P:"+context.getRealPath("/validation.zip"));
+		//System.out.println("P:"+context.getRealPath("/validation.zip"));
 		v.setDefinitions(context.getRealPath("/validation.zip"));
 		System.out.println(v.getDefinitions());
 		System.out.println("ready");
