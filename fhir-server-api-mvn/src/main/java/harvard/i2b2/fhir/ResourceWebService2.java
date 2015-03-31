@@ -28,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
@@ -127,19 +128,22 @@ public class ResourceWebService2 {
 				}	
 				String id = resourcedb.addResource((Resource) r, c);
 				if (id != null) {
-					return Response.created(URI.create(resourceName + "/"+id)).build();
+						ResponseBuilder respbuild= Response.created(URI.create("res/"+resourceName + "/"+id));
+						if (r.getId()!=null) respbuild.header("xreason", "updated existing resource").build();
+						return respbuild.build();
 				} else {
 					throw new RuntimeException("resource not stored");
 				}
 			
 			} catch (Exception e) {
 				e.printStackTrace();
-				return Response.serverError().header("xreason", e.getMessage()).build();
+				//return Response.serverError().header("xreason", e.getMessage()).build();
+				return Response.status(Status.BAD_REQUEST).header("xreason", e.getMessage()).build();
 			}
 	}
 
 	@GET
-	@Path("{resourceName:" + RESOURCE_LIST + "}")
+	@Path("{resourceName:" + RESOURCE_LIST + "(//_search)[0,1]}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public String getResourceBundle(
 			@PathParam("resourceName") String resourceName,
