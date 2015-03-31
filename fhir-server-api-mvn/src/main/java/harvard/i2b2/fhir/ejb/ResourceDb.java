@@ -52,11 +52,14 @@ public class ResourceDb {
 			p.setId(Integer.toString(getResourceTypeCount(c)));
 		}
 		
-		if (getResource(p.getId(),c)!=null) {
-				throw new RuntimeException("resource with id:"+p.getId()+" already exists");
+		Resource presentRes=getResource(p.getId(),c);
+		if (presentRes!=null) {
+				//throw new RuntimeException("resource with id:"+p.getId()+" already exists");
+				System.out.println("replacing resource with id:"+p.getId());
+				resources.remove(presentRes);	
 		}
-		
 		resources.add(p);
+		
 		System.out.println("EJB resources (after adding) size:"+resources.size());
 		return p.getId();
 		}
