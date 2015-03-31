@@ -111,7 +111,10 @@ public class FromI2b2WebService {
 		XQDataSource xqds = new SaxonXQDataSource();
 		XQConnection conn = xqds.getConnection();
 		// The XQuery expression to be executed
-		String query = "var x=.;<hello-world>{x + 1}</hello-world>";
+		 final String sep = System.getProperty("line.separator");
+		String query = "declare variable $x as xs:integer external; "
+						+sep+" for $n in $x"+
+						sep +" return  <test>$n+1</test>";
 		 
 		// Bind a value (21) to an external variable with the QName x
 		 
@@ -120,6 +123,7 @@ public class FromI2b2WebService {
 		 
 		XQPreparedExpression expr = conn.prepareExpression(query); 
 		expr.bindInt(new QName("x"), 21, null);
+		
 		
 		XQSequence result = expr.executeQuery();
         //System.out.println(result.getSequenceAsString(null));
