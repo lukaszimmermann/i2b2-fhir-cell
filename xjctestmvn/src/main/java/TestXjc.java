@@ -61,6 +61,7 @@ import javax.xml.xquery.XQSequence;
 
 
 
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.xqj.SaxonXQDataSource;
 
@@ -77,7 +78,9 @@ public class TestXjc {
 		// TODO Auto-generated method stub
 		System.out.println("will run xquery");
 		try{
-			processXquery("hi");
+			String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+			String input=getFile("example/i2b2/i2b2medspod.txt");
+			processXquery(query,input);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -85,39 +88,9 @@ public class TestXjc {
 
 	}
 	
-	private static void processXquery1(String input) throws XQException, ParserConfigurationException, SAXException, IOException {
-        XQDataSource ds = new SaxonXQDataSource();
-        XQConnection conn = ds.getConnection();
-        XQPreparedExpression exp = conn.prepareExpression(
-                //"declare variable $v as xs:string external; contains($v, 'e')");
-        		//"declare variable $doc as document-node(element(*, xs:untyped)) external;"
-        		//+sep+ "$doc/observation;");
-        		"doc('src/main/resources/example/i2b2/i2b2medspod.txt')//units_cd");
-        QName v = new QName("v");
 
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		 factory.setNamespaceAware(true);
-
-		 DocumentBuilder parser = factory.newDocumentBuilder();
-		 input=getFile("example/i2b2/i2b2medspod.txt");
-		 InputStream stream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-		 Document domDocument = parser.parse(stream);
-				 
-		 //exp.bindNode(new QName("doc"), domDocument,null);
-        //exp.bindObject(v, "banana", null);
-        XQSequence seq = exp.executeQuery();
-        seq.next();
-        //System.out.println("banana: " + seq.getBoolean());
-        System.out.println(seq.getSequenceAsString(null));
-
-    ;
-	}
 	
-	private static void processXquery(String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
-	    
-		String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
-		input=getFile("example/i2b2/i2b2medspod.txt");
-		
+	private static void processXquery(String query, String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
 	XQDataSource ds = new SaxonXQDataSource();
 	XQConnection xqjc = ds.getConnection();
 	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/kbw19/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
@@ -133,35 +106,7 @@ public class TestXjc {
 	xqjs.writeSequence(System.out, null);
 }
 
-	private static void processXquery2(String input) throws XQException, ParserConfigurationException, SAXException, IOException {
-        XQDataSource ds = new SaxonXQDataSource();
-        XQConnection conn = ds.getConnection();
-        String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
-        XQPreparedExpression exp = conn.prepareExpression(
-                //"declare variable $v as xs:string external; contains($v, 'e')");
-        		//"declare variable $doc as document-node(element(*, xs:untyped)) external;"
-        		//+sep+ "$doc/observation;");
-        		//"doc('src/main/resources/example/i2b2/i2b2medspod.txt')//units_cd");
-        		query);
-        QName v = new QName("v");
-
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		 factory.setNamespaceAware(true);
-
-		 DocumentBuilder parser = factory.newDocumentBuilder();
-		 input=getFile("example/i2b2/i2b2medspod.txt");
-		 InputStream stream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-		 Document domDocument = parser.parse(stream);
-				 
-		exp.bindNode(new QName("doc"), domDocument,null);
-        //exp.bindObject(v, "banana", null);
-        XQSequence seq = exp.executeQuery();
-        seq.next();
-        //System.out.println("banana: " + seq.getBoolean());
-        System.out.println(seq.getSequenceAsString(null));
-
-    ;
-	}
+	
 	/**
 	 * @param input
 	 * @return
