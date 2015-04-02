@@ -1,10 +1,13 @@
-declare variable $doc as document-node(element(*, xs:untyped)) external;
- 
+(:declare variable $doc as document-node(element(*, xs:untyped)) external;
+ :)
  (: Distinct observations for one patient:)
  let $PID := 1000000001
 
 let $distobs :=
- for $t in $doc//observation
+ (:for $t in $doc//observation
+ 
+ :)
+ for $t in //observation
  let $eid := $t/event_id/text()
  let $pid := $t/patient_id/text()
  let $cid := $t/concept_cd/text()
