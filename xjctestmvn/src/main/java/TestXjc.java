@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,6 +35,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.xquery.XQConnection;
+import javax.xml.xquery.XQConstants;
 import javax.xml.xquery.XQDataSource;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQExpression;
@@ -56,7 +58,11 @@ import javax.xml.xquery.XQSequence;
 
 
 
+
+
+
 import net.sf.saxon.Configuration;
+import net.sf.saxon.xqj.SaxonXQDataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Document;
@@ -78,10 +84,83 @@ public class TestXjc {
 	
 
 	}
+	
+	private static void processXquery1(String input) throws XQException, ParserConfigurationException, SAXException, IOException {
+        XQDataSource ds = new SaxonXQDataSource();
+        XQConnection conn = ds.getConnection();
+        XQPreparedExpression exp = conn.prepareExpression(
+                //"declare variable $v as xs:string external; contains($v, 'e')");
+        		//"declare variable $doc as document-node(element(*, xs:untyped)) external;"
+        		//+sep+ "$doc/observation;");
+        		"doc('src/main/resources/example/i2b2/i2b2medspod.txt')//units_cd");
+        QName v = new QName("v");
 
-	private static void processXquery(String input) throws XQException, FileNotFoundException {
-		Configuration conf=new Configuration();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		 factory.setNamespaceAware(true);
+
+		 DocumentBuilder parser = factory.newDocumentBuilder();
+		 input=getFile("example/i2b2/i2b2medspod.txt");
+		 InputStream stream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+		 Document domDocument = parser.parse(stream);
+				 
+		 //exp.bindNode(new QName("doc"), domDocument,null);
+        //exp.bindObject(v, "banana", null);
+        XQSequence seq = exp.executeQuery();
+        seq.next();
+        //System.out.println("banana: " + seq.getBoolean());
+        System.out.println(seq.getSequenceAsString(null));
+
+    ;
+	}
+	
+	private static void processXquery(String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
+	    
+		String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+		input=getFile("example/i2b2/i2b2medspod.txt");
 		
+	XQDataSource ds = new SaxonXQDataSource();
+	XQConnection xqjc = ds.getConnection();
+	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
+			xqjc.prepareExpression(new ByteArrayInputStream(query.getBytes(StandardCharsets.UTF_8)));
+			
+	XMLInputFactory factory = XMLInputFactory.newInstance();
+	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
+			factory.createXMLStreamReader(new StringReader(input));
+	xqje.bindDocument(XQConstants.CONTEXT_ITEM,streamReader, xqjc.createDocumentType());
+
+	XQResultSequence xqjs  = xqje.executeQuery();
+
+	xqjs.writeSequence(System.out, null);
+}
+
+	private static void processXquery2(String input) throws XQException, ParserConfigurationException, SAXException, IOException {
+        XQDataSource ds = new SaxonXQDataSource();
+        XQConnection conn = ds.getConnection();
+        String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+        XQPreparedExpression exp = conn.prepareExpression(
+                //"declare variable $v as xs:string external; contains($v, 'e')");
+        		//"declare variable $doc as document-node(element(*, xs:untyped)) external;"
+        		//+sep+ "$doc/observation;");
+        		//"doc('src/main/resources/example/i2b2/i2b2medspod.txt')//units_cd");
+        		query);
+        QName v = new QName("v");
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		 factory.setNamespaceAware(true);
+
+		 DocumentBuilder parser = factory.newDocumentBuilder();
+		 input=getFile("example/i2b2/i2b2medspod.txt");
+		 InputStream stream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+		 Document domDocument = parser.parse(stream);
+				 
+		exp.bindNode(new QName("doc"), domDocument,null);
+        //exp.bindObject(v, "banana", null);
+        XQSequence seq = exp.executeQuery();
+        seq.next();
+        //System.out.println("banana: " + seq.getBoolean());
+        System.out.println(seq.getSequenceAsString(null));
+
+    ;
 	}
 	/**
 	 * @param input
