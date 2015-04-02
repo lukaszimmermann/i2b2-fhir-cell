@@ -77,6 +77,7 @@ import org.hl7.fhir.instance.validation.Validator;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ranges.RangeException;
 import org.xml.sax.InputSource;
 
 @Path("i2b2")
@@ -91,9 +92,9 @@ public class FromI2b2WebService {
 
 	@PostConstruct
 	private void init() {
-		System.out.println("will run xquery");
+		//System.out.println("will run xquery");
 		try{
-			String input=getFile("example/i2b2/i2b2medspod.txt");
+			//String input=getFile("example/i2b2/i2b2medspod.txt");
 			//System.out.println(processXquery(input));
 		}catch(Exception e){
 			e.printStackTrace();
@@ -107,25 +108,49 @@ public class FromI2b2WebService {
 			//@PathParam("patientId") String patientId,
 			@HeaderParam("accept") String acceptHeader) throws IOException {
 			//logger.log(Level.WARNING, "customer is null.");
+		
+			String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
 			Client client = ClientBuilder.newClient();
 			WebTarget myResource = client.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
-			 String str=getFile("i2b2RequestMeds1.xml");
+			 String str=getFile("i2b2query/i2b2RequestMeds1.xml");
 			 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
-			 System.out.println("got:"+oStr.substring(0,(oStr.length()>200)?200:0));
+			 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
 			 try{
 				 //String input=getFile("example/i2b2/i2b2medspod.txt");
 				 //str=processXquery(input);
-				 return processXquery(oStr.toString());
-			 }catch(Exception e){
+				 return processXquery(query,oStr.toString());
+			 }catch( InstantiationException | IllegalAccessException | ClassNotFoundException | XQException | XMLStreamException e){
 				 e.printStackTrace();
 			 }
-			 //System.out.println(str);
 			return null; 		
 	}
 	
-	private String processXquery(String input) throws InstantiationException, IllegalAccessException, ClassNotFoundException, XQException, XMLStreamException{
+	@Path("patient")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public String getAllPatients(
+			@HeaderParam("accept") String acceptHeader) throws IOException {
+			
+
 		String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
-	    return xqp.processXquery(query, input);
+		Client client = ClientBuilder.newClient();
+		WebTarget myResource = client.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+		 String str=getFile("i2b2query/i2b2RequestMeds1.xml");
+		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
+		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
+		 try{
+			 //String input=getFile("example/i2b2/i2b2medspod.txt");
+			 //str=processXquery(input);
+			 return processXquery(query,oStr.toString());
+		 }catch( InstantiationException | IllegalAccessException | ClassNotFoundException | XQException | XMLStreamException e){
+			 e.printStackTrace();
+		 }
+		return null; 	
+	}
+	
+	
+	
+	private String processXquery(String query, String input) throws InstantiationException, IllegalAccessException, ClassNotFoundException, XQException, XMLStreamException{
+		return xqp.processXquery(query, input);
 	}
 	
 	
