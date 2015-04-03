@@ -1,5 +1,6 @@
 package harvard.i2b2.fhir;
 
+import harvard.i2b2.fhir.ejb.BaseXWrapper;
 import harvard.i2b2.fhir.ejb.ResourceDb;
 import harvard.i2b2.fhir.ejb.XQueryProcessor;
 
@@ -83,24 +84,38 @@ import org.xml.sax.InputSource;
 @Path("i2b2")
 public class FromI2b2WebService {
 	//Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
+	String i2b2SessionId;
 	
 	@EJB
-	XQueryProcessor xqp;
+	//XQueryProcessor xqp;
+	BaseXWrapper xqp;
 	
 	@javax.ws.rs.core.Context
 	ServletContext context;
 
 	@PostConstruct
 	private void init() {
-		//System.out.println("will run xquery");
 		try{
-			//String input=getFile("example/i2b2/i2b2medspod.txt");
-			//System.out.println(processXquery(input));
+			doLogin();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	
+	@GET
+	@Path("login")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public String doLogin() {
+		String query = getFile("transform/i2b2/getSessionKeyFromGetServices.xquery");
+		Client client = ClientBuilder.newClient();
+		WebTarget myResource = client.target("http://services.i2b2.org/i2b2/services/PMService/getServices");
+		 String str=getFile("i2b2query/getServices.xml");
+		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
+		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
+		 	 return processXquery(query,oStr.toString());
+		
+	}
+
 	@GET
 	@Path("medication")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -115,14 +130,10 @@ public class FromI2b2WebService {
 			 String str=getFile("i2b2query/i2b2RequestMeds1.xml");
 			 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 			 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-			 try{
-				 //String input=getFile("example/i2b2/i2b2medspod.txt");
+			 	 //String input=getFile("example/i2b2/i2b2medspod.txt");
 				 //str=processXquery(input);
 				 return processXquery(query,oStr.toString());
-			 }catch( InstantiationException | IllegalAccessException | ClassNotFoundException | XQException | XMLStreamException e){
-				 e.printStackTrace();
-			 }
-			return null; 		
+					
 	}
 	
 	@GET
@@ -138,20 +149,13 @@ public class FromI2b2WebService {
 		 String str=getFile("i2b2query/getAllPatients.xml");
 		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-		 //try{
-			 //String input=getFile("example/i2b2/i2b2medspod.txt");
-			 //str=processXquery(input);
 			 //return processXquery(query,oStr.toString());
 			 return oStr.toString();
-		// }catch( InstantiationException | IllegalAccessException | ClassNotFoundException | XQException | XMLStreamException e){
-			// e.printStackTrace();
-		 //}
-		//return null; 	
 	}
 	
 	
 	
-	private String processXquery(String query, String input) throws InstantiationException, IllegalAccessException, ClassNotFoundException, XQException, XMLStreamException{
+	private String processXquery(String query, String input) {
 		return xqp.processXquery(query, input);
 	}
 	
