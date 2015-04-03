@@ -62,16 +62,26 @@ import javax.xml.xquery.XQSequence;
 
 
 
+
+
+
+
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.xqj.SaxonXQDataSource;
+import net.xqj.basex.BaseXXQDataSource;
 
 import org.apache.commons.io.IOUtils;
+import org.basex.core.Context;
+import org.basex.core.cmd.XQuery;
+import org.basex.query.QueryException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class TestXjc {
 	static String sep;
+	static Context context = new Context();
 	
 	public static void main(String[] args) {
 		sep= System.getProperty("line.separator");
@@ -80,7 +90,8 @@ public class TestXjc {
 		try{
 			String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
 			String input=getFile("example/i2b2/i2b2medspod.txt");
-			processXquery(query,input);
+			//processXqueryBase(query,input);
+			processXqueryBaseSA(query,input);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -89,6 +100,36 @@ public class TestXjc {
 	}
 	
 
+	private static void processXqueryBase(String query, String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
+		XQDataSource xqs = new BaseXXQDataSource();
+	    xqs.setProperty("serverName", "localhost");
+	    xqs.setProperty("port", "1984");
+
+	    // Change USERNAME and PASSWORD values
+	    XQConnection xqjc = xqs.getConnection("admin", "admin");
+	    
+	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
+			xqjc.prepareExpression(new ByteArrayInputStream(query.getBytes(StandardCharsets.UTF_8)));
+			
+	XMLInputFactory factory = XMLInputFactory.newInstance();
+	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
+			factory.createXMLStreamReader(new StringReader(input));
+	xqje.bindDocument(XQConstants.CONTEXT_ITEM,streamReader, xqjc.createDocumentType());
+
+	XQResultSequence xqjs  = xqje.executeQuery();
+
+	xqjs.writeSequence(System.out, null);
+}
+	
+	private static void processXqueryBaseSA(String query, String input) throws IOException, QueryException {
+		    System.out.println("=== RunQueries ===");
+
+		    // Evaluate the specified XQuery
+		     query =
+		        " let $x:= <h1>e</h1> return $x";
+		     System.out.println(new XQuery(query).execute(context));
+	 }
+	
 	
 	private static void processXquery(String query, String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
 	XQDataSource ds = new SaxonXQDataSource();
@@ -198,7 +239,7 @@ public class TestXjc {
 	}
 	*/
 	
-	static private String getFile(String fileName){
+	public static String getFile(String fileName){
 		 
 		  String result = "";
 	 
@@ -212,6 +253,8 @@ public class TestXjc {
 		  return result;
 	 
 	  }
+	
+	
 
 	
 }
