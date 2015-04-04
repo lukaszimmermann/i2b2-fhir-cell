@@ -54,19 +54,22 @@
 	<version>9.4</version>
 </dependency>
 
+
+ 
 <dependency>
   <groupId>org.basex</groupId>
   <artifactId>basex</artifactId>
   <version>8.1</version>
 </dependency>
 
+<!-- 
 <dependency>
   <groupId>org.basex</groupId>
   <artifactId>basex-api</artifactId>
   <version>8.1</version>
 </dependency>
 
-
+-->
 
   	
     </dependencies>
@@ -74,10 +77,11 @@
     
     <build>
         <finalName>fhir-server-api-mvn</finalName>
+        
     </build>
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+     <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <failOnMissingWebXml>false</failOnMissingWebXml>
     </properties>
     
