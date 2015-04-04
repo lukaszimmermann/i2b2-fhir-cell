@@ -1,7 +1,6 @@
 package harvard.i2b2.fhir;
 
 import harvard.i2b2.fhir.ejb.BaseXWrapper;
-import harvard.i2b2.fhir.ejb.ResourceDb;
 import harvard.i2b2.fhir.ejb.XQueryProcessor;
 
 import java.io.BufferedReader;
@@ -38,48 +37,9 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xquery.XQConnection;
-import javax.xml.xquery.XQDataSource;
-import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQExpression;
-import javax.xml.xquery.XQPreparedExpression;
-import javax.xml.xquery.XQResultSequence;
-import javax.xml.xquery.XQSequence;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.xqj.SaxonXQDataSource;
-
-import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.writer.Writer;
 import org.apache.commons.io.IOUtils;
-import org.hl7.fhir.Patient;
-import org.hl7.fhir.Resource;
-import org.hl7.fhir.instance.validation.Validator;
-import org.json.XML;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.ranges.RangeException;
-import org.xml.sax.InputSource;
+
 
 @Path("i2b2")
 public class FromI2b2WebService {
@@ -96,7 +56,7 @@ public class FromI2b2WebService {
 	@PostConstruct
 	private void init() {
 		try{
-			doLogin();
+			//doLogin();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -161,7 +121,7 @@ public class FromI2b2WebService {
 	
 	
 	
-	private String getFile(String fileName){
+	private  String getFile(String fileName){
 		 
 		  String result = "";
 	 
