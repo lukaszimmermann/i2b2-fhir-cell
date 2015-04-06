@@ -1,8 +1,7 @@
 package harvard.i2b2.fhir.ejb;
 
 
-import java.io.IOException;
-import java.io.StringWriter;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,15 +13,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import org.apache.abdera.Abdera;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.writer.Writer;
-import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 
 @Startup
