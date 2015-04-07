@@ -6,6 +6,12 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
 import org.basex.core.cmd.*;
+import org.basex.data.Result;
+import org.basex.query.QueryException;
+import org.basex.query.QueryIOException;
+import org.basex.query.QueryProcessor;
+import org.basex.query.iter.Iter;
+import org.basex.query.value.item.Item;
 
 /**
  * This example demonstrates how databases can be created from remote XML
@@ -40,15 +46,22 @@ public final class WikiExample {
     
     new org.basex.core.cmd.CreateDB("LocalXml", input).execute(context);
     
-    // Insert a node before the closing body tag
-    // N.B. do not forget to specify the namespace
-    System.out.println("\n* Update the document.");
 
-    System.out.println(new XQuery(
-      //query
-    		"//observation"
-    ).execute(context));
+    
+    try(QueryProcessor proc = new QueryProcessor(query, context)) {
+        // Store the pointer to the result in an iterator:
+        Iter iter = proc.iter();
 
+        // Iterate through all items and serialize
+        for(Item item; (item = iter.next()) != null;) {
+          System.out.println(item.serialize().toString());
+          System.out.println("----------");
+        }
+      } catch (QueryException | QueryIOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+    
 
     // ----------------------------------------------------------------------
     // Drop the database
