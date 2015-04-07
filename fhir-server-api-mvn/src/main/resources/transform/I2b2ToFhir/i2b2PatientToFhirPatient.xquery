@@ -68,8 +68,16 @@ return
             <td>Id</td>
             <td>{$id}</td>
           </tr>
-             <tr>
-            <td>Marital Status</td>
+           <tr>
+            <td>Gender</td>
+            <td>{$gender_expanded}</td>
+          </tr>
+           <tr>
+            <td>Birthdate</td>
+            <td>{$birthdate}</td>
+          </tr>
+           <tr>
+           <td>Marital Status</td>
             <td>{$marital_status_raw}</td>
           </tr>
         </tbody>

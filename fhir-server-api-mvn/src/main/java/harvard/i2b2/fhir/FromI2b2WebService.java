@@ -94,7 +94,7 @@ public class FromI2b2WebService {
 		 String str=getFile("i2b2query/getAllPatients.xml");
 		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-			 return processXquery(query,oStr.toString());
+			 return "<html>"+processXquery(query,oStr.toString())+"</html>";
 			 //return oStr.toString();
 	}
 	
