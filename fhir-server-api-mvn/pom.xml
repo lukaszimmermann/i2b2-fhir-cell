@@ -5,6 +5,16 @@
     <artifactId>fhir-server-api-mvn</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
+    
+     <build>
+        <finalName>fhir-server-api-mvn</finalName>
+    </build>
+    <properties>
+     <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+    </properties>
+    
     <dependencies>
         <dependency>
             <groupId>javax</groupId>
@@ -32,77 +42,25 @@
   	-->
   	</dependency>
   
-  <dependency>
-  <groupId>net.xqj</groupId>
-  <artifactId>basex-xqj</artifactId>
-  <version>1.4.0</version>
-</dependency>
-  <dependency>
-  <groupId>com.xqj2</groupId>
-  <artifactId>xqj2</artifactId>
-  <version>0.1.0</version>
-</dependency>
-<dependency>
-  <groupId>javax.xml.xquery</groupId>
-  <artifactId>xqj-api</artifactId>
-  <version>1.0</version>
-</dependency>
-
-<dependency>
-	<groupId>net.sf.saxon</groupId>
-	<artifactId>Saxon-HE</artifactId>
-	<version>9.4</version>
-</dependency>
 
 
- 
 <dependency>
   <groupId>org.basex</groupId>
   <artifactId>basex</artifactId>
   <version>8.1</version>
 </dependency>
 
-<!-- 
-<dependency>
-  <groupId>org.basex</groupId>
-  <artifactId>basex-api</artifactId>
-  <version>8.1</version>
-</dependency>
 
--->
 
   	
     </dependencies>
     
     
-    <build>
-        <finalName>fhir-server-api-mvn</finalName>
-        
-    </build>
-    <properties>
-     <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
-    </properties>
+   
     
-    <dependencyManagement>
-    	<dependencies>
-    		<dependency>
-    			<groupId>com.google.code</groupId>
-    			<artifactId>couchdb4j</artifactId>
-    			<version>0.1.2</version>
-    			<scope>system</scope>
-    			<systemPath>${project.basedir}/lib/couchdb4j-0.1.2.jar</systemPath>
-    		</dependency>
-    	</dependencies>
-    </dependencyManagement>
-    
+
     <repositories>
-  <repository>
-  <id>xqj</id>
-  <name>XQJ Maven Repository</name>
-  <url>http://xqj.net/maven</url>
-</repository>
+
 <repository>
     <id>basex</id>
     <name>BaseX Maven Repository</name>

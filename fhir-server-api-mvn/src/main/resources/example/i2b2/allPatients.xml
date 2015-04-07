@@ -1,4 +1,13 @@
-<ns5:response xmlns:ns5="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/" xmlns:ns9="http://www.i2b2.org/xsd/cell/ont/1.1/" xmlns:ns6="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/" xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" xmlns:ns10="http://www.i2b2.org/xsd/hive/msg/result/1.1/" xmlns:ns8="http://www.i2b2.org/xsd/cell/pm/1.1/">
+<ns5:response 
+    xmlns:ns5="http://www.i2b2.org/xsd/hive/msg/1.1/" 
+    xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" 
+    xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" 
+    xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/" 
+    xmlns:ns9="http://www.i2b2.org/xsd/cell/ont/1.1/" 
+    xmlns:ns6="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/" 
+    xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" 
+    xmlns:ns10="http://www.i2b2.org/xsd/hive/msg/result/1.1/" 
+    xmlns:ns8="http://www.i2b2.org/xsd/cell/pm/1.1/">
     <message_header>
         <i2b2_version_compatible>1.1</i2b2_version_compatible>
         <hl7_version_compatible>2.4</hl7_version_compatible>
@@ -29,73 +38,27 @@
         </result_status>
     </response_header>
     <message_body>
-        <ns4:response xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns4:master_instance_result_responseType">
-            <status>
-                <condition type="DONE">DONE</condition>
-            </status>
-            <query_master>
-                <query_master_id>9528</query_master_id>
-                <name>Age@16:42:07</name>
-                <user_id>demo</user_id>
-                <group_id>Demo</group_id>
-                <create_date>2015-04-02T20:42:12.000Z</create_date>
-                <request_xml>&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-&lt;ns3:query_definition xmlns:ns2="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/">
-    &lt;query_name>Age@16:42:07&lt;/query_name>
-    &lt;query_timing>ANY&lt;/query_timing>
-    &lt;specificity_scale>0&lt;/specificity_scale>
-    &lt;panel>
-        &lt;panel_number>1&lt;/panel_number>
-        &lt;panel_timing>ANY&lt;/panel_timing>
-        &lt;panel_accuracy_scale>100&lt;/panel_accuracy_scale>
-        &lt;invert>0&lt;/invert>
-        &lt;total_item_occurrences>1&lt;/total_item_occurrences>
-        &lt;item>
-            &lt;hlevel>2&lt;/hlevel>
-            &lt;item_name>Age&lt;/item_name>
-            &lt;item_key>\\i2b2_DEMO\i2b2\Demographics\Age\&lt;/item_key>
-            &lt;item_icon>CA&lt;/item_icon>
-            &lt;tooltip>Demographics \ Age&lt;/tooltip>
-            &lt;class>ENC&lt;/class>
-            &lt;item_is_synonym>false&lt;/item_is_synonym>
-        &lt;/item>
-    &lt;/panel>
-&lt;/ns3:query_definition>
-</request_xml>
-            </query_master>
-            <query_instance>
-                <query_instance_id>9548</query_instance_id>
-                <query_master_id>9528</query_master_id>
-                <user_id>demo</user_id>
-                <group_id>Demo</group_id>
-                <start_date>2015-04-02T20:42:12.000Z</start_date>
-                <end_date>2015-04-02T20:42:13.000Z</end_date>
-                <query_status_type>
-                    <status_type_id>6</status_type_id>
-                    <name>COMPLETED</name>
-                    <description>COMPLETED</description>
-                </query_status_type>
-            </query_instance>
-            <query_result_instance>
-                <result_instance_id>18202</result_instance_id>
-                <query_instance_id>9548</query_instance_id>
-                <description>Patient Set for "Age@16:42:07"</description>
-                <query_result_type>
-                    <result_type_id>1</result_type_id>
-                    <name>PATIENTSET</name>
-                    <display_type>LIST</display_type>
-                    <visual_attribute_type>LA</visual_attribute_type>
-                    <description>Patient set</description>
-                </query_result_type>
-                <set_size>133</set_size>
-                <start_date>2015-04-02T20:42:12.000Z</start_date>
-                <end_date>2015-04-02T20:42:12.000Z</end_date>
-                <query_status_type>
-                    <status_type_id>3</status_type_id>
-                    <name>FINISHED</name>
-                    <description>FINISHED</description>
-                </query_status_type>
-            </query_result_instance>
-        </ns4:response>
+        <ns3:response 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:patient_data_responseType">
+            <ns2:patient_data>
+                <ns2:patient_set>
+                    <patient>
+                        <patient_id>1000000001</patient_id>
+                        <param type="string" column_descriptor="Date Accuracy Code" column="vital_status_cd">D</param>
+                        <param type="string" column_descriptor="Language" column="language_cd">english</param>
+                        <param type="dateTime" column="birth_date">1985-11-17T00:00:00.000Z</param>
+                        <param type="string" column_descriptor="Race" column="race_cd">black</param>
+                        <param type="string" column_descriptor="Religion" column="religion_cd">roman catholic</param>
+                        <param type="string" column_descriptor="Income" column="income_cd">Low</param>
+                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\Cambridge\02140\</param>
+                        <param type="string" column_descriptor="Zip Code" column="zip_cd">02140</param>
+                        <param type="string" column_descriptor="Marital Status" column="marital_status_cd">married</param>
+                        <param type="int" column_descriptor="Age" column="age_in_years_num">24</param>
+                        <param type="string" column_descriptor="Gender" column="sex_cd">F</param>
+                    </patient>
+                
+                </ns2:patient_set>
+            </ns2:patient_data>
+        </ns3:response>
     </message_body>
 </ns5:response>
