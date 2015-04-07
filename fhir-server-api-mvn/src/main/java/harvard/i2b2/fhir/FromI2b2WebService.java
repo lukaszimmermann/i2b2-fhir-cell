@@ -1,31 +1,16 @@
 package harvard.i2b2.fhir;
 
 import harvard.i2b2.fhir.ejb.BaseXWrapper;
-import harvard.i2b2.fhir.ejb.XQueryProcessor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
+
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Init;
 import javax.servlet.ServletContext;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -103,14 +88,14 @@ public class FromI2b2WebService {
 			@HeaderParam("accept") String acceptHeader) throws IOException {
 			
 
-		String query = getFile("transform/I2b2ToFhir/i2b2PatientsToFHIRPatients.xquery");
+		String query = getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		Client client = ClientBuilder.newClient();
 		WebTarget myResource = client.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 		 String str=getFile("i2b2query/getAllPatients.xml");
 		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-			 //return processXquery(query,oStr.toString());
-			 return oStr.toString();
+			 return processXquery(query,oStr.toString());
+			 //return oStr.toString();
 	}
 	
 	
