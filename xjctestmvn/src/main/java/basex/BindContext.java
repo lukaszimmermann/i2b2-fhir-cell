@@ -5,7 +5,10 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
 import org.basex.data.*;
+import org.basex.io.serial.Serializer;
 import org.basex.query.*;
+import org.basex.query.iter.Iter;
+import org.basex.query.value.item.Item;
 
 /**
  * This example demonstrates how items can be bound as context item of
@@ -34,27 +37,33 @@ public final class BindContext {
 
     // Show query
     System.out.println("\n* Query:");
-    System.out.println(query);
+    //System.out.println(query);
 
     // Create a query processor
-    try(QueryProcessor qp = new QueryProcessor(query, context)) {
+    try(QueryProcessor proc = new QueryProcessor(query, context)) {
+    	System.out.println(proc.execute());
+        // Store the pointer to the result in an iterator:
+       /* Iter iter = proc.iter();
 
-      // Define the items to be bound
+        // Iterate through all items and serialize
+        int count=0;
+        for(Item item; (item = iter.next()) != null;) {
+        	count++;
+          System.out.println(item.toJava()+"\n"+count+"\n--------------\n");
+        }
+        */
+      }
+     // System.out.println("\n* Result:");
+      //System.out.println(result);
     
-      // Bind the variables
-      qp.context(input);
-
-      // Execute the query
-      Result result = qp.execute();
-
-      // Print result as string
-      System.out.println("\n* Result:");
-      System.out.println(result);
-    }
 
     // Close the database context
     context.close();
   }
+  
+   
+
+	
   
   public static String getFile(String fileName){
 		 
