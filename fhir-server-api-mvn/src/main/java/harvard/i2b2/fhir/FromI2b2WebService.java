@@ -2,9 +2,7 @@ package harvard.i2b2.fhir;
 
 import harvard.i2b2.fhir.ejb.BaseXWrapper;
 
-
 import java.io.IOException;
-
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -94,7 +92,8 @@ public class FromI2b2WebService {
 		 String str=getFile("i2b2query/getAllPatients.xml");
 		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-			 return "<html>"+processXquery(query,oStr.toString())+"</html>";
+			 //return "<html>"+processXquery(query,oStr.toString())+"</html>";
+			 return ResourceWebService2.getResourceBundle(ResourceWebService2.xmlToResource(processXquery(query,oStr.toString()),"uriinfo_string");
 			 //return oStr.toString();
 	}
 	

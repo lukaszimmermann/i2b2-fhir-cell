@@ -2,6 +2,7 @@ package basex;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
@@ -12,6 +13,9 @@ import org.basex.query.QueryIOException;
 import org.basex.query.QueryProcessor;
 import org.basex.query.iter.Iter;
 import org.basex.query.value.item.Item;
+import org.hl7.fhir.Resource;
+
+import fhir.FhirHelper;
 
 /**
  * This example demonstrates how databases can be created from remote XML
@@ -27,8 +31,11 @@ public final class WikiExample {
    * @throws BaseXException if a database command fails
    */
   public static void main(final String[] args) throws BaseXException {
-	  String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
-		String input=getFile("example/i2b2/i2b2medspod.txt");
+	  //String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+		//String input=getFile("example/i2b2/i2b2medspod.txt");
+	  ArrayList<Resource> resList= new ArrayList<Resource>();
+	  String query="declare namespace ns=\"http://hl7.org/fhir\";"+"\n//(ns:Medication|ns:Patient)";
+	  String input=getFile("example/fhir/mixedResource.xml");
     // Database context.
     Context context = new Context();
 
@@ -53,9 +60,13 @@ public final class WikiExample {
         Iter iter = proc.iter();
 
         // Iterate through all items and serialize
+        int count=0;
         for(Item item; (item = iter.next()) != null;) {
-          System.out.println(item.serialize().toString());
-          System.out.println("----------");
+          //System.out.println(item.serialize().toString());
+        	Resource r=FhirHelper.xmlToResource(item.serialize().toString());
+        	 resList.add(r);
+        	 //System.out.println(FhirHelper.resourceToXml(r));
+          //System.out.println(count++ +"----------");
         }
       } catch (QueryException | QueryIOException e) {
 		// TODO Auto-generated catch block
@@ -69,6 +80,7 @@ public final class WikiExample {
 
     new DropDB("WikiExample").execute(context);
 
+    System.out.println(FhirHelper.getResourceBundle(resList, "uriInfoString"));
     // ------------------------------------------------------------------------
     // Close the database context
     context.close();
