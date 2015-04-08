@@ -70,6 +70,7 @@ public class FhirHelper {
 
 	public static Resource xmlToResource(String xml) {
 		Resource r = null;
+		
 		try {
 			JAXBContext jc = JAXBContext.newInstance(Resource.class);
 			Unmarshaller unMarshaller = jc.createUnmarshaller();
@@ -82,7 +83,8 @@ public class FhirHelper {
 	}
 
 	public static String getResourceBundle(List<Resource> resList, String uriInfoString) {
-
+		String fhirBase="http://localhost:8080/fhir-server-api/resources/res/";
+		
 		Abdera abdera = new Abdera();
 		Writer writer1 = abdera.getWriterFactory().getWriter("prettyxml");
 		Feed feed = abdera.newFeed();
@@ -93,7 +95,12 @@ public class FhirHelper {
 			feed.setId(uriInfoString);
 			feed.setTitle("all class" + " bundle");
 			feed.setUpdated(new Date());
+			feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+			feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
+			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
+			
+			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
 			for (Resource r : resList) {
@@ -105,7 +112,11 @@ public class FhirHelper {
 
 					if (c.isInstance(r)) {
 						Entry entry = feed.addEntry();
-						entry.setId(r.getId());
+						entry.setId(fhirBase+r.getId());
+						entry.setUpdated(new Date());
+						entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+						entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
+						
 						jaxbMarshaller.marshal(r, rwriter);
 						entry.setContent(rwriter.toString(), "application/xml");
 						rwriter.getBuffer().setLength(0);// reset String writer
