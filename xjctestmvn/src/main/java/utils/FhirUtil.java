@@ -1,4 +1,4 @@
-package fhir;
+package utils;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -21,7 +21,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Resource;
 
-public class FhirHelper {
+public class FhirUtil {
 	private static final String RESOURCE_LIST = "(patient)|(medication)|(observation)";
 	private static List<Class> resourceClassList;
 
@@ -82,6 +82,11 @@ public class FhirHelper {
 		return r;
 	}
 
+	public static List<Resource> xmlToResource(List<String> xmlList) {
+		List<Resource> resList= new ArrayList<Resource>();
+		for(String xmlStr:xmlList) resList.add(xmlToResource(xmlStr));
+		return resList;
+	}
 	public static String getResourceBundle(List<Resource> resList, String uriInfoString) {
 		String fhirBase="http://localhost:8080/fhir-server-api/resources/res/";
 		
@@ -146,7 +151,7 @@ public class FhirHelper {
 	}
 
 	public static Class getResourceClass(String resourceName) {
-		ClassLoader loader = FhirHelper.class.getClassLoader();
+		ClassLoader loader = FhirUtil.class.getClassLoader();
 		System.out.println("processing resourceName:" + resourceName);
 		String targetClassName = "org.hl7.fhir."
 				+ resourceName.substring(0, 1).toUpperCase()
