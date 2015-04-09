@@ -2,6 +2,8 @@ package xjctestmvn;
 
 import static org.junit.Assert.*;
 
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.hl7.fhir.Resource;
@@ -33,15 +35,24 @@ public class PdoEGtoFhirBundle {
 	public void tearDown() throws Exception {
 	}
 
-	@Test
+	//@Test
 	public void test() {
 	 String query="declare namespace ns=\"http://hl7.org/fhir\";"+"\n//(ns:Medication|ns:Patient)";
 	 String input=Utils.getFile("example/fhir/mixedResource.xml");
 
-	List<String> xmlList=XQueryUtil.getStringSequence(input, query);
-	List<Resource> resList=FhirUtil.xmlToResource(xmlList);
-	System.out.println(FhirUtil.getResourceBundle(resList,"uriInfoString"));
-	
+	 List<String> xmlList=XQueryUtil.getStringSequence(input, query);
+	 List<Resource> resList=FhirUtil.xmlToResource(xmlList);
+	 System.out.println(FhirUtil.getResourceBundle(resList,"uriInfoString"));
 	}
 
+	@Test
+	public void validate() {
+		//URL path=FhirUtil.class.getResource("validation.zip");
+		//System.out.println(FhirUtil.isValid(Utils.getFile("example/fhir/singlePatient.xml")));
+		//String msg=FhirUtil.getValidatorErrorMessage(Utils.getFile("example/fhir/singlePatientInvalid.xml"));
+		//System.out.println(fileStr);
+		assertEquals(false,FhirUtil.isValid(Utils.getFile("example/fhir/singlePatientInvalid.xml")));
+		//assertEquals("Unknown Content familys @  START_TAG seen ...<use value=\"usual\"/>\n    <familys value=\"van de Heuvel\"/>... @93:37"
+			//	,msg);
+	}
 }
