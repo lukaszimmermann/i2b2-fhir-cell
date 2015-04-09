@@ -73,6 +73,7 @@ public class FhirUtil {
 	}
 
 	public static Resource xmlToResource(String xml) {
+		if (xml.equals("")||xml==null) return null;
 		Resource r = null;
 		
 		try {
