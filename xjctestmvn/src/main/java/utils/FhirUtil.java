@@ -20,8 +20,12 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.instance.validation.Validator;
 
 public class FhirUtil {
+	
+	private static Validator v;
+	
 	private static final String RESOURCE_LIST = "(patient)|(medication)|(observation)";
 	private static List<Class> resourceClassList;
 
@@ -164,5 +168,48 @@ public class FhirUtil {
 			return null;
 		}
 	}
+	public static String getValidatorErrorMessage(String input) {
+		 
+		String msg="";
+		System.out.println("running validator for input:" + input);
+		try {
+			if (v==null) init();
+			v.setSource(input);
+			v.process();
+			
+		} catch (Exception e) {
+			msg= e.getMessage();
+		}
+		return msg;
+		
+	}
+	
+	public static boolean isValid(String xml) {
+		try {
+			if (v==null) init();
+			//System.out.println("setting source:"+xml);
+			v.setSource(xml);
+			v.process();
+		} catch (Exception e) {
+			//e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	private static void init() {
+		v = new Validator();
+		//System.out.println("P:"+context.getRealPath("/validation.zip"));
+		//v.setDefinitions(context.getRealPath("/validation.zip"));
+		//System.out.println("url:");
+		String path=Utils.getFilePath("validation.zip");//this.getClass().getResource("validation.zip").getPath();
+		//System.out.println("url:"+path);
+	
+		v.setDefinitions(path);
+		System.out.println(v.getDefinitions());
+		System.out.println("ready");
+	}
+	
+
 
 }
