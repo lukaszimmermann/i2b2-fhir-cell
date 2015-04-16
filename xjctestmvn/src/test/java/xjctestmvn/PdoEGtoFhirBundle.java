@@ -29,6 +29,9 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.writer.Writer;
+import org.basex.core.Context;
+import org.basex.query.QueryException;
+import org.basex.query.QueryProcessor;
 
 
 public class PdoEGtoFhirBundle {
@@ -82,7 +85,7 @@ public class PdoEGtoFhirBundle {
 		
 	}
 	
-	@Test
+	//@Test
 	public void readBundle() throws ParseException, IOException{
 		ResourceDb resDb= new ResourceDb();
 		
@@ -110,4 +113,49 @@ public class PdoEGtoFhirBundle {
 		//System.out.println (feed.getAuthor());
 		
 	}
+	@Test
+	
+	  public void defaultread ()  {
+		    // Database context.
+		String query = Utils.getFile("transform/defaultloaddoc.xquery");
+		String input=Utils.getFile("example/i2b2/i2b2medspod.txt");
+		
+			  //String query = Utils.getFile("transform/defaultloaddoc.xquery");
+			try{	
+				System.out.println(XQueryUtil.getStringSequence(input,  query));
+		    //Context context = new Context();
+
+		    System.out.println("=== BindContext ===");
+
+		    // Specify query to be executed
+		    //query = "declare context item external; .";
+
+		    // Show query
+		    System.out.println("\n* Query:");
+		    //System.out.println(query);
+
+		    // Create a query processor
+		    //try(QueryProcessor proc = new QueryProcessor(query, context)) {
+		    	//System.out.println("->"+proc.execute());
+		        // Store the pointer to the result in an iterator:
+		       /* Iter iter = proc.iter();
+
+		        // Iterate through all items and serialize
+		        int count=0;
+		        for(Item item; (item = iter.next()) != null;) {
+		        	count++;
+		          System.out.println(item.toJava()+"\n"+count+"\n--------------\n");
+		        }
+		        */
+		      }catch(Exception e){
+		    	  e.printStackTrace();
+		      }
+		     // System.out.println("\n* Result:");
+		      //System.out.println(result);
+		    
+
+		    // Close the database context
+		    //context.close();
+		  }
+		  
 }
