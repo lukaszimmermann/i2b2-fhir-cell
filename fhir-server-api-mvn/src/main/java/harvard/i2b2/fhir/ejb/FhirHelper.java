@@ -4,10 +4,21 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.ejb.Stateless;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
+import javax.tools.JavaFileManager.Location;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
@@ -21,22 +32,31 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
+import org.apache.xml.serializer.utils.Utils;
 import org.hl7.fhir.Resource;
+
 
 /**
  * Session Bean implementation class FhirHelper
  */
-@Stateless
-@LocalBean
+@Startup
+@Singleton
 public class FhirHelper {
 
-	private static final String RESOURCE_LIST = "(patient)|(medication)|(observation)";
-
+	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
+	public static List<Class>resourceClassList =new ArrayList<Class>();
     /**
      * Default constructor. 
      */
-    public FhirHelper() {
-        // TODO Auto-generated constructor stub
+   
+    
+    @PostConstruct
+	void init(){
+    	initResourceClassList();
+    	System.out.println("resClassList:"+resourceClassList);
+    }
+    public static List<Class> getResourceClassList(){
+    	return resourceClassList;
     }
     
 	public String getResourceBundle(List<Resource> resList, String uriInfoString) {
@@ -78,17 +98,15 @@ public class FhirHelper {
 	}
 
     public Class getResourceClass(String resourceName) {
-		ClassLoader loader = this.getClass().getClassLoader();
-		String targetClassName = "org.hl7.fhir."
-				+ resourceName.substring(0, 1).toUpperCase()
-				+ resourceName.substring(1, resourceName.length());
-		try {
-			return Class.forName(targetClassName, false, loader);
-		} catch (ClassNotFoundException e) {
+    	if(resourceClassList==null) initResourceClassList();
+    	for(Class c:resourceClassList){ 
+    		if (c.getSimpleName().toLowerCase().equals(resourceName.toLowerCase()))
+    			return c;
+    	}
 			System.out.println("Class Not Found for FHIR resource:"
 					+ resourceName);
 			return null;
-		}
+		
 	}
     
 	public List<Class> getResourceClasses(){
@@ -102,5 +120,52 @@ public class FhirHelper {
 		
 	}
 			
+public static void initResourceClassList(){
+	
+		try {
+			for(Class c:getAllFhirResourceClasses("org.hl7.fhir")){
+			
+				System.out.println(c.getSimpleName());
+				resourceClassList.add(c);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		
+		
+	}
+		
+	public static List<Class> getAllFhirResourceClasses(String packageName) throws IOException{
+		
+		System.out.println("Running getAllFhirResourceClasses for:"+packageName);
+		List<Class> commands = new ArrayList<Class>();
+
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+		        null, null, null);
+
+		Location location = StandardLocation.CLASS_PATH;
+		
+		Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
+		kinds.add(JavaFileObject.Kind.CLASS);
+		boolean recurse = false;
+
+		Iterable<JavaFileObject> list = fileManager.list(location, packageName,
+		        kinds, recurse);
+
+		for (JavaFileObject javaFileObject : list) {
+		    commands.add(javaFileObject.getClass());
+		}
+		
+		Class c=null;
+		for (String x: 
+			"org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement".split("\\|")){
+		c=harvard.i2b2.fhir.utils.Utils.getClassFromClassPath(x);
+		if(c!=null)commands.add(c);
+		}
+		System.out.println(commands.toString());
+		return commands;
+	}
 
 }

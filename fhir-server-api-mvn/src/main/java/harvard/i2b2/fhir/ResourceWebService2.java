@@ -1,5 +1,6 @@
 package harvard.i2b2.fhir;
 
+import harvard.i2b2.fhir.ejb.FhirHelper;
 import harvard.i2b2.fhir.ejb.ResourceDb;
 
 import java.io.File;
@@ -10,12 +11,20 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Init;
 import javax.servlet.ServletContext;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileManager.Location;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -50,11 +59,12 @@ import org.json.XML;
 
 @Path("res")
 public class ResourceWebService2 {
-	private static final String RESOURCE_LIST = "(patient)|(medication)|(observation)";
-
+	
 	@EJB
 	ResourceDb resourcedb;
-
+	@EJB
+	FhirHelper fhirHelper;
+	
 	@javax.ws.rs.core.Context
 	ServletContext context;
 
@@ -62,7 +72,7 @@ public class ResourceWebService2 {
 
 	@GET
 	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
-	@Path("{resourceName:" + RESOURCE_LIST + "}/{id:[0-9]+}")
+	@Path("{resourceName:" + FhirHelper.RESOURCE_LIST + "}/{id:[0-9]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,
@@ -72,7 +82,7 @@ public class ResourceWebService2 {
 		Resource r = null;
 		System.out.println("searhcing particular resource2:<" + resourceName
 				+ "> with id:<" + id + ">");
-		Class c = getResourceClass(resourceName);
+		Class c = fhirHelper.getResourceClass(resourceName);
 		if (c == null)
 			throw new RuntimeException("class not found for resource:"+ resourceName);
 
@@ -101,7 +111,7 @@ public class ResourceWebService2 {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Path("{resourceName:" + RESOURCE_LIST + "}")
+	@Path("{resourceName:" + FhirHelper.RESOURCE_LIST  + "}")
 	public Response putParticularResource(
 			@PathParam("resourceName") String resourceName,
 			String xml
@@ -116,7 +126,7 @@ public class ResourceWebService2 {
 			System.out
 					.println("putting  particular resource2:<" + (Resource) r);
 			try {
-				Class c = getResourceClass(resourceName);
+				Class c = fhirHelper.getResourceClass(resourceName);
 				if (c == null)
 				throw new RuntimeException("class not found for resource:"+ resourceName);
 			
@@ -144,7 +154,7 @@ public class ResourceWebService2 {
 	}
 
 	@GET
-	@Path("{resourceName:" + RESOURCE_LIST + "(//_search)[0,1]}")
+	@Path("{resourceName:" + FhirHelper.RESOURCE_LIST  + "(//_search)[0,1]}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public String getResourceBundle(
 			@PathParam("resourceName") String resourceName,
@@ -160,7 +170,7 @@ public class ResourceWebService2 {
 			 
 			StringWriter swriter=new StringWriter();
 			  try {
-				  Class c = getResourceClass(resourceName);
+				  Class c = fhirHelper.getResourceClass(resourceName);
 				  feed.setId(uriInfo.getRequestUri().toString());
 				  feed.setTitle(c.getSimpleName()+" bundle");
 				  feed.setUpdated(new Date());
@@ -186,8 +196,6 @@ public class ResourceWebService2 {
 			return swriter.toString();
 	}
 			
-	@POST
-	@Path("_validate")
 	public String _validate(String input) {
 		System.out.println("running validator for input:" + input);
 		try {
@@ -201,19 +209,6 @@ public class ResourceWebService2 {
 
 	}
 	
-	private Class getResourceClass(String resourceName) {
-		ClassLoader loader = this.getClass().getClassLoader();
-		String targetClassName = "org.hl7.fhir."
-				+ resourceName.substring(0, 1).toUpperCase()
-				+ resourceName.substring(1, resourceName.length());
-		try {
-			return Class.forName(targetClassName, false, loader);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Class Not Found for FHIR resource:"
-					+ resourceName);
-			return null;
-		}
-	}
 	
 	public boolean isValid(String xml) {
 		try {
@@ -234,6 +229,7 @@ public class ResourceWebService2 {
 		v.setDefinitions(context.getRealPath("/validation.zip"));
 		System.out.println(v.getDefinitions());
 		System.out.println("ready");
+		
 	}
 
 	private static String xmlToJson(String xmlStr) {
@@ -273,68 +269,10 @@ public class ResourceWebService2 {
 	
 	 public static String getResourceBundle(List<Resource> resList,String uriInfoString) {
 			
-			
-			
-			Abdera abdera = new Abdera();
-			Writer writer1 = abdera.getWriterFactory().getWriter();//.getWriter("prettyxml");
-			Feed feed = abdera.newFeed();
-			 
-			StringWriter swriter=new StringWriter();
-			  try {
-				  
-				  feed.setId(uriInfoString);
-				  feed.setTitle("all class"+" bundle");
-				  feed.setUpdated(new Date());
-				  
-				  
-				  StringWriter rwriter=new StringWriter();
-				  //for(Resource r:resourcedb.getAll(c)){
-				  for(Resource r:resList){
-					  for(Class c:getResourceClasses()){
-						  JAXBContext jaxbContext = JAXBContext.newInstance(c);
-						  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-						  jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-							
-						  if(c.isInstance(r)){
-							  Entry entry = feed.addEntry();
-							  entry.setId(r.getId());
-							  jaxbMarshaller.marshal(r, rwriter);
-							  entry.setContent(rwriter.toString(),"application/xml");
-							  rwriter.getBuffer().setLength(0);//reset String writer
-					  }
-					  }
-					}
-				writer1.writeTo(feed,swriter);
-			} catch (IOException|JAXBException e) {
-				e.printStackTrace();
-			}
-			return swriter.toString();
+		return "XX delegate to FhirHelper";
 	}
  
- public static Class getResourceClass1(String resourceName) {
-		ClassLoader loader = ResourceWebService2.class.getClassLoader();
-		String targetClassName = "org.hl7.fhir."
-				+ resourceName.substring(0, 1).toUpperCase()
-				+ resourceName.substring(1, resourceName.length());
-		try {
-			return Class.forName(targetClassName, false, loader);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Class Not Found for FHIR resource:"
-					+ resourceName);
-			return null;
-		}
-	}
+	
  
-	public static List<Class> getResourceClasses(){
-		List<Class> classList=new ArrayList<Class>();
-		for(String x:RESOURCE_LIST.split("|")){
-			x=x.replace("(", "").replace(")","");
-			Class y=getResourceClass1(x);
-			if(y!=null)classList.add(y);
-		}
-		return classList;
-		
-	}
-		
-
+	
 }
