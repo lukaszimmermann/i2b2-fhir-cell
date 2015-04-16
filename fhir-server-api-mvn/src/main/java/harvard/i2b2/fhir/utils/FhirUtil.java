@@ -6,8 +6,16 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
+import javax.tools.JavaFileManager.Location;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -24,11 +32,12 @@ import org.hl7.fhir.instance.validation.Validator;
 
 public class FhirUtil {
 	
+	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
+	public static ArrayList<Class>resourceClassList =null;
+    
 	private static Validator v;
 	
-	private static final String RESOURCE_LIST = "(patient)|(medication)|(observation)";
-	private static List<Class> resourceClassList;
-
+	
 	public static String resourceToXml(Resource r, Class c) {
 		StringWriter strw = new StringWriter();
 
@@ -48,11 +57,12 @@ public class FhirUtil {
 	}
 
 	public static String resourceToXml(Resource r) {
-
+		init();
+		
 		StringWriter strw = new StringWriter();
 		JAXBElement jbe = null;
 		boolean classFound=false;
-		for (Class c : getResourceClasses()) {
+		for (Class c : resourceClassList) {
 			if (c.isInstance(r)) {
 				try {
 					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
@@ -114,7 +124,7 @@ public class FhirUtil {
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
 			for (Resource r : resList) {
-				for (Class c : getResourceClasses()) {
+				for (Class c : getResourceClassList()) {
 					JAXBContext jaxbContext = JAXBContext.newInstance(c);
 					Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 					jaxbMarshaller.setProperty(
@@ -141,34 +151,12 @@ public class FhirUtil {
 	}
 
 	
-	public static List<Class> getResourceClasses() {
-		if (resourceClassList == null) {
-			resourceClassList = new ArrayList<Class>();
-			for (String x : RESOURCE_LIST.split("\\|")) {
-				x = x.replace("(", "").replace(")", "");
-				Class y = getResourceClass(x);
-				if (y != null)
-					resourceClassList.add(y);
-			}
-		}
+	
+	private static ArrayList<Class> getResourceClassList() {
+		initResourceClassList();
 		return resourceClassList;
-
 	}
 
-	public static Class getResourceClass(String resourceName) {
-		ClassLoader loader = FhirUtil.class.getClassLoader();
-		System.out.println("processing resourceName:" + resourceName);
-		String targetClassName = "org.hl7.fhir."
-				+ resourceName.substring(0, 1).toUpperCase()
-				+ resourceName.substring(1, resourceName.length());
-		try {
-			return Class.forName(targetClassName, false, loader);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Class Not Found for FHIR resource:"
-					+ resourceName);
-			return null;
-		}
-	}
 	public static String getValidatorErrorMessage(String input) {
 		 
 		String msg="";
@@ -183,6 +171,7 @@ public class FhirUtil {
 		}
 		return msg;
 		
+		
 	}
 	
 	public static boolean isValid(String xml) {
@@ -192,25 +181,100 @@ public class FhirUtil {
 			v.setSource(xml);
 			v.process();
 		} catch (Exception e) {
-			//e.printStackTrace();
+			e.printStackTrace();
+			
 			return false;
 		}
 		return true;
 	}
 	
 	private static void init() {
+		if(v==null){
 		v = new Validator();
-		//System.out.println("P:"+context.getRealPath("/validation.zip"));
-		//v.setDefinitions(context.getRealPath("/validation.zip"));
-		//System.out.println("url:");
-		String path=Utils.getFilePath("validation.zip");//this.getClass().getResource("validation.zip").getPath();
-		//System.out.println("url:"+path);
+		String path=Utils.getFilePath("validation.zip");
 	
 		v.setDefinitions(path);
 		System.out.println(v.getDefinitions());
-		System.out.println("ready");
+		System.out.println("ready")
+		;
+		}
+		if (resourceClassList==null)
+		initResourceClassList();
 	}
 	
+	  
+		public List<Class> getResourceClasses(){
+			List<Class> classList=new ArrayList<Class>();
+			for(String x:RESOURCE_LIST.split("|")){
+				x=x.replace("(", "").replace(")","");
+				Class y=getResourceClass(x);
+				if(y!=null)classList.add(y);
+			}
+			return classList;
+			
+		}
+				
+	public static void initResourceClassList(){
+			if (resourceClassList==null){
+				resourceClassList=new ArrayList<Class>();
+				try {
+				for(Class c:getAllFhirResourceClasses("org.hl7.fhir")){
+				
+					System.out.println(c.getSimpleName());
+					resourceClassList.add(c);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+		}
+			
+	}
+			
+		public static List<Class> getAllFhirResourceClasses(String packageName) throws IOException{
+			
+			System.out.println("Running getAllFhirResourceClasses for:"+packageName);
+			List<Class> commands = new ArrayList<Class>();
+
+			JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+			StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+			        null, null, null);
+
+			Location location = StandardLocation.CLASS_PATH;
+			
+			Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
+			kinds.add(JavaFileObject.Kind.CLASS);
+			boolean recurse = false;
+
+			Iterable<JavaFileObject> list = fileManager.list(location, packageName,
+			        kinds, recurse);
+
+			for (JavaFileObject javaFileObject : list) {
+			    commands.add(javaFileObject.getClass());
+			}
+			
+			Class c=null;
+			for (String x: 
+				"org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement".split("\\|")){
+			c=harvard.i2b2.fhir.utils.Utils.getClassFromClassPath(x);
+			if(c!=null)commands.add(c);
+			}
+			System.out.println(commands.toString());
+			return commands;
+		}
+		
+		public static Class getResourceClass(String resourceName) {
+	    	if(resourceClassList==null) initResourceClassList();
+	    	for(Class c:resourceClassList){ 
+	    		if (c.getSimpleName().toLowerCase().equals(resourceName.toLowerCase()))
+	    			return c;
+	    	}
+				System.out.println("Class Not Found for FHIR resource:"
+						+ resourceName);
+				return null;
+			
+		}
+	  
 
 
 }
