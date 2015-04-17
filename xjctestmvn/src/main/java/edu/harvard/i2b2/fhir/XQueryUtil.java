@@ -1,4 +1,4 @@
-package edu.harvard.i2b2;
+package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public final class XQueryUtil {
 		Context context = new Context();
 
 		// Create a database from a remote XML document
-		System.out.println("\n* Create a database from a file via http.");
+		//System.out.println("\n* Create a database from a file via http.");
 
 		// Use internal parser to skip DTD parsing
 		try {
@@ -57,7 +57,7 @@ public final class XQueryUtil {
 				e.printStackTrace();
 			}
 
-			System.out.println("\n* Drop the database.");
+			//System.out.println("\n* Drop the database.");
 			new DropDB("WikiExample").execute(context);
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
@@ -75,13 +75,13 @@ public final class XQueryUtil {
 			
 	    Context context = new Context();
 
-	    System.out.println("=== BindContext ===");
+	    //System.out.println("=== BindContext ===");
 
 	    // Specify query to be executed
 	    //query = "declare context item external; .";
 
 	    // Show query
-	    System.out.println("\n* Query:");
+	    //System.out.println("\n* Query:");
 	    //System.out.println(query);
 
 	    // Create a query processor

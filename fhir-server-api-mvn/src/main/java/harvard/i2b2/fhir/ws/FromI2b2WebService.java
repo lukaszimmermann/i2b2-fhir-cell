@@ -24,8 +24,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
 
-import edu.harvard.i2b2.FhirUtil;
-import edu.harvard.i2b2.XQueryUtil;
+import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.XQueryUtil;
 
 
 @Path("i2b2")

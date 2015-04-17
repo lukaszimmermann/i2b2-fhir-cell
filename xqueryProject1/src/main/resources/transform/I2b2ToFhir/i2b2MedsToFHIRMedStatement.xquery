@@ -229,11 +229,11 @@ let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid)
 let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,"route",$fhirMedication,$sd,$ed)
 
-return <FhirResourceSetWithMetaData>
+return <FhirResourceSet>
 {$fhirMedication}
 {local:fnFhirResourceMetaData(xs:string($count),$updateDate)}
 {$fhirMedicationStatement}
-</FhirResourceSetWithMetaData>
+</FhirResourceSet>
 
 
 
