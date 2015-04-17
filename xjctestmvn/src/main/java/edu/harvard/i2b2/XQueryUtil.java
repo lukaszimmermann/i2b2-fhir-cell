@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
 import org.basex.core.cmd.*;
+import org.basex.data.Result;
 import org.basex.query.QueryException;
 import org.basex.query.QueryIOException;
 import org.basex.query.QueryProcessor;
@@ -65,6 +66,36 @@ public final class XQueryUtil {
 		return resList;
 	}
 
-	
+	public static String processXQuery(String query,String input)  {
+		String resultString =null;
+	    // Database context.
+		  
+		  //String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+			//String input=getFile("example/i2b2/i2b2medspod.txt");
+			
+	    Context context = new Context();
+
+	    System.out.println("=== BindContext ===");
+
+	    // Specify query to be executed
+	    //query = "declare context item external; .";
+
+	    // Show query
+	    System.out.println("\n* Query:");
+	    //System.out.println(query);
+
+	    // Create a query processor
+	    try(QueryProcessor proc = new QueryProcessor(query, context)) {
+	    	Result res= proc.execute();
+	    	resultString =res.serialize();
+
+	  }catch(Exception e){
+		  e.printStackTrace();
+	  }
+	    
+   	    context.close();
+   	    return resultString;
+	  }
+	  
 
 }
