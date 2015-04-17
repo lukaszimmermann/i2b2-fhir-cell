@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.utils;
+package edu.harvard.i2b2;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -256,7 +256,7 @@ public class FhirUtil {
 			Class c=null;
 			for (String x: 
 				"org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement".split("\\|")){
-			c=harvard.i2b2.fhir.utils.Utils.getClassFromClassPath(x);
+			c=Utils.getClassFromClassPath(x);
 			if(c!=null)commands.add(c);
 			}
 			System.out.println(commands.toString());

@@ -1,5 +1,4 @@
-package harvard.i2b2.fhir.utils;
-
+package edu.harvard.i2b2;
 import java.io.IOException;
 import java.nio.file.Path;
 

@@ -18,9 +18,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import core.ResourceDb;
-import utils.FhirUtil;
-import utils.Utils;
-import utils.XQueryUtil;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
@@ -32,6 +29,10 @@ import org.apache.abdera.writer.Writer;
 import org.basex.core.Context;
 import org.basex.query.QueryException;
 import org.basex.query.QueryProcessor;
+
+import edu.harvard.i2b2.FhirUtil;
+import edu.harvard.i2b2.Utils;
+import edu.harvard.i2b2.XQueryUtil;
 
 
 public class PdoEGtoFhirBundle {
@@ -101,7 +102,7 @@ public class PdoEGtoFhirBundle {
 		  System.out.println("\t" + entry.getTitle());
 		  System.out.println();
 		  //System.out.println("\t" + entry.getContent());
-		  if(!utils.FhirUtil.isValid(entry.getContent())){
+		  if(!FhirUtil.isValid(entry.getContent())){
 			  throw new RuntimeException("entry is not a valid Fhir Resource:"+entry.getId()
 					  +FhirUtil.getValidatorErrorMessage(entry.getContent()));
 		  }
