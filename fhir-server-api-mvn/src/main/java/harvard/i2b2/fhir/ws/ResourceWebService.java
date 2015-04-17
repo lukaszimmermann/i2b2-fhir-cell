@@ -2,7 +2,7 @@ package harvard.i2b2.fhir.ws;
 
 
 import harvard.i2b2.fhir.ejb.ResourceDb;
-import edu.harvard.i2b2.FhirUtil;
+import edu.harvard.i2b2.fhir.FhirUtil;
 
 import java.io.File;
 import java.io.IOException;
