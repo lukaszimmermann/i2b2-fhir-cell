@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir;
+package harvard.i2b2.fhir.ws;
 
 
 import java.io.IOException;

@@ -1,8 +1,9 @@
-package harvard.i2b2.fhir;
+package harvard.i2b2.fhir.ws;
 
 import harvard.i2b2.fhir.ejb.BaseXWrapper;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,9 +24,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
 
+import edu.harvard.i2b2.FhirUtil;
+
 
 @Path("i2b2")
-public class FromI2b2WebService {
+public class FromI2b2WebService<Resource> {
 	//Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
 	String i2b2SessionId;
 	
@@ -93,7 +96,9 @@ public class FromI2b2WebService {
 		 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 		 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
 			 //return "<html>"+processXquery(query,oStr.toString())+"</html>";
-			 return ResourceWebService2.getResourceBundle(ResourceWebService2.xmlToResource(processXquery(query,oStr.toString()),"uriinfo_string");
+		 str=processXquery(query,oStr.toString());
+		 List<org.hl7.fhir.Resource> listRes=(List<org.hl7.fhir.Resource>) FhirUtil.xmlToResource(str);
+			 return ResourceWebService.getResourceBundle((List<org.hl7.fhir.Resource>) listRes,"uriinfo_string");
 			 //return oStr.toString();
 	}
 	
