@@ -1,6 +1,6 @@
 package harvard.i2b2.fhir.ws;
 
-import harvard.i2b2.fhir.ejb.BaseXWrapper;
+
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.io.IOUtils;
 
 import edu.harvard.i2b2.FhirUtil;
+import edu.harvard.i2b2.XQueryUtil;
 
 
 @Path("i2b2")
@@ -32,9 +33,7 @@ public class FromI2b2WebService<Resource> {
 	//Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
 	String i2b2SessionId;
 	
-	@EJB
-	//XQueryProcessor xqp;
-	BaseXWrapper xqp;
+
 	
 	@javax.ws.rs.core.Context
 	ServletContext context;
@@ -105,7 +104,7 @@ public class FromI2b2WebService<Resource> {
 	
 	
 	private String processXquery(String query, String input) {
-		return xqp.processXquery(query, input);
+		return XQueryUtil.processXQuery(query, input);
 	}
 	
 	

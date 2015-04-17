@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.ws;
+package harvard.i2b2.fhir.del.ws;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.ContextResolver;

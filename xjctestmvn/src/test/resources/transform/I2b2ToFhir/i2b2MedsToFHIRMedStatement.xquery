@@ -1,6 +1,9 @@
 (:declare variable $doc as document-node(element(*, xs:untyped)) external;
  :)
  (: Distinct observations for one patient:)
+xquery version "1.0";
+declare namespace functx = "http://www.functx.com";
+ 
 declare function local:fnDose($r as xs:string?) as node()?
 { 
 let $r:= fn:lower-case($r)
@@ -116,11 +119,30 @@ id="MedicationStatement/{$count}">
 </MedicationStatement>
 };
 
-let $PID := 1000000001
+
+
+declare function functx:is-node-in-sequence
+  ( $node as node()? ,
+    $seq as node()* )  as xs:boolean {
+
+   some $nodeInSeq in $seq satisfies $nodeInSeq is $node
+ } ;
+ 
+declare function functx:distinct-nodes
+  ( $nodes as node()* )  as node()* {
+
+    for $seq in (1 to count($nodes))
+    return $nodes[$seq][not(functx:is-node-in-sequence(
+                                .,$nodes[position() < $seq]))]
+ } ;
+ 
+ 
+declare function local:distinctObservations($I as node()?) as node ()?{
+
 
 let $distobs :=
  (:for $t in $doc//observation:)
- for $t in //observation
+ for $t in $I//observation
  let $eid := $t/event_id/text()
  let $pid := $t/patient_id/text()
  let $cid := $t/concept_cd/text()
@@ -139,16 +161,14 @@ let $distobs :=
   let $id := concat($pid,"-",$eid,"-",$cid,"-",$sd)
 
  return
-       if ($t is (//observation)[. = $t and patient_id/text() = $PID ][1]
-        
-       ) then
-            <observation sourcesystem_cd="{$sourceSystem}" import_date="{$importDate}" download_date="{$downloadDate}" update_date="{$updateDate}">
+  
+             <observation sourcesystem_cd="{$sourceSystem}" import_date="{$importDate}" download_date="{$downloadDate}" update_date="{$updateDate}">
                         <id>{$id}</id>
                         <event_id source="HIVE">{$eid}</event_id>
                         <patient_id source="HIVE">{$pid}</patient_id>
                         <concept_cd name="{$cn}">{$cid}</concept_cd>
                         {$oid}
-                        <start_date>${sd}</start_date>
+                        <start_date>{$sd}</start_date>
                         <modifier_cd>{$m}</modifier_cd>
                         <valuetype_cd>{$val_cd}</valuetype_cd>
                         <tval_char>{$tval_char}</tval_char>
@@ -157,12 +177,24 @@ let $distobs :=
                         <end_date>{$ed}</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
-     else ()
-
+    return  <set>{functx:distinct-nodes($distobs)}</set>
+ };
  
+ let $I:=
+if(empty(root())) 
+then doc('/Users/kbw19/Documents/workspace-sts/xqueryProject1/resources/example/i2b2/medicationsForAPatient.xml')
+else root()
+let $distObs:=local:distinctObservations($I)
+ 
+let $FhirResSet:=
+for $t in $distObs/observation 
+return
+<i2b2MedToFhir>
+{$t}
+</i2b2MedToFhir>
 
+let $A:=$distObs
 
-let $A := <set>{$distobs}</set>
 for $id at $count in fn:distinct-values($A/observation/id)
 let $refObs :=  $A/observation[id =$id and modifier_cd = "MED:FREQ"]
 
@@ -197,9 +229,13 @@ let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid)
 let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,"route",$fhirMedication,$sd,$ed)
 
-return <p>{$fhirMedication}
+return <FhirResourceSetWithMetaData>
+{$fhirMedication}
 {local:fnFhirResourceMetaData(xs:string($count),$updateDate)}
-{$fhirMedicationStatement}</p>
+{$fhirMedicationStatement}
+</FhirResourceSetWithMetaData>
+
+
 
 (:
 
