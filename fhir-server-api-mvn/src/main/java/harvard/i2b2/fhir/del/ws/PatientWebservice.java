@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.ws;
+package harvard.i2b2.fhir.del.ws;
 
 
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Collection;
 
-import harvard.i2b2.fhir.ejb.PatientDb;
+import harvard.i2b2.fhir.del.ejb.PatientDb;
 import harvard.i2b2.fhir.entity.Patients;
 
 import javax.ejb.EJB;
