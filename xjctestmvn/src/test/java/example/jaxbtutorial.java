@@ -12,13 +12,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.hl7.fhir.FhirResourceWithMD;
+
 import org.hl7.fhir.Medication;
 import org.junit.Test;
-
-import edu.harvard.i2b2.fhir.model.FhirResourceWithMetaData;
-import edu.harvard.i2b2.fhir.model.FhirResourceWithMetaDataSet;
-import edu.harvard.i2b2.fhir.model.MetaData;
 
 public class jaxbtutorial {
 
@@ -73,7 +69,7 @@ public class jaxbtutorial {
 		          + book.getAuthor());
 		    }
 		  }	
-	
+/*	
 	//@Test
 	public void test1() throws JAXBException, IOException{
 		 final String BOOKSTORE_XML = "./tmp.xml";
@@ -121,7 +117,7 @@ public class jaxbtutorial {
 		      System.out.println("FhirResourceWithMetaData: " +rm.getRmd().getId() );
 		    }
 		  }	
-
+*/
 	
 	
 }

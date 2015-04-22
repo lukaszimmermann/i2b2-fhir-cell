@@ -1,27 +1,37 @@
-<xs:schema xmlns="http://hl7.org/fhir" targetNamespace="http://hl7.org/fhir" 
-	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:ns7="http://i2b2.harvar.edu/fhir/core" targetNamespace="http://i2b2.harvar.edu/fhir/core"
+	xmlns:ns9="http://hl7.org/fhir" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	
- <xs:include schemaLocation="fhir-base.xsd"/>
- 
- <xs:element name="FhirResourceWithMD">
- 	  <xs:complexType>
-    <xs:sequence>
-      <xs:element name="Resource" type="Resource"/>
-      <xs:element ref="MetaData" />
-      </xs:sequence>
-  </xs:complexType>
-  
-</xs:element>
-
-
-<xs:element name="MetaData">
-  <xs:complexType >
-    <xs:sequence>
-      <xs:element name="id" type="xs:string"/>
-      <xs:element name="lastUpdated" type="xs:string"/>
-     </xs:sequence>
-  </xs:complexType>
-</xs:element>
-
- 
+	<xs:import  schemaLocation="fhir-base.xsd"
+	 namespace="http://hl7.org/fhir"  />
+	
+	<xs:element name="MetaResourceSet" type="ns7:MetaResourceSet">
+	</xs:element>
+	<xs:element name="MetaResource" type="ns7:MetaResource">
+	</xs:element>
+	<xs:element name="MetaData" type="ns7:MetaData">
+	</xs:element>
+	
+	<xs:complexType name="MetaResourceSet">
+		<xs:sequence>
+			<xs:element name="MetaResource" type="ns7:MetaResource" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	
+	<xs:complexType name="MetaResource">
+		<xs:sequence>
+			<xs:element name="Resource" type="ns9:Resource" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="MetaData" type="ns7:MetaData"   minOccurs="1" maxOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="MetaData">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
+			<xs:element name="lastUpdated" type="xs:dateTime"/>
+		</xs:sequence>
+	</xs:complexType>
+	
 </xs:schema>

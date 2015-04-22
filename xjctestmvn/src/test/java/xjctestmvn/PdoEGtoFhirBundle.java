@@ -35,9 +35,7 @@ import org.apache.abdera.parser.Parser;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
-import edu.harvard.i2b2.fhir.model.FhirResourceWithMetaData;
-import edu.harvard.i2b2.fhir.model.FhirResourceWithMetaDataSet;
-import edu.harvard.i2b2.fhir.model.MetaData;
+
 
 public class PdoEGtoFhirBundle {
 
@@ -138,7 +136,7 @@ public class PdoEGtoFhirBundle {
 
 		System.out.println(XQueryUtil.getStringSequence(input, query));
 	}
-
+/*
 	// @Test
 	public void readFhirResourceSet() {
 
@@ -155,8 +153,8 @@ public class PdoEGtoFhirBundle {
 		}
 		System.out.println(r.getId() + r.toString());
 	}
-
-	 @Test
+*/
+	/* @Test
 	public void readFhirResourceWithMetaData() {
 
 		String xml = Utils.getFile("example/fhir/FhirResourceWithMetaData.xml");
@@ -191,5 +189,5 @@ public class PdoEGtoFhirBundle {
 		}
 		System.out.println(r.getId());
 	}
-
+*/
 }
