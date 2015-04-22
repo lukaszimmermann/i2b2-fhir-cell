@@ -1,5 +1,5 @@
-<FhirResourceSet>
-<FhirResource>
+<FhirResourceWithMetaDataSet>
+<FhirResourceWithMetaData>
   <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml" id="Medication/1">
     <text>
       <status value="generated"/>
@@ -14,14 +14,15 @@
       </coding>
     </code>
   </Medication>
-  <FhirResourceMetaData>
+  
+  <MetaData>
     <id>Medication/1</id>
       <lastUpdated>2012-12-13T10:10:10</lastUpdated>
-  </FhirResourceMetaData>
-  </FhirResource>
+  </MetaData>
   
-   <FhirResource>
-  <MedicationStatement xmlns="http://hl7.org/fhir" id="MedicationStatement/2">
+<FhirResourceWithMetaData>
+    
+   <MedicationStatement xmlns="http://hl7.org/fhir" id="MedicationStatement/2">
     <text>
       <status value="generated"/>
       <div xmlns="http://www.w3.org/1999/xhtml">
@@ -50,9 +51,9 @@
       </route>
     </dosage>
   </MedicationStatement>
-    <FhirResourceMetaData>
+    <MetaData>
     <id>MedicationStatement/2</id>
     <lastUpdated>2012-12-13T10:10:10</lastUpdated>
-  </FhirResourceMetaData>
-   </FhirResource>
-  </FhirResourceSet>
+  </MetaData>
+  </FhirResourceWithMetaData>
+</FhirResourceWithMetaDataSet>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:FhirResourceWithMD xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir">
+    <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Medication">
+        <ns3:name value="med1"/>
+    </Resource>
+    <MetaData>
+        <id>medication/1</id>
+        <lastUpdated>2015-04-22</lastUpdated>
+    </MetaData>
+</ns3:FhirResourceWithMD>

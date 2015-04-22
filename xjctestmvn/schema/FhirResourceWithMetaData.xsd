@@ -1,0 +1,27 @@
+<xs:schema xmlns="http://hl7.org/fhir" targetNamespace="http://hl7.org/fhir" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	
+ <xs:include schemaLocation="fhir-base.xsd"/>
+ 
+ <xs:element name="FhirResourceWithMD">
+ 	  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="Resource" type="Resource"/>
+      <xs:element ref="MetaData" />
+      </xs:sequence>
+  </xs:complexType>
+  
+</xs:element>
+
+
+<xs:element name="MetaData">
+  <xs:complexType >
+    <xs:sequence>
+      <xs:element name="id" type="xs:string"/>
+      <xs:element name="lastUpdated" type="xs:string"/>
+     </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+ 
+</xs:schema>
