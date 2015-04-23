@@ -1,5 +1,7 @@
 package xjctestmvn;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+import javax.validation.constraints.AssertTrue;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -16,6 +19,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
+import junit.framework.Assert;
 
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationStatement;
@@ -26,6 +30,7 @@ import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 
@@ -82,22 +87,18 @@ public class xmlIOMetaResourceSet {
 
 	}
 
-	// @Test
+	//@Test
 	public void Test2() throws JAXBException, FileNotFoundException {
 		final String xmlFileName = "example/fhir/MetaResourceSet3.xml";
 		String xmlString = Utils.getFile(xmlFileName);
-		JAXBContext context = JAXBContext.newInstance(MetaResourceSet.class);
-		Unmarshaller um = context.createUnmarshaller();
-		// System.out.println(Utils.getFile(xmlFileName));
-		MetaResourceSet s2 = (MetaResourceSet) um
-				.unmarshal(new ByteArrayInputStream(xmlString
-						.getBytes(StandardCharsets.UTF_8)));
+		
+		MetaResourceSet s2 = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xmlString); 
 		// System.out.println("FhirResourceSet: "
 		// +s2.getMetaResource().get(0).getMetaData().getId());
 		System.out.println("FhirResourceSet: "
 				+ ((Medication) s2.getMetaResource().get(0).getResource())
 						.getName().getValue());
-		System.out.println("FhirResourceSet: "
+		assertEquals("NDC:00641276641","FhirResourceSet: "
 				+ ((Medication) s2.getMetaResource().get(0).getResource())
 						.getCode().getCoding().get(0).getCode().getValue());
 
@@ -110,15 +111,11 @@ public class xmlIOMetaResourceSet {
 			System.out.println(xmlString);
 		}
 	//@Test
-	public void Test3() throws JAXBException {
+	public void testI2b2toFhirMedPDOtransform() throws JAXBException {
 		String xmlString = PdoEGtoFhirBundle.defaultread();
 		System.out.println(xmlString);
-		JAXBContext context = JAXBContext.newInstance(MetaResourceSet.class);
-		Unmarshaller um = context.createUnmarshaller();
-		MetaResourceSet s2 = (MetaResourceSet) um
-				.unmarshal(new ByteArrayInputStream(xmlString
-						.getBytes(StandardCharsets.UTF_8)));
-		testResources(s2);
+		MetaResourceSet s = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xmlString); 
+		testResources(s);
 	}
 
 	private void testResources(MetaResourceSet s2){

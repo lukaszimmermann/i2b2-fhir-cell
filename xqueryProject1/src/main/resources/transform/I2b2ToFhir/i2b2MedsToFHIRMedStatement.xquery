@@ -224,7 +224,7 @@ let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 
  
-let $cid := $refObs/concept_cd/text() 
+let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
 let $cn := $refObs/concept_cd/@name/string()
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
@@ -255,10 +255,7 @@ return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="
     </ns4:metaResourceSet>
 
 (:
-return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
-    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
-    {$O/MetaResource}
-<ns4:metaResourceSet>
+
 
 for $q in $O//MetaResource
 return 

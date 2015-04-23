@@ -1,8 +1,10 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +31,9 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.instance.validation.Validator;
+
+import edu.harvard.i2b2.fhir.core.MetaResource;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class FhirUtil {
 	
@@ -112,12 +117,12 @@ public class FhirUtil {
 		StringWriter swriter = new StringWriter();
 		try {
 
-			feed.setId(uriInfoString);
+			//feed.setId(uriInfoString);
 			feed.setTitle("all class" + " bundle");
-			feed.setUpdated(new Date());
-			feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
-			feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
-			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
+			//feed.setUpdated(new Date());
+			//feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+			//feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
+			//feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			
 			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
@@ -133,9 +138,9 @@ public class FhirUtil {
 					if (c.isInstance(r)) {
 						Entry entry = feed.addEntry();
 						entry.setId(fhirBase+r.getId());
-						entry.setUpdated(new Date());
-						entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
-						entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
+						//entry.setUpdated(new Date());
+						//entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+						//entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
 						
 						jaxbMarshaller.marshal(r, rwriter);
 						entry.setContent(rwriter.toString(), "application/xml");
@@ -275,6 +280,13 @@ public class FhirUtil {
 			
 		}
 	  
-
+		static public List<Resource> getResourcesFromMetaResourceSet(MetaResourceSet s){
+			List<Resource> list= new ArrayList<Resource>();
+			for(MetaResource r:s.getMetaResource()){
+				list.add(r.getResource());
+			}
+			return list;
+			
+		} 
 
 }
