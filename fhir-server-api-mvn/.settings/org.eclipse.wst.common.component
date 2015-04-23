@@ -7,6 +7,9 @@
         <dependent-module archiveName="fhirutils-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/fhirUtils/fhirUtils">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="xquery-0.0.1-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/XQueryEclipse/XQueryEclipse">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="fhir-server-api-mvn"/>
         <property name="java-output-path" value="/fhir-server-api-mvn/target/classes"/>
     </wb-module>

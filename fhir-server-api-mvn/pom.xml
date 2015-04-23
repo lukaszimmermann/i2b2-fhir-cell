@@ -21,6 +21,12 @@
   <artifactId>fhirutils</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   </dependency>
+  
+  <dependency>
+<groupId>edu.harvard.i2b2</groupId>
+  <artifactId>xquery</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+</dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>

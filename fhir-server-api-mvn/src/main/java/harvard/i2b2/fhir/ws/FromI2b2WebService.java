@@ -3,6 +3,7 @@ package harvard.i2b2.fhir.ws;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -21,15 +22,20 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.Resource;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
+import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 
 @Path("i2b2")
-public class FromI2b2WebService<Resource> {
+public class FromI2b2WebService {
 	//Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
 	String i2b2SessionId;
 	
@@ -69,7 +75,9 @@ public class FromI2b2WebService<Resource> {
 			@HeaderParam("accept") String acceptHeader) throws IOException {
 			//logger.log(Level.WARNING, "customer is null.");
 		
-			String query = getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery");
+			String query = Utils
+					.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+			String input = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
 			Client client = ClientBuilder.newClient();
 			WebTarget myResource = client.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 			 String str=getFile("i2b2query/i2b2RequestMeds1.xml");
@@ -77,7 +85,20 @@ public class FromI2b2WebService<Resource> {
 			 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
 			 	 //String input=getFile("example/i2b2/i2b2medspod.txt");
 				 //str=processXquery(input);
-				 return processXquery(query,oStr.toString());
+				 //return processXquery(query,oStr.toString());
+			 String xQueryResultString=processXquery(query,input);//oStr.toString());
+			 try {
+				MetaResourceSet s = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xQueryResultString);
+				List<Resource> rl=FhirUtil.getResourcesFromMetaResourceSet(s);
+				
+				//return rl.toString();
+				return FhirUtil.getResourceBundle((List<org.hl7.fhir.Resource>) rl, "work in progress");
+			} catch (JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return "NOTHING FOUND"; 
+			
 					
 	}
 	
