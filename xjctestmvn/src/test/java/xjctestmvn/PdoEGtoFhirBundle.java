@@ -127,67 +127,17 @@ public class PdoEGtoFhirBundle {
 
 	}
 
-	// @Test
-
-	public void defaultread() {
+	
+	@Test
+	public void Test23(){
+		System.out.println(defaultread());
+	}
+	static public String defaultread() {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
 		String input = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
 
-		System.out.println(XQueryUtil.getStringSequence(input, query));
-	}
-/*
-	// @Test
-	public void readFhirResourceSet() {
-
-		String xml = Utils.getFile("example/fhir/MetaData.xml");
-		MetaData r = null;
-
-		try {
-			JAXBContext jc = JAXBContext.newInstance(MetaData.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			r = (MetaData) unMarshaller.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		System.out.println(r.getId() + r.toString());
-	}
-*/
-	/* @Test
-	public void readFhirResourceWithMetaData() {
-
-		String xml = Utils.getFile("example/fhir/FhirResourceWithMetaData.xml");
-		FhirResourceWithMetaData r = null;
-
-		try {
-			JAXBContext jc = JAXBContext.newInstance(FhirResourceWithMetaData.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			r = (FhirResourceWithMetaData) unMarshaller
-					.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		System.out.println(r.getRmd());
+		return XQueryUtil.processXQuery( query,input).toString();
 	}
 
-	//@Test
-	public void readFhirResource() {
-
-		String xml = Utils.getFile("example/fhir/Medication.xml");
-		Resource r = null;
-
-		try {
-			JAXBContext jc = JAXBContext.newInstance(Resource.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			r = (Resource) unMarshaller
-					.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		System.out.println(r.getId());
-	}
-*/
 }

@@ -1,0 +1,3 @@
+Afet changing schema
+rm -rf ../src/main/java/org/;xjc FhirResourceWithMetaData.xsd -d ../src/main/java
+add @XmlRootElement annotation to generated java files

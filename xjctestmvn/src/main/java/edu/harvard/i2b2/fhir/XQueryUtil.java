@@ -58,7 +58,7 @@ public final class XQueryUtil {
 			}
 
 			//System.out.println("\n* Drop the database.");
-			new DropDB("WikiExample").execute(context);
+			new DropDB("LocalXml").execute(context);
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
 		}
@@ -66,7 +66,7 @@ public final class XQueryUtil {
 		return resList;
 	}
 
-	public static String processXQuery(String query,String input)  {
+	public static String processXQuery(String query)  {
 		String resultString =null;
 	    // Database context.
 		  
@@ -97,5 +97,33 @@ public final class XQueryUtil {
    	    return resultString;
 	  }
 	  
+	
+	public static String processXQuery(String query,String input){
+		String result=null;
+		Context context = new Context();
+
+		// Create a database from a remote XML document
+		//System.out.println("\n* Create a database from a file via http.");
+
+		// Use internal parser to skip DTD parsing
+		try {
+			new Set("intparse", true).execute(context);
+			new org.basex.core.cmd.CreateDB("LocalXml", input).execute(context);
+
+			try (QueryProcessor proc = new QueryProcessor(query, context)) {
+				// Store the pointer to the result in an iterator:
+				result=proc.execute().serialize();
+				} catch (QueryException | IOException e) {
+				e.printStackTrace();
+			}
+
+			//System.out.println("\n* Drop the database.");
+			new DropDB("LocalXml").execute(context);
+		} catch (BaseXException e1) {
+			e1.printStackTrace();
+		}
+		context.close();
+		return result;
+	}
 
 }

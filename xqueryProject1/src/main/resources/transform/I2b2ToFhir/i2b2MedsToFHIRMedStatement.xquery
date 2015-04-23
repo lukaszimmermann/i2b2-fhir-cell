@@ -4,6 +4,11 @@
 xquery version "1.0";
 declare namespace functx = "http://www.functx.com";
  
+ 
+declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
+fn:replace($r,'.000Z$','') 
+};
+ 
 declare function local:fnDose($r as xs:string?) as node()?
 { 
 let $r:= fn:lower-case($r)
@@ -65,9 +70,9 @@ declare function local:fnFhirDosage($d as node()?, $q as node()?) as node()?
 };
 
 declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?, $cid as xs:string? ) as node(){
-<Medication id="Medication/{$count}"
-  xmlns:ns2="http://www.w3.org/1999/xhtml" 
-    xmlns="http://hl7.org/fhir">
+<Resource namespace="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:type="ns3:Medication" xmlns:ns2="http://www.w3.org/1999/xhtml"
+ id="Medication/{$count}">
     
 	<text>
         <status value="generated"/>
@@ -82,21 +87,21 @@ declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?,
     </coding>
   </code>
 
-  </Medication>
+  </Resource>
   
 };
 
-declare function local:fnFhirResourceMetaData($id as xs:string?, $last_updated as xs:string? ) as node(){
-<FhirResourceMetaData>
+declare function local:fnMetaData($id as xs:string?, $last_updated as xs:string? ) as node(){
+<MetaData>
     <id>{$id}</id>
-    <lastUpdated>$last_updated</lastUpdated>
-</FhirResourceMetaData>
+    <lastUpdated>{$last_updated}</lastUpdated>
+</MetaData>
 };
 
 declare function local:fnFhirMedicationStatement($count as xs:integer?, $route as xs:string? ,$medicationNode as node()?,
         $sd as xs:string, $ed as xs:string) as node(){
-<MedicationStatement xmlns="http://hl7.org/fhir"
-id="MedicationStatement/{$count}">
+ <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationStatement" id="MedicationStatement/{$count}">
+
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -104,7 +109,6 @@ id="MedicationStatement/{$count}">
       <p>to patient ref: a23</p>
     </div>
   </text> 
-  <!--      -->
   <patient>
     <reference value="Patient/example"/>
   </patient>
@@ -116,7 +120,8 @@ id="MedicationStatement/{$count}">
     <reference value="{$medicationNode/id}"/> 
   </medication>
     {local:fnRoute($route)}
-</MedicationStatement>
+
+</Resource>
 };
 
 
@@ -148,12 +153,12 @@ let $distobs :=
  let $cid := $t/concept_cd/text()
  let $cn := $t/concept_cd/@name
  let $sourceSystem := $t/@sourcesystem_cd
- let $importDate := $t/@import_date
- let $downloadDate := $t/@download_date
- let $updateDate := $t/@update_date
+ let $importDate := local:fnI2b2TimeToFhirTime($t/@import_date)
+ let $downloadDate := local:fnI2b2TimeToFhirTime($t/@download_date)
+ let $updateDate := local:fnI2b2TimeToFhirTime($t/@update_date)
  let $oid := $t/observer_cd/text()
- let $sd := $t/start_date/text()
- let $ed := $t/end_date/text()
+ let $sd := local:fnI2b2TimeToFhirTime($t/start_date/text())
+ let $ed := local:fnI2b2TimeToFhirTime($t/end_date/text())
  let $m := $t/modifier_cd/text()
  let $val_cd := $t/valuetype_cd/text()
  let $tval_char := $t/tval_char/text()
@@ -195,6 +200,7 @@ return
 
 let $A:=$distObs
 
+let $O:=
 for $id at $count in fn:distinct-values($A/observation/id)
 let $refObs :=  $A/observation[id =$id and modifier_cd = "MED:FREQ"]
 
@@ -229,15 +235,43 @@ let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid)
 let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,"route",$fhirMedication,$sd,$ed)
 
-return <FhirResourceSet>
+return <set>
+<MetaResource>
 {$fhirMedication}
-{local:fnFhirResourceMetaData(xs:string($count),$updateDate)}
+{local:fnMetaData(xs:string($count),$updateDate)}
+</MetaResource>
+
+<MetaResource>
 {$fhirMedicationStatement}
-</FhirResourceSet>
+{local:fnMetaData(xs:string($count),$updateDate)}
+</MetaResource>
+
+</set>
 
 
+return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
+    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
+    {$O/MetaResource}
+    </ns4:metaResourceSet>
 
 (:
+return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
+    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
+    {$O/MetaResource}
+<ns4:metaResourceSet>
+
+for $q in $O//MetaResource
+return 
+<p>{$q}</p>
+
+
+return
+
+    {$M}
+</ns4:metaResourceSet>   
+
+
+
 
 return <p>{$freq}{$freqNode}</p>
 
