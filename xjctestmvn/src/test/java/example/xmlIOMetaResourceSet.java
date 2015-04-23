@@ -26,7 +26,7 @@ import edu.harvar.i2b2.fhir.core.MetaResourceSet;
 
 
 
-public class jaxbtutorial1 {
+public class xmlIOMetaResourceSet {
 
 	
 	@Test
@@ -38,7 +38,6 @@ public class jaxbtutorial1 {
 		    ArrayList<MetaResource> list = new ArrayList<MetaResource>();
 
 		    // create books
-		    
 		    MetaResource r1= new MetaResource();
 		    MetaData md1= new MetaData();
 		    md1.setId("medication/1");
@@ -55,29 +54,31 @@ public class jaxbtutorial1 {
 		    r1.setMetaData(md1);
 		    r1.setResource(m1);
 		    list.add(r1);
-		    
-		    
+		    s1.getMetaResource().add(r1);
+		    s1.getMetaResource().add(r1);
+			    
 		 
 		    // create JAXB context and instantiate marshaller
-		    JAXBContext context = JAXBContext.newInstance( MetaResource.class);
+		    JAXBContext context = JAXBContext.newInstance( MetaResourceSet.class);
 		    Marshaller m = context.createMarshaller();
 		    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 		    // Write to System.out
-		    m.marshal(r1, System.out);
-/*
+		    m.marshal(s1, System.out);
+
 		    // Write to File
-		    m.marshal(r1, new File(BOOKSTORE_XML));
+		    m.marshal(s1, new File(BOOKSTORE_XML));
 
 		    
 		    // get variables from our xml file, created before
 		    System.out.println();
 		    System.out.println("Output from our XML File: ");
 		    Unmarshaller um = context.createUnmarshaller();
-		   FhirResourceWithMD r2= (FhirResourceWithMD) um.unmarshal(new FileReader(BOOKSTORE_XML));
-		      System.out.println("FhirResourceWithMD: " +((MetaData)r2.getMetaData()).getId()+"\n"+
-		    		  ((Medication)r2.getResource()).getName().getValue());
-	*/	    }	
+		    System.out.println("FhirResourceSet: ");
+		    MetaResourceSet s2= (MetaResourceSet) um.unmarshal(new FileReader(BOOKSTORE_XML));
+		    System.out.println("FhirResourceSet: " +s2.getMetaResource().get(0).getMetaData().getId());
+		   
+	}	
 	
 	
 }
