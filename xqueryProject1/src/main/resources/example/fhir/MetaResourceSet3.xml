@@ -1,0 +1,23 @@
+<ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
+	xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
+	<MetaResource>
+  <Resource xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:Medication" id="Medication/1">
+    <text>
+      <status value="generated"/>
+      <ns2:div/>
+    </text>
+    <name value=""/>
+    <code>
+      <coding>
+        <system value="http://../NDC"/>
+        <code value="NDC:00641276641"/>
+        <display value=""/>
+      </coding>
+    </code>
+  </Resource>
+  <MetaData>
+    <id>1</id>
+    <lastUpdated>$last_updated</lastUpdated>
+  </MetaData>
+</MetaResource>
+</ns4:metaResourceSet>
