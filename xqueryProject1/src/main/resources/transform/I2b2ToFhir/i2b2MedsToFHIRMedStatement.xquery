@@ -117,7 +117,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $route a
     <end value="{$ed}"/>
   </whenGiven>
   <medication>
-    <reference value="{$medicationNode/id}"/> 
+    <reference value="{$medicationNode/@id}"/> 
   </medication>
     {local:fnRoute($route)}
 
@@ -233,7 +233,7 @@ let $ed := $refObs/end_date/text()
 let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid)
-let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,"route",$fhirMedication,$sd,$ed)
+let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$route,$fhirMedication,$sd,$ed)
 
 return <set>
 <MetaResource>

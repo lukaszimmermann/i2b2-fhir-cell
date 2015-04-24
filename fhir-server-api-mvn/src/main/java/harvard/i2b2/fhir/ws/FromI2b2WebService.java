@@ -3,6 +3,8 @@ package harvard.i2b2.fhir.ws;
 
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +69,8 @@ public class FromI2b2WebService {
 		
 	}
 
+	
+
 	@GET
 	@Path("medication")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -83,10 +87,9 @@ public class FromI2b2WebService {
 			 String str=getFile("i2b2query/i2b2RequestMeds1.xml");
 			 String oStr= myResource.request(MediaType.APPLICATION_XML).post(Entity.entity(str, MediaType.APPLICATION_XML),String.class);
 			 System.out.println("got::"+oStr.substring(0,(oStr.length()>200)?200:0));
-			 	 //String input=getFile("example/i2b2/i2b2medspod.txt");
-				 //str=processXquery(input);
-				 //return processXquery(query,oStr.toString());
-			 String xQueryResultString=processXquery(query,input);//oStr.toString());
+			 System.out.println(oStr);
+			 //stringToFile("",oStr); 
+			 String xQueryResultString=processXquery(query,oStr);//input
 			 try {
 				MetaResourceSet s = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xQueryResultString);
 				List<Resource> rl=FhirUtil.getResourcesFromMetaResourceSet(s);
@@ -124,9 +127,8 @@ public class FromI2b2WebService {
 	
 	
 	
-	private String processXquery(String query, String input) {
-		return XQueryUtil.processXQuery(query, input);
-	}
+		
+	
 	
 	
 	
@@ -145,5 +147,13 @@ public class FromI2b2WebService {
 	 
 	  }
 
-	
+private String processXquery(String query, String input) {
+		
+		return XQueryUtil.processXQuery(query, input);
+	}
+
+	public void stringToFile(String FileName,String str ) throws IOException {
+        Files.write(Paths.get(context.getInitParameter("storedFilePath") + "/tempinfo.xml"), str.getBytes());
+    
+}
 }
