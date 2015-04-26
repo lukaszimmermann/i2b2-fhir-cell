@@ -96,8 +96,7 @@
                         <param type="string" column_descriptor="Race" column="race_cd">black</param>
                         <param type="string" column_descriptor="Religion" column="religion_cd">jewish</param>
                         <param type="string" column_descriptor="Income" column="income_cd">Low</param>
-                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\Braintree\02185
-\</param>
+                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\Braintree\02185\</param>
                         <param type="string" column_descriptor="Zip Code" column="zip_cd">02185</param>
                         <param type="string" column_descriptor="Marital Status" column="marital_status_cd">single</param>
                         <param type="int" column_descriptor="Age" column="age_in_years_num">42</param>
@@ -316,7 +315,7 @@
                         <nval_num>5</nval_num>
                         <valueflag_cd />
                         <units_cd>mg</units_cd>
-<end_date>2007-06-28T00:00:00.000Z</end_date>
+                        <end_date>2007-06-28T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
@@ -446,7 +445,7 @@
                         <modifier_cd>@</modifier_cd>
                         <instance_num>1</instance_num>
                         <nval_num />
-                        <valueflagcd />
+                        <valueflag_cd />
                         <end_date>2007-09-20T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
@@ -706,7 +705,7 @@
                         <observer_cd name="Welby, Marcus, MD">LCS-I2B2:D000109060</observer_cd>
                         <start_date>2008-02-28T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
-<instance_num>1</instance_num>
+                        <instance_num>1</instance_num>
                         <valuetype_cd>N</valuetype_cd>
                         <tval_char>E</tval_char>
                         <nval_num>40</nval_num>
@@ -837,8 +836,7 @@
                         <event_id source="HIVE">482452</event_id>
                         <patient_id source="HIVE">1000000001</patient_id>
                         <concept_cd name="Diflucan 150mg tablet Pfizer U.S. Pharmaceuticals">NDC:00049350079</concept_cd>
-                        <observer_cd name="Welby, Marcus, MD">LCS-I
-2B2:D000109060</observer_cd>
+                        <observer_cd name="Welby, Marcus, MD">LCS-I2B2:D000109060</observer_cd>
                         <start_date>2009-03-09T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
                         <instance_num>1</instance_num>
@@ -1098,7 +1096,7 @@
                         <valueflag_cd />
                         <end_date>2009-03-09T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
-</observation>
+                    </observation>
                     <observation>
                         <event_id source="HIVE">482452</event_id>
                         <patient_id source="HIVE">1000000001</patient_id>
@@ -1359,7 +1357,7 @@
                         <valuetype_cd>T</valuetype_cd>
                         <tval_char>QD</tval_char>
                         <nval_num />
-                        <valueflag_cd/>
+                        <valueflag_cd />
                         <end_date>2009-07-20T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
@@ -1491,7 +1489,7 @@
                         <valueflag_cd />
                         <end_date>2009-07-20T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
-</observation>
+                    </observation>
                     <observation>
                         <event_id source="HIVE">482790</event_id>
                         <patient_id source="HIVE">1000000016</patient_id>
@@ -1620,7 +1618,7 @@
                         <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
                         <tval_char>injection</tval_char>
-<nval_num />
+                        <nval_num />
                         <valueflag_cd />
                         <end_date>2009-07-20T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
@@ -1750,7 +1748,7 @@
                         <observer_cd name="Cooper, Fitch, MD">LCS-I2B2:D000109098</observer_cd>
                         <start_date>2004-11-29T00:00:00.000Z</start_date>
                         <modifier_cd>MED:ROUTE</modifier_cd>
-<instance_num>1</instance_num>
+                        <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
                         <tval_char>PO</tval_char>
                         <nval_num />
@@ -1881,7 +1879,7 @@
                         <observer_cd name="Hansen, Sydney, MD">LCS-I2B2:D000109075</observer_cd>
                         <start_date>2008-11-06T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
-<instance_num>1</instance_num>
+                        <instance_num>1</instance_num>
                         <valuetype_cd>N</valuetype_cd>
                         <tval_char>E</tval_char>
                         <nval_num>110</nval_num>
@@ -2011,8 +2009,7 @@
                         <patient_id source="HIVE">1000000036</patient_id>
                         <concept_cd name="Albuterol Sulfate 4mg tablet ESI Lederle Generics">NDC:00005306343</concept_cd>
                         <observer_cd name="Hansen, Sydney, MD">LCS-I2B2:D000109075</observer_cd>
-                        <start_date>2007-10-25T00:00:00.00
-0Z</start_date>
+                        <start_date>2007-10-25T00:00:00.000Z</start_date>
                         <modifier_cd>@</modifier_cd>
                         <instance_num>1</instance_num>
                         <nval_num />
@@ -2143,8 +2140,7 @@
                         <patient_id source="HIVE">1000000036</patient_id>
                         <concept_cd name="Flovent 220 mcg/inh aerosol with adapter Glaxo Wellcome">NDC:00173049900</concept_cd>
                         <observer_cd name="Hansen, Sydney, MD">LCS-I2B2:D000109075</observer_cd>
-                        <start_date>2
-007-11-05T00:00:00.000Z</start_date>
+                        <start_date>2007-11-05T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>N</valuetype_cd>
@@ -2274,7 +2270,7 @@
                     </observation>
                     <observation>
                         <event_id source="HIVE">481217</event_id>
-                       <patient_id source="HIVE">1000000036</patient_id>
+                        <patient_id source="HIVE">1000000036</patient_id>
                         <concept_cd name="Betamethasone Dipropionate dipropionate 0.05% lotion Alpharma USPD Makers of Barre and NMC">NDC:23317038220</concept_cd>
                         <observer_cd name="Hansen, Sydney, MD">LCS-I2B2:D000109075</observer_cd>
                         <start_date>2008-06-25T00:00:00.000Z</start_date>
@@ -2406,8 +2402,7 @@
                     <observation>
                         <event_id source="HIVE">482640</event_id>
                         <patient_id source="HIVE">1000000036</patient_id>
-                        <concept_cd
-name="Clindamycin Topical 1% solution Zenith Goldline Pharmaceuticals">NDC:00182602866</concept_cd>
+                        <concept_cd name="Clindamycin Topical 1% solution Zenith Goldline Pharmaceuticals">NDC:00182602866</concept_cd>
                         <observer_cd name="Hansen, Sydney, MD">LCS-I2B2:D000109075</observer_cd>
                         <start_date>2009-05-12T00:00:00.000Z</start_date>
                         <modifier_cd>@</modifier_cd>
@@ -2536,7 +2531,7 @@ name="Clindamycin Topical 1% solution Zenith Goldline Pharmaceuticals">NDC:00182
                         <valueflag_cd />
                         <units_cd>mg/ml</units_cd>
                         <end_date>2002-08-05T00:00:00.000Z</end_date>
-<location_cd name="">@</location_cd>
+                        <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
                         <event_id source="HIVE">474944</event_id>
@@ -2791,8 +2786,7 @@ name="Clindamycin Topical 1% solution Zenith Goldline Pharmaceuticals">NDC:00182
                         <event_id source="HIVE">480362</event_id>
                         <patient_id source="HIVE">1000000051</patient_id>
                         <concept_cd name="Ibuprofen 200mg tablet Zenith Goldline Pharmaceuticals">NDC:00182103901</concept_cd>
-                        <observer_cd name="Winchester
-, Charles Emerson, MD">LCS-I2B2:D000109066</observer_cd>
+                        <observer_cd name="Winchester, Charles Emerson, MD">LCS-I2B2:D000109066</observer_cd>
                         <start_date>2007-10-06T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
                         <instance_num>1</instance_num>
@@ -3056,8 +3050,7 @@ name="Clindamycin Topical 1% solution Zenith Goldline Pharmaceuticals">NDC:00182
                         <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
-                        <event_id
-source="HIVE">472000</event_id>
+                        <event_id source="HIVE">472000</event_id>
                         <patient_id source="HIVE">1000000070</patient_id>
                         <concept_cd name="Maxair Autohaler 0.2 mg/inh aerosol with adapter 3 M Pharmaceuticals">NDC:00089081710</concept_cd>
                         <observer_cd name="Delgado, Luisa, MD">LCS-I2B2:D000109076</observer_cd>
@@ -3186,7 +3179,7 @@ source="HIVE">472000</event_id>
                         <valueflag_cd />
                         <units_cd>mg</units_cd>
                         <end_date>2006-09-06T00:00:00.000Z</end_date>
-<location_cd name="">@</location_cd>
+                        <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
                         <event_id source="HIVE">478929</event_id>
@@ -3315,7 +3308,7 @@ source="HIVE">472000</event_id>
                         <modifier_cd>MED:FREQ</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
-<tval_char>QD</tval_char>
+                        <tval_char>QD</tval_char>
                         <nval_num />
                         <valueflag_cd />
                         <end_date>2007-03-28T00:00:00.000Z</end_date>
@@ -3445,7 +3438,7 @@ source="HIVE">472000</event_id>
                         <concept_cd name="Claritin Reditab 10mg tablet disintegrating Schering Corporation">NDC:00085112802</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>1999-04-19T00:00:00.000Z</start_date>
-<modifier_cd>MED:ROUTE</modifier_cd>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
                         <tval_char>PO</tval_char>
@@ -3575,8 +3568,7 @@ source="HIVE">472000</event_id>
                         <patient_id source="HIVE">1000000099</patient_id>
                         <concept_cd name="Biaxin 125 mg/5ml powder for reconstitution Abbott Pharmaceutical">NDC:00074316350</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
-                        <
-start_date>1999-05-04T00:00:00.000Z</start_date>
+                        <start_date>1999-05-04T00:00:00.000Z</start_date>
                         <modifier_cd>MED:FREQ</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
@@ -3707,8 +3699,7 @@ start_date>1999-05-04T00:00:00.000Z</start_date>
                         <patient_id source="HIVE">1000000099</patient_id>
                         <concept_cd name="Albuterol Sulfate 4mg tablet ESI Lederle Generics">NDC:00005306343</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
-                        <start_date>2006-11
--24T00:00:00.000Z</start_date>
+                        <start_date>2006-11-24T00:00:00.000Z</start_date>
                         <modifier_cd>MED:FREQ</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>T</valuetype_cd>
@@ -3840,7 +3831,7 @@ start_date>1999-05-04T00:00:00.000Z</start_date>
                         <event_id source="HIVE">478285</event_id>
                         <patient_id source="HIVE">1000000104</patient_id>
                         <concept_cd name="Albuterol Sulfate 4mg tablet ESI Lederle Generics">NDC:00005306343</concept_cd>
-<observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
+                        <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2006-01-26T00:00:00.000Z</start_date>
                         <modifier_cd>MED:ROUTE</modifier_cd>
                         <instance_num>1</instance_num>
@@ -3971,7 +3962,7 @@ start_date>1999-05-04T00:00:00.000Z</start_date>
                         <event_id source="HIVE">479428</event_id>
                         <patient_id source="HIVE">1000000104</patient_id>
                         <concept_cd name="Propofol 10 mg/ml suspension Baxter Pharmaceutical Products Inc">NDC:10019001301</concept_cd>
-<observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
+                        <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2007-01-05T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
                         <instance_num>1</instance_num>
@@ -4102,8 +4093,7 @@ start_date>1999-05-04T00:00:00.000Z</start_date>
                     <observation>
                         <event_id source="HIVE">482050</event_id>
                         <patient_id source="HIVE">1000000104</patient_id>
-                        <concept_cd name="Tylox 500
-mg-5mg capsule Janssen Pharmaceuticals">NDC:00045052660</concept_cd>
+                        <concept_cd name="Tylox 500mg-5mg capsule Janssen Pharmaceuticals">NDC:00045052660</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2008-12-12T00:00:00.000Z</start_date>
                         <modifier_cd>MED:FREQ</modifier_cd>
@@ -4237,7 +4227,7 @@ mg-5mg capsule Janssen Pharmaceuticals">NDC:00045052660</concept_cd>
                         <event_id source="HIVE">482050</event_id>
                         <patient_id source="HIVE">1000000104</patient_id>
                         <concept_cd name="Hexadrol 4mg tablet Organon">NDC:00052079891</concept_cd>
-<observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
+                        <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2008-12-12T00:00:00.000Z</start_date>
                         <modifier_cd>MED:ROUTE</modifier_cd>
                         <instance_num>1</instance_num>
@@ -4369,8 +4359,7 @@ mg-5mg capsule Janssen Pharmaceuticals">NDC:00045052660</concept_cd>
                         <patient_id source="HIVE">1000000104</patient_id>
                         <concept_cd name="Cocaine Hydrochloride 100% powder Mallinckrodt Medical Inc">NDC:00406152053</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
-                        <star
-t_date>2008-12-12T00:00:00.000Z</start_date>
+                        <start_date>2008-12-12T00:00:00.000Z</start_date>
                         <modifier_cd>MED:DOSE</modifier_cd>
                         <instance_num>1</instance_num>
                         <valuetype_cd>N</valuetype_cd>
@@ -4502,7 +4491,7 @@ t_date>2008-12-12T00:00:00.000Z</start_date>
                     <observation>
                         <event_id source="HIVE">482050</event_id>
                         <patient_id source="HIVE">1000000104</patient_id>
-<concept_cd name="Thiopental Sodium 5gm powder for injection Gensia Inc">NDC:00703255001</concept_cd>
+                        <concept_cd name="Thiopental Sodium 5gm powder for injection Gensia Inc">NDC:00703255001</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2008-12-12T00:00:00.000Z</start_date>
                         <modifier_cd>MED:ROUTE</modifier_cd>
@@ -4630,8 +4619,7 @@ t_date>2008-12-12T00:00:00.000Z</start_date>
                     </observation>
                     <observation>
                         <event_id source="HIVE">482050</event_id>
-                        <patient_id source="HIVE">1000000104</patien
-t_id>
+                        <patient_id source="HIVE">1000000104</patient_id>
                         <concept_cd name="Peridex 0.12% liquid Procter and Gamble Pharmaceuticals">NDC:37000000701</concept_cd>
                         <observer_cd name="O'Hara, Eleanor, MD">LCS-I2B2:D000109100</observer_cd>
                         <start_date>2008-12-12T00:00:00.000Z</start_date>
@@ -4761,8 +4749,7 @@ t_id>
                         <nval_num>1000</nval_num>
                         <valueflag_cd />
                         <units_cd>u/ml</units_cd>
-                        <en
-d_date>2008-12-12T00:00:00.000Z</end_date>
+                        <end_date>2008-12-12T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
@@ -4893,8 +4880,7 @@ d_date>2008-12-12T00:00:00.000Z</end_date>
                         <instance_num>1</instance_num>
                         <nval_num />
                         <valueflag_cd />
-                        <end_date>2008-12-31T00:00:00.
-000Z</end_date>
+                        <end_date>2008-12-31T00:00:00.000Z</end_date>
                         <location_cd name="">@</location_cd>
                     </observation>
                     <observation>
@@ -5024,8 +5010,7 @@ d_date>2008-12-12T00:00:00.000Z</end_date>
                         <start_date>2008-12-31T00:00:00.000Z</start_date>
                         <modifier_cd>MED:FREQ</modifier_cd>
                         <instance_num>1</instance_num>
-                        <v
-aluetype_cd>T</valuetype_cd>
+                        <valuetype_cd>T</valuetype_cd>
                         <tval_char>QD</tval_char>
                         <nval_num />
                         <valueflag_cd />

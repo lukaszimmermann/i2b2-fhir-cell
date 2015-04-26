@@ -130,12 +130,13 @@ public class PdoEGtoFhirBundle {
 	
 	@Test
 	public void Test23(){
+		
 		System.out.println(defaultread());
 	}
 	static public String defaultread() {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		String input = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
+		String input = Utils.getFile("example/i2b2/medicationsForAPatient2.xml");
 
 		return XQueryUtil.processXQuery( query,input).toString();
 	}
