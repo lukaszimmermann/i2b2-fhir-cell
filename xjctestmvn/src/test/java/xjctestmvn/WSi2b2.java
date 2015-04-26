@@ -31,8 +31,6 @@ String query = Utils
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 		String oStr = webTarget.request().accept("Context-Type","application/xml").post(
 				Entity.entity(request, MediaType.APPLICATION_XML), String.class);
-		//System.out.println(oStr);
-		//writeFileBytes("tmpIO.xml",oStr);
 		String xQueryResultString = XQueryUtil.processXQuery(query,  oStr);
 		System.out.println(xQueryResultString);
 	}

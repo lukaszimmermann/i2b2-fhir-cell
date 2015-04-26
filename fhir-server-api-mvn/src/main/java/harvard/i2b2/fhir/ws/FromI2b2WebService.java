@@ -1,5 +1,7 @@
 package harvard.i2b2.fhir.ws;
 
+import harvard.i2b2.fhir.ejb.MetaResourceDb;
+
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
@@ -41,6 +43,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.Medication;
+import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Resource;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -50,6 +54,7 @@ import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 @Path("i2b2")
@@ -57,6 +62,9 @@ public class FromI2b2WebService {
 	// Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
 	String i2b2SessionId;
 
+	@EJB
+	MetaResourceDb metaResourceDb;
+	
 	@javax.ws.rs.core.Context
 	ServletContext context;
 
@@ -87,7 +95,7 @@ public class FromI2b2WebService {
 	}
 
 	@GET
-	@Path("medication")
+	@Path("MedicationStatement")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public String getMedsForPatientSet(
 	 @QueryParam("patientId") String patientId,
@@ -111,17 +119,29 @@ public class FromI2b2WebService {
 		try {
 			MetaResourceSet s = I2b2ToFhirTransform
 					.MetaResourceSetFromI2b2Xml(xQueryResultString);
-			List<Resource> rl = FhirUtil.getResourcesFromMetaResourceSet(s);
+			//List<Resource> rl = FhirUtil.getResourcesFromMetaResourceSet(s);
 
 			// return rl.toString();
-			return FhirUtil.getResourceBundle((List<org.hl7.fhir.Resource>) rl,
-					"work in progress");
+				metaResourceDb.addMetaResourceSet(s);
+				s=getQueriedMetaResources(MedicationStatement.class);
+			return FhirUtil.getResourceBundleFromMetaResourceSet(s,
+					"http://i2b2.harvard.edu/fhir");
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return "ERROR";
 
+	}
+
+	private MetaResourceSet getQueriedMetaResources(Class c) {
+		MetaResourceSet s= new MetaResourceSet();
+		List<MetaResource> list=s.getMetaResource();
+		//list.addAll(metaResourceDb.getAll(Medication.class));
+		list.addAll(metaResourceDb.getAll(MedicationStatement.class));
+		//XXX include dependent resources based on include portion of query
+		//XXX to make the resource id accessible via cRud(readOnly) webservice 
+		return s;
 	}
 
 	@GET
@@ -148,6 +168,7 @@ public class FromI2b2WebService {
 		// return oStr.toString();
 	}
 
+	
 	private String getFile(String fileName) {
 
 		String result = "";
@@ -176,51 +197,7 @@ public class FromI2b2WebService {
 
 	}
 	
-	public String convert(String input) throws ParserConfigurationException, SAXException, IOException{
-		// Create the encoder and decoder for ISO-8859-1
-		Charset charset = Charset.forName("UTF-8");
-		CharsetDecoder decoder = charset.newDecoder();
-		CharsetEncoder encoder = charset.newEncoder();
-
-		    // Convert a string to ISO-LATIN-1 bytes in a ByteBuffer
-		    // The new ByteBuffer is ready to be read.
-		    ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(input));
-
-		    // Convert ISO-LATIN-1 bytes in a ByteBuffer to a character ByteBuffer and then to a string.
-		    // The new ByteBuffer is ready to be read.
-		    CharBuffer cbuf = decoder.decode(bbuf);
-		    //if(1==1)return Utils.getFile("example/i2b2/medicationsForAPatient2.xml");
-		    if(1==1)return FromI2b2WebService.getStringFromDocument( FromI2b2WebService.xmltoDOM(cbuf.toString()));
-		    return cbuf.toString();
-		
-	}
 	
-	public static Document xmltoDOM(String xmlStr) throws ParserConfigurationException, SAXException, IOException{
-		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		InputSource is = new InputSource();
-		is.setCharacterStream(new StringReader(xmlStr));
-
-		return db.parse(is);
-	}
-	
-	public static String getStringFromDocument(Document doc)
-	{
-	    try
-	    {
-	       DOMSource domSource = new DOMSource(doc);
-	       StringWriter writer = new StringWriter();
-	       StreamResult result = new StreamResult(writer);
-	       TransformerFactory tf = TransformerFactory.newInstance();
-	       Transformer transformer = tf.newTransformer();
-	       transformer.transform(domSource, result);
-	       return writer.toString();
-	    }
-	    catch(TransformerException ex)
-	    {
-	       ex.printStackTrace();
-	       return null;
-	    }
-	} 
 		
 	
 }
