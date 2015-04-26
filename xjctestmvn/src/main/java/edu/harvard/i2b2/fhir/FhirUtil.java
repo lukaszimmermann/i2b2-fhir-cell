@@ -1,13 +1,10 @@
 package edu.harvard.i2b2.fhir;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +29,7 @@ import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.instance.validation.Validator;
 
+import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
@@ -117,12 +115,12 @@ public class FhirUtil {
 		StringWriter swriter = new StringWriter();
 		try {
 
-			//feed.setId(uriInfoString);
+			feed.setId(uriInfoString);
 			feed.setTitle("all class" + " bundle");
-			//feed.setUpdated(new Date());
-			//feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
-			//feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
-			//feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
+			feed.setUpdated(new Date());
+			feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+			feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
+			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			
 			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
@@ -138,9 +136,9 @@ public class FhirUtil {
 					if (c.isInstance(r)) {
 						Entry entry = feed.addEntry();
 						entry.setId(fhirBase+r.getId());
-						//entry.setUpdated(new Date());
-						//entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
-						//entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
+						entry.setUpdated(new Date());
+						entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+						entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
 						
 						jaxbMarshaller.marshal(r, rwriter);
 						entry.setContent(rwriter.toString(), "application/xml");
@@ -155,7 +153,55 @@ public class FhirUtil {
 		return swriter.toString();
 	}
 
-	
+	public static String getResourceBundleFromMetaResourceSet(MetaResourceSet s, String uriInfoString) {
+		String fhirBase="http://localhost:8080/fhir-server-api/resources/res/";
+		
+		Abdera abdera = new Abdera();
+		Writer writer1 = abdera.getWriterFactory().getWriter("prettyxml");
+		Feed feed = abdera.newFeed();
+
+		StringWriter swriter = new StringWriter();
+		try {
+
+			feed.setId(uriInfoString);
+			feed.setTitle("all class" + " bundle");
+			feed.setUpdated(new Date());
+			feed.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+			feed.addLink(fhirBase+uriInfoString).setAttributeValue("rel", "self");
+			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
+
+			
+			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
+			StringWriter rwriter = new StringWriter();
+			// for(Resource r:resourcedb.getAll(c)){
+			for (MetaResource mr : s.getMetaResource()) {
+				Resource r=mr.getResource();
+				MetaData m=mr.getMetaData();
+				for (Class c : getResourceClassList()) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(c);
+					Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+					jaxbMarshaller.setProperty(
+							Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+					if (c.isInstance(r)) {
+						Entry entry = feed.addEntry();
+						entry.setId(fhirBase+r.getId());
+						entry.setUpdated(m.getLastUpdated().toString());
+						//entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new Date().toGMTString());
+						entry.addLink(fhirBase+r.getId()).setAttributeValue("rel", "self");
+						
+						jaxbMarshaller.marshal(r, rwriter);
+						entry.setContent(rwriter.toString(), "application/xml");
+						rwriter.getBuffer().setLength(0);// reset String writer
+					}
+				}
+			}
+			writer1.writeTo(feed, swriter);
+		} catch (IOException | JAXBException e) {
+			e.printStackTrace();
+		}
+		return swriter.toString();
+	}
 	
 	private static ArrayList<Class> getResourceClassList() {
 		initResourceClassList();
@@ -280,6 +326,17 @@ public class FhirUtil {
 			
 		}
 	  
+		public static Class getResourceClass(Resource resource) {
+	    	if(resourceClassList==null) initResourceClassList();
+	    	for(Class c:resourceClassList){ 
+	    		if (c.isInstance(resource))
+	    			return c;
+	    	}
+				System.out.println("Class Not Found for FHIR resource:"
+						+ resource.getId());
+				return null;
+			
+		}
 		static public List<Resource> getResourcesFromMetaResourceSet(MetaResourceSet s){
 			List<Resource> list= new ArrayList<Resource>();
 			for(MetaResource r:s.getMetaResource()){

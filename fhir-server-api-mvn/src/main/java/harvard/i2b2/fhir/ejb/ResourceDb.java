@@ -132,39 +132,7 @@ public class ResourceDb {
 		}
 		return list;
 	}
-	
-/*
-	@Lock(LockType.READ)
-	public String getall(Class c)  {
-		Abdera abdera = new Abdera();
-		Writer writer1 = abdera.getWriterFactory().getWriter();//.getWriter("prettyxml");
-		Feed feed = abdera.newFeed();
-		 
-		StringWriter swriter=new StringWriter();
-		  try {
-			  feed.setId("123");
-			  feed.setTitle(c.getSimpleName()+" search");
-			  JAXBContext jaxbContext = JAXBContext.newInstance(c);
-			  Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			  jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			  
-			  StringWriter pwriter=new StringWriter();
-			  for(Resource p:resources){
-				  if(c.isInstance(p)){
-					Entry entry = feed.addEntry();
-					entry.setId(p.getId());
-					jaxbMarshaller.marshal(p, pwriter);
-					entry.setContent(pwriter.toString(),"application/xml");
-					pwriter.getBuffer().setLength(0);//reset String writer
-				  }
-				}
-			writer1.writeTo(feed,swriter);
-		} catch (IOException|JAXBException e) {
-			e.printStackTrace();
-		}
-		  return swriter.toString();
-	}
-*/	
+
 	public Resource getParticularResource(Class c, String id) {
 		for(Resource r:resources){
 			  if(c.isInstance(r) && r.getId().equals(id)){

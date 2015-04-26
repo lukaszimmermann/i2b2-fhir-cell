@@ -1,7 +1,7 @@
 package edu.harvard.i2b2.fhir;
-import java.io.IOException;
-import java.nio.file.Path;
 
+
+import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 
 public class Utils {
@@ -45,4 +45,53 @@ public class Utils {
 			return null;
 		}
 	}
+
+/*
+ * public String convert(String input) throws ParserConfigurationException, SAXException, IOException{
+		// Create the encoder and decoder for ISO-8859-1
+		Charset charset = Charset.forName("UTF-8");
+		CharsetDecoder decoder = charset.newDecoder();
+		CharsetEncoder encoder = charset.newEncoder();
+
+		    // Convert a string to ISO-LATIN-1 bytes in a ByteBuffer
+		    // The new ByteBuffer is ready to be read.
+		    ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(input));
+
+		    // Convert ISO-LATIN-1 bytes in a ByteBuffer to a character ByteBuffer and then to a string.
+		    // The new ByteBuffer is ready to be read.
+		    CharBuffer cbuf = decoder.decode(bbuf);
+		    //if(1==1)return Utils.getFile("example/i2b2/medicationsForAPatient2.xml");
+		    if(1==1)return FromI2b2WebService.getStringFromDocument( FromI2b2WebService.xmltoDOM(cbuf.toString()));
+		    return cbuf.toString();
+		
+	}
+	
+	public static Document xmltoDOM(String xmlStr) throws ParserConfigurationException, SAXException, IOException{
+		DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		InputSource is = new InputSource();
+		is.setCharacterStream(new StringReader(xmlStr));
+
+		return db.parse(is);
+	}
+	
+	public static String getStringFromDocument(Document doc)
+	{
+	    try
+	    {
+	       DOMSource domSource = new DOMSource(doc);
+	       StringWriter writer = new StringWriter();
+	       StreamResult result = new StreamResult(writer);
+	       TransformerFactory tf = TransformerFactory.newInstance();
+	       Transformer transformer = tf.newTransformer();
+	       transformer.transform(domSource, result);
+	       return writer.toString();
+	    }
+	    catch(TransformerException ex)
+	    {
+	       ex.printStackTrace();
+	       return null;
+	    }
+	} 
+ */
+
 }
