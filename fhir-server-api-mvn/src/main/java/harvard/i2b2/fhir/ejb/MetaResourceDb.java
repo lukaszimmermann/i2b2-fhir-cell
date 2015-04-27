@@ -102,16 +102,8 @@ public class MetaResourceDb {
 				Object returnValue=null;
 				String returnStr=null;
 				try {
-					String methodName=k.substring(0,1).toUpperCase()+k.subSequence(1, k.length());
 					System.out.println("searching for parameter:"+k+" with value "+qp.getFirst(k));
-					Method method =
-						    c.getMethod("get"+methodName, null);
-					returnValue = method.invoke(p);
-					Class returnType= method.getReturnType();
-					if(returnType==org.hl7.fhir.String.class){
-						org.hl7.fhir.String s1=(org.hl7.fhir.String)returnValue;
-						returnStr=s1.getValue();
-					}
+					getValueOfFirstLevelChild(p,c,k);
 					
 				} catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
@@ -126,6 +118,30 @@ public class MetaResourceDb {
 		}
 		return list;
 	}
+	
+	public static String getValueOfFirstLevelChild(MetaResource p,Class c,String k) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Object returnValue=null;
+		String returnStr=null;
+		
+		returnValue=getFirstLevelChild(p,c,k);
+		if(org.hl7.fhir.String.class.isInstance(returnValue)){
+			org.hl7.fhir.String s1=(org.hl7.fhir.String)returnValue;
+			returnStr=s1.getValue();
+		}
+		return null;
+	}
+
+	public static Object getFirstLevelChild(MetaResource p,Class c,String k)//k is name of child
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		String returnStr=null;
+		
+		String methodName=k.substring(0,1).toUpperCase()+k.subSequence(1, k.length());
+		Method method =
+			    c.getMethod("get"+methodName, null);
+		return method.invoke(c.cast(p.getResource()));
+		
+	}
+	
 	
 	@Lock(LockType.READ)
 	public List<MetaResource> getAll(Class c)  {
@@ -152,5 +168,14 @@ public class MetaResourceDb {
 		for(MetaResource mr:s.getMetaResource()){
 			this.addMetaResource(mr, FhirUtil.getResourceClass(mr.getResource()));
 		}		
+	}
+	
+	public MetaResource searchById(String id){
+		for(MetaResource mr:metaResources){
+			  if(mr.getResource().getId().equals(id))
+					  return mr;			  
+		  }
+		System.out.println("id NOT found:"+id);
+		return null;
 	}
 }

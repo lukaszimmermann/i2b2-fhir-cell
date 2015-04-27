@@ -69,11 +69,12 @@ declare function local:fnFhirDosage($d as node()?, $q as node()?) as node()?
 
 };
 
-declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?, $cid as xs:string? ) as node(){
+declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?, $cid as xs:string?, $pid as xs:string) as node(){
 <Resource namespace="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:type="ns3:Medication" xmlns:ns2="http://www.w3.org/1999/xhtml"
- id="Medication/{$count}">
-    
+            id="Medication//{$pid}-{$count}"
+ >
+
 	<text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
@@ -98,10 +99,10 @@ declare function local:fnMetaData($id as xs:string?, $last_updated as xs:string?
 </MetaData>
 };
 
-declare function local:fnFhirMedicationStatement($count as xs:integer?, $route as xs:string? ,$medicationNode as node()?,
-        $sd as xs:string, $ed as xs:string) as node(){
- <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationStatement" id="MedicationStatement/{$count}">
-
+declare function local:fnFhirMedicationStatement($count as xs:integer?, $route as xs:string?, $medicationNode as node()?,
+        $sd as xs:string, $ed as xs:string, $pid as xs:string?) as node(){
+ <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationStatement" id="MedicationStatement/{$pid}-{$count}">
+ 
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -110,7 +111,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $route a
     </div>
   </text> 
   <patient>
-    <reference value="Patient/example"/>
+    <reference value="Patient/{$pid}"/>
   </patient>
   <whenGiven>
     <start value="{$sd}"/>
@@ -223,7 +224,7 @@ let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 
- 
+let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
 let $cn := $refObs/concept_cd/@name/string()
 let $oid := $refObs/observer_cd
@@ -232,8 +233,8 @@ let $ed := $refObs/end_date/text()
 
 let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 
-let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid)
-let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$route,$fhirMedication,$sd,$ed)
+let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid)
+let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$route,$fhirMedication,$sd,$ed,$pid)
 
 return <set>
 <MetaResource>
