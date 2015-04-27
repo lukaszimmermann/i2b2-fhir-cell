@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -23,7 +24,9 @@ import junit.framework.Assert;
 
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationStatement;
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.ResourceReference;
 import org.junit.Test;
 
 import edu.harvard.i2b2.fhir.core.MetaData;
@@ -31,6 +34,7 @@ import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 
@@ -157,5 +161,31 @@ public class xmlIOMetaResourceSet {
 	public void Test4() throws JAXBException {
 		String str = "<a>{fn:replace('2009-09-10T00:00:00.000Z','.000Z$','')}</a>";
 		System.out.println(XQueryUtil.processXQuery(str));
+	}
+	
+	@Test
+	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+		MetaResourceDb mrDb= new MetaResourceDb();
+		Patient p= new Patient();
+		p.setId("Patient/123");
+		MetaResource mrP=new MetaResource();mrP.setResource(p);
+		MetaData md1=new MetaData();md1.setId(p.getId());mrP.setMetaData(md1);
+		
+		
+		MedicationStatement ms=new MedicationStatement();
+		ms.setId("MedicationStatement/234");
+		ResourceReference pRef=new ResourceReference();
+		pRef.setId(p.getId());
+		ms.setPatient(pRef);
+		
+		
+		MetaResource mrMS=new MetaResource();mrMS.setResource(ms);
+		MetaData md2=new MetaData();md2.setId(ms.getId());mrMS.setMetaData(md2);
+		
+		mrDb.addMetaResource(mrMS,MedicationStatement.class);
+		mrDb.addMetaResource(mrP,Patient.class);
+		
+		System.out.println("child:"+mrDb.getChildOfResource(ms, "patient.id"));
+		
 	}
 }

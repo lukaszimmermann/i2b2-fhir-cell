@@ -2,7 +2,10 @@ package edu.harvard.i2b2.fhir;
 
 
 import java.io.IOException;
+
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
+import org.json.XML;
 
 public class Utils {
 	public static String getFile(String fileName) {
@@ -44,6 +47,10 @@ public class Utils {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	public static String xmlToJson(String xmlStr) throws JSONException {
+		return XML.toJSONObject(xmlStr).toString(2);
 	}
 
 /*
