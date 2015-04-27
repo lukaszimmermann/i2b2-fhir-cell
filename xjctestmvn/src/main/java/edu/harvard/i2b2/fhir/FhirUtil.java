@@ -123,7 +123,7 @@ public class FhirUtil {
 			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			
-			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
+			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText(Integer.toString(resList.size()));
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
 			for (Resource r : resList) {
@@ -171,7 +171,7 @@ public class FhirUtil {
 			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			
-			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText("#count");
+			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result", "os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
 			for (MetaResource mr : s.getMetaResource()) {
@@ -345,5 +345,14 @@ public class FhirUtil {
 			return list;
 			
 		} 
+		
+		static public boolean isContained(MetaResourceSet s,String id){
+			for(MetaResource mr:s.getMetaResource()){
+				if(mr.getResource().getId().equals(id))
+					return true;
+			}
+			return false;
+			
+		}
 
 }
