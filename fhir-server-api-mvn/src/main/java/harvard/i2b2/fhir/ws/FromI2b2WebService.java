@@ -1,6 +1,7 @@
 package harvard.i2b2.fhir.ws;
 
-import harvard.i2b2.fhir.ejb.MetaResourceDb;
+import harvard.i2b2.fhir.ejb.OldMetaResourceDb;
+import harvard.i2b2.fhir.ejb.MetaResourceDbWrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +36,7 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -50,9 +52,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationStatement;
+import org.hl7.fhir.Narrative;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
+import org.w3._1999.xhtml.Div;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -71,7 +75,7 @@ public class FromI2b2WebService {
 	String i2b2SessionId;
 
 	@EJB
-	MetaResourceDb metaResourceDb;
+	MetaResourceDbWrapper metaResourceDb;
 	
 	@javax.ws.rs.core.Context
 	ServletContext context;
@@ -89,11 +93,11 @@ public class FromI2b2WebService {
 	@Path("login")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public String doLogin() {
-		String query = getFile("transform/i2b2/getSessionKeyFromGetServices.xquery");
+		String query = Utils.getFile("transform/i2b2/getSessionKeyFromGetServices.xquery");
 		Client client = ClientBuilder.newClient();
 		WebTarget myResource = client
 				.target("http://services.i2b2.org/i2b2/services/PMService/getServices");
-		String str = getFile("i2b2query/getServices.xml");
+		String str = Utils.getFile("i2b2query/getServices.xml");
 		String oStr = myResource.request(MediaType.APPLICATION_XML).post(
 				Entity.entity(str, MediaType.APPLICATION_XML), String.class);
 		System.out.println("got::"
@@ -137,14 +141,16 @@ public class FromI2b2WebService {
 				md1.setLastUpdated(DatatypeFactory.newInstance()
 						.newXMLGregorianCalendar(gc));
 
-				metaResourceDb.addMetaResource(mr1,Patient.class);
+				MetaResourceSet s1=new MetaResourceSet();
+				s1.getMetaResource().add(mr1); 
+				metaResourceDb.addMetaResourceSet(s1);
 		
 		try {
 			MetaResourceSet s = I2b2ToFhirTransform
 					.MetaResourceSetFromI2b2Xml(xQueryResultString);
 					
 				metaResourceDb.addMetaResourceSet(s);
-				s=getQueriedMetaResources(MedicationStatement.class,includeResources);
+				s=metaResourceDb.getQueriedMetaResources(MedicationStatement.class,includeResources);
 				MedicationStatement egr=(MedicationStatement)s.getMetaResource().get(0).getResource();
 				
 				System.out.println("ref:"+egr.getPatient().getReference());
@@ -152,7 +158,7 @@ public class FromI2b2WebService {
 				System.out.println("toXML:"+FhirUtil.resourceToXml(egr));
 				
 				return FhirUtil.getResourceBundleFromMetaResourceSet(s,
-					"http://i2b2.harvard.edu/fhir");
+					"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -161,35 +167,7 @@ public class FromI2b2WebService {
 
 	}
 
-	private MetaResourceSet getQueriedMetaResources(Class c, List<String> includeResources) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		MetaResourceSet s= new MetaResourceSet();
-		List<MetaResource> list=s.getMetaResource();
-		//list.addAll(metaResourceDb.getAll(Medication.class));
-		list.addAll(metaResourceDb.getAll(c));
-		//XXX include dependent resources based on include portion of query
-		//XXX to make the resource id accessible via cRud(readOnly) webservice 
-		
-		//iterate through resources and add included dependencies
-		MetaResourceSet s2=new MetaResourceSet();
-		ArrayList<MetaResource> sInclusions=(ArrayList<MetaResource>) s2.getMetaResource();
-		for(String ir:includeResources){
-			String methodName=ir.split("\\.")[1];
-			System.out.println("MethodName:"+methodName);
-			for(MetaResource mr:s.getMetaResource()){
-				String id=((ResourceReference) metaResourceDb.getFirstLevelChild(mr,c,methodName)).getReference().getValue();
-				System.out.println("Found dep:"+id);
-				MetaResource depMr=metaResourceDb.searchById(id);
-				if(depMr!=null){
-					
-					if(!FhirUtil.isContained(s2, id)){sInclusions.add(depMr);}
-					//System.out.println("added dep:"+depMr.getResource().getId());
-				}
-			}
-		}
-		list.addAll(sInclusions);
-		
-		return s;
-	}
+	
 
 	@GET
 	@Path("patient")
@@ -197,11 +175,11 @@ public class FromI2b2WebService {
 	public String getAllPatients(@HeaderParam("accept") String acceptHeader)
 			throws IOException {
 
-		String query = getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
+		String query = Utils.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		Client client = ClientBuilder.newClient();
 		WebTarget myResource = client
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
-		String str = getFile("i2b2query/getAllPatients.xml");
+		String str = Utils.getFile("i2b2query/getAllPatients.xml");
 		String oStr = myResource.request(MediaType.APPLICATION_XML).post(
 				Entity.entity(str, MediaType.APPLICATION_XML), String.class);
 		System.out.println("got::"
@@ -214,23 +192,42 @@ public class FromI2b2WebService {
 				(List<org.hl7.fhir.Resource>) listRes, "uriinfo_string");
 		// return oStr.toString();
 	}
-
+	//http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 	
-	private String getFile(String fileName) {
+	@GET
+	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST + "}/{id:[0-9|-]+}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getParticularResource(
+			@PathParam("resourceName") String resourceName,
+			@PathParam("id") String id,
+			@HeaderParam("accept") String acceptHeader) throws DatatypeConfigurationException {
+		String msg = null;
+		Resource r = null;
+		System.out.println("searhcing particular resource2:<" + resourceName
+				+ "> with id:<" + id + ">");
+		Class c = FhirUtil.getResourceClass(resourceName);
+		if (c == null)
+			throw new RuntimeException("class not found for resource:"+ resourceName);
 
-		String result = "";
-
-		ClassLoader classLoader = getClass().getClassLoader();
-		try {
-			result = IOUtils
-					.toString(classLoader.getResourceAsStream(fileName));
-		} catch (IOException e) {
-			e.printStackTrace();
+		//metaResourceDb.addMetaResourceSet(getPatientAndMedicationStatementEg());
+		
+		r = metaResourceDb.getParticularResource(c, id);
+		msg = FhirUtil.resourceToXml(r, c);
+		if (acceptHeader.equals("application/json")) {
+			msg = Utils.xmlToJson(FhirUtil.resourceToXml(r, c));
 		}
-
-		return result;
-
+		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
+				r != null) {
+			return Response.ok(msg).build();
+		} else {
+			return Response
+					.noContent()
+					.header("xreason",resourceName + " with id:" + id + " NOT found")
+					.build();
+		}
 	}
+	
 
 	private String processXquery(String query, String input) {
 
@@ -244,7 +241,40 @@ public class FromI2b2WebService {
 
 	}
 	
-	
+	private MetaResourceSet getPatientAndMedicationStatementEg() throws DatatypeConfigurationException{
+		MetaResourceSet s1=new MetaResourceSet();
+		
+		Patient p= new Patient();
+		p.setId("Patient/1000000005");
+		
+		MedicationStatement ms=new MedicationStatement();
+		ms.setId("MedicationStatement/1000000005-1");
+		ResourceReference pRef=new ResourceReference();
+		pRef.setId(p.getId());
+		ms.setPatient(pRef);
+		
+		
+		MetaResource mr1=new MetaResource();
+		MetaData md1=new MetaData();
+		md1.setId(p.getId());
+		mr1.setResource(p);
+		mr1.setMetaData(md1);
+		GregorianCalendar gc = new GregorianCalendar();
+		md1.setLastUpdated(DatatypeFactory.newInstance()
+				.newXMLGregorianCalendar(gc));
+		s1.getMetaResource().add(mr1); 
+		
+		MetaResource mr2=new MetaResource();
+		MetaData md2=new MetaData();
+		md2.setId(ms.getId());
+		mr2.setResource(ms);
+		mr2.setMetaData(md2);
+		md2.setLastUpdated(DatatypeFactory.newInstance()
+				.newXMLGregorianCalendar(gc));
+
+		s1.getMetaResource().add(mr2); 
+		return s1;
+	}
 		
 	
 }

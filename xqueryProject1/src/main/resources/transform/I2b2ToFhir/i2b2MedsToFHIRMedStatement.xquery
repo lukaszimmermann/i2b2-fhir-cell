@@ -72,7 +72,7 @@ declare function local:fnFhirDosage($d as node()?, $q as node()?) as node()?
 declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?, $cid as xs:string?, $pid as xs:string) as node(){
 <Resource namespace="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:type="ns3:Medication" xmlns:ns2="http://www.w3.org/1999/xhtml"
-            id="Medication//{$pid}-{$count}"
+            id="Medication/{$pid}-{$count}"
  >
 
 	<text>

@@ -3,6 +3,7 @@ package harvard.i2b2.fhir.ws;
 
 import harvard.i2b2.fhir.ejb.ResourceDb;
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,7 +77,7 @@ public class ResourceWebService {
 		r = resourcedb.getParticularResource(c, id);
 		msg = FhirUtil.resourceToXml(r, c);
 		if (acceptHeader.equals("application/json")) {
-			msg = xmlToJson(FhirUtil.resourceToXml(r, c));
+			msg = Utils.xmlToJson(FhirUtil.resourceToXml(r, c));
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 				r != null) {
@@ -186,9 +187,7 @@ public class ResourceWebService {
 		FhirUtil.initResourceClassList();
 	}
 
-	private static String xmlToJson(String xmlStr) {
-		return XML.toJSONObject(xmlStr).toString(2);
-	}
+	
 
 	
 	 public static String getResourceBundle(List<Resource> resList,String uriInfoString) {
