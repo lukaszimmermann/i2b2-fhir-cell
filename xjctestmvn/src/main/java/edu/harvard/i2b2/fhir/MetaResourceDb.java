@@ -69,14 +69,15 @@ public class MetaResourceDb {
 		System.out.println("EJB searching for resource with id:" + id);
 		System.out.println("metaResources size:" + metaResources.size());
 		for (MetaResource p : metaResources) {
-			if (!c.isInstance(p))
+			Resource r=p.getResource();
+			if (!c.isInstance(r))
 				continue;
 			System.out.println("examining resource with id:<"
-					+p.getResource().getId() + "> for match to qid:<" + id
+					+r.getId() + "> for match to qid:<" + id
 					+ ">");
-			if (p.getResource().getId().equals(id)) {
+			if (r.getId().equals(id)) {
 				System.out.println("matched resource with id:"
-						+ p.getResource().getId());
+						+ r.getId());
 				return p;
 			}
 		}
