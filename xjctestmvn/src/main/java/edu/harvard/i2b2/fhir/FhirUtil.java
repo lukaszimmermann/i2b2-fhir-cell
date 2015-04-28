@@ -68,6 +68,7 @@ public class FhirUtil {
 		JAXBElement jbe = null;
 		boolean classFound = false;
 		for (Class c : resourceClassList) {
+			//System.out.println("instanceOf:"+c.getSimpleName());
 			if (c.isInstance(r)) {
 				try {
 					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
