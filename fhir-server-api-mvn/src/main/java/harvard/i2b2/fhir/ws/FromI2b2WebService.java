@@ -22,7 +22,11 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.ejb.embeddable.EJBContainer;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -35,8 +39,13 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -56,10 +65,14 @@ import org.hl7.fhir.Narrative;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3._1999.xhtml.Div;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import com.sun.xml.xsom.impl.scd.Iterators.Map;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
@@ -71,8 +84,9 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 @Path("i2b2")
 public class FromI2b2WebService {
-	// Logger logger= LoggerFactory.getLogger(ResourceFromI2b2WebService.class);
+	static Logger logger=LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
+	
 
 	@EJB
 	MetaResourceDbWrapper metaResourceDb;
@@ -82,6 +96,7 @@ public class FromI2b2WebService {
 
 	@PostConstruct
 	private void init() {
+		
 		try {
 			// doLogin();
 		} catch (Exception e) {
@@ -109,24 +124,40 @@ public class FromI2b2WebService {
 	@GET
 	@Path("MedicationStatement")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public String getMedsForPatientSet(
+	public Response getMedsForPatientSet(
 	 @QueryParam("patientId") String patientId,
 	 @QueryParam("_include") List<String> includeResources,
-			@HeaderParam("accept") String acceptHeader) throws IOException, ParserConfigurationException, SAXException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, DatatypeConfigurationException {
-		// logger.log(Level.WARNING, "customer is null.");
+			@HeaderParam("accept") String acceptHeader,
+			@Context HttpHeaders hh,
+			 @Context HttpServletRequest request 
+			) throws IOException, ParserConfigurationException, SAXException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, DatatypeConfigurationException {
+		// logger.log(Level.WARNING, "customer is null.
+		
+		MultivaluedMap<String, String> headerParams = hh.getRequestHeaders();
+		//Map<String, Cookie> pathParams = (Map<String, Cookie>) hh.getCookies();
+		
+		 String userId = request.getParameter("userId");
+	     
+	     if(userId==null) logger.error("userId header parameter is null");
+		HttpSession session = request.getSession(true);
+		
+		session.setAttribute("userId", userId);
+		NewCookie userNameCookie = new NewCookie("userId", userId);
+        
+		
 		System.out.println("PatientId:"+patientId);
 		System.out.println("_include:"+includeResources.toString());
 		
-		String request = Utils.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
+		String requestStr = Utils.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
 		String query = Utils
 		.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		if(patientId!=null)request=request.replaceAll("PATIENTID", patientId);
+		if(patientId!=null)requestStr=requestStr.replaceAll("PATIENTID", patientId);
 
 				Client client = ClientBuilder.newClient();
 				WebTarget webTarget = client
 						.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 				String oStr = webTarget.request().accept("Context-Type","application/xml").post(
-						Entity.entity(request, MediaType.APPLICATION_XML), String.class);
+						Entity.entity(requestStr, MediaType.APPLICATION_XML), String.class);
 				String xQueryResultString = XQueryUtil.processXQuery(query,  oStr);
 				//System.out.println(xQueryResultString);
 				
@@ -157,13 +188,16 @@ public class FromI2b2WebService {
 				System.out.println("refval:"+egr.getPatient().getReference().getValue());
 				System.out.println("toXML:"+FhirUtil.resourceToXml(egr));
 				
-				return FhirUtil.getResourceBundleFromMetaResourceSet(s,
-					"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
+				String returnString=FhirUtil.getResourceBundleFromMetaResourceSet(s,
+						"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
+				
+				return Response.status(200).type(MediaType.APPLICATION_XML).entity(returnString).cookie(userNameCookie).build();
+					
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "ERROR";
+		return Response.status(Status.BAD_REQUEST).header("xreason","some ERROR").build();
 
 	}
 
@@ -202,6 +236,8 @@ public class FromI2b2WebService {
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader) throws DatatypeConfigurationException {
+		
+		//request.getSession().setAttribute(CART_SESSION_KEY, cartBean);
 		String msg = null;
 		Resource r = null;
 		System.out.println("searhcing particular resource2:<" + resourceName
@@ -275,6 +311,7 @@ public class FromI2b2WebService {
 		s1.getMetaResource().add(mr2); 
 		return s1;
 	}
-		
+	
+	
 	
 }
