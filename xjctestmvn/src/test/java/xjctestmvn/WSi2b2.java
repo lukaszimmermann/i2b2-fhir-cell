@@ -12,11 +12,16 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 
+import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class WSi2b2 {
 
@@ -35,7 +40,7 @@ String query = Utils
 		System.out.println(xQueryResultString);
 	}
 	
-	@Test
+	//@Test
 	public void test2() {
 		String request = Utils.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
 		String query="declare namespace ns3=\"http://www.i2b2.org/xsd/cell/crc/pdo/1.1/\";"
@@ -50,6 +55,35 @@ String query = Utils
 		String xQueryResultString = XQueryUtil.processXQuery(query,  request);
 		System.out.println(xQueryResultString);
 	}
+	
+	
+	@Test
+	public void Test3() throws JAXBException{
+		MetaResourceDb md= new MetaResourceDb();
+		String query = Utils
+				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client
+				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
+		String oStr = webTarget
+				.request()
+				.accept("Context-Type", "application/xml")
+				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
+						String.class);
+		System.out.println("got::"
+				+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
+		
+		//if(1==1)return Response.ok().type(MediaType.APPLICATION_XML)
+		//		.entity(oStr).build();
+		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
+		//System.out.println(xQueryResultString);
+		MetaResourceSet s = I2b2ToFhirTransform
+				.MetaResourceSetFromI2b2Xml(xQueryResultString);
+		System.out.println(FhirUtil.resourceToXml(s.getMetaResource().get(0).getResource()));
+		md.addMetaResourceSet(s);
+	}
+	
 	
 	static void writeFileBytes(String filename, String content) {
         try {
