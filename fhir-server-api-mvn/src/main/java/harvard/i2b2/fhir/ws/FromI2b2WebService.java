@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -193,17 +194,21 @@ public class FromI2b2WebService {
 	}
 
 	@GET
-	@Path("MedicationStatement")
+	//@Path("MedicationStatement")
+		@Path("{resourceName:" + FhirUtil.RESOURCE_LIST + "}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getMedsForPatientSet(
+			@PathParam("resourceName") String resourceName,
 			@QueryParam("patientId") String patientId,
 			@QueryParam("_include") List<String> includeResources,
+			@QueryParam("filterf") String filterf,
 			// @HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request) throws IOException,
 			ParserConfigurationException, SAXException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException,
 			DatatypeConfigurationException {
+		Class c = FhirUtil.getResourceClass(resourceName);
 		MetaResourceDb md = null;
 		
 		HttpSession session = request.getSession(false);
@@ -243,16 +248,25 @@ public class FromI2b2WebService {
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		// System.out.println(xQueryResultString);
 
-		//md.addMetaResourceSet(getEGPatient());
+		md.addMetaResourceSet(getEGPatient());
 
 		try {
 			MetaResourceSet s = I2b2ToFhirTransform
 					.MetaResourceSetFromI2b2Xml(xQueryResultString);
 
 			md.addMetaResourceSet(s);
-			s = md.getQueriedMetaResources(MedicationStatement.class,
-					includeResources);
 
+			
+			s = md.getIncludedMetaResources(c,
+					includeResources);
+	
+			HashMap<String,String> filter=new HashMap<String,String>();
+		filter.put("Patient", "Patient/1000000005");
+		MetaResourceSet s1=new MetaResourceSet();
+		if(filterf!=null){
+			s=md.filterMetaResources(MedicationStatement.class,filter);
+		}
+			
 			String returnString = FhirUtil
 					.getResourceBundleFromMetaResourceSet(s,
 							"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
@@ -265,9 +279,6 @@ public class FromI2b2WebService {
 		}
 		return Response.status(Status.BAD_REQUEST)
 				.header("xreason", "some ERROR").build();
-
-		//return Response.ok().entity("ho").type(MediaType.APPLICATION_XML)
-			//	.build();
 	}
 
 	@GET
