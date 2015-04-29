@@ -149,7 +149,10 @@ public class FhirUtil {
 					if (c.isInstance(r)) {
 						Entry entry = feed.addEntry();
 						entry.setId(fhirBase + r.getId());
-						entry.setUpdated(m.getLastUpdated().toString());
+						String lastUpdated=null;
+						try{lastUpdated=m.getLastUpdated().toString();}
+						catch(Exception e){}
+						if(lastUpdated!=null)entry.setUpdated(lastUpdated);
 						// entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new
 						// Date().toGMTString());
 						entry.addLink(fhirBase + r.getId()).setAttributeValue(
