@@ -274,8 +274,6 @@ public class MetaResourceDb {
 			for (MetaResource mr : s.getMetaResource()) {
 				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,methodName)).getReference().getValue();
 
-				//String id = ((Resource) this.getFirstLevelChild(mr, c,methodName)).getId();
-
 				System.out.println("Found dep:" + id);
 				MetaResource depMr = searchById(id);
 				if (depMr != null) {
