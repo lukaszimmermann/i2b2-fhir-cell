@@ -57,7 +57,7 @@ String query = Utils
 	}
 	
 	
-	@Test
+	//@Test
 	public void Test3() throws JAXBException{
 		MetaResourceDb md= new MetaResourceDb();
 		String query = Utils
@@ -95,5 +95,12 @@ String query = Utils
             ioe.printStackTrace();
         }
     }
+	@Test
+	public void Test4(){
+		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
+		String query="replace node / with <a/>";
+		String xQueryResultString = XQueryUtil.processXQuery(query, requestStr);
+		System.out.println("RES:"+xQueryResultString);
+	}
 
 }

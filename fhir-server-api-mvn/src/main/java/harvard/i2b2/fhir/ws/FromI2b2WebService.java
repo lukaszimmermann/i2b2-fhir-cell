@@ -173,19 +173,22 @@ public class FromI2b2WebService {
 
 		String username = request.getHeader("username");
 		String password = request.getHeader("password");
-		String i2b2server = request.getHeader("i2b2server");
+		String i2b2domain = request.getHeader("i2b2domain");
+		String i2b2domainUrl = request.getHeader("i2b2domainUrl");
+		
 		
 		username="i2b2";
 		password="i2b2demo";
-		i2b2server="http://services.i2b2.org:9090/i2b2";
+		i2b2domain="i2b2domain";
+		i2b2domainUrl="http://services.i2b2.org:9090/i2b2";
 		
 		if (username != null && password != null
 				&username.equals("i2b2") && password.equals("i2b2demo")){ 
 			session.setAttribute("testAttr1", authId);
-			session.setAttribute("i2b2server",i2b2server);
+			session.setAttribute("i2b2domain",i2b2domain);
+			session.setAttribute("i2b2domainUrl",i2b2domainUrl);
 			session.setAttribute("username",username);
 			session.setAttribute("password",password);
-			
 			MetaResourceDb md = new MetaResourceDb();
 			/*MetaResourceSet MRS = getEGPatient();
 			System.out.println(((MetaResource) MRS.getMetaResource().get(0))
@@ -195,9 +198,10 @@ public class FromI2b2WebService {
 			Resource r = md.getParticularResource(Patient.class, "1000000005");
 			System.out.println("res:" + FhirUtil.resourceToXml(r));
 			*/
-			initAllPatients(md);
 			session.setAttribute("md", md);
 
+			initAllPatients(md,session);
+			
 			return Response.ok().entity("Auth successful."+authId
 			).type(MediaType.TEXT_PLAIN).build();
 		}
@@ -251,7 +255,10 @@ public class FromI2b2WebService {
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
-
+		//requestStr= insertSessionParametersInXml(requestStr,session);
+		//if(1==1)return Response.ok().type(MediaType.APPLICATION_XML)
+			//.entity(requestStr).build();
+		
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
@@ -316,7 +323,7 @@ public class FromI2b2WebService {
 		}
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 		
-		MetaResourceSet s=initAllPatients(md);
+		MetaResourceSet s=initAllPatients(md,session);
 		
 		String returnString = FhirUtil.getResourceBundleFromMetaResourceSet(s,
 				"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
@@ -326,7 +333,7 @@ public class FromI2b2WebService {
 
 	}
 
-	private MetaResourceSet initAllPatients(MetaResourceDb md ) throws JAXBException {
+	private MetaResourceSet initAllPatients(MetaResourceDb md,HttpSession session ) throws JAXBException {
 
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
@@ -334,6 +341,8 @@ public class FromI2b2WebService {
 		WebTarget webTarget = client
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
+		requestStr= insertSessionParametersInXml(requestStr,session);
+		
 		String oStr = webTarget
 				.request()
 				.accept("Context-Type", "application/xml")
@@ -469,6 +478,27 @@ public class FromI2b2WebService {
 
 		s1.getMetaResource().add(mr2);
 		return s1;
+	}
+	
+	private static String insertSessionParametersInXml(String xml,HttpSession session){
+		String username=(String) session.getAttribute("username");
+		String password=(String) session.getAttribute("password");
+		String i2b2domain=(String) session.getAttribute("i2b2domain");
+		String i2b2domainUrl=(String) session.getAttribute("i2b2domainUrl");
+		
+		xml=replaceXMLString(xml,"//security/username",username);
+		xml=replaceXMLString(xml,"//security/password",password);
+		xml=replaceXMLString(xml,"//security/domain",i2b2domain);
+		xml=replaceXMLString(xml,"//proxy/redirect_url",i2b2domainUrl+"/services/QueryToolService/pdorequest");
+		return xml;
+	}
+	
+	private  static String replaceXMLString(String xmlInput,String path, String value){
+		String query ="copy $c := root()\n"
+				+ "modify ( replace value of node $c"+path+" with \"" + value +"\")\n"
+				+" return $c";
+		System.out.println("query:"+query);
+		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 
 }
