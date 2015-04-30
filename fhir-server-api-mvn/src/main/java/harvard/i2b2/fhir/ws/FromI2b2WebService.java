@@ -105,7 +105,7 @@ public class FromI2b2WebService {
 			e.printStackTrace();
 		}
 	}
-
+/*
 	@GET
 	@Path("step1")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -143,7 +143,7 @@ public class FromI2b2WebService {
 		System.out.println("Got res:" + FhirUtil.resourceToXml(r));
 		return Response.ok().entity(sa).type(MediaType.TEXT_PLAIN).build();
 	}
-
+*/
 	@GET
 	@Path("login")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -234,8 +234,8 @@ public class FromI2b2WebService {
 		System.out.println("gettestAttr1:" + sa);
 
 		md = (MetaResourceDb) session.getAttribute("md");
-		Resource r = md.getParticularResource(Patient.class, "1000000005");
-		System.out.println("Got res:" + FhirUtil.resourceToXml(r));
+		//Resource r = md.getParticularResource(Patient.class, "1000000005");
+		//System.out.println("Got res:" + FhirUtil.resourceToXml(r));
 		// return
 		// Response.ok().entity(sa).type(MediaType.TEXT_PLAIN).build();
 
@@ -255,35 +255,42 @@ public class FromI2b2WebService {
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+		System.out.println("fetching from i2b2host...");
 		String oStr = webTarget
 				.request()
 				.accept("Context-Type", "application/xml")
 				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
 						String.class);
+		System.out.println("running transformation...");
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		// System.out.println(xQueryResultString);
 
 		md.addMetaResourceSet(getEGPatient());
 
 		try {
+		
 			MetaResourceSet s = I2b2ToFhirTransform
 					.MetaResourceSetFromI2b2Xml(xQueryResultString);
-
+			System.out.println("adding to memory...");
 			md.addMetaResourceSet(s);
 
 			s = md.getIncludedMetaResources(c, includeResources);
 
 			HashMap<String, String> filter = new HashMap<String, String>();
 			filter.put("Patient", "Patient/1000000005");
+			System.out.println("running filter...");
 			MetaResourceSet s1 = new MetaResourceSet();
 			if (filterf != null) {
 				s = md.filterMetaResources(MedicationStatement.class, filter);
 			}
-
+			
+			System.out.println("getting bundle string...");
+			
 			String returnString = FhirUtil
 					.getResourceBundleFromMetaResourceSet(s,
 							"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
-
+			System.out.println("returning response...");
+			
 			return Response.ok().type(MediaType.APPLICATION_XML)
 					.entity(returnString).build();
 
@@ -364,9 +371,8 @@ public class FromI2b2WebService {
 					.build();
 		}
 
-		MetaResourceDbWrapper metaResourceDb = (MetaResourceDbWrapper) session
-				.getAttribute("MetaResourceDbWrapper");
-
+		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+		
 		// request.getSession().setAttribute(CART_SESSION_KEY, cartBean);
 		String msg = null;
 		Resource r = null;
@@ -379,7 +385,7 @@ public class FromI2b2WebService {
 
 		// metaResourceDb.addMetaResourceSet(getPatientAndMedicationStatementEg());
 
-		r = metaResourceDb.getParticularResource(c, id);
+		r = md.getParticularResource(c, id);
 		msg = FhirUtil.resourceToXml(r, c);
 		if (acceptHeader.equals("application/json")) {
 			msg = Utils.xmlToJson(FhirUtil.resourceToXml(r, c));

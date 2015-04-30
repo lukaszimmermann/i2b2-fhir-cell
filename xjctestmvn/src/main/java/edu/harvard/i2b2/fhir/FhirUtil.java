@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -137,16 +138,33 @@ public class FhirUtil {
 					"os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
+			
+			HashMap<Class,JAXBContext> hmJaxbc=new HashMap<Class,JAXBContext>();
+			for (Class c : getResourceClassList()) {
+				JAXBContext jaxbContext = JAXBContext.newInstance(c);
+				hmJaxbc.put(c,jaxbContext );
+			}	
+			//HashMap<Class,List<MetaResource>> hm= new HashMap<Class,List<MetaResource>> ();
+			
+			
+			//put resources into class buckets
+			
+			//process class buckets (index by id)
+			
+			
+			//retrive the resources from bucket buy id
+			
 			for (MetaResource mr : s.getMetaResource()) {
 				Resource r = mr.getResource();
 				MetaData m = mr.getMetaData();
 				for (Class c : getResourceClassList()) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(c);
-					Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-					jaxbMarshaller.setProperty(
-							Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
+			
 					if (c.isInstance(r)) {
+						JAXBContext jaxbContext =hmJaxbc.get(c);// JAXBContext.newInstance(c);
+						Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+						jaxbMarshaller.setProperty(
+								Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
 						Entry entry = feed.addEntry();
 						entry.setId(fhirBase + r.getId());
 						String lastUpdated=null;
