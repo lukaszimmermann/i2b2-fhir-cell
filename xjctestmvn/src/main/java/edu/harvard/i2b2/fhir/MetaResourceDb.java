@@ -74,10 +74,9 @@ public class MetaResourceDb {
 			Resource r = p.getResource();
 			if (!c.isInstance(r))
 				continue;
-			System.out.println("examining resource with id:<" + r.getId()
-					+ "> for match to qid:<" + id + ">");
+			//System.out.println("examining resource with id:<" + r.getId()+ "> for match to qid:<" + id + ">");
 			if (r.getId().equals(id)) {
-				System.out.println("matched resource with id:" + r.getId());
+				//System.out.println("matched resource with id:" + r.getId());
 				return p;
 			}
 		}
@@ -193,7 +192,7 @@ public class MetaResourceDb {
 	}
 
 	public MetaResource searchById(String id) {
-		System.out.println("searching id:" + id);
+		//System.out.println("searching id:" + id);
 		for (MetaResource mr : metaResources) {
 			if (mr.getResource().getId().equals(id))
 				return mr;
