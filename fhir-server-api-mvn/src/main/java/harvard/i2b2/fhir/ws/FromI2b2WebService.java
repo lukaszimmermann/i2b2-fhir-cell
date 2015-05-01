@@ -185,10 +185,11 @@ public class FromI2b2WebService {
 			*/
 			session.setAttribute("md", md);
 
-			initAllPatients(md,session);
-			
+			initAllPatients(session);
 			return Response.ok().entity("Auth successful."+authId
-			).type(MediaType.TEXT_PLAIN).build();
+			).type(MediaType.TEXT_PLAIN)
+			.header("session_id",  session.getId())
+			.build();
 		}
 		return Response.ok().entity("Auth failure")// .cookie(authIdCookie)
 				.build();
@@ -306,20 +307,31 @@ public class FromI2b2WebService {
 					.type(MediaType.APPLICATION_XML).entity("login first ")
 					.build();
 		}
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 		
-		MetaResourceSet s=initAllPatients(md,session);
+		MetaResourceSet s=initAllPatients(session);
 		
 		String returnString = FhirUtil.getResourceBundleFromMetaResourceSet(s,
 				"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
 
 		return Response.ok().type(MediaType.APPLICATION_XML)
+				.header("Access-Control-Allow-Origin",  "http://localhost:8080/fhir-server-api-mvn/")
+				.header("Access-Control-Allow-Credentials ","true")
 				.entity(returnString).build();
 
 	}
 
-	private MetaResourceSet initAllPatients(MetaResourceDb md,HttpSession session ) throws JAXBException {
-
+	private MetaResourceSet initAllPatients(HttpSession session ) throws JAXBException {
+				if (session == null) {
+					return new MetaResourceSet();
+				}
+		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+		if(session==null ) throw new RuntimeException("session is null")	;
+		
+		String sa = (String) session.getAttribute("testAttr1");
+		System.out.println("gettestAttr1:" + sa);
+		if(md==null) throw new RuntimeException("md is null")	;
+		
+		
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		Client client = ClientBuilder.newClient();
@@ -482,7 +494,7 @@ public class FromI2b2WebService {
 		String query ="copy $c := root()\n"
 				+ "modify ( replace value of node $c"+path+" with \"" + value +"\")\n"
 				+" return $c";
-		//System.out.println("query:"+query);
+		System.out.println("query:"+query);
 		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 

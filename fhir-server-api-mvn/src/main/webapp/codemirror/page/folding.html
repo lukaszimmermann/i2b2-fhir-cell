@@ -1,64 +1,110 @@
 <!doctype html>
 
 <head>
-  <title>CodeMirror: Code Folding Demo</title>
-  <meta charset="utf-8"/>
-  <link rel=stylesheet href="../doc/docs.css">
+<title>CodeMirror: Code Folding Demo</title>
+<meta charset="utf-8" />
+<link rel=stylesheet href="../doc/docs.css">
 
-  <link rel="stylesheet" href="../lib/codemirror.css">
-  <link rel="stylesheet" href="../addon/fold/foldgutter.css" />
-  <script src="../lib/codemirror.js"></script>
-  <script src="../addon/fold/foldcode.js"></script>
-  <script src="../addon/fold/foldgutter.js"></script>
-  <script src="../addon/fold/brace-fold.js"></script>
-  <script src="../addon/fold/xml-fold.js"></script>
-  <script src="../addon/fold/markdown-fold.js"></script>
-  <script src="../addon/fold/comment-fold.js"></script>
-  <script src="../mode/javascript/javascript.js"></script>
-  <script src="../mode/xml/xml.js"></script>
-  <script src="../mode/markdown/markdown.js"></script>
-  
-  <script>
-  
-function setXmlDisplay(displayText) {
-  var te_html = document.getElementById("code-xml");
-  te_html.value=displayText;
+<link rel="stylesheet" href="../lib/codemirror.css">
+<link rel="stylesheet" href="../addon/fold/foldgutter.css" />
+<script src="../lib/codemirror.js"></script>
+<script src="../addon/fold/foldcode.js"></script>
+<script src="../addon/fold/foldgutter.js"></script>
+<script src="../addon/fold/brace-fold.js"></script>
+<script src="../addon/fold/xml-fold.js"></script>
+<script src="../addon/fold/markdown-fold.js"></script>
+<script src="../addon/fold/comment-fold.js"></script>
+<script src="../mode/javascript/javascript.js"></script>
+<script src="../mode/xml/xml.js"></script>
+<script src="../mode/markdown/markdown.js"></script>
+<script type="text/javascript" src="../../lib/jquery-1.11.2.min.js"></script>
 
-  window.editor_html = CodeMirror.fromTextArea(te_html, {
-    mode: "text/xml",
-    lineNumbers: true,
-    lineWrapping: true,
-    extraKeys: {"Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }},
-    foldGutter: true,
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
-  });
-  //editor_html.foldCode(CodeMirror.Pos(0, 0));
-  //editor_html.foldCode(CodeMirror.Pos(21, 0));
-};
-  </script>
-  <style type="text/css">
-    .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
-  </style>
+<script>
+	var sessionId="123";
+	var cm;
+	function getAuth() {
+		$.ajax({
+			url : 'http://localhost:8080/fhir-server-api-mvn/resources/i2b2/auth',
+			xhrFields: {
+      			withCredentials: true
+   		},
+			type : 'GET',
+			//data : 'ID=1&Name=John&Age=10', // or $('#myform').serializeArray()
+			success: function(data, textStatus, xhr){
+   			     sessionId=xhr.getResponseHeader('session_id');
+   			     //alert(sessionId);
+  				setXmlDisplay(data);
+				getPatients();
+			}
+		});
+		
+	};
+
+function getPatients() {
+		$.ajax({
+			url : 'http://localhost:8080/fhir-server-api-mvn/resources/i2b2/patientall;jsessionid='+sessionId,
+			xhrFields: {
+      			withCredentials: true
+   			},
+			type : 'GET',
+			dataType: 'text',
+			success : function(data) {
+				//alert( );
+				setXmlDisplay(data);
+			}
+		});
+	};
+
+	function setXmlDisplay(displayText) {
+		var te_html = document.getElementById("code-xml");
+		te_html.value = displayText;
+		cm = CodeMirror.fromTextArea(te_html, {
+			mode : "text/xml",
+			lineNumbers : true,
+			lineWrapping : true,
+			extraKeys : {
+				"Ctrl-Q" : function(cm) {
+					cm.foldCode(cm.getCursor());
+				}
+			},
+			foldGutter : true,
+			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
+		});
+	};
+	
+	function setXmlDisplay2(displayText) {
+		var te_html = document.getElementById("code-xml");
+		te_html.value = displayText;
+	}
+	
+	
+</script>
+<style type="text/css">
+.CodeMirror {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+</style>
 </head>
 
 <body>
-<div id=nav>
- <!--   <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="../doc/logo.png"></a>
+	<div id=nav>
+		<!--   <a href="http://codemirror.net"><h1>CodeMirror</h1><img id=logo src="../doc/logo.png"></a>
 -->
-  
-</div>
 
-<article>
-  <h2>Code Folding Demo</h2>
-  <form>
-    
-    <div style="max-width: 50em; margin-bottom: 1em">XML:<br>
-    <textarea id="code-xml" ></textarea></div>
-    </form>
-  <script >
+	</div>
 
+	<article>
+		<h2>Code Folding Demo</h2>
+		<form>
 
-	window.onload = setXmlDisplay("<a><b>c</b></a>")
-  </script>
-</article>
+			<div style="max-width: 50em; margin-bottom: 1em">
+				XML:<br>
+				<textarea id="code-xml"></textarea>
+			</div>
+		</form>
+		<script>
+			window.onload = getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
+		</script>
+	</article>
 </body>
