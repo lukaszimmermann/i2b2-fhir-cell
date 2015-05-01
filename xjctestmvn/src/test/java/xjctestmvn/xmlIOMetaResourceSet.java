@@ -51,7 +51,7 @@ public class xmlIOMetaResourceSet {
 		// create books
 		MetaResource r1 = new MetaResource();
 		MetaData md1 = new MetaData();
-		md1.setId("medication/1");
+		//md1.setId("medication/1");
 		GregorianCalendar gc = new GregorianCalendar();
 
 		md1.setLastUpdated(DatatypeFactory.newInstance()
@@ -87,7 +87,7 @@ public class xmlIOMetaResourceSet {
 		MetaResourceSet s2 = (MetaResourceSet) um.unmarshal(new FileReader(
 				BOOKSTORE_XML));
 		System.out.println("FhirResourceSet: "
-				+ s2.getMetaResource().get(0).getMetaData().getId());
+				+ s2.getMetaResource().get(0).getResource().getId());
 
 	}
 
@@ -169,7 +169,7 @@ public class xmlIOMetaResourceSet {
 		Patient p= new Patient();
 		p.setId("Patient/123");
 		MetaResource mrP=new MetaResource();mrP.setResource(p);
-		MetaData md1=new MetaData();md1.setId(p.getId());mrP.setMetaData(md1);
+		MetaData md1=new MetaData();mrP.setMetaData(md1);
 		
 		
 		MedicationStatement ms=new MedicationStatement();
@@ -180,7 +180,7 @@ public class xmlIOMetaResourceSet {
 		
 		
 		MetaResource mrMS=new MetaResource();mrMS.setResource(ms);
-		MetaData md2=new MetaData();md2.setId(ms.getId());mrMS.setMetaData(md2);
+		MetaData md2=new MetaData();mrMS.setMetaData(md2);
 		
 		mrDb.addMetaResource(mrMS,MedicationStatement.class);
 		mrDb.addMetaResource(mrP,Patient.class);

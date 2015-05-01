@@ -49,7 +49,7 @@ public class MetaResourceDb {
 		if (p.getResource().getId() == null) {
 			p.getResource()
 					.setId(Integer.toString(getMetaResourceTypeCount(c)));
-			p.getMetaData().setId(p.getResource().getId());
+			
 		}
 
 		MetaResource presentRes = getMetaResource(p.getResource().getId(), c);
