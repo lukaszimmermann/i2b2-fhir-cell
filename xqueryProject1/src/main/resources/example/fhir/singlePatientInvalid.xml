@@ -88,12 +88,12 @@
     <use value="usual"/>
     <system value="urn:oid:2.16.840.1.113883.2.4.6.3"/>
   </identifier><!--    BSN identification system    -->
-  <name>
+  <name1>
     <use value="usual"/>
     <familys value="van de Heuvel"/>
     <given value="Pieter"/>
     <suffix value="MSc"/>
-  </name>
+  </name1>
   <telecom>
     <system value="phone"/>
     <value value="0648352638"/>

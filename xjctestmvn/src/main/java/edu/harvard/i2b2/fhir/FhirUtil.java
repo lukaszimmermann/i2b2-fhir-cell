@@ -38,6 +38,9 @@ import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class FhirUtil {
+	//public static boolean validateFhirResourceBeforeAddingFlag=false;
+	
+	
 
 	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
 	public static ArrayList<Class> resourceClassList = null;
