@@ -284,6 +284,8 @@ public class FromI2b2WebService {
 							"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
 			System.out.println("returning response...");
 			
+			returnString=Utils.getStringFromDocument(Utils.xmltoDOM(returnString.replaceAll("(?m)^[ \t]*\r?\n", "")));
+
 			return Response.ok().type(MediaType.APPLICATION_XML)
 					.entity(returnString).build();
 
@@ -299,7 +301,7 @@ public class FromI2b2WebService {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAllPatients(@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request) throws IOException,
-			JAXBException {
+			JAXBException, ParserConfigurationException, SAXException {
 
 		HttpSession session = request.getSession();
 		if (session == null) {
@@ -313,9 +315,9 @@ public class FromI2b2WebService {
 		String returnString = FhirUtil.getResourceBundleFromMetaResourceSet(s,
 				"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
 
+		returnString=Utils.getStringFromDocument(Utils.xmltoDOM(returnString.replaceAll("(?m)^[ \t]*\r?\n", "")));
 		return Response.ok().type(MediaType.APPLICATION_XML)
-				.header("Access-Control-Allow-Origin",  "http://localhost:8080/fhir-server-api-mvn/")
-				.header("Access-Control-Allow-Credentials ","true")
+				.header("session_id",  session.getId())
 				.entity(returnString).build();
 
 	}
@@ -367,7 +369,7 @@ public class FromI2b2WebService {
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request)
-			throws DatatypeConfigurationException {
+			throws DatatypeConfigurationException, ParserConfigurationException, SAXException, IOException {
 
 		HttpSession session = request.getSession();
 		if (session == null) {
@@ -397,7 +399,10 @@ public class FromI2b2WebService {
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
-			return Response.ok(msg).build();
+			msg=Utils.getStringFromDocument(Utils.xmltoDOM(msg.replaceAll("(?m)^[ \t]*\r?\n", "")));
+
+			return Response.ok(msg).header("session_id",  session.getId())
+					.build();
 		} else {
 			return Response
 					.noContent()

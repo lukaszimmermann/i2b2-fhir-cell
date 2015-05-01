@@ -50,7 +50,7 @@ function getPatients() {
 			dataType: 'text',
 			success : function(data) {
 				//alert( );
-				setXmlDisplay(data);
+				setXmlDisplay2(data);
 			}
 		});
 	};
@@ -73,8 +73,25 @@ function getPatients() {
 	};
 	
 	function setXmlDisplay2(displayText) {
-		var te_html = document.getElementById("code-xml");
+		var old_te_html = document.getElementById("code-xml");
+		old_te_html.parentNode.style.display="none";
+		
+		var te_html = document.getElementById("code-xml2");
 		te_html.value = displayText;
+		te_html.parentNode.style.display="block";
+		cm = CodeMirror.fromTextArea(te_html, {
+			mode : "text/xml",
+			lineNumbers : true,
+			lineWrapping : true,
+			extraKeys : {
+				"Ctrl-Q" : function(cm) {
+					cm.foldCode(cm.getCursor());
+				}
+			},
+			foldGutter : true,
+			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
+		});
+		
 	}
 	
 	
@@ -98,10 +115,15 @@ function getPatients() {
 		<h2>Code Folding Demo</h2>
 		<form>
 
-			<div style="max-width: 50em; margin-bottom: 1em">
+			<div style="max-width: 100em; margin-bottom: 1em:display:block;font-size: 10px;">
 				XML:<br>
 				<textarea id="code-xml"></textarea>
 			</div>
+			
+			<div style="max-width: 100em; margin-bottom: 1em;display:none;font-size: 10px;">
+				XML2:<br>
+				<textarea id="code-xml2" ></textarea>
+			</div >
 		</form>
 		<script>
 			window.onload = getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
