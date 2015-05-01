@@ -42,6 +42,8 @@ public class FhirUtil {
 	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
 	public static ArrayList<Class> resourceClassList = null;
 
+	private static HashMap<Class, JAXBContext> hmJaxbc = null;
+
 	private static Validator v;
 
 	public static String resourceToXml(Resource r, Class c) {
@@ -69,7 +71,7 @@ public class FhirUtil {
 		JAXBElement jbe = null;
 		boolean classFound = false;
 		for (Class c : resourceClassList) {
-			//System.out.println("instanceOf:"+c.getSimpleName());
+			// System.out.println("instanceOf:"+c.getSimpleName());
 			if (c.isInstance(r)) {
 				try {
 					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
@@ -113,7 +115,6 @@ public class FhirUtil {
 		return resList;
 	}
 
-	
 	public static String getResourceBundleFromMetaResourceSet(
 			MetaResourceSet s, String uriInfoString) {
 		String fhirBase = uriInfoString;
@@ -130,47 +131,43 @@ public class FhirUtil {
 			feed.setUpdated(new Date());
 			feed.addExtension("http://www.w3.org/2005/Atom", "published", null)
 					.setText(new Date().toGMTString());
-			feed.addLink( uriInfoString).setAttributeValue("rel",
-					"self");
+			feed.addLink(uriInfoString).setAttributeValue("rel", "self");
 			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result",
 					"os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
 			// for(Resource r:resourcedb.getAll(c)){
-			
-			HashMap<Class,JAXBContext> hmJaxbc=new HashMap<Class,JAXBContext>();
-			for (Class c : getResourceClassList()) {
-				JAXBContext jaxbContext = JAXBContext.newInstance(c);
-				hmJaxbc.put(c,jaxbContext );
-			}	
-			//HashMap<Class,List<MetaResource>> hm= new HashMap<Class,List<MetaResource>> ();
-			
-			
-			//put resources into class buckets
-			
-			//process class buckets (index by id)
-			
-			
-			//retrive the resources from bucket buy id
-			
+
+			if (hmJaxbc == null) {
+				hmJaxbc = new HashMap<Class, JAXBContext>();
+
+				for (Class c : getResourceClassList()) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(c);
+					hmJaxbc.put(c, jaxbContext);
+				}
+			}
 			for (MetaResource mr : s.getMetaResource()) {
 				Resource r = mr.getResource();
 				MetaData m = mr.getMetaData();
 				for (Class c : getResourceClassList()) {
-			
+
 					if (c.isInstance(r)) {
-						JAXBContext jaxbContext =hmJaxbc.get(c);// JAXBContext.newInstance(c);
-						Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+						JAXBContext jaxbContext = hmJaxbc.get(c);// JAXBContext.newInstance(c);
+						Marshaller jaxbMarshaller = jaxbContext
+								.createMarshaller();
 						jaxbMarshaller.setProperty(
 								Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 						Entry entry = feed.addEntry();
 						entry.setId(fhirBase + r.getId());
-						String lastUpdated=null;
-						try{lastUpdated=m.getLastUpdated().toString();}
-						catch(Exception e){}
-						if(lastUpdated!=null)entry.setUpdated(lastUpdated);
+						String lastUpdated = null;
+						try {
+							lastUpdated = m.getLastUpdated().toString();
+						} catch (Exception e) {
+						}
+						if (lastUpdated != null)
+							entry.setUpdated(lastUpdated);
 						// entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new
 						// Date().toGMTString());
 						entry.addLink(fhirBase + r.getId()).setAttributeValue(
@@ -232,8 +229,8 @@ public class FhirUtil {
 			String path = Utils.getFilePath("validation.zip");
 
 			v.setDefinitions(path);
-			//System.out.println(v.getDefinitions());
-			//System.out.println("ready");
+			// System.out.println(v.getDefinitions());
+			// System.out.println("ready");
 		}
 		if (resourceClassList == null)
 			initResourceClassList();
@@ -257,7 +254,7 @@ public class FhirUtil {
 			try {
 				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
 
-					//System.out.println(c.getSimpleName());
+					// System.out.println(c.getSimpleName());
 					resourceClassList.add(c);
 				}
 			} catch (IOException e) {
@@ -271,7 +268,8 @@ public class FhirUtil {
 	public static List<Class> getAllFhirResourceClasses(String packageName)
 			throws IOException {
 
-		//System.out.println("Running getAllFhirResourceClasses for:"	+ packageName);
+		// System.out.println("Running getAllFhirResourceClasses for:" +
+		// packageName);
 		List<Class> commands = new ArrayList<Class>();
 
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -298,7 +296,7 @@ public class FhirUtil {
 			if (c != null)
 				commands.add(c);
 		}
-		//System.out.println(commands.toString());
+		// System.out.println(commands.toString());
 		return commands;
 	}
 
@@ -354,10 +352,10 @@ public class FhirUtil {
 			InvocationTargetException {
 		Class c = FhirUtil.getResourceClass(r);
 		String returnStr = null;
-		String suffix =null;
-		String prefix=pathStr;
-		System.out.println("pathStr:"+pathStr);
-		if(pathStr.indexOf('.')>-1){
+		String suffix = null;
+		String prefix = pathStr;
+		System.out.println("pathStr:" + pathStr);
+		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
@@ -365,14 +363,14 @@ public class FhirUtil {
 				+ prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		if (suffix == null) {
-			Object o= method.invoke(c.cast(r));
-			if(ResourceReference.class.isInstance(o)){
+			Object o = method.invoke(c.cast(r));
+			if (ResourceReference.class.isInstance(o)) {
 				return o;
-			} else{
+			} else {
 				return o;
 			}
 		} else {
-			return getChild(r,  suffix);
+			return getChild(r, suffix);
 		}
 
 	}

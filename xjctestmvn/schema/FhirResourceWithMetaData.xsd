@@ -29,7 +29,6 @@
 	
 	<xs:complexType name="MetaData">
 		<xs:sequence>
-			<xs:element name="id" type="xs:string" />
 			<xs:element name="lastUpdated" type="xs:dateTime"/>
 		</xs:sequence>
 	</xs:complexType>

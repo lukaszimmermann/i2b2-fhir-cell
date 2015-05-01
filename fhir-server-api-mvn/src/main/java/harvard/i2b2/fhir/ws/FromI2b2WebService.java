@@ -1,32 +1,19 @@
 package harvard.i2b2.fhir.ws;
 
-import harvard.i2b2.fhir.ejb.OldMetaResourceDb;
+
 import harvard.i2b2.fhir.ejb.MetaResourceDbWrapper;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
-import javax.ejb.embeddable.EJBContainer;
 import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.GET;
@@ -433,7 +420,7 @@ public class FromI2b2WebService {
 		md1.setLastUpdated(DatatypeFactory.newInstance()
 				.newXMLGregorianCalendar(gc));
 
-		md1.setId(p.getId());
+		//md1.setId(p.getId());
 
 		MetaResource mr1 = new MetaResource();
 		mr1.setResource((Resource) p);
@@ -460,7 +447,7 @@ public class FromI2b2WebService {
 
 		MetaResource mr1 = new MetaResource();
 		MetaData md1 = new MetaData();
-		md1.setId(p.getId());
+		//md1.setId(p.getId());
 		mr1.setResource(p);
 		mr1.setMetaData(md1);
 		GregorianCalendar gc = new GregorianCalendar();
@@ -470,7 +457,7 @@ public class FromI2b2WebService {
 
 		MetaResource mr2 = new MetaResource();
 		MetaData md2 = new MetaData();
-		md2.setId(ms.getId());
+		//md2.setId(ms.getId());
 		mr2.setResource(ms);
 		mr2.setMetaData(md2);
 		md2.setLastUpdated(DatatypeFactory.newInstance()
