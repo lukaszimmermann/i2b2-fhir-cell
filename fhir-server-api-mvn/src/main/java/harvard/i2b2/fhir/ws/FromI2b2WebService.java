@@ -163,14 +163,12 @@ public class FromI2b2WebService {
 		String i2b2domain = request.getHeader("i2b2domain");
 		String i2b2domainUrl = request.getHeader("i2b2domainUrl");
 		
-		
-		username="i2b2";
-		password="i2b2demo";
-		i2b2domain="i2b2domain";
+		username="demo";
+		password="demouser";
+		i2b2domain="i2b2demo";
 		i2b2domainUrl="http://services.i2b2.org:9090/i2b2";
 		
-		if (username != null && password != null
-				&username.equals("i2b2") && password.equals("i2b2demo")){ 
+		if (username != null && password != null){ 
 			session.setAttribute("testAttr1", authId);
 			session.setAttribute("i2b2domain",i2b2domain);
 			session.setAttribute("i2b2domainUrl",i2b2domainUrl);
@@ -337,12 +335,12 @@ public class FromI2b2WebService {
 						String.class);
 		System.out.println("got::"
 				+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
-
+		
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
-
+		System.out.println("Got xQueryResultString :"+xQueryResultString );
 		MetaResourceSet s = I2b2ToFhirTransform
 				.MetaResourceSetFromI2b2Xml(xQueryResultString);
-
+		System.out.println("Got MetaResourceSet  of size:"+s.getMetaResource().size());
 		md.addMetaResourceSet(s);
 		return s;
 	}
@@ -477,6 +475,7 @@ public class FromI2b2WebService {
 		xml=replaceXMLString(xml,"//security/password",password);
 		xml=replaceXMLString(xml,"//security/domain",i2b2domain);
 		xml=replaceXMLString(xml,"//proxy/redirect_url",i2b2domainUrl+"/services/QueryToolService/pdorequest");
+		//System.out.println("returning xml:"+xml);
 		return xml;
 	}
 	
@@ -484,7 +483,7 @@ public class FromI2b2WebService {
 		String query ="copy $c := root()\n"
 				+ "modify ( replace value of node $c"+path+" with \"" + value +"\")\n"
 				+" return $c";
-		System.out.println("query:"+query);
+		//System.out.println("query:"+query);
 		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 
