@@ -23,7 +23,7 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class MetaResourceDb {
 	List<MetaResource> metaResources;
-
+	
 	public MetaResourceDb() {
 		init();
 	}
@@ -45,19 +45,19 @@ public class MetaResourceDb {
 			e.printStackTrace();
 			return null;
 		}
-
-		if (p.getResource().getId() == null) {
-			p.getResource()
-					.setId(Integer.toString(getMetaResourceTypeCount(c)));
+		Resource r=p.getResource();
+		
+		if (r.getId() == null) {
+			r.setId(Integer.toString(getMetaResourceTypeCount(c)));
 			
 		}
 
-		MetaResource presentRes = getMetaResource(p.getResource().getId(), c);
+		MetaResource presentRes = getMetaResource(r.getId(), c);
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
 			System.out.println("replacing resource with id:"
-					+ p.getResource().getId());
+					+ r.getId());
 			metaResources.remove(presentRes);
 		}
 		metaResources.add(p);

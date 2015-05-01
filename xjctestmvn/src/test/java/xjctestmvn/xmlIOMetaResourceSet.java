@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.validation.constraints.AssertTrue;
 import javax.xml.bind.JAXBContext;
@@ -33,8 +34,8 @@ import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.FhirUtil;
-import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 
@@ -96,7 +97,7 @@ public class xmlIOMetaResourceSet {
 		final String xmlFileName = "example/fhir/MetaResourceSet3.xml";
 		String xmlString = Utils.getFile(xmlFileName);
 		
-		MetaResourceSet s2 = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xmlString); 
+		MetaResourceSet s2 = MetaResourceSetTransform.MetaResourceSetFromXml(xmlString); 
 		// System.out.println("FhirResourceSet: "
 		// +s2.getMetaResource().get(0).getMetaData().getId());
 		System.out.println("FhirResourceSet: "
@@ -118,7 +119,7 @@ public class xmlIOMetaResourceSet {
 	public void testI2b2toFhirMedPDOtransform() throws JAXBException {
 		String xmlString = PdoEGtoFhirBundle.defaultread();
 		System.out.println(xmlString);
-		MetaResourceSet s = I2b2ToFhirTransform.MetaResourceSetFromI2b2Xml(xmlString); 
+		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xmlString); 
 		testResources(s);
 	}
 
@@ -163,7 +164,7 @@ public class xmlIOMetaResourceSet {
 		System.out.println(XQueryUtil.processXQuery(str));
 	}
 	
-	@Test
+	//@Test
 	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
 		MetaResourceDb mrDb= new MetaResourceDb();
 		Patient p= new Patient();
@@ -188,4 +189,33 @@ public class xmlIOMetaResourceSet {
 		System.out.println("child:"+mrDb.getChildOfResource(ms, "patient.id"));
 		
 	}
+	
+	/*
+	 * validation needs to occur before translation to java object;
+	 * Error in xml is lost after transformation of xml to java object
+	 * as demonstrated here
+	 */
+	@Test
+	public void Test6() throws DatatypeConfigurationException{ 
+		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
+		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
+		Patient p=(Patient) FhirUtil.xmlToResource(inValidPatient);
+		MetaResource mr= new MetaResource();
+		MetaData md= new MetaData();
+		GregorianCalendar gc = new GregorianCalendar();
+		md.setLastUpdated(DatatypeFactory.newInstance()
+				.newXMLGregorianCalendar(gc));
+		mr.setMetaData(md);
+		mr.setResource(p);
+		
+		MetaResourceSet s= new MetaResourceSet();
+		List<MetaResource> list=s.getMetaResource();
+		list.add(mr);
+		MetaResourceDb db=new MetaResourceDb();
+		
+		db.addMetaResourceSet(s);
+		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(FhirUtil.resourceToXml(p)));
+		
+	}
+	
 }

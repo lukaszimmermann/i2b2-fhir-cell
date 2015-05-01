@@ -64,8 +64,8 @@ import org.xml.sax.SAXException;
 import com.sun.xml.xsom.impl.scd.Iterators.Map;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
-import edu.harvard.i2b2.fhir.I2b2ToFhirTransform;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.core.MetaData;
@@ -257,12 +257,12 @@ public class FromI2b2WebService {
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		// System.out.println(xQueryResultString);
 
-		md.addMetaResourceSet(getEGPatient());
+		//md.addMetaResourceSet(getEGPatient());
 
 		try {
 		
-			MetaResourceSet s = I2b2ToFhirTransform
-					.MetaResourceSetFromI2b2Xml(xQueryResultString);
+			MetaResourceSet s = MetaResourceSetTransform
+					.MetaResourceSetFromXml(xQueryResultString);
 			System.out.println("adding to memory...");
 			md.addMetaResourceSet(s);
 
@@ -338,8 +338,7 @@ public class FromI2b2WebService {
 		
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		System.out.println("Got xQueryResultString :"+xQueryResultString );
-		MetaResourceSet s = I2b2ToFhirTransform
-				.MetaResourceSetFromI2b2Xml(xQueryResultString);
+		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xQueryResultString);
 		System.out.println("Got MetaResourceSet  of size:"+s.getMetaResource().size());
 		md.addMetaResourceSet(s);
 		return s;

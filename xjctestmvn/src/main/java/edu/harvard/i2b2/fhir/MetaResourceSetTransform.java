@@ -9,9 +9,9 @@ import javax.xml.bind.Unmarshaller;
 
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
-public class I2b2ToFhirTransform {
+public class MetaResourceSetTransform {
 	
-	static public MetaResourceSet MetaResourceSetFromI2b2Xml(String xml) throws JAXBException{
+	static public MetaResourceSet MetaResourceSetFromXml(String xml) throws JAXBException{
 		JAXBContext context = JAXBContext.newInstance(MetaResourceSet.class);
 		Unmarshaller um = context.createUnmarshaller();
 		MetaResourceSet s = (MetaResourceSet) um
@@ -21,3 +21,5 @@ public class I2b2ToFhirTransform {
 		return s;
 	}
 }
+
+
