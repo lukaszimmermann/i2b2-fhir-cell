@@ -46,8 +46,8 @@ public class MetaResourceDbWrapper {
 
 	@Lock(LockType.READ)
 	public MetaResourceSet getIncludedMetaResources(
-			Class c, List<String> includeResources) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return mrdb.getIncludedMetaResources(c, includeResources);
+			MetaResourceSet inputSet, Class c, List<String> includeResources) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return mrdb.getIncludedMetaResources(c,inputSet, includeResources);
 	}
 
 	@Lock(LockType.READ)

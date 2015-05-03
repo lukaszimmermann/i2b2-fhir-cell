@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.constraints.AssertTrue;
 import javax.xml.bind.JAXBContext;
@@ -195,7 +197,7 @@ public class xmlIOMetaResourceSet {
 	 * Error in xml is lost after transformation of xml to java object
 	 * as demonstrated here
 	 */
-	@Test
+	//@Test
 	public void Test6() throws DatatypeConfigurationException{ 
 		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
 		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
@@ -218,4 +220,16 @@ public class xmlIOMetaResourceSet {
 		
 	}
 	
+	@Test
+	public void Test7(){ 
+	String input="subject:Patient=123";
+		String id=null;
+		Pattern p = Pattern.compile("[P|p]atient=([a-zA-Z0-9]+)");
+		Matcher m = p.matcher(input);
+
+		if (m.find()) {
+			id=m.group(1);
+		    System.out.println(id);
+		}
+	}
 }

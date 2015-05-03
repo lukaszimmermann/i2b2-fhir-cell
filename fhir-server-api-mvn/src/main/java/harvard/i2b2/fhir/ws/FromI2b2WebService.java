@@ -1,16 +1,18 @@
 package harvard.i2b2.fhir.ws;
 
-
 import harvard.i2b2.fhir.ejb.MetaResourceDbWrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -76,6 +78,7 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public class FromI2b2WebService {
 	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
+	ArrayList<String> PDOcallHistory;// contains ids of patients already called.
 
 	// @EJB
 	// MetaResourceDbWrapper metaResourceDb;
@@ -92,45 +95,47 @@ public class FromI2b2WebService {
 			e.printStackTrace();
 		}
 	}
-/*
-	@GET
-	@Path("step1")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getStep1(@Context HttpServletRequest request)
-			throws DatatypeConfigurationException {
-		HttpSession session = request.getSession();// new session
-		String authId = Integer.toString(new Random().nextInt()).toString();
 
-		session.setAttribute("testAttr1", authId);
-		MetaResourceDb md = new MetaResourceDb();
-		MetaResourceSet MRS = getEGPatient();
-		System.out.println(((MetaResource) MRS.getMetaResource().get(0))
-				.getResource().getId());
-
-		md.addMetaResourceSet(MRS);
-		Resource r = md.getParticularResource(Patient.class, "1000000005");
-		System.out.println("res:" + FhirUtil.resourceToXml(r));
-		session.setAttribute("md", md);
-
-		return Response.ok().entity(authId
-
-		).type(MediaType.TEXT_PLAIN).build();
-	}
-
-	@GET
-	@Path("step2")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response getStep2(@Context HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		String sa = (String) session.getAttribute("testAttr1");
-		System.out.println("gettestAttr1:" + sa);
-
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		Resource r = md.getParticularResource(Patient.class, "1000000005");
-		System.out.println("Got res:" + FhirUtil.resourceToXml(r));
-		return Response.ok().entity(sa).type(MediaType.TEXT_PLAIN).build();
-	}
-*/
+	/*
+	 * @GET
+	 * 
+	 * @Path("step1")
+	 * 
+	 * @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	 * public Response getStep1(@Context HttpServletRequest request) throws
+	 * DatatypeConfigurationException { HttpSession session =
+	 * request.getSession();// new session String authId = Integer.toString(new
+	 * Random().nextInt()).toString();
+	 * 
+	 * session.setAttribute("testAttr1", authId); MetaResourceDb md = new
+	 * MetaResourceDb(); MetaResourceSet MRS = getEGPatient();
+	 * System.out.println(((MetaResource) MRS.getMetaResource().get(0))
+	 * .getResource().getId());
+	 * 
+	 * md.addMetaResourceSet(MRS); Resource r =
+	 * md.getParticularResource(Patient.class, "1000000005");
+	 * System.out.println("res:" + FhirUtil.resourceToXml(r));
+	 * session.setAttribute("md", md);
+	 * 
+	 * return Response.ok().entity(authId
+	 * 
+	 * ).type(MediaType.TEXT_PLAIN).build(); }
+	 * 
+	 * @GET
+	 * 
+	 * @Path("step2")
+	 * 
+	 * @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	 * public Response getStep2(@Context HttpServletRequest request) {
+	 * HttpSession session = request.getSession(false); String sa = (String)
+	 * session.getAttribute("testAttr1"); System.out.println("gettestAttr1:" +
+	 * sa);
+	 * 
+	 * MetaResourceDb md = (MetaResourceDb) session.getAttribute("md"); Resource
+	 * r = md.getParticularResource(Patient.class, "1000000005");
+	 * System.out.println("Got res:" + FhirUtil.resourceToXml(r)); return
+	 * Response.ok().entity(sa).type(MediaType.TEXT_PLAIN).build(); }
+	 */
 	@GET
 	@Path("login")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
@@ -162,34 +167,34 @@ public class FromI2b2WebService {
 		String password = request.getHeader("password");
 		String i2b2domain = request.getHeader("i2b2domain");
 		String i2b2domainUrl = request.getHeader("i2b2domainUrl");
-		
-		username="demo";
-		password="demouser";
-		i2b2domain="i2b2demo";
-		i2b2domainUrl="http://services.i2b2.org:9090/i2b2";
-		
-		if (username != null && password != null){ 
-			session.setAttribute("testAttr1", authId);
-			session.setAttribute("i2b2domain",i2b2domain);
-			session.setAttribute("i2b2domainUrl",i2b2domainUrl);
-			session.setAttribute("username",username);
-			session.setAttribute("password",password);
-			MetaResourceDb md = new MetaResourceDb();
-			/*MetaResourceSet MRS = getEGPatient();
-			System.out.println(((MetaResource) MRS.getMetaResource().get(0))
-					.getResource().getId());
 
-			md.addMetaResourceSet(MRS);
-			Resource r = md.getParticularResource(Patient.class, "1000000005");
-			System.out.println("res:" + FhirUtil.resourceToXml(r));
-			*/
+		username = "demo";
+		password = "demouser";
+		i2b2domain = "i2b2demo";
+		i2b2domainUrl = "http://services.i2b2.org:9090/i2b2";
+
+		if (username != null && password != null) {
+			session.setAttribute("testAttr1", authId);
+			session.setAttribute("i2b2domain", i2b2domain);
+			session.setAttribute("i2b2domainUrl", i2b2domainUrl);
+			session.setAttribute("username", username);
+			session.setAttribute("password", password);
+			MetaResourceDb md = new MetaResourceDb();
+			/*
+			 * MetaResourceSet MRS = getEGPatient();
+			 * System.out.println(((MetaResource) MRS.getMetaResource().get(0))
+			 * .getResource().getId());
+			 * 
+			 * md.addMetaResourceSet(MRS); Resource r =
+			 * md.getParticularResource(Patient.class, "1000000005");
+			 * System.out.println("res:" + FhirUtil.resourceToXml(r));
+			 */
 			session.setAttribute("md", md);
 
 			initAllPatients(session);
-			return Response.ok().entity("Auth successful."+authId
-			).type(MediaType.TEXT_PLAIN)
-			.header("session_id",  session.getId())
-			.build();
+			return Response.ok().entity("Auth successful." + authId)
+					.type(MediaType.TEXT_PLAIN)
+					.header("session_id", session.getId()).build();
 		}
 		return Response.ok().entity("Auth failure")// .cookie(authIdCookie)
 				.build();
@@ -201,7 +206,6 @@ public class FromI2b2WebService {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getMedsForPatientSet(
 			@PathParam("resourceName") String resourceName,
-			@QueryParam("patientId") String patientId,
 			@QueryParam("_include") List<String> includeResources,
 			@QueryParam("filterf") String filterf,
 			// @HeaderParam("accept") String acceptHeader,
@@ -222,78 +226,53 @@ public class FromI2b2WebService {
 		}
 		String sa = (String) session.getAttribute("testAttr1");
 		System.out.println("gettestAttr1:" + sa);
-
-		md = (MetaResourceDb) session.getAttribute("md");
-		//Resource r = md.getParticularResource(Patient.class, "1000000005");
-		//System.out.println("Got res:" + FhirUtil.resourceToXml(r));
+		// Resource r = md.getParticularResource(Patient.class, "1000000005");
+		// System.out.println("Got res:" + FhirUtil.resourceToXml(r));
 		// return
 		// Response.ok().entity(sa).type(MediaType.TEXT_PLAIN).build();
 
 		// System.out.println("session attributes:"+session.getAttributeNames()
 		// .toString());
 
-		System.out.println("PatientId:" + patientId);
-		System.out.println("_include:" + includeResources.toArray());
+		// System.out.println("PatientId:" + patientId);
+		// requestStr= insertSessionParametersInXml(requestStr,session);
+		// if(1==1)return Response.ok().type(MediaType.APPLICATION_XML)
+		// .entity(requestStr).build();
 
-		String requestStr = Utils
-				.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		if (patientId != null)
-			requestStr = requestStr.replaceAll("PATIENTID", patientId);
-		//requestStr= insertSessionParametersInXml(requestStr,session);
-		//if(1==1)return Response.ok().type(MediaType.APPLICATION_XML)
-			//.entity(requestStr).build();
+		MetaResourceSet s= new MetaResourceSet();
+		String patientId = extractPatientId(request.getQueryString());
+		scanQueryParametersToGetPdo(session, request.getQueryString());
+		md = (MetaResourceDb) session.getAttribute("md");
+
 		
-		Client client = ClientBuilder.newClient();
-		WebTarget webTarget = client
-				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
-		System.out.println("fetching from i2b2host...");
-		String oStr = webTarget
-				.request()
-				.accept("Context-Type", "application/xml")
-				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
-						String.class);
-		System.out.println("running transformation...");
-		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
-		// System.out.println(xQueryResultString);
-
-		//md.addMetaResourceSet(getEGPatient());
-
-		try {
-		
-			MetaResourceSet s = MetaResourceSetTransform
-					.MetaResourceSetFromXml(xQueryResultString);
-			System.out.println("adding to memory...");
-			md.addMetaResourceSet(s);
-
-			s = md.getIncludedMetaResources(c, includeResources);
-
+		//filter if patientId is mentioned in query string
+		if (patientId != null) {
 			HashMap<String, String> filter = new HashMap<String, String>();
-			filter.put("Patient", "Patient/1000000005");
+			filter.put("Patient", "Patient/"+patientId);
 			System.out.println("running filter...");
-			MetaResourceSet s1 = new MetaResourceSet();
-			if (filterf != null) {
-				s = md.filterMetaResources(MedicationStatement.class, filter);
-			}
-			
-			System.out.println("getting bundle string...");
-			
-			String returnString = FhirUtil
-					.getResourceBundleFromMetaResourceSet(s,
-							"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
-			System.out.println("returning response...");
-			
-			returnString=Utils.getStringFromDocument(Utils.xmltoDOM(returnString.replaceAll("(?m)^[ \t]*\r?\n", "")));
-
-			return Response.ok().type(MediaType.APPLICATION_XML)
-					.entity(returnString).build();
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
+			//XXX filter has to be translated to correct "Patient" path based on class
+			s = md.filterMetaResources(c, filter);
 		}
-		return Response.status(Status.BAD_REQUEST)
-				.header("xreason", "some ERROR").build();
+		
+		System.out.println("including...._include:" + includeResources.toString());
+		if(s.getMetaResource().size()>0){
+			s = md.getIncludedMetaResources(c,s, includeResources);
+		}
+		
+		System.out.println("getting bundle string...");
+
+		String returnString = FhirUtil.getResourceBundleFromMetaResourceSet(s,
+				"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
+		System.out.println("returning response...");
+
+		returnString = Utils.getStringFromDocument(Utils.xmltoDOM(returnString
+				.replaceAll("(?m)^[ \t]*\r?\n", "")));
+
+		return Response.ok().type(MediaType.APPLICATION_XML)
+				.entity(returnString).build();
+
+		// return Response.status(Status.BAD_REQUEST)
+		// .header("xreason", "some ERROR").build();
 	}
 
 	@GET
@@ -309,39 +288,42 @@ public class FromI2b2WebService {
 					.type(MediaType.APPLICATION_XML).entity("login first ")
 					.build();
 		}
-		
-		MetaResourceSet s=initAllPatients(session);
-		
+
+		MetaResourceSet s = initAllPatients(session);
+
 		String returnString = FhirUtil.getResourceBundleFromMetaResourceSet(s,
 				"http://localhost:8080/fhir-server-api-mvn/resources/i2b2/");
 
-		returnString=Utils.getStringFromDocument(Utils.xmltoDOM(returnString.replaceAll("(?m)^[ \t]*\r?\n", "")));
+		returnString = Utils.getStringFromDocument(Utils.xmltoDOM(returnString
+				.replaceAll("(?m)^[ \t]*\r?\n", "")));
 		return Response.ok().type(MediaType.APPLICATION_XML)
-				.header("session_id",  session.getId())
-				.entity(returnString).build();
+				.header("session_id", session.getId()).entity(returnString)
+				.build();
 
 	}
 
-	private MetaResourceSet initAllPatients(HttpSession session ) throws JAXBException {
-				if (session == null) {
-					return new MetaResourceSet();
-				}
+	private MetaResourceSet initAllPatients(HttpSession session)
+			throws JAXBException {
+		if (session == null) {
+			return new MetaResourceSet();
+		}
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		if(session==null ) throw new RuntimeException("session is null")	;
-		
+		if (session == null)
+			throw new RuntimeException("session is null");
+
 		String sa = (String) session.getAttribute("testAttr1");
 		System.out.println("gettestAttr1:" + sa);
-		if(md==null) throw new RuntimeException("md is null")	;
-		
-		
+		if (md == null)
+			throw new RuntimeException("md is null");
+
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
 				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
-		requestStr= insertSessionParametersInXml(requestStr,session);
-		
+		requestStr = insertSessionParametersInXml(requestStr, session);
+
 		String oStr = webTarget
 				.request()
 				.accept("Context-Type", "application/xml")
@@ -349,11 +331,13 @@ public class FromI2b2WebService {
 						String.class);
 		System.out.println("got::"
 				+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
-		
+
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
-		System.out.println("Got xQueryResultString :"+xQueryResultString );
-		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xQueryResultString);
-		System.out.println("Got MetaResourceSet  of size:"+s.getMetaResource().size());
+		System.out.println("Got xQueryResultString :" + xQueryResultString);
+		MetaResourceSet s = MetaResourceSetTransform
+				.MetaResourceSetFromXml(xQueryResultString);
+		System.out.println("Got MetaResourceSet  of size:"
+				+ s.getMetaResource().size());
 		md.addMetaResourceSet(s);
 		return s;
 	}
@@ -369,7 +353,8 @@ public class FromI2b2WebService {
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request)
-			throws DatatypeConfigurationException, ParserConfigurationException, SAXException, IOException {
+			throws DatatypeConfigurationException,
+			ParserConfigurationException, SAXException, IOException {
 
 		HttpSession session = request.getSession();
 		if (session == null) {
@@ -379,7 +364,7 @@ public class FromI2b2WebService {
 		}
 
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		
+
 		// request.getSession().setAttribute(CART_SESSION_KEY, cartBean);
 		String msg = null;
 		Resource r = null;
@@ -399,9 +384,10 @@ public class FromI2b2WebService {
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
-			msg=Utils.getStringFromDocument(Utils.xmltoDOM(msg.replaceAll("(?m)^[ \t]*\r?\n", "")));
+			msg = Utils.getStringFromDocument(Utils.xmltoDOM(msg.replaceAll(
+					"(?m)^[ \t]*\r?\n", "")));
 
-			return Response.ok(msg).header("session_id",  session.getId())
+			return Response.ok(msg).header("session_id", session.getId())
 					.build();
 		} else {
 			return Response
@@ -434,7 +420,7 @@ public class FromI2b2WebService {
 		md1.setLastUpdated(DatatypeFactory.newInstance()
 				.newXMLGregorianCalendar(gc));
 
-		//md1.setId(p.getId());
+		// md1.setId(p.getId());
 
 		MetaResource mr1 = new MetaResource();
 		mr1.setResource((Resource) p);
@@ -461,7 +447,7 @@ public class FromI2b2WebService {
 
 		MetaResource mr1 = new MetaResource();
 		MetaData md1 = new MetaData();
-		//md1.setId(p.getId());
+		// md1.setId(p.getId());
 		mr1.setResource(p);
 		mr1.setMetaData(md1);
 		GregorianCalendar gc = new GregorianCalendar();
@@ -471,7 +457,7 @@ public class FromI2b2WebService {
 
 		MetaResource mr2 = new MetaResource();
 		MetaData md2 = new MetaData();
-		//md2.setId(ms.getId());
+		// md2.setId(ms.getId());
 		mr2.setResource(ms);
 		mr2.setMetaData(md2);
 		md2.setLastUpdated(DatatypeFactory.newInstance()
@@ -480,27 +466,113 @@ public class FromI2b2WebService {
 		s1.getMetaResource().add(mr2);
 		return s1;
 	}
-	
-	private static String insertSessionParametersInXml(String xml,HttpSession session){
-		String username=(String) session.getAttribute("username");
-		String password=(String) session.getAttribute("password");
-		String i2b2domain=(String) session.getAttribute("i2b2domain");
-		String i2b2domainUrl=(String) session.getAttribute("i2b2domainUrl");
-		
-		xml=replaceXMLString(xml,"//security/username",username);
-		xml=replaceXMLString(xml,"//security/password",password);
-		xml=replaceXMLString(xml,"//security/domain",i2b2domain);
-		xml=replaceXMLString(xml,"//proxy/redirect_url",i2b2domainUrl+"/services/QueryToolService/pdorequest");
-		//System.out.println("returning xml:"+xml);
+
+	private static String insertSessionParametersInXml(String xml,
+			HttpSession session) {
+		String username = (String) session.getAttribute("username");
+		String password = (String) session.getAttribute("password");
+		String i2b2domain = (String) session.getAttribute("i2b2domain");
+		String i2b2domainUrl = (String) session.getAttribute("i2b2domainUrl");
+
+		xml = replaceXMLString(xml, "//security/username", username);
+		xml = replaceXMLString(xml, "//security/password", password);
+		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
+		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
+				+ "/services/QueryToolService/pdorequest");
+		// System.out.println("returning xml:"+xml);
 		return xml;
 	}
-	
-	private  static String replaceXMLString(String xmlInput,String path, String value){
-		String query ="copy $c := root()\n"
-				+ "modify ( replace value of node $c"+path+" with \"" + value +"\")\n"
-				+" return $c";
-		System.out.println("query:"+query);
+
+	private static String replaceXMLString(String xmlInput, String path,
+			String value) {
+		String query = "copy $c := root()\n"
+				+ "modify ( replace value of node $c" + path + " with \""
+				+ value + "\")\n" + " return $c";
+		System.out.println("query:" + query);
 		return XQueryUtil.processXQuery(query, xmlInput);
+	}
+
+	private void scanQueryParametersToGetPdo(HttpSession session,
+			String queryString) {
+		if (queryString != null) {
+			String pid = extractPatientId(queryString);
+			System.out.println("will fetch Patient with id:" + pid);
+			getPdo(session, pid);
+
+		}
+	}
+
+	private static String extractPatientIdFromQuery(HashMap<String, String> hm) {
+		String id = null;
+		for (String k : hm.keySet()) {
+			String v = hm.get(k);
+			String kv = k + "=" + v;
+			id = extractPatientId(kv);
+			if (id != null)
+				return id;
+		}
+		return id;
+	}
+
+	private static String extractPatientId(String input) {
+		if(input==null) return null;
+		String id = null;
+		Pattern p = Pattern.compile("[P|p]atient=([a-zA-Z0-9]+)");
+		Matcher m = p.matcher(input);
+
+		if (m.find()) {
+			id = m.group(1);
+			System.out.println(id);
+		}
+		return id;
+	}
+
+	private void getPdo(HttpSession session, String patientId) {
+		PDOcallHistory=(ArrayList<String>)session.getAttribute("PDOcallHistory");
+		if (PDOcallHistory==null) {
+			PDOcallHistory=new ArrayList<String>();
+			session.setAttribute("PDOcallHistory",PDOcallHistory);
+		}
+		if(PDOcallHistory.contains(patientId)) {
+			System.out.println("patient already present:"+patientId);
+			return;//avoid recall on historical patient
+		}
+		PDOcallHistory.add(patientId);
+		
+		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+
+		String requestStr = Utils
+				.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
+		String query = Utils
+				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+		if (patientId != null)
+			requestStr = requestStr.replaceAll("PATIENTID", patientId);
+
+		Client client = ClientBuilder.newClient();
+		WebTarget webTarget = client
+				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+		System.out.println("fetching from i2b2host...");
+		String oStr = webTarget
+				.request()
+				.accept("Context-Type", "application/xml")
+				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
+						String.class);
+		System.out.println("running transformation...");
+		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
+		// System.out.println(xQueryResultString);
+
+		// md.addMetaResourceSet(getEGPatient());
+
+		try {
+
+			MetaResourceSet s = MetaResourceSetTransform
+					.MetaResourceSetFromXml(xQueryResultString);
+			System.out.println("adding to memory...");
+			md.addMetaResourceSet(s);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+
+		}
 	}
 
 }
