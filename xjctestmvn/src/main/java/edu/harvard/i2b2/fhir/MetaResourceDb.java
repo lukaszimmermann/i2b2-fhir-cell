@@ -253,13 +253,13 @@ public class MetaResourceDb {
 	}
 
 	public MetaResourceSet getIncludedMetaResources(Class c,
-			List<String> includeResources) throws IllegalAccessException,
+			MetaResourceSet inputSet, List<String> includeResources) throws IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException {
-		MetaResourceSet s = new MetaResourceSet();
-		List<MetaResource> list = s.getMetaResource();
+		//MetaResourceSet s = new MetaResourceSet();
+		List<MetaResource> list = inputSet.getMetaResource();
 		// list.addAll(metaResourceDb.getAll(Medication.class));
-		list.addAll(this.getAll(c));
+		//list.addAll(this.getAll(c));
 		// XXX include dependent resources based on include portion of query
 		// XXX to make the resource id accessible via cRud(readOnly) webservice
 
@@ -270,7 +270,7 @@ public class MetaResourceDb {
 		for (String ir : includeResources) {
 			String methodName = ir.split("\\.")[1];
 			System.out.println("MethodName:" + methodName);
-			for (MetaResource mr : s.getMetaResource()) {
+			for (MetaResource mr : inputSet.getMetaResource()) {
 				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,methodName)).getReference().getValue();
 
 				System.out.println("Found dep:" + id);
@@ -286,7 +286,7 @@ public class MetaResourceDb {
 		}
 		list.addAll(sInclusions);
 
-		return s;
+		return inputSet;
 	}
 
 	public MetaResourceSet filterMetaResources(Class c,
@@ -312,7 +312,9 @@ public class MetaResourceDb {
 					System.out.println("filterinput child:NULL");
 				}
 				if (child != null && child.getId().equals(v)) {
+					System.out.println("adding:"+r.getId());
 					list.add(mr);
+					continue;
 				}
 			/*
 				String childStr = (String) getValueOfFirstLevelChild(mr,
