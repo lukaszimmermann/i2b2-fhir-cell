@@ -25,25 +25,19 @@
 	
 	function getAuth() {
 	
-	$.ajax({
-      url: 'http://localhost:8080/fhir-server-api-mvn/resources/i2b2/login',
-      type: 'POST',
-  	   data: $("form1").serialize(), // serializes the form's elements.
-  	   dataType: 'text',
-           success: function(data)
-           {
-               alert(data); // show response from the php script.
-           },
-           error: function(data)
-           {
-               alert(data); // show response from the php script.
-           }
-        });
+       $.post("http://localhost:8080/fhir-server-api-mvn/resources/i2b2/login",$( "#form1" ).serialize() 
+       , function(data, textStatus, xhr){
+ 	sessionId=xhr.getResponseHeader('session_id');
+ 	alert(sessionId);
+ 	
+ 	setXmlDisplay(data);
+ 	getPatients();
+});
 };
 
 function getPatients() {
 		$.ajax({
-			url : 'http://localhost:8080/fhir-server-api-mvn/resources/i2b2/Patient;jsessionid='+sessionId,
+			url : 'http://localhost:8080/fhir-server-api-mvn/resources/i2b2/patientall;jsessionid='+sessionId,
 			xhrFields: {
       			withCredentials: true
    			},
@@ -115,10 +109,10 @@ function getPatients() {
 	<div id=myform
 		style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;">
 		<form id=form1 enctype="application/x-www-form-urlencoded" action="http://localhost:8080/fhir-server-api-mvn/resources/i2b2/login">
-			Username:<input type="text" name="username" value="demo">
-			Password:<input type="text" name="password" value="demouser">
-			I2B2Domain:<input type="text" name="i2b2domain" value="i2b2demo">
-			I2B2Url:<input type="text" name="i2b2url"
+			Username:<input type="text"  id="username" name="username" value="demo">
+			Password:<input type="text" id="password" name="password" value="demouser">
+			I2B2Domain:<input type="text" id="i2b2domain" name="i2b2domain" value="i2b2demo">
+			I2B2Url:<input type="text" id="i2b2url" name="i2b2url"
 				value="http://services.i2b2.org:9090/i2b2"> <input
 				type="submit" value="Submit">
 
