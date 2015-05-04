@@ -27,9 +27,8 @@
 	
        $.post("http://localhost:8080/fhir-server-api-mvn/resources/i2b2/login",$( "#form1" ).serialize() 
        , function(data, textStatus, xhr){
+ 	//alert(data);
  	sessionId=xhr.getResponseHeader('session_id');
- 	alert(sessionId);
- 	
  	setXmlDisplay(data);
  	getPatients();
 });
@@ -45,14 +44,20 @@ function getPatients() {
 			dataType: 'text',
 			success : function(data) {
 				//alert( );
-				setXmlDisplay2(data);
+				setXmlDisplay(data);
 			}
 		});
 	};
 
 	function setXmlDisplay(displayText) {
 		var te_html = document.getElementById("code-xml");
+		if(cm!=null) {
+			cm.toTextArea();
+			cm=null;
+		}
 		te_html.value = displayText;
+		
+		if(cm==null){
 		cm = CodeMirror.fromTextArea(te_html, {
 			mode : "text/xml",
 			lineNumbers : true,
@@ -65,29 +70,11 @@ function getPatients() {
 			foldGutter : true,
 			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
 		});
+		}
+		 
+		
 	};
 	
-	function setXmlDisplay2(displayText) {
-		var old_te_html = document.getElementById("code-xml");
-		old_te_html.parentNode.style.display="none";
-		
-		var te_html = document.getElementById("code-xml2");
-		te_html.value = displayText;
-		te_html.parentNode.style.display="block";
-		cm = CodeMirror.fromTextArea(te_html, {
-			mode : "text/xml",
-			lineNumbers : true,
-			lineWrapping : true,
-			extraKeys : {
-				"Ctrl-Q" : function(cm) {
-					cm.foldCode(cm.getCursor());
-				}
-			},
-			foldGutter : true,
-			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
-		});
-		
-	}
 	
 	
 </script>
@@ -106,36 +93,44 @@ function getPatients() {
 -->
 
 	</div>
-	<div id=myform
-		style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;">
-		<form id=form1 enctype="application/x-www-form-urlencoded" action="http://localhost:8080/fhir-server-api-mvn/resources/i2b2/login">
-			Username:<input type="text"  id="username" name="username" value="demo">
-			Password:<input type="text" id="password" name="password" value="demouser">
-			I2B2Domain:<input type="text" id="i2b2domain" name="i2b2domain" value="i2b2demo">
-			I2B2Url:<input type="text" id="i2b2url" name="i2b2url"
-				value="http://services.i2b2.org:9090/i2b2"> <input
-				type="submit" value="Submit">
+		<div style="text-align: center;vertical-align: middle;color: #E00000 ">
+		Fhir-Api for I2b2
+<a href="http://www.hl7.org/FHIR/"><img src="../../images/fhir-logo-www.png"></a>
+<a href="http://smarthealthit.org/"><img src="../../images/SMART_logo.png" width="80" height="60"></a>
+<a href="http://i2b2.org/"><img src="../../images/i2b2.jpg" width="150" height="54"></a>
 
-		</form>
-	</div>
+</div>
 	<article>
-		<h2>Code Folding Demo</h2>
+		<h2></h2>
 		<form>
 
 			<div
-				style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;">
+				style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;text-align: left;">
 				XML:<br>
-				<textarea id="code-xml"></textarea>
+				<textarea style="text-align: left;" id="code-xml"></textarea>
 			</div>
 
 			<div
 				style="max-width: 100em; margin-bottom: 1em; display: none; font-size: 10px;">
-				XML2:<br>
-				<textarea id="code-xml2"></textarea>
+				
 			</div>
 		</form>
-		<script>
+		
+	<div style="text-align: center;">
+		<form id=form1 method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
+		action="javascript:getAuth()">
+			Username<input type="text"  id="username" name="username" value="demo">
+			Password<input type="text" id="password" name="password" value="demouser">
+			I2B2Domain<input type="text" id="i2b2domain" name="i2b2domain" value="i2b2demo">
+			I2B2Url<input type="text" id="i2b2url" name="i2b2url"
+				value="http://services.i2b2.org:9090/i2b2">
+			<input type="submit" value="Submit">
+
+		</form>
+			</div>
+	</article>
+	<script>
 			window.onload = getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
 		</script>
-	</article>
+	
 </body>

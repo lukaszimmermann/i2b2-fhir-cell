@@ -170,7 +170,7 @@ public class FromI2b2WebService {
 				session.setAttribute("i2b2domain", i2b2domain);
 				session.setAttribute("i2b2domainUrl", i2b2url);
 				session.setAttribute("username", username);
-				session.setAttribute("password", password);
+				session.setAttribute("password" , password);
 				MetaResourceDb md = new MetaResourceDb();
 				session.setAttribute("md", md);
 
@@ -178,17 +178,17 @@ public class FromI2b2WebService {
 				return Response.ok().entity("Auth successful." )
 						.type(MediaType.TEXT_PLAIN)
 						.header("session_id", session.getId()).build();
-			}
+			}     
 		} catch (AuthenticationFailure e) {
 			
 			return Response.ok().entity("Auth failure")// .cookie(authIdCookie)
-					.build();
+					.header("session_id", session.getId()).build();
 
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
 		return Response.ok().entity("Unknown ERROR")// .cookie(authIdCookie)
-				.build();
+				.header("session_id", session.getId()).build();
 		}
 
 	
