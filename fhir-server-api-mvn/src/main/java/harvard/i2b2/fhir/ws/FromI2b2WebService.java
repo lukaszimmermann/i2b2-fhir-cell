@@ -77,7 +77,7 @@ import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
-@Path("i2b2")
+@Path("a")
 public class FromI2b2WebService {
 	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
@@ -178,7 +178,7 @@ public class FromI2b2WebService {
 				return Response.ok().entity("Auth successful." )
 						.type(MediaType.TEXT_PLAIN)
 						.header("session_id", session.getId()).build();
-			}     
+			}      
 		} catch (AuthenticationFailure e) {
 			
 			return Response.ok().entity("Auth failure")// .cookie(authIdCookie)
@@ -308,11 +308,10 @@ public class FromI2b2WebService {
 				.replaceAll("(?m)^[ \t]*\r?\n", "")));
 
 		return Response.ok().type(MediaType.APPLICATION_XML)
+				.header("session_id", session.getId())
 				.entity(returnString).build();
-
-		// return Response.status(Status.BAD_REQUEST)
-		// .header("xreason", "some ERROR").build();
 	}
+	
 
 	@GET
 	@Path("patientall")
@@ -445,6 +444,7 @@ public class FromI2b2WebService {
 					.noContent()
 					.header("xreason",
 							resourceName + " with id:" + id + " NOT found")
+							.header("session_id", session.getId())
 					.build();
 		}
 	}
