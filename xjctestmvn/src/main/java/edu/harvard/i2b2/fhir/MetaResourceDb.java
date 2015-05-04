@@ -105,7 +105,7 @@ public class MetaResourceDb {
 			MultivaluedMap<String, String> qp// Query Parameters
 	) {
 		List<MetaResource> list = new ArrayList<MetaResource>();
-		for (MetaResource p : getAll(c)) {
+		for (MetaResource p : getAll(c).getMetaResource()) {
 			for (String k : qp.keySet()) {
 				Object returnValue = null;
 				String returnStr = null;
@@ -159,14 +159,15 @@ public class MetaResourceDb {
 
 	}
 
-	public List<MetaResource> getAll(Class c) {
-		List<MetaResource> list = new ArrayList<MetaResource>();
+	public MetaResourceSet getAll(Class c) {
+		MetaResourceSet  s= new MetaResourceSet();
+		List<MetaResource> list = s.getMetaResource();
 		for (MetaResource p : metaResources) {
 			if (c.isInstance(p.getResource())) {
 				list.add(p);
 			}
 		}
-		return list;
+		return s;
 	}
 
 	public Resource getParticularResource(Class c, String id) {
@@ -297,7 +298,7 @@ public class MetaResourceDb {
 		List<MetaResource> list = s.getMetaResource();
 
 		System.out.println("filtering by:");
-		for (MetaResource mr : this.getAll(c)) {
+		for (MetaResource mr : this.getAll(c).getMetaResource()) {
 			Resource r = mr.getResource();
 			System.out.println("filtering on:" + r.getId());
 
