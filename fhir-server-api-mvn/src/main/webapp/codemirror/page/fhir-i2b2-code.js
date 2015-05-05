@@ -37,7 +37,8 @@
            theDiv.innerHTML = theDiv.innerHTML +
           // '<a href="#Foo" onclick="return runMyFunction(\''+d.getUrl()+'\'); " >'+d.getMsg()+'</a><hr>';
           // '<button style="width:40px;">Some really long text that is more than 20px</button>';
-        '<button type=button  onclick="return runMyFunction(\''+d.getUrl()+'\',this); " onmouseover="" >'+d.getMsg()+'</button> ';
+        '<button type=button  onclick="return runMyFunction(\''+d.getUrl()+'\'); "  >'+d.getMsg()+'</button> ';
+       //    '<button type=button  onclick="return runMyFunction(\''d.getId()+'\',this); " >'+d.getMsg()+'</button> ';
          //  theDiv.innerHTML = "hi"
 	}
     

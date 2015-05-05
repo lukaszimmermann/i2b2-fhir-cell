@@ -1,7 +1,7 @@
 <!doctype html>
 
 <head>
-<title>CodeMirror: Code Folding Demo</title>
+<title>Fhir API for I2b2</title>
 <meta charset="utf-8" />
 <link rel=stylesheet href="../doc/docs.css">
 
@@ -31,14 +31,15 @@
 		runMyFunction(document.getElementById("url_bar").value);
 	}
 	
-	function runMyFunction(url,buttonClicked) {
-	
+	function runMyFunction(url) {
+		//var ds=document.getElementById(id);
+	//url=ds.getId();
 	//this.setAttribute("class", "button_active");
 	//include jsession id in the url
-	$("nav").click(function(){
-  	  $("button").removeClass("button-active");
-	});
-	buttonClicked.setAttribute("class","button-active");
+	//$("nav").click(function(){
+  	  //$("button").removeClass("button-active");
+	//});
+	//buttonClicked.setAttribute("class","button-active");
 	var url_bar_elem=document.getElementById("url_bar");
 	url_bar_elem.value=url;
 	
@@ -87,7 +88,7 @@
  			setXmlDisplay(data);
  			if(data!="Authentication Failure"){
  				//alert("gotdata no AF");
- 				getPatients();
+ 				runMyFunction("http://localhost:8080/fhir-server-api-mvn/a/a/Patient");
  			}else{
  				alert("Authentication Failure");
  			}
@@ -113,22 +114,6 @@ function computeResponseTime(){
 	responseTime=Date.now()-startTime;
 	document.getElementById("time_bar").value=responseTime+"ms";
 }
-function getPatients() {
-		$.ajax({
-			url : 'http://localhost:8080/fhir-server-api-mvn/a/a/patientall;jsessionid='+sessionId,
-			xhrFields: {
-      			withCredentials: true
-   			},
-			type : 'GET',
-			dataType: 'text',
-			success :function(data, textStatus, xhr){
-				//alert( );
-				sessionId=xhr.getResponseHeader('session_id');
- 	
-				setXmlDisplay(data);
-			}
-		});
-	};
 	function setXmlDisplay(displayText) {
 		var te_html = document.getElementById("code-xml");
 		if(cm!=null) {
@@ -177,7 +162,8 @@ nav {
 section {
     width:70%;
     float:left;
-    padding:10px;	 	 
+    padding:10px;	
+     font-size: 12px; 	 
 }
 footer {
     background-color:black;
@@ -232,7 +218,7 @@ button:hover{
 
 	<input style="text-align: left;background-color:#FFFFE0;padding:2pt;display:inline;border-size:0pt;font-size: 10px;font-style: italic;" id="msg_bar" size="80"></input>
 	
-		<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
+		<br>URL:<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
 		action="javascript:runMyFunction2()" >
 		<input style="text-align: left;" id="url_bar" size="150"></input>
 			<input  type="submit" value="Submit">
