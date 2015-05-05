@@ -3,10 +3,10 @@
 <head>
 <title>Fhir API for I2b2</title>
 <meta charset="utf-8" />
-<link rel=stylesheet href="../doc/docs.css">
+<link rel=stylesheet href="codemirror/doc/docs.css">
 
-<link rel="stylesheet" href="../lib/codemirror.css">
-<link rel="stylesheet" href="../addon/fold/foldgutter.css" />
+<link rel="stylesheet" href="codemirror/lib/codemirror.css">
+<link rel="stylesheet" href="codemirror/addon/fold/foldgutter.css" />
 <script src="codemirror/lib/codemirror.js"></script>
 <script src="codemirror/addon/fold/foldcode.js"></script>
 <script src="codemirror/addon/fold/foldgutter.js"></script>
@@ -32,6 +32,9 @@
 	}
 	
 	function runMyFunction(url) {
+		setXmlDisplay("...connecting to i2b2 server") ;
+		setMsg("...connecting to i2b2 server");
+		
 		//var ds=document.getElementById(id);
 	//url=ds.getId();
 	//this.setAttribute("class", "button_active");
@@ -115,6 +118,7 @@ function computeResponseTime(){
 	document.getElementById("time_bar").value=responseTime+"ms";
 }
 	function setXmlDisplay(displayText) {
+	
 		var te_html = document.getElementById("code-xml");
 		if(cm!=null) {
 			cm.toTextArea();
@@ -137,7 +141,7 @@ function computeResponseTime(){
 		});
 		}
 		 
-		
+		setMsg("Select a use case on the left, to get response below...");
 	};
 	
 	
@@ -216,13 +220,13 @@ button:hover{
 </nav>
 <section>
 
-	<input style="text-align: left;background-color:#FFFFE0;padding:2pt;display:inline;border-size:0pt;font-size: 10px;font-style: italic;" id="msg_bar" size="80"></input>
+	<input style="text-align: left;background-color:#FFFFE0;padding:2pt;display:inline;border: 0px solid;font-size: 10px;font-style: italic;" id="msg_bar" size="80"></input>
 	
-		<br>URL:<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
+		<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
 		action="javascript:runMyFunction2()" >
-		<input style="text-align: left;" id="url_bar" size="150"></input>
+		<br>URL:<input style="text-align: left;" id="url_bar" size="150"></input>
 			<input  type="submit" value="Submit">
-	<input style="text-align: left;" id="time_bar" size="7"></input>
+	<input style="text-align: left;background-color:#E0EBFF;border: 0px solid;" id="time_bar" size="7" readonly></input>
 			
 
 		</form>
@@ -254,10 +258,11 @@ button:hover{
 		</form>
 		<footer>
 	<script>
+			setXmlDisplay("..loading");
 			getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
 			setMsg("Select a use case on the left, to get response below...");
 			</script>
-		<script src="codemirror/page/fhir-i2b2-code.js"></script>
+		<script src="fhir-i2b2-code.js"></script>
 		
 	
 </body>
