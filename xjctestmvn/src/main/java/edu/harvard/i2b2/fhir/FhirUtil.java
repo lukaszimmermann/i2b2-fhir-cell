@@ -118,8 +118,8 @@ public class FhirUtil {
 		return resList;
 	}
 
-	public static String getResourceBundleFromMetaResourceSet(
-			MetaResourceSet s, String uriInfoString) {
+	public static String getResourceBundle(
+			MetaResourceSet s, String uriInfoString,String urlString) {
 		String fhirBase = uriInfoString;
 
 		Abdera abdera = new Abdera();
@@ -130,18 +130,18 @@ public class FhirUtil {
 		try {
 
 			feed.setId(uriInfoString);
-			feed.setTitle("all class" + " bundle");
+			feed.setTitle("Query result");
 			feed.setUpdated(new Date());
 			feed.addExtension("http://www.w3.org/2005/Atom", "published", null)
 					.setText(new Date().toGMTString());
+			feed.addLink(urlString).setAttributeValue("rel", "query");
 			feed.addLink(uriInfoString).setAttributeValue("rel", "self");
 			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
 
 			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result",
 					"os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
-			// for(Resource r:resourcedb.getAll(c)){
-
+		
 			if (hmJaxbc == null) {
 				hmJaxbc = new HashMap<Class, JAXBContext>();
 
