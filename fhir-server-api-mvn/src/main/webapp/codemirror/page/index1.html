@@ -1,20 +1,256 @@
-<html>
-<head>
-<script src="codemirror/lib/codemirror.js"></script>
-<link rel="stylesheet" href="../lib/codemirror.css">
-<script src="codemirror/mode/javascript/javascript.js"></script>
-<script>var myCodeMirror = CodeMirror(document.body);
-</script>
-</head>
-<center>
-<a href="http://www.hl7.org/FHIR/"><img src="images/fhir-logo-www.png"></a>
-<a href="http://smarthealthit.org/"><img src="images/SMART_logo.png" width="80" height="60"></a>
-<a href="http://i2b2.org/"><img src="images/i2b2.jpg" width="150" height="54"></a>
-</center>
-<hr>
-<br><br>
-<a href="http://localhost:8080/fhir-server-api-mvn/resources/i2b2/auth" target="_blank"> auth </a>
-<br>
-<a href="http://localhost:8080/fhir-server-api-mvn/resources/i2b2/patientall" target="_blank"> all patients </a>
+<!doctype html>
 
-</html>
+<head>
+<title>CodeMirror: Code Folding Demo</title>
+<meta charset="utf-8" />
+<link rel=stylesheet href="../doc/docs.css">
+
+<link rel="stylesheet" href="../lib/codemirror.css">
+<link rel="stylesheet" href="../addon/fold/foldgutter.css" />
+<script src="../lib/codemirror.js"></script>
+<script src="../addon/fold/foldcode.js"></script>
+<script src="../addon/fold/foldgutter.js"></script>
+<script src="../addon/fold/brace-fold.js"></script>
+<script src="../addon/fold/xml-fold.js"></script>
+<script src="../addon/fold/markdown-fold.js"></script>
+<script src="../addon/fold/comment-fold.js"></script>
+<script src="../mode/javascript/javascript.js"></script>
+<script src="../mode/xml/xml.js"></script>
+<script src="../mode/markdown/markdown.js"></script>
+<script type="text/javascript" src="../../lib/jquery-1.11.2.min.js"></script>
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+
+<script>
+	var sessionId="123";
+	var cm;
+	var responseTime=0;
+	
+	function runMyFunction2() {
+		runMyFunction(document.getElementById("url_bar").value);
+	}
+	
+	function runMyFunction(url) {
+	
+	//this.setAttribute("class", "button_active");
+	//include jsession id in the url
+	var url_bar_elem=document.getElementById("url_bar");
+	url_bar_elem.value=url;
+	
+	var urlparts = url.split('?');
+	var nurl=urlparts[0];
+	if(sessionId!='123'){nurl=nurl+';jsessionid='+sessionId;}
+	if (urlparts[1]!=undefined) {nurl=nurl+"?"+urlparts[1];}
+	startTime= Date.now();
+	
+	$.ajax({
+ 			url : nurl,
+			xhrFields: {
+      			withCredentials: true
+   			},
+			type : 'GET',
+			dataType: 'text',
+			timeout: 30000,
+			success :function(data, textStatus, xhr){
+				//alert( );
+				//sessionId=xhr.getResponseHeader('session_id');
+ 	
+				setXmlDisplay(data);
+				computeResponseTime();
+				
+				
+			},
+			error :function(data, textStatus, xhr){
+				alert("ERROR" );
+				//sessionId=xhr.getResponseHeader('session_id');
+ 	
+				setXmlDisplay(data);
+			}
+		});
+		//alert(nurl);
+ 	
+};
+	
+	function getAuth() {
+	startTime= Date.now();
+	
+       $.post("http://localhost:8080/fhir-server-api-mvn/a/a/auth",$( "#form1" ).serialize() 
+       , function(data, textStatus, xhr){
+ 			//alert(data);
+ 			sessionId=xhr.getResponseHeader('session_id');
+ 	
+ 			setXmlDisplay(data);
+ 			if(data!="Authentication Failure"){
+ 				//alert("gotdata no AF");
+ 				getPatients();
+ 			}else{
+ 				alert("Authentication Failure");
+ 			}
+ 			computeResponseTime();
+		})
+		.done(function() {
+  			  //alert( "second success" );
+ 		 })
+ 		 .fail(function() {
+  			  alert( "error: possibly i2b2 server not reachable" );
+ 		 })
+ 		 .always(function() {
+ 		   	//alert( "finished" );
+		})
+		
+};
+function computeResponseTime(){
+	responseTime=Date.now()-startTime;
+	document.getElementById("time_bar").value=responseTime+"ms";
+}
+function getPatients() {
+		$.ajax({
+			url : 'http://localhost:8080/fhir-server-api-mvn/a/a/patientall;jsessionid='+sessionId,
+			xhrFields: {
+      			withCredentials: true
+   			},
+			type : 'GET',
+			dataType: 'text',
+			success :function(data, textStatus, xhr){
+				//alert( );
+				sessionId=xhr.getResponseHeader('session_id');
+ 	
+				setXmlDisplay(data);
+			}
+		});
+	};
+	function setXmlDisplay(displayText) {
+		var te_html = document.getElementById("code-xml");
+		if(cm!=null) {
+			cm.toTextArea();
+			cm=null;
+		}
+		te_html.value = displayText;
+		
+		if(cm==null){
+		cm = CodeMirror.fromTextArea(te_html, {
+			mode : "text/xml",
+			lineNumbers : true,
+			lineWrapping : true,
+			extraKeys : {
+				"Ctrl-Q" : function(cm) {
+					cm.foldCode(cm.getCursor());
+				}
+			},
+			foldGutter : true,
+			gutters : [ "CodeMirror-linenumbers", "CodeMirror-foldgutter" ]
+		});
+		}
+		 
+		
+	};
+	
+	
+	
+</script>
+<style>
+header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:15px;	 
+}
+nav {
+    line-height:30px;
+    background-color:#eeeeee;
+    height:300px;
+    width:200px;
+    float:left;
+    padding:5px;
+    font-size: 80%;	      
+}
+section {
+    width:70%;
+    float:left;
+    padding:10px;	 	 
+}
+footer {
+    background-color:black;
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px;
+    font-size: 10px;	 	 
+}
+
+button{
+	width:100%;
+	background-color:#E0EBFF;//#D8D8D8; 
+	//background-color:blue; 
+	
+}
+
+button:hover{
+	width:100%;
+	background-color:#C2D6FF;//#99CCFF ; 
+}
+
+
+</style>
+</head>
+
+<body>
+		<header>
+		<div align="left" style="vertical-align: middle;color: #E00000;font-size: 25px;display: inline;padding:10%;">Fhir-Api for I2b2
+		</div>
+		<div align="right" style="vertical-align: middle;color: #E00000;font-size: 25px;display: inline">
+		<a href="http://www.hl7.org/FHIR/"><img src="../../images/fhir-logo-www.png"></a>
+<a href="http://smarthealthit.org/"><img src="../../images/SMART_logo.png" width="80" height="60"></a>
+<a href="http://i2b2.org/"><img src="../../images/i2b2.jpg" width="150" height="54"></a>
+</div>
+</header>
+
+<nav>
+<div id="nav1">
+ 
+ </div>
+</nav>
+	<section>
+		<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
+		action="javascript:runMyFunction2()" >
+		<input style="text-align: left;" id="url_bar" size="150"></input>
+			<input  type="submit" value="Submit">
+	<input style="text-align: left;" id="time_bar" size="7"></input>
+			
+
+		</form>
+		
+	
+		
+			<div
+				style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;text-align: left;">
+				Server response:<br>
+				<textarea style="text-align: left;" id="code-xml"></textarea>
+			</div>
+
+			<div
+				style="max-width: 100em; margin-bottom: 1em; display: none; font-size: 10px;">
+				
+			</div>
+	</section>
+		
+	<footer>
+		<form id=form1 method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
+		action="javascript:getAuth()">
+			Username:<input type="text"  id="username" name="username" value="demo">
+			Password:<input type="text" id="password" name="password" value="demouser">
+			I2B2Domain:<input type="text" id="i2b2domain" name="i2b2domain" value="i2b2demo">
+			I2B2Url:<input type="text" id="i2b2url" name="i2b2url"
+				value="http://services.i2b2.org:9090/i2b2">
+			<input type="submit" value="Submit">
+
+		</form>
+		<footer>
+	<script>
+			window.onload = getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
+		</script>
+		<script src="fhir-i2b2-code.js"></script>
+		
+	
+</body>
