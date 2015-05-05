@@ -181,11 +181,16 @@ public class FromI2b2WebService {
 			}      
 		} catch (AuthenticationFailure e) {
 			
-			return Response.ok().entity("Auth failure")// .cookie(authIdCookie)
+			return Response.ok().entity("Authentication Failure")// .cookie(authIdCookie)
+					.type(MediaType.TEXT_PLAIN)
 					.header("session_id", session.getId()).build();
 
 		} catch (JAXBException e) {
 			e.printStackTrace();
+			return Response.ok().entity("Authentication Failure")// .cookie(authIdCookie)
+					.type(MediaType.TEXT_PLAIN)
+					.header("session_id", session.getId()).build();
+
 		}
 		return Response.ok().entity("Unknown ERROR")// .cookie(authIdCookie)
 				.header("session_id", session.getId()).build();
@@ -353,12 +358,12 @@ public class FromI2b2WebService {
 		System.out.println("gettestAttr1:" + sa);
 		if (md == null)
 			throw new RuntimeException("md is null");
-
+		String i2b2Url= (String) session.getAttribute("i2b2domainUrl");	
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
-				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+				.target(i2b2Url+"/services/QueryToolService/pdorequest");
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
 		
 		requestStr = insertSessionParametersInXml(requestStr, session);
@@ -601,9 +606,11 @@ public class FromI2b2WebService {
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
+		String i2b2Url= (String) session.getAttribute("i2b2domainUrl");	
+				
 		Client client = ClientBuilder.newClient();
 		WebTarget webTarget = client
-				.target("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest");
+				.target(i2b2Url+"/services/QueryToolService/pdorequest");
 		System.out.println("fetching from i2b2host...");
 		String oStr = webTarget
 				.request()

@@ -72,12 +72,28 @@
 	
        $.post("http://localhost:8080/fhir-server-api-mvn/a/a/login",$( "#form1" ).serialize() 
        , function(data, textStatus, xhr){
- 	//alert(data);
- 	sessionId=xhr.getResponseHeader('session_id');
- 	setXmlDisplay(data);
- 	getPatients();
- 	computeResponseTime();
-});
+ 			//alert(data);
+ 			sessionId=xhr.getResponseHeader('session_id');
+ 	
+ 			setXmlDisplay(data);
+ 			if(data!="Authentication Failure"){
+ 				//alert("gotdata no AF");
+ 				getPatients();
+ 			}else{
+ 				alert("Authentication Failure");
+ 			}
+ 			computeResponseTime();
+		})
+		.done(function() {
+  			  //alert( "second success" );
+ 		 })
+ 		 .fail(function() {
+  			  alert( "error: possibly i2b2 server not reachable" );
+ 		 })
+ 		 .always(function() {
+ 		   	//alert( "finished" );
+		})
+		
 };
 
 function computeResponseTime(){
@@ -195,7 +211,7 @@ footer {
 		<footer>
 			<div
 				style="max-width: 100em; margin-bottom: 1em:display:block; font-size: 10px;text-align: left;">
-				XML:<br>
+				Server response:<br>
 				<textarea style="text-align: left;" id="code-xml"></textarea>
 			</div>
 
