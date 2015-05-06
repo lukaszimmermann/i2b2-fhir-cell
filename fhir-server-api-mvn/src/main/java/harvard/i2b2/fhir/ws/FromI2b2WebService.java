@@ -31,16 +31,18 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 @Path("a")
 public class FromI2b2WebService {
-	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
+	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class); 
 	String i2b2SessionId;
 	ArrayList<String> PDOcallHistory;// contains ids of patients already called.
 
@@ -54,7 +56,8 @@ public class FromI2b2WebService {
 	private void init() {
 
 		try {
-			// doLogin();
+			logger.info("Got init request");
+			System.out.println(" Print Got init request");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,8 +70,11 @@ public class FromI2b2WebService {
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
 			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm) {
-
+			@FormParam("i2b2url") String i2b2urlForm)  {
+		//Exception e1=new RuntimeException("test error");
+			//logger.error("test error1:",e1);
+		//if(1==1) throw (RuntimeException)e1;
+		
 		String username = request.getHeader("username");
 		String password = request.getHeader("password");
 		String i2b2domain = request.getHeader("i2b2domain");

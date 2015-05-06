@@ -35,6 +35,8 @@ import org.apache.abdera.parser.Parser;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.MetaData;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 
 public class PdoEGtoFhirBundle {
@@ -140,5 +142,8 @@ public class PdoEGtoFhirBundle {
 
 		return XQueryUtil.processXQuery( query,input).toString();
 	}
+	
+	
+	
 
 }
