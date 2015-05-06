@@ -29,6 +29,7 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.validation.Validator;
@@ -377,5 +378,19 @@ public class FhirUtil {
 		}
 
 	}
-
+	
+	static public String getPatientId(MetaResource mr){
+		String id=mr.getResource().getId();
+		Resource r= mr.getResource();
+		if(Patient.class.isInstance(r)){
+			if(id.contains("/")){
+				return id.split("/")[1];
+			}else throw new RuntimeException("id is malformed:"+id);
+		}else{
+			if(id.contains("/")&& id.contains("-")){
+				return id.split("/")[1].split("-")[0];
+			}else throw new RuntimeException("id is malformed:"+id);
+			
+			}	
+	}
 }

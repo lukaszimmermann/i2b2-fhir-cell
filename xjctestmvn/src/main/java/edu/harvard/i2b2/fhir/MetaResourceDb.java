@@ -23,6 +23,7 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class MetaResourceDb {
 	List<MetaResource> metaResources;
+	//MetaResourcePrimaryDb metaResources;
 	
 	public MetaResourceDb() {
 		init();
@@ -30,6 +31,7 @@ public class MetaResourceDb {
 
 	public void init() {
 		metaResources = new ArrayList<MetaResource>();
+		//metaResources = new MetaResourcePrimaryDb();
 		System.out.println("created resourcedb");
 		System.out.println("resources size:" + metaResources.size());
 	}

@@ -220,7 +220,7 @@ public class xmlIOMetaResourceSet {
 		
 	}
 	
-	@Test
+	//@Test
 	public void Test7(){ 
 	String input="subject:Patient=123";
 		String id=null;
@@ -232,4 +232,15 @@ public class xmlIOMetaResourceSet {
 		    System.out.println(id);
 		}
 	}
+	
+	@Test
+	public void getPatientIdFromMetaResource() throws DatatypeConfigurationException{
+		MetaResourceSet s=ResourceSetup.getPatientAndMedicationStatementEg();
+		MetaResource medmr=s.getMetaResource().get(1);
+		assertEquals( "1000000005",FhirUtil.getPatientId(medmr));
+		MetaResource ptmr=s.getMetaResource().get(0);
+		assertEquals( "1000000005",FhirUtil.getPatientId(ptmr));
+	
+	}
+	
 }

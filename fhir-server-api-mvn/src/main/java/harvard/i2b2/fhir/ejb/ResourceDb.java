@@ -2,6 +2,8 @@ package harvard.i2b2.fhir.ejb;
 
 
 
+import harvard.i2b2.fhir.ws.FromI2b2WebService;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,14 +17,19 @@ import javax.ejb.Startup;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.hl7.fhir.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
 public class ResourceDb {
+	static Logger logger = LoggerFactory.getLogger(ResourceDb.class);
+	
 	List<Resource> resources;
 	
 	@PostConstruct
 	void init(){
+		logger.info("log4j works!");
 		resources = new ArrayList<Resource>();
 		System.out.println("created resourcedb");
 		System.out.println("resources size:"+resources.size());
