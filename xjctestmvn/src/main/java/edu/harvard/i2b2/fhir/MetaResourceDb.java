@@ -16,12 +16,16 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class MetaResourceDb {
+	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class); 
+	
 	List<MetaResource> metaResources;
 	//MetaResourcePrimaryDb metaResources;
 	
@@ -32,14 +36,14 @@ public class MetaResourceDb {
 	public void init() {
 		metaResources = new ArrayList<MetaResource>();
 		//metaResources = new MetaResourcePrimaryDb();
-		System.out.println("created resourcedb");
-		System.out.println("resources size:" + metaResources.size());
+		logger.debug("created resourcedb");
+		logger.debug("resources size:" + metaResources.size());
 	}
 
 	public String addMetaResource(MetaResource p, Class c) {
-		System.out.println("EJB Putting resource:" + c.getSimpleName());
+		logger.debug("EJB Putting resource:" + c.getSimpleName());
 		try {
-			System.out.println("EJB Put MetaResource:"
+			logger.debug("EJB Put MetaResource:"
 					+ c.cast(p.getResource()).getClass().getSimpleName());
 			System.out
 					.println("EJB MetaResources size:" + metaResources.size());
@@ -58,27 +62,27 @@ public class MetaResourceDb {
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			System.out.println("replacing resource with id:"
+			logger.debug("replacing resource with id:"
 					+ r.getId());
 			metaResources.remove(presentRes);
 		}
 		metaResources.add(p);
 
-		System.out.println("EJB resources (after adding) size:"
+		logger.debug("EJB resources (after adding) size:"
 				+ metaResources.size());
 		return p.getResource().getId();
 	}
 
 	public MetaResource getMetaResource(String id, Class c) {
-		System.out.println("EJB searching for resource with id:" + id);
-		System.out.println("metaResources size:" + metaResources.size());
+		logger.debug("EJB searching for resource with id:" + id);
+		logger.debug("metaResources size:" + metaResources.size());
 		for (MetaResource p : metaResources) {
 			Resource r = p.getResource();
 			if (!c.isInstance(r))
 				continue;
-			//System.out.println("examining resource with id:<" + r.getId()+ "> for match to qid:<" + id + ">");
+			//logger.debug("examining resource with id:<" + r.getId()+ "> for match to qid:<" + id + ">");
 			if (r.getId().equals(id)) {
-				//System.out.println("matched resource with id:" + r.getId());
+				//logger.debug("matched resource with id:" + r.getId());
 				return p;
 			}
 		}
@@ -86,9 +90,9 @@ public class MetaResourceDb {
 	}
 
 	public int getMetaResourceTypeCount(Class c) {
-		System.out.println("EJB searching for resource type:"
+		logger.debug("EJB searching for resource type:"
 				+ c.getSimpleName());
-		System.out.println("resources size:" + metaResources.size());
+		logger.debug("resources size:" + metaResources.size());
 		int count = 0;
 
 		for (MetaResource p : metaResources) {
@@ -112,7 +116,7 @@ public class MetaResourceDb {
 				Object returnValue = null;
 				String returnStr = null;
 				try {
-					System.out.println("searching for parameter:" + k
+					logger.debug("searching for parameter:" + k
 							+ " with value " + qp.getFirst(k));
 					getValueOfFirstLevelChild(p, c, k);
 
@@ -121,8 +125,8 @@ public class MetaResourceDb {
 						| SecurityException e) {
 					e.printStackTrace();
 				}
-				System.out.println("returnStr:" + returnStr);
-				System.out.println("qp.getFirst(k):" + qp.getFirst(k));
+				logger.debug("returnStr:" + returnStr);
+				logger.debug("qp.getFirst(k):" + qp.getFirst(k));
 
 				if (returnStr.toString().contains(qp.getFirst(k))) {
 					list.add(p);
@@ -175,7 +179,7 @@ public class MetaResourceDb {
 	public Resource getParticularResource(Class c, String id) {
 		for (MetaResource mr : metaResources) {
 			Resource r = mr.getResource();
-			System.out.println(r.getId());
+			logger.debug(r.getId());
 			if (c.isInstance(r)
 					&& r.getId().equals(c.getSimpleName() + "/" + id)) {
 				return r;
@@ -195,12 +199,12 @@ public class MetaResourceDb {
 	}
 
 	public MetaResource searchById(String id) {
-		//System.out.println("searching id:" + id);
+		//logger.debug("searching id:" + id);
 		for (MetaResource mr : metaResources) {
 			if (mr.getResource().getId().equals(id))
 				return mr;
 		}
-		System.out.println("id NOT found:" + id);
+		logger.debug("id NOT found:" + id);
 		return null;
 	}
 
@@ -220,7 +224,7 @@ public class MetaResourceDb {
 		String returnStr = null;
 		String suffix = null;
 		String prefix = pathStr;
-		System.out.println("pathStr:" + pathStr + "	Resource:" + r.getId());
+		logger.debug("pathStr:" + pathStr + "	Resource:" + r.getId());
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
@@ -235,19 +239,19 @@ public class MetaResourceDb {
 				ResourceReference rr = (ResourceReference) o;
 				System.out.print("returning from reference:");
 				//String idn = rr.getId();// rr.getReference().getValue();
-				//System.out.println(":" + rr.getId());
+				//logger.debug(":" + rr.getId());
 				
 				String idn = rr.getReference().getValue();
-				System.out.println(":" + idn);
+				logger.debug(":" + idn);
 
 				return searchResourceById(idn);
 			} else {
-				System.out.println("returning NOT from reference");
+				logger.debug("returning NOT from reference");
 				return o;
 			}
 		} else {
 
-			System.out.println("Suffix is not null");
+			logger.debug("Suffix is not null");
 
 			return getChildOfResource(r, suffix);
 			// return getChildOfResource(r, suffix);
@@ -272,18 +276,18 @@ public class MetaResourceDb {
 				.getMetaResource();
 		for (String ir : includeResources) {
 			String methodName = ir.split("\\.")[1];
-			System.out.println("MethodName:" + methodName);
+			logger.debug("MethodName:" + methodName);
 			for (MetaResource mr : inputSet.getMetaResource()) {
 				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,methodName)).getReference().getValue();
 
-				System.out.println("Found dep:" + id);
+				logger.debug("Found dep:" + id);
 				MetaResource depMr = searchById(id);
 				if (depMr != null) {
 
 					if (!FhirUtil.isContained(s2, id)) {
 						sInclusions.add(depMr);
 					}
-					// System.out.println("added dep:"+depMr.getResource().getId());
+					// logger.debug("added dep:"+depMr.getResource().getId());
 				}
 			}
 		}
@@ -299,23 +303,23 @@ public class MetaResourceDb {
 		MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = s.getMetaResource();
 
-		System.out.println("filtering by:");
+		logger.debug("filtering by:");
 		for (MetaResource mr : this.getAll(c).getMetaResource()) {
 			Resource r = mr.getResource();
-			System.out.println("filtering on:" + r.getId());
+			logger.debug("filtering on:" + r.getId());
 
 			for (String k : filter.keySet()) {
 				String v = filter.get(k);
-				System.out.println("filter:" + k + "=" + v);
+				logger.debug("filter:" + k + "=" + v);
 
 				Resource child = (Resource) getChildOfResource(r, k);
 				if (child != null) {
-					System.out.println("filterinput child:" + child.getId());
+					logger.debug("filterinput child:" + child.getId());
 				} else {
-					System.out.println("filterinput child:NULL");
+					logger.debug("filterinput child:NULL");
 				}
 				if (child != null && child.getId().equals(v)) {
-					System.out.println("adding:"+r.getId());
+					logger.debug("adding:"+r.getId());
 					list.add(mr);
 					continue;
 				}
@@ -323,9 +327,9 @@ public class MetaResourceDb {
 				String childStr = (String) getValueOfFirstLevelChild(mr,
 						FhirUtil.getResourceClass(r), k);
 				if (childStr != null) {
-					System.out.println("filterinput childStr:" + childStr);
+					logger.debug("filterinput childStr:" + childStr);
 				} else {
-					System.out.println("filterinput childStr:NULL");
+					logger.debug("filterinput childStr:NULL");
 				}
 				if (childStr != null && childStr.equals(v)) {
 					list.add(mr);
