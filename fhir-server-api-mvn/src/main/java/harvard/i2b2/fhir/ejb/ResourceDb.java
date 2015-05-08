@@ -31,16 +31,16 @@ public class ResourceDb {
 	void init(){
 		logger.info("log4j works!");
 		resources = new ArrayList<Resource>();
-		System.out.println("created resourcedb");
-		System.out.println("resources size:"+resources.size());
+		logger.debug("created resourcedb");
+		logger.debug("resources size:"+resources.size());
 	}
 	
 	@Lock(LockType.WRITE)
 	public String addResource(Resource p, Class c){
-		System.out.println("EJB Putting resource:"+c.getSimpleName());
+		logger.debug("EJB Putting resource:"+c.getSimpleName());
 		try{
-			System.out.println("EJB Put resource:"+c.cast(p).getClass().getSimpleName());
-			System.out.println("EJB resources size:"+resources.size());
+			logger.debug("EJB Put resource:"+c.cast(p).getClass().getSimpleName());
+			logger.debug("EJB resources size:"+resources.size());
 		}catch(Exception e){
 			e.printStackTrace();
 			return null;
@@ -53,24 +53,24 @@ public class ResourceDb {
 		Resource presentRes=getResource(p.getId(),c);
 		if (presentRes!=null) {
 				//throw new RuntimeException("resource with id:"+p.getId()+" already exists");
-				System.out.println("replacing resource with id:"+p.getId());
+				logger.debug("replacing resource with id:"+p.getId());
 				resources.remove(presentRes);	
 		}
 		resources.add(p);
 		
-		System.out.println("EJB resources (after adding) size:"+resources.size());
+		logger.debug("EJB resources (after adding) size:"+resources.size());
 		return p.getId();
 		}
 	
 	@Lock(LockType.READ)
 	public Resource getResource(String id, Class c){
-		System.out.println("EJB searching for resource with id:"+id);
-		System.out.println("resources size:"+resources.size());
+		logger.debug("EJB searching for resource with id:"+id);
+		logger.debug("resources size:"+resources.size());
 		for(Resource p:resources){
 			if(!c.isInstance(p)) continue;
-			System.out.println("examining resource with id:<"+p.getId() +"> for match to qid:<"+id+">");
+			logger.debug("examining resource with id:<"+p.getId() +"> for match to qid:<"+id+">");
 			if (p.getId().equals(id)) {
-				System.out.println("matched resource with id:"+p.getId());
+				logger.debug("matched resource with id:"+p.getId());
 				return p;
 			}
 		}
@@ -79,8 +79,8 @@ public class ResourceDb {
 	
 	@Lock(LockType.READ)
 	public int getResourceTypeCount( Class c){
-		System.out.println("EJB searching for resource type:"+c.getSimpleName());
-		System.out.println("resources size:"+resources.size());
+		logger.debug("EJB searching for resource type:"+c.getSimpleName());
+		logger.debug("resources size:"+resources.size());
 		int count=0;
 		
 		for(Resource p:resources){
@@ -105,7 +105,7 @@ public class ResourceDb {
 				String returnStr=null;
 				try {
 					String methodName=k.substring(0,1).toUpperCase()+k.subSequence(1, k.length());
-					System.out.println("searching for parameter:"+k+" with value "+qp.getFirst(k));
+					logger.debug("searching for parameter:"+k+" with value "+qp.getFirst(k));
 					Method method =
 						    c.getMethod("get"+methodName, null);
 					returnValue = method.invoke(p);
@@ -118,8 +118,8 @@ public class ResourceDb {
 				} catch (IllegalAccessException|IllegalArgumentException|InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					e.printStackTrace();
 				}
-				System.out.println("returnStr:"+returnStr);
-				System.out.println("qp.getFirst(k):"+qp.getFirst(k));
+				logger.debug("returnStr:"+returnStr);
+				logger.debug("qp.getFirst(k):"+qp.getFirst(k));
 				
 				if (returnStr.toString().contains(qp.getFirst(k))){
 					list.add(p);

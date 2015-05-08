@@ -1,5 +1,6 @@
 package edu.harvard.i2b2.fhir;
 
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -33,6 +34,8 @@ import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.instance.model.ResourceReference;
 import org.hl7.fhir.instance.validation.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
@@ -41,6 +44,7 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public class FhirUtil {
 	//public static boolean validateFhirResourceBeforeAddingFlag=false;
 	
+	static Logger logger = LoggerFactory.getLogger(FhirUtil.class); 
 	
 
 	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
@@ -75,7 +79,7 @@ public class FhirUtil {
 		JAXBElement jbe = null;
 		boolean classFound = false;
 		for (Class c : resourceClassList) {
-			// System.out.println("instanceOf:"+c.getSimpleName());
+			// logger.debug("instanceOf:"+c.getSimpleName());
 			if (c.isInstance(r)) {
 				try {
 					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
@@ -198,7 +202,7 @@ public class FhirUtil {
 	public static String getValidatorErrorMessage(String input) {
 
 		String msg = "";
-		System.out.println("running validator for input:" + input);
+		logger.debug("running validator for input:" + input);
 		try {
 			if (v == null)
 				init();
@@ -216,7 +220,7 @@ public class FhirUtil {
 		try {
 			if (v == null)
 				init();
-			// System.out.println("setting source:"+xml);
+			// logger.debug("setting source:"+xml);
 			v.setSource(xml);
 			v.process();
 		} catch (Exception e) {
@@ -233,8 +237,8 @@ public class FhirUtil {
 			String path = Utils.getFilePath("validation.zip");
 
 			v.setDefinitions(path);
-			// System.out.println(v.getDefinitions());
-			// System.out.println("ready");
+			// logger.debug(v.getDefinitions());
+			// logger.debug("ready");
 		}
 		if (resourceClassList == null)
 			initResourceClassList();
@@ -258,7 +262,7 @@ public class FhirUtil {
 			try {
 				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
 
-					// System.out.println(c.getSimpleName());
+					// logger.debug(c.getSimpleName());
 					resourceClassList.add(c);
 				}
 			} catch (IOException e) {
@@ -272,7 +276,7 @@ public class FhirUtil {
 	public static List<Class> getAllFhirResourceClasses(String packageName)
 			throws IOException {
 
-		// System.out.println("Running getAllFhirResourceClasses for:" +
+		// logger.debug("Running getAllFhirResourceClasses for:" +
 		// packageName);
 		List<Class> commands = new ArrayList<Class>();
 
@@ -300,7 +304,7 @@ public class FhirUtil {
 			if (c != null)
 				commands.add(c);
 		}
-		// System.out.println(commands.toString());
+		// logger.debug(commands.toString());
 		return commands;
 	}
 
@@ -312,7 +316,7 @@ public class FhirUtil {
 					.equals(resourceName.toLowerCase()))
 				return c;
 		}
-		System.out.println("Class Not Found for FHIR resource:" + resourceName);
+		logger.debug("Class Not Found for FHIR resource:" + resourceName);
 		return null;
 
 	}
@@ -324,7 +328,7 @@ public class FhirUtil {
 			if (c.isInstance(resource))
 				return c;
 		}
-		System.out.println("Class Not Found for FHIR resource:"
+		logger.debug("Class Not Found for FHIR resource:"
 				+ resource.getId());
 		return null;
 
@@ -358,7 +362,7 @@ public class FhirUtil {
 		String returnStr = null;
 		String suffix = null;
 		String prefix = pathStr;
-		System.out.println("pathStr:" + pathStr);
+		logger.debug("pathStr:" + pathStr);
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
