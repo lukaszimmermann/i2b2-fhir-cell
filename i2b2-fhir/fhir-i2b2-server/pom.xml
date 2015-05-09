@@ -1,33 +1,29 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<parent>
+		<groupId>edu.harvard.i2b2</groupId>
+		<artifactId>fhir</artifactId>
+		<version>0.1</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>i2b2</groupId>
-	<artifactId>fhir-server-api-mvn</artifactId>
+	<artifactId>fhir-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<build>
-		<finalName>fhir-server-api-mvn</finalName>
+		<finalName>fhir-server</finalName>
 	</build>
-	<properties>
-		<maven.compiler.source>1.7</maven.compiler.source>
-		<maven.compiler.target>1.7</maven.compiler.target>
-		<failOnMissingWebXml>false</failOnMissingWebXml>
-	</properties>
 
 	<dependencies>
-
-
-
 		<dependency>
 			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>fhirutils</artifactId>
+			<artifactId>fhir-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
 		<dependency>
-
-
 			<groupId>edu.harvard.i2b2</groupId>
 			<artifactId>xquery</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
@@ -38,23 +34,7 @@
 			<version>7.0</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.12</version>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.12</version>
-		</dependency>
 
-
-		<dependency>
-			<groupId>org.apache.abdera</groupId>
-			<artifactId>abdera-bundle</artifactId>
-			<version>1.1.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -67,32 +47,8 @@
 			<version>1.0</version>
 			<!-- <scope>system</scope> <systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath> -->
 		</dependency>
-
-
-
-
-
-
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-			<scope>runtime</scope>
-		</dependency>
 	</dependencies>
 
-
-
-
-
-	<repositories>
-
-		<repository>
-			<id>basex</id>
-			<name>BaseX Maven Repository</name>
-			<url>http://files.basex.org/maven</url>
-		</repository>
-
-	</repositories>
+	<!-- <repositories> <repository> <id>basex</id> <name>BaseX Maven Repository</name> 
+		<url>http://files.basex.org/maven</url> </repository> </repositories> -->
 </project>
