@@ -104,7 +104,7 @@
 	function getAuth() {
 	startTime= Date.now();
 	
-       $.post(fhirServerBase+"/fhir-server-api-mvn/a/a/auth",$( "#form1" ).serialize() 
+       $.post(fhirServerBase+"/fhir-server/a/a/auth",$( "#form1" ).serialize() 
        , function(data, textStatus, xhr){
  			//alert(data);
  			sessionId=xhr.getResponseHeader('session_id');
@@ -112,7 +112,7 @@
  			setXmlDisplay(data);
  			if(data!="Authentication Failure"){
  				//alert("gotdata no AF");
- 				runMyFunction(fhirServerBase+"/fhir-server-api-mvn/a/a/Patient/");
+ 				runMyFunction(fhirServerBase+"/fhir-server/a/a/Patient");
  			}else{
  				alert("Authentication Failure");
  			}
