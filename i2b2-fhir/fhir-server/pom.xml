@@ -15,6 +15,19 @@
 
 	<build>
 		<finalName>fhir-server</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Dependencies>org.apache.log4j</Dependencies>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
@@ -76,4 +89,5 @@
 
 	<!-- <repositories> <repository> <id>basex</id> <name>BaseX Maven Repository</name> 
 		<url>http://files.basex.org/maven</url> </repository> </repositories> -->
+
 </project>

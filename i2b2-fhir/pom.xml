@@ -6,8 +6,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>fhir-i2b2-server</module>
-		<module>fhir-i2b2-core</module>
+		<module>fhir-server</module>
+		<module>fhir-core</module>
 		<module>xquery</module>
 	</modules>
 
@@ -34,7 +34,7 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
-			<scope>runtime</scope>
+			<!-- <scope>runtime</scope> -->
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

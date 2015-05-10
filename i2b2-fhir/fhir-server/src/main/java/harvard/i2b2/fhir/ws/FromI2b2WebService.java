@@ -149,7 +149,7 @@ public class FromI2b2WebService {
 		MetaResourceSet s = new MetaResourceSet();
 		HttpSession session = request.getSession(false);
 		String basePath = request.getRequestURL().toString()
-				.replaceAll(resourceName + "$", "");
+				.split(resourceName)[0];
 
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST)
@@ -181,9 +181,13 @@ public class FromI2b2WebService {
 
 		logger.debug("getting bundle string...");
 
+		String url=request.getRequestURL().toString();
+		url=url.substring(0, url.indexOf(";"));
+		if(request.getQueryString()!=null) 
+			url+="?" + request.getQueryString();
+		
 		String returnString = FhirUtil.getResourceBundle(s, basePath,
-				request.getRequestURL().toString() );
-		if(request.getQueryString()!=null) returnString+="?" + request.getQueryString();
+				 url);
 		logger.debug("returning response...");
 
 		return Response.ok().type(MediaType.APPLICATION_XML)
