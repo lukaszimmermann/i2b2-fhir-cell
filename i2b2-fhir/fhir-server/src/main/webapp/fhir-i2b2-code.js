@@ -20,10 +20,10 @@
    var DSArray=new Array();
    //var ds1=new DataStore("http://nowhere","msg1");
    
-   var ds1=new DataStore(fhirServerBase+"/fhir-server-api-mvn/a/a/Patient","Get all patients");
-   var ds2=new DataStore(fhirServerBase+"/fhir-server-api-mvn/a/a/Patient/1000000005","Get particular patient");
-   var ds3=new DataStore(fhirServerBase+"/fhir-server-api-mvn/a/a/MedicationStatement?patient=1000000005","Get Medication Statements for a particular patient");
-   var ds4=new DataStore(fhirServerBase+"/fhir-server-api-mvn/a/a/MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient","Get Medication Statements for a particular patient and include Medications and the Patient");
+   var ds1=new DataStore(fhirServerBase+"/fhir-server/a/a/Patient","Get all patients");
+   var ds2=new DataStore(fhirServerBase+"/fhir-server/a/a/Patient/1000000005","Get particular patient");
+   var ds3=new DataStore(fhirServerBase+"/fhir-server/a/a/MedicationStatement?patient=1000000005","Get Medication Statements for a particular patient");
+   var ds4=new DataStore(fhirServerBase+"/fhir-server/a/a/MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient","Get Medication Statements for a particular patient and include Medications and the Patient");
   
    DSArray.push(ds1);
    DSArray.push(ds2);

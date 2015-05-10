@@ -268,7 +268,7 @@ public class FromI2b2WebService {
 
 		String oStr = webTarget
 				.request()
-				.accept("Context-Type", "application/xml")
+				 .accept("Context-Type", "application/xml")
 				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
 						String.class);
 		logger.debug("got::"
