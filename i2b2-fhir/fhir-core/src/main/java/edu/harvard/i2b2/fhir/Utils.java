@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.fhir;
 
 
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,11 +19,15 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.XML;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class Utils {
+	static Logger logger = LoggerFactory.getLogger(Utils.class); 
+
 	public static String getFile(String fileName) {
 
 		String result = "";
@@ -57,8 +62,8 @@ public class Utils {
 		try {
 			return Class.forName(resourceName, false, loader);
 		} catch (ClassNotFoundException e) {
-			System.out.println("Class Not Found for:"
-					+ resourceName);
+			logger.error("Class Not Found for:"
+					+ resourceName,e);
 			e.printStackTrace();
 			return null;
 		}

@@ -79,7 +79,7 @@ public class FhirUtil {
 		JAXBElement jbe = null;
 		boolean classFound = false;
 		for (Class c : resourceClassList) {
-			// logger.debug("instanceOf:"+c.getSimpleName());
+			// logger.trace("instanceOf:"+c.getSimpleName());
 			if (c.isInstance(r)) {
 				try {
 					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
@@ -202,7 +202,7 @@ public class FhirUtil {
 	public static String getValidatorErrorMessage(String input) {
 
 		String msg = "";
-		logger.debug("running validator for input:" + input);
+		logger.trace("running validator for input:" + input);
 		try {
 			if (v == null)
 				init();
@@ -220,7 +220,7 @@ public class FhirUtil {
 		try {
 			if (v == null)
 				init();
-			// logger.debug("setting source:"+xml);
+			// logger.trace("setting source:"+xml);
 			v.setSource(xml);
 			v.process();
 		} catch (Exception e) {
@@ -237,8 +237,8 @@ public class FhirUtil {
 			String path = Utils.getFilePath("validation.zip");
 
 			v.setDefinitions(path);
-			// logger.debug(v.getDefinitions());
-			// logger.debug("ready");
+			// logger.trace(v.getDefinitions());
+			// logger.trace("ready");
 		}
 		if (resourceClassList == null)
 			initResourceClassList();
@@ -262,7 +262,7 @@ public class FhirUtil {
 			try {
 				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
 
-					// logger.debug(c.getSimpleName());
+					// logger.trace(c.getSimpleName());
 					resourceClassList.add(c);
 				}
 			} catch (IOException e) {
@@ -276,7 +276,7 @@ public class FhirUtil {
 	public static List<Class> getAllFhirResourceClasses(String packageName)
 			throws IOException {
 
-		// logger.debug("Running getAllFhirResourceClasses for:" +
+		// logger.trace("Running getAllFhirResourceClasses for:" +
 		// packageName);
 		List<Class> commands = new ArrayList<Class>();
 
@@ -304,7 +304,7 @@ public class FhirUtil {
 			if (c != null)
 				commands.add(c);
 		}
-		// logger.debug(commands.toString());
+		// logger.trace(commands.toString());
 		return commands;
 	}
 
@@ -316,7 +316,7 @@ public class FhirUtil {
 					.equals(resourceName.toLowerCase()))
 				return c;
 		}
-		logger.debug("Class Not Found for FHIR resource:" + resourceName);
+		logger.trace("Class Not Found for FHIR resource:" + resourceName);
 		return null;
 
 	}
@@ -328,7 +328,7 @@ public class FhirUtil {
 			if (c.isInstance(resource))
 				return c;
 		}
-		logger.debug("Class Not Found for FHIR resource:"
+		logger.trace("Class Not Found for FHIR resource:"
 				+ resource.getId());
 		return null;
 
@@ -362,7 +362,7 @@ public class FhirUtil {
 		String returnStr = null;
 		String suffix = null;
 		String prefix = pathStr;
-		logger.debug("pathStr:" + pathStr);
+		logger.trace("pathStr:" + pathStr);
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
