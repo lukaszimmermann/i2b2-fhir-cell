@@ -6,14 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
 import org.slf4j.Logger;
@@ -110,7 +102,7 @@ public class MetaResourceDb {
 	}
 
 	public List<MetaResource> getQueried(Class c,
-			MultivaluedMap<String, String> qp// Query Parameters
+			HashMap<String, String> qp// Query Parameters
 	) {
 		List<MetaResource> list = new ArrayList<MetaResource>();
 		for (MetaResource p : getAll(c).getMetaResource()) {
@@ -119,7 +111,7 @@ public class MetaResourceDb {
 				String returnStr = null;
 				try {
 					logger.trace("searching for parameter:" + k
-							+ " with value " + qp.getFirst(k));
+							+ " with value " + qp.get(k));
 					getValueOfFirstLevelChild(p, c, k);
 
 				} catch (IllegalAccessException | IllegalArgumentException
@@ -128,9 +120,9 @@ public class MetaResourceDb {
 					e.printStackTrace();
 				}
 				logger.trace("returnStr:" + returnStr);
-				logger.trace("qp.getFirst(k):" + qp.getFirst(k));
+				logger.trace("qp.getFirst(k):" + qp.get(k));
 
-				if (returnStr.toString().contains(qp.getFirst(k))) {
+				if (returnStr.toString().contains(qp.get(k))) {
 					list.add(p);
 				}
 			}

@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import core.ResourceDb;
 
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
@@ -85,6 +84,7 @@ public class PdoEGtoFhirBundle {
 	}
 
 	// @Test
+	/*
 	public void search() {
 		ResourceDb resDb = new ResourceDb();
 		Resource r = FhirUtil.xmlToResource(Utils
@@ -129,7 +129,7 @@ public class PdoEGtoFhirBundle {
 
 	}
 
-	
+	*/
 	@Test
 	public void Test23(){
 		
