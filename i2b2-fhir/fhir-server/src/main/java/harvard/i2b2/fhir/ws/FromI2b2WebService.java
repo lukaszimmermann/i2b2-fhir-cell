@@ -159,6 +159,7 @@ public class FromI2b2WebService {
 		}
 
 		String patientId = extractPatientId(request.getQueryString());
+		logger.info("PatientId:"+patientId);
 		scanQueryParametersToGetPdo(session, request.getQueryString());
 		md = (MetaResourceDb) session.getAttribute("md");
 
@@ -411,7 +412,7 @@ public class FromI2b2WebService {
 
 		if (m.find()) {
 			id = m.group(1);
-			logger.info(id);
+			logger.debug(id);
 		}
 		return id;
 	}
