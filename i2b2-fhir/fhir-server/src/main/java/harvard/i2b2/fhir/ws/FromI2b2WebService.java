@@ -277,13 +277,13 @@ public class FromI2b2WebService {
 				 .accept("Context-Type", "application/xml")
 				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
 						String.class);
-		logger.debug("got::"
-				+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
-		logger.trace("got::" + oStr);
+		//logger.debug("got::"
+				//+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
+		logger.debug("got Response::" + oStr);
 
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
 		String loginError = XQueryUtil.processXQuery(loginStatusquery, oStr);
-		logger.debug("ERROR:<" + loginError + ">");
+		logger.trace("ERROR:<" + loginError + ">");
 
 		if (loginError.equals("ERROR"))
 			throw new AuthenticationFailure();
@@ -386,7 +386,7 @@ public class FromI2b2WebService {
 		String query = "copy $c := root()\n"
 				+ "modify ( replace value of node $c" + path + " with \""
 				+ value + "\")\n" + " return $c";
-		logger.debug("query:" + query);
+		logger.trace("query:" + query);
 		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 
