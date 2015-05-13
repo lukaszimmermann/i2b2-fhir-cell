@@ -75,6 +75,12 @@ public class FromI2b2WebService {
 			//logger.error("test error1:",e1);
 		//if(1==1) throw (RuntimeException)e1;
 		logger.info("Got Auth request");
+		HttpSession session = request.getSession(false);
+		if(session!=null) {
+			logger.info("invalidated session");
+			session.invalidate();
+		}
+		
 		
 		String username = request.getHeader("username");
 		String password = request.getHeader("password");
@@ -97,7 +103,7 @@ public class FromI2b2WebService {
 			i2b2domain = i2b2domainForm;
 		if (i2b2url == null)
 			i2b2url = i2b2urlForm;
-		HttpSession session = request.getSession();// new session
+		session = request.getSession();// new session
 
 		try {
 			if (username != null && password != null) {
@@ -412,7 +418,7 @@ public class FromI2b2WebService {
 
 		if (m.find()) {
 			id = m.group(1);
-			logger.debug(id);
+			logger.trace(id);
 		}
 		return id;
 	}
