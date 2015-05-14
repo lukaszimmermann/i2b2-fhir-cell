@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUtils;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -24,6 +26,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -146,11 +149,17 @@ public class FromI2b2WebService {
 			@QueryParam("_include") List<String> includeResources,
 			@QueryParam("filterf") String filterf,
 			// @HeaderParam("accept") String acceptHeader,
-			@Context HttpServletRequest request) throws IOException,
+			@Context HttpServletRequest request,
+			@Context ServletContext servletContext 
+			) throws IOException,
 			ParserConfigurationException, SAXException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException,
 			DatatypeConfigurationException {
+		
+		logger.info("Query param:"+request.getParameterMap().keySet().toString());
+		
+		
 		Class c = FhirUtil.getResourceClass(resourceName);
 		MetaResourceDb md = null;
 		MetaResourceSet s = new MetaResourceSet();
@@ -173,14 +182,15 @@ public class FromI2b2WebService {
 		if (patientId != null) {
 			HashMap<String, String> filter = new HashMap<String, String>();
 			filter.put("Patient", "Patient/" + patientId);
-			logger.info("running filter...");
+			logger.info("running filter..."+filter.toString());
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
 			s = md.filterMetaResources(c, filter);
 		} else {
 			s = md.getAll(c);
 		}
-
+		
+		
 		logger.info("including...._include:"
 				+ includeResources.toString());
 		if (s.getMetaResource().size() > 0) {
@@ -366,8 +376,12 @@ public class FromI2b2WebService {
 			String queryString) {
 		if (queryString != null) {
 			String pid = extractPatientId(queryString);
-			logger.info("will fetch Patient with id:" + pid);
-			getPdo(session, pid);
+			if(pid!=null){
+				logger.info("will fetch Patient with id:" + pid);
+				getPdo(session, pid);
+			}else{
+				logger.info("will not fetch Patient as there is no Patient id in query");
+			}
 
 		}
 	}

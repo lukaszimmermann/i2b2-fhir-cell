@@ -209,6 +209,7 @@ public class MetaResourceDb {
 		return null;
 	}
 
+	//child can be a element in the resource or element of a reference element
 	public Object getChildOfResource(Resource r, String pathStr)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
@@ -302,10 +303,13 @@ public class MetaResourceDb {
 			Resource r = mr.getResource();
 			logger.trace("filtering on:" + r.getId());
 
+			boolean matchF=false;
 			for (String k : filter.keySet()) {
+				if(matchF==true) continue;
 				String v = filter.get(k);
 				logger.trace("filter:" + k + "=" + v);
 
+				//child 
 				Resource child = (Resource) getChildOfResource(r, k);
 				if (child != null) {
 					logger.trace("filterinput child:" + child.getId());
@@ -314,22 +318,11 @@ public class MetaResourceDb {
 				}
 				if (child != null && child.getId().equals(v)) {
 					logger.trace("adding:"+r.getId());
-					list.add(mr);
+					matchF=true;
 					continue;
 				}
-			/*
-				String childStr = (String) getValueOfFirstLevelChild(mr,
-						FhirUtil.getResourceClass(r), k);
-				if (childStr != null) {
-					logger.trace("filterinput childStr:" + childStr);
-				} else {
-					logger.trace("filterinput childStr:NULL");
-				}
-				if (childStr != null && childStr.equals(v)) {
-					list.add(mr);
-				}
-			*/
 			}
+			if(matchF==true) list.add(mr);
 		}
 		return s;
 	}
