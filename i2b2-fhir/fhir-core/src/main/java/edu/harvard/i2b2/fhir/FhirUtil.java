@@ -32,7 +32,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.instance.model.ResourceReference;
+import org.hl7.fhir.ResourceReference;
 import org.hl7.fhir.instance.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -353,7 +353,7 @@ public class FhirUtil {
 
 	}
 
-	public static Object getChild(Resource r, String pathStr)
+	 static Object getChild(Resource r, String pathStr)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -397,4 +397,18 @@ public class FhirUtil {
 			
 			}	
 	}
+	
+	static public ResourceReference getResourceReferenceForRessource(Resource r ){
+		ResourceReference rRef=null;
+		if(r.getId()!=null){
+			rRef=new ResourceReference();
+			org.hl7.fhir.String shl7=new org.hl7.fhir.String();
+			shl7.setValue(r.getId());
+			rRef.setReference(shl7);
+		}
+		return rRef;
+	}
+	
+	
+	
 }
