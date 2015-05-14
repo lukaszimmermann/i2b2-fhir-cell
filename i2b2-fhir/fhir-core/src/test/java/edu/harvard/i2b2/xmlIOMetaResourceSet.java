@@ -1,4 +1,4 @@
-package xjctestmvn;
+package edu.harvard.i2b2;
 
 import static org.junit.Assert.assertEquals;
 

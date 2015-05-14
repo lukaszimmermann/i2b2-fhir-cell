@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -173,22 +174,31 @@ public class FromI2b2WebService {
 					.build();
 		}
 
-		String patientId = extractPatientId(request.getQueryString());
-		logger.info("PatientId:"+patientId);
-		scanQueryParametersToGetPdo(session, request.getQueryString());
+		
 		md = (MetaResourceDb) session.getAttribute("md");
 
 		// filter if patientId is mentioned in query string
-		if (patientId != null) {
+		
 			HashMap<String, String> filter = new HashMap<String, String>();
-			filter.put("Patient", "Patient/" + patientId);
-			logger.info("running filter..."+filter.toString());
+			
+			String patientId = extractPatientId(request.getQueryString());
+			logger.info("PatientId:"+patientId);
+			if (patientId != null) {
+				filter.put("Patient", "Patient/" + patientId);
+				scanQueryParametersToGetPdo(session, request.getQueryString());
+			}
+			Map<String,String> q=request.getParameterMap();
+			for(String k:q.keySet()){
+				if(k.equals("_include")
+				  ||k.equals("patient")) continue;
+				filter.put(k, new String(request.getParameter(k)));
+			}
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
+			logger.info("running filter..."+filter.toString());
 			s = md.filterMetaResources(c, filter);
-		} else {
-			s = md.getAll(c);
-		}
+			if( filter.size()==0) s = md.getAll(c);
+		//}
 		
 		
 		logger.info("including...._include:"

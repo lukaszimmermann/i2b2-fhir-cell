@@ -66,6 +66,14 @@ public class MetaResourceDb {
 				+ metaResources.size());
 		return p.getResource().getId();
 	}
+	
+	public void addMetaResourceSet(MetaResourceSet s) {
+		for (MetaResource mr : s.getMetaResource()) {
+			this.addMetaResource(mr,
+					FhirUtil.getResourceClass(mr.getResource()));
+		}
+	}
+
 
 	public MetaResource getMetaResource(String id, Class c) {
 		logger.trace("EJB searching for resource with id:" + id);
@@ -101,7 +109,7 @@ public class MetaResourceDb {
 		metaResources.remove(p1);
 	}
 
-	public List<MetaResource> getQueried(Class c,
+	/*public List<MetaResource> getQueried(Class c,
 			HashMap<String, String> qp// Query Parameters
 	) {
 		List<MetaResource> list = new ArrayList<MetaResource>();
@@ -129,7 +137,7 @@ public class MetaResourceDb {
 		}
 		return list;
 	}
-
+*/
 	public static String getValueOfFirstLevelChild(MetaResource p, Class c,
 			String k) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -182,16 +190,7 @@ public class MetaResourceDb {
 		return null;
 	}
 
-	public void addMetaResourceSet(MetaResourceSet s) {
-		// MetaResource mr=s.getMetaResource().get(0);
-		// this.addMetaResource(mr,
-		// FhirUtil.getResourceClass(mr.getResource()));
-		for (MetaResource mr : s.getMetaResource()) {
-			this.addMetaResource(mr,
-					FhirUtil.getResourceClass(mr.getResource()));
-		}
-	}
-
+	
 	public MetaResource searchById(String id) {
 		//logger.trace("searching id:" + id);
 		for (MetaResource mr : metaResources) {
@@ -248,7 +247,24 @@ public class MetaResourceDb {
 
 			logger.trace("Suffix is not null");
 
-			return getChildOfResource(r, suffix);
+			Object o = method.invoke(c.cast(r));
+			Resource nextR=null;
+			if (ResourceReference.class.isInstance(o)) {
+				ResourceReference rr = (ResourceReference) o;
+				logger.trace("returning from reference:");
+				//String idn = rr.getId();// rr.getReference().getValue();
+				//logger.trace(":" + rr.getId());
+				
+				String idn = rr.getReference().getValue();
+				logger.trace(":" + idn);
+
+				 nextR=searchResourceById(idn);
+			} else {
+				logger.trace("returning NOT from reference");
+				return o;
+			}
+			
+			return getChildOfResource(nextR, suffix);
 			// return getChildOfResource(r, suffix);
 		}
 
@@ -298,7 +314,9 @@ public class MetaResourceDb {
 		MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = s.getMetaResource();
 
-		logger.trace("filtering by:");
+		logger.trace("filtering by:"+filter.toString());
+		
+		logger.trace("size:"+this.getAll(c).getMetaResource().size());
 		for (MetaResource mr : this.getAll(c).getMetaResource()) {
 			Resource r = mr.getResource();
 			logger.trace("filtering on:" + r.getId());
@@ -310,19 +328,31 @@ public class MetaResourceDb {
 				logger.trace("filter:" + k + "=" + v);
 
 				//child 
-				Resource child = (Resource) getChildOfResource(r, k);
+				Resource child=null;
+				Object obj=getChildOfResource(r, k);
+				try{
+					child = (Resource) obj ;
+				}catch(ClassCastException e){
+					
+					logger.trace("Not a Resource:<"+ obj+">. Its a "+e.getMessage());
+					String gotVal=(String)obj;
+					logger.trace("comparing <"+v+ "> with <"+gotVal+">");
+					if(gotVal.equals(v)) matchF=true;
+				}
 				if (child != null) {
 					logger.trace("filterinput child:" + child.getId());
 				} else {
 					logger.trace("filterinput child:NULL");
 				}
 				if (child != null && child.getId().equals(v)) {
-					logger.trace("adding:"+r.getId());
 					matchF=true;
 					continue;
 				}
 			}
-			if(matchF==true) list.add(mr);
+			if(matchF==true) {
+				logger.trace("adding:"+r.getId());
+				list.add(mr);
+			}
 		}
 		return s;
 	}
