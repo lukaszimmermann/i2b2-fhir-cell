@@ -27,7 +27,7 @@ public class QueryTest {
 		qb=new QueryBuilder();
 	}
 	
-	@Test
+	//@Test
 	public void testDate() throws QueryParameterException, QueryValueException {
 		logger.info("Running tests for QueryDate...");
 		try{
