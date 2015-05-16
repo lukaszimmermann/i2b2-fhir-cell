@@ -30,7 +30,7 @@ public final class XQueryUtil {
 	 *             if a database command fails
 	 */
 	
-	public static ArrayList<String> getStringSequence(String input, String query) {
+	public static ArrayList<String> getStringSequence( String query,String input) {
 		ArrayList<String> resList = new ArrayList<String>();
 		// Database context.
 		Context context = new Context();

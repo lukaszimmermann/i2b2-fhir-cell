@@ -19,18 +19,18 @@ public abstract class Query {
 
 	private String rawParameter;
 	private String rawValue;
-	private String parameterPath;// this will be resource specific defined at runTime
+	private String parameterPath;// this will be resource specific defined at
+									// runTime
 	private Class resourceClass;
 	private String modifier;
 	private String parameter;
-	
-	String value;
+
 	QueryType type;
 
 	/*
-	 * The raw Parameter and raw Value have protected Function access by children
-	 * Child will be init first and then validation will first be at parent then
-	 * child level
+	 * The raw Parameter and raw Value have protected Function access by
+	 * children Child will be init first and then validation will first be at
+	 * parent then child level
 	 */
 	private Query() {
 	}
@@ -42,16 +42,16 @@ public abstract class Query {
 			throws QueryParameterException, QueryValueException {
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
-		this.rawParameter = rawValue;
+		this.rawParameter = rawParameter;
 
-		Pattern p = Pattern.compile("^(.*)[:]*(.*)$");
+		Pattern p = Pattern.compile("^([^:]*)[:]*(.*)$");
 		Matcher m = p.matcher(rawParameter);
 		if (m.matches()) {
 			this.parameter = m.group(1);
 			this.modifier = m.group(2);
+		}else{
+			throw new QueryParameterException("Parameter does not match template"+rawParameter);
 		}
-
-		this.value = rawValue;
 
 		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
 				this.resourceClass, this.parameter);
@@ -68,14 +68,12 @@ public abstract class Query {
 			throw new QueryValueException("rawValue is null");
 		if (this.rawParameter == null)
 			throw new QueryParameterException("rawParameter is null");
-		if (this.value == null)
-			throw new QueryValueException("Value is null");
 		if (this.parameter == null)
 			throw new QueryParameterException("Parameter is null");
 
 		if (this.parameterPath == null)
 			throw new QueryParameterException(
-					"rawParameter Path not found for " + this.rawParameter
+					"Path not found for parameter " + this.parameter
 							+ " for " + this.resourceClass);
 	}
 
@@ -104,14 +102,6 @@ public abstract class Query {
 
 	abstract public void validateValue() throws QueryValueException;
 
-	public String toString() {
-		return "resourceClass=" + this.resourceClass.getCanonicalName()
-				+ "\nrawparameter=" + this.rawParameter + "\nparameter="
-				+ this.parameter + "\nrawValue=" + this.rawValue + "\nvalue="
-				+ this.value + "\ntype=" + this.type + "\nparameterPath"
-				+ this.parameterPath + "\nmodifier" + this.modifier;
-	}
-
 	public ArrayList<String> getValuesBelowParameterPath(Resource r,
 			String parPath) {
 		return getValuesFromParameterPath(r, parPath, true);
@@ -130,17 +120,53 @@ public abstract class Query {
 		ArrayList<String> list = new ArrayList<String>();
 
 		String xml = FhirUtil.resourceToXml(r);
-		list = XQueryUtil.getStringSequence(xml,
-				"declare default element namespace \"http://hl7.org/fhir\";"
-						+ "/" + this.parameterPath.replace(".", "/")// "/Patient/birthDate+"
-						+ (explodeF ? "/*" : "") + "/@value/string()");
+		String xqueryStr="declare default element namespace \"http://hl7.org/fhir\";"
+				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
+				+ (explodeF ? "/" : "") + "/@value/string()";
+		logger.trace("xqueryStr:"+xqueryStr);
+		list = XQueryUtil.getStringSequence(
+				xqueryStr, xml);
+
 		logger.trace("list:" + list.toString());
 		return list;
 	}
 
+	protected ArrayList<String> getListFromParameterPath(Resource r,
+			String parPath) {
+		ArrayList<String> list = new ArrayList<String>();
+		String xml = FhirUtil.resourceToXml(r);
+		String xqueryStr="declare default element namespace \"http://hl7.org/fhir\";"
+				+ "/" + parPath.replace(".", "/");
+				
+		logger.trace("xqueryStr:"+xqueryStr);
+		list = XQueryUtil.getStringSequence(
+				xqueryStr, xml);
+
+		logger.trace("list:" + list.toString());
+		return list;
+	}
+
+	
+	private String getXmlFromParameterPath(String xml, String parPath) {
+		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+				+ "/" + this.parameterPath.replace(".", "/") + parPath;// "/Patient/gender;
+		// logger.trace("xqueryStr:" + xqueryStr);
+
+		String msg = XQueryUtil.processXQuery(xqueryStr, xml).toString();
+
+		logger.trace("msg:" + msg.toString());
+		return msg;
+	}
+
+	protected String getXmlFromParameterPath(Resource r, String parPath) {
+		return getXmlFromParameterPath(FhirUtil.resourceToXml(r),parPath);
+	}
+
+	
 	protected String getRawValue() {
 		return rawValue;
 	}
+
 	protected String getRawParameter() {
 		return rawParameter;
 	}
@@ -148,7 +174,7 @@ public abstract class Query {
 	protected String getParameterPath() {
 		return parameterPath;
 	}
-	
+
 	protected String getParameter() {
 		return parameter;
 	}
@@ -159,6 +185,14 @@ public abstract class Query {
 
 	protected String getModifier() {
 		return modifier;
+	}
+
+	public String toString() {
+		return "resourceClass=" + this.resourceClass.getCanonicalName()
+				+ "\nrawparameter=" + this.rawParameter + "\nparameter="
+				+ this.parameter + "\nrawValue=" + this.rawValue 
+				+ "\ntype=" + this.type + "\nparameterPath:"
+				+ this.parameterPath + "\nmodifier:" + this.modifier;
 	}
 
 }
