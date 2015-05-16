@@ -27,7 +27,7 @@ public class QueryTest {
 		qb=new QueryBuilder();
 	}
 	
-	//@Test
+	@Test
 	public void testDate() throws QueryParameterException, QueryValueException {
 		logger.info("Running tests for QueryDate...");
 		try{
@@ -57,7 +57,7 @@ public class QueryTest {
 	
 	
 	@Test
-	public void testToken() throws QueryParameterException, QueryValueException {
+	public void testTokenCode() throws QueryParameterException, QueryValueException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
 		//logger.trace("RES:"+q.match(p));
 		assertTrue(q.match(p));
@@ -83,6 +83,9 @@ public class QueryTest {
 		assertFalse(q.match(p));
 	
 		
+		
+		
+		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
 		assertFalse(q.match(p));
 	
@@ -90,7 +93,27 @@ public class QueryTest {
 		p=(Patient) FhirUtil.xmlToResource(xml);
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
 		assertTrue(q.match(p));
-	
-		
 	}
+	
+	@Test
+	public void testIdentifier() throws QueryParameterException, QueryValueException {
+	
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
+		assertTrue(q.match(p));
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472981").build();
+		assertFalse(q.match(p));
+		
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("urn:oid:2.16.840.1.113883.2.4.6.3|738472983").build();
+		assertTrue(q.match(p));
+	}
+	
+	@Test
+	public void testSimpleElements() throws QueryParameterException, QueryValueException {
+	
+		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
+		assertTrue(q.match(p));
+	}	
+	
 }
