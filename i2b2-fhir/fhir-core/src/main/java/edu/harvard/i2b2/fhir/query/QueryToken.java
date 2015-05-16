@@ -3,6 +3,7 @@ package edu.harvard.i2b2.fhir.query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,7 +51,6 @@ public class QueryToken extends Query {
 								+ this.getRawValue());
 			}
 		}
-
 	}
 
 	@Override
@@ -59,21 +59,25 @@ public class QueryToken extends Query {
 		typeList = new ArrayList<String>(Arrays.asList("/coding",
 				"/CodeableConcept", "/Identifier"));
 		for (String type : typeList) {
-			String xml = getXmlFromParameterPath(r, this.getParameterPath()
-					.replace(".", "/") + type);
-			logger.trace("xml:" + xml);
-			if (xml.equals(""))	continue;
-			String resultSystem = getXmlFromParameterPath(xml,
-					"//system/@value/string()");
-			logger.trace("resultSystem:" + resultSystem);
+			List<String> xmlList = getXmlListFromParameterPath(r, this
+					.getParameterPath().replace(".", "/") + type);
+			for (String xml : xmlList) {
+				logger.trace("xml:" + xml);
+				if (xml.equals(""))
+					continue;
+				String resultSystem = getXmlFromParameterPath(xml,
+						"//system/@value/string()");
+				logger.trace("resultSystem:" + resultSystem);
 
-			// consider namespace
-			if (this.namespace.length() > 0
-					&& (!resultSystem.equals(namespace)))
-				return false;
+				// consider namespace
+				if (this.namespace.length() > 0 ) {
+					if (!(resultSystem.equals(namespace)))
+						return false;
+				}
 
-			if (textSearch(xml))
-				return true;
+				if (textSearch(xml))
+					return true;
+			}
 		}
 
 		return false;
