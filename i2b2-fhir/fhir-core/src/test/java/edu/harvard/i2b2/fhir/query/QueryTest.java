@@ -83,12 +83,18 @@ public class QueryTest {
 		assertFalse(q.match(p));
 	
 		
+		q=qb.setResourceClass(Patient.class).setRawParameter("language").setRawValue("urn:ietf:bcp:47|nl").build();
+		assertTrue(q.match(p));
 		
+		q=qb.setResourceClass(Patient.class).setRawParameter("language:text").setRawValue("Dutch").build();
+		assertTrue(q.match(p));
 		
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
 		assertFalse(q.match(p));
 	
+		
+		
 		String xml=Utils.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
 		p=(Patient) FhirUtil.xmlToResource(xml);
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
@@ -115,5 +121,6 @@ public class QueryTest {
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
 		assertTrue(q.match(p));
 	}	
+	
 	
 }

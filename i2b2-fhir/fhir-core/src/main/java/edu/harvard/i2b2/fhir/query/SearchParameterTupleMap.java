@@ -19,6 +19,7 @@ public class SearchParameterTupleMap {
 		patientTuple.add(new SearchParameterTuple("identifier","token","A patient identifier","Patient.identifier"));
 		//patientTuple.add(new SearchParameterTuple("_id","token","The logical resource id associated with the resource (must be supported by all servers)","Patient.id"));
 		patientTuple.add(new SearchParameterTuple("active","token","Whether the patient record is active","Patient.active"));
+		patientTuple.add(new SearchParameterTuple("language","token","Language code (irrespective of use value)","Patient.communication"));
 		hm.put(Patient.class, patientTuple);
 	}
 	
