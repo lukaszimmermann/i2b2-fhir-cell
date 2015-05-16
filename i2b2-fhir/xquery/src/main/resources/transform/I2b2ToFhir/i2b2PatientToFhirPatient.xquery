@@ -114,6 +114,7 @@ declare function local:fnPatient($zip as xs:string?,
       <system value="http://hl7.org/fhir/v3/AdministrativeGender"/>
       <code value="{$gender}"/>
       <display value="{$gender_expanded}"/>
+      <primary value="true"/>
     </coding>
   </gender>
   <birthDate value="{$birthdate}"/>
@@ -124,7 +125,7 @@ declare function local:fnPatient($zip as xs:string?,
       <coding>
         <system value="http://hl7.org/fhir/v3/Race"/>
         <code value="{$race_code}"/>
-        
+        <primary value="true"/>
       </coding>
     </valueCodeableConcept>
   </extension>

@@ -54,6 +54,7 @@ return
       <system value="http://snomed.info/sct"/>
       <code value="{$c}"/>
       <display value="{$d}"/>
+      <primary value="true"/>
    </coding>  
  </route>
     </dosage>
@@ -85,6 +86,7 @@ declare function local:fnFhirMedication($count as xs:integer?,$cn as xs:string?,
       <system value="http://../NDC"/>
       <code value="{$cid}"/>
       <display value="{$cn}"/>
+      <primary value="true"/>
     </coding>
   </code>
 
