@@ -27,7 +27,7 @@ public class QueryTest {
 		qb=new QueryBuilder();
 	}
 	
-	@Test
+	//@Test
 	public void testDate() throws QueryParameterException, QueryValueException {
 		logger.info("Running tests for QueryDate...");
 		try{
@@ -42,25 +42,55 @@ public class QueryTest {
 		}
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<2015-05-15").build();
-		logger.trace("RES:"+q.match(p));
+		//logger.trace("RES:"+q.match(p));
 		assertTrue(q.match(p));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue(">1941-05-15").build();
-		logger.trace("RES:"+q.match(p));
-		assertTrue(q.match(p));
+		//logger.trace("RES:"+q.match(p));
+		//assertTrue(q.match(p));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<1941-05-15").build();
-		logger.trace("RES:"+q.match(p));
+		//logger.trace("RES:"+q.match(p));
 		assertFalse(q.match(p));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("=<1944-11-17").build();
-		logger.trace("RES:"+q.match(p));
+		//logger.trace("RES:"+q.match(p));
 		assertTrue(q.match(p));
 	}
 	
 	
-	//@Test
+	@Test
 	public void testToken() throws QueryParameterException, QueryValueException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
-		logger.trace("q:"+q);
-		logger.trace("RES:"+q.match(p));
-		//assertTrue(q.match(p));
+		//logger.trace("RES:"+q.match(p));
+		assertTrue(q.match(p));
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("M").build();
+		assertTrue(q.match(p));
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("F").build();
+		assertFalse(q.match(p));
+		
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("F").build();
+		assertFalse(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
+		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
+		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|Male").build();
+		assertTrue(q.match(p));
+	
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
+		assertFalse(q.match(p));
+	
+		
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
+		assertFalse(q.match(p));
+	
+		String xml=Utils.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
+		p=(Patient) FhirUtil.xmlToResource(xml);
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
+		assertTrue(q.match(p));
+	
+		
 	}
 }

@@ -27,11 +27,11 @@ public class QueryDate extends Query {
 	protected void init() throws QueryValueException, QueryParameterException{
 		this.type = QueryType.DATE;
 		Pattern p = Pattern.compile("^([<=>]*)[^\\s]*");
-		Matcher m = p.matcher(value);
+		Matcher m = p.matcher(this.getRawValue());
 		this.operator = m.matches() ? m.group(1) : "";
 		logger.info("operator:" + this.operator);
-		this.dateValue = (this.operator.length() > 0) ? value
-				.substring(this.operator.length()) : value;
+		this.dateValue = (this.operator.length() > 0) ? this.getRawValue()
+				.substring(this.operator.length()) : this.getRawValue();
 				
 		try {
 			validateDate();
@@ -86,7 +86,7 @@ public class QueryDate extends Query {
 	
 	@Override
 	public void validateValue() throws QueryValueException {
-		if(this.value==null) throw new QueryValueException("value is null");
+		if(this.getRawValue()==null) throw new QueryValueException("rawValue is null");
 	}
 
 	
