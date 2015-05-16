@@ -15,6 +15,8 @@ public class SearchParameterTupleMap {
 		hm =new HashMap<Class,List<SearchParameterTuple>>();
 		List<SearchParameterTuple> patientTuple= new ArrayList<SearchParameterTuple>();
 		patientTuple.add(new SearchParameterTuple("birthdate","date","The patient's date of birth","Patient.birthDate"));
+		patientTuple.add(new SearchParameterTuple("gender","token","Gender of the patient",	"Patient.gender"));
+
 		hm.put(Patient.class, patientTuple);
 	}
 	
