@@ -21,6 +21,10 @@ public class QueryDate extends Query {
 	public QueryDate(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException {
 		super(resourceClass, parameter, value);
+		
+	}
+	
+	protected void init() throws QueryValueException, QueryParameterException{
 		this.type = QueryType.DATE;
 		Pattern p = Pattern.compile("^([<=>]*)[^\\s]*");
 		Matcher m = p.matcher(value);
@@ -28,22 +32,21 @@ public class QueryDate extends Query {
 		logger.info("operator:" + this.operator);
 		this.dateValue = (this.operator.length() > 0) ? value
 				.substring(this.operator.length()) : value;
-				validateDate();
-			
+				
 		try {
+			validateDate();
 			this.dateValueExpected = DatatypeFactory.newInstance()
 					.newXMLGregorianCalendar(this.dateValue)
 					.toGregorianCalendar();
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	@Override
 	public boolean match(Resource r) {
-		ArrayList<String> list = getValuesBelowParameterPath(r,
-				this.parameterPath);
+		ArrayList<String> list = getValuesAtParameterPath(r,
+				this.getParameterPath());
 		for (String v : list) {
 			GregorianCalendar dateValueFound;
 			logger.info("matching on:"+v);
@@ -83,7 +86,7 @@ public class QueryDate extends Query {
 	
 	@Override
 	public void validateValue() throws QueryValueException {
-		
+		if(this.value==null) throw new QueryValueException("value is null");
 	}
 
 	

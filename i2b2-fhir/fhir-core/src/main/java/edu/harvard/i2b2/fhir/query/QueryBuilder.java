@@ -2,19 +2,34 @@ package edu.harvard.i2b2.fhir.query;
 
 public class QueryBuilder {
 	Class resourceClass;
-	String parameter;
-	String value;
+	String rawParameter;
+	String rawValue;
+	String queryTypeStr;
 
-	
-	public QueryBuilder(){
+	public QueryBuilder() {
 	}
-	
-	//will aply rules to parameter name and value to identify type of query and create it
-	public Query build() throws QueryParameterException,QueryValueException{
-		Query q=new QueryDate(resourceClass,parameter,value);
+
+	// will aply rules to parameter name and value to identify type of query and
+	// create it
+	public Query build() throws QueryParameterException, QueryValueException {
+		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
+				this.resourceClass, this.rawParameter);
+
+		if (t != null)
+			this.queryTypeStr = t.getType();
+		Query q = null;
+
+		switch (this.queryTypeStr) {
+		case "date":
+			q = new QueryDate(resourceClass, rawParameter, rawValue);
+			break;
+		case "token":
+			q = new QueryToken(resourceClass, rawParameter, rawValue);
+			break;
+		}
 		return q;
 	}
-	
+
 	public Class getResourceClass() {
 		return resourceClass;
 	}
@@ -24,25 +39,22 @@ public class QueryBuilder {
 		return this;
 	}
 
-	public String getParameter() {
-		return parameter;
+	public String getRawParameter() {
+		return rawParameter;
 	}
 
-	public QueryBuilder setParameter(String parameter) {
-		this.parameter = parameter;
+	public QueryBuilder setRawParameter(String parameter) {
+		this.rawParameter = parameter;
 		return this;
 	}
 
-	public String getValue() {
-		return value;
+	public String getRawValue() {
+		return rawValue;
 	}
 
-	public QueryBuilder setValue(String value) {
-		this.value = value;
+	public QueryBuilder setRawValue(String value) {
+		this.rawValue = value;
 		return this;
 	}
-	
-	
 
-	
 }
