@@ -1,3 +1,8 @@
 mvn install:install-file -Dfile=lib/org.hl7.fhir.validator.jar -DgroupId=org.hl7.fhir.tools -DartifactId=validator -Dversion=1.0 -Dpackaging=jar
 
 TODO;move validation.zip to fhirutil dependency completely
+
+
+=========================
+MISC
+indicated that the coding was primary(from source system). Not sure that all coding are primary

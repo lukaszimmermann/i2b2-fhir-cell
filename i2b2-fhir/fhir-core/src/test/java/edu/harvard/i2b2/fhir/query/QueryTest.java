@@ -102,7 +102,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testIdentifier() throws QueryParameterException, QueryValueException {
+	public void testTokenIdentifier() throws QueryParameterException, QueryValueException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
 		assertTrue(q.match(p));
@@ -116,7 +116,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testSimpleElements() throws QueryParameterException, QueryValueException {
+	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
 		assertTrue(q.match(p));
