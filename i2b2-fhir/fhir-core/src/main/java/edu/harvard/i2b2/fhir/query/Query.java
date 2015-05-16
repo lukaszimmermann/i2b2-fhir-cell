@@ -140,7 +140,7 @@ public abstract class Query {
 			String parPath) {
 		ArrayList<String> list=new ArrayList<String>();
 		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
-				+ "/" + parPath.replace(".", "/");
+				 + parPath.replace(".", "/");
 
 		logger.trace("xqueryStr:" + xqueryStr);
 		list = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -206,5 +206,10 @@ public abstract class Query {
 				+ this.type + "\nparameterPath:" + this.parameterPath
 				+ "\nmodifier:" + this.modifier;
 	}
-
+	protected String getLastElementOfParameterPath() {
+		Pattern p = Pattern.compile(".*\\.([^\\.]*)$");
+		Matcher m = p.matcher(this.getParameterPath());
+		m.matches();
+		return m.group(1);
+	}
 }

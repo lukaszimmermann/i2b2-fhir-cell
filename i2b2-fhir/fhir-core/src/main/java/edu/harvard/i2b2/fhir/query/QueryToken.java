@@ -56,8 +56,8 @@ public class QueryToken extends Query {
 	@Override
 	public boolean match(Resource r) {
 		ArrayList<String> typeList;
-		typeList = new ArrayList<String>(Arrays.asList("/coding",
-				"/CodeableConcept", "/Identifier"));
+		typeList = new ArrayList<String>(Arrays.asList("/coding",//codeable concept
+					""));//identifier
 		for (String type : typeList) {
 			List<String> xmlList = getXmlListFromParameterPath(r, this
 					.getParameterPath().replace(".", "/") + type);
@@ -89,14 +89,16 @@ public class QueryToken extends Query {
 		// consider "text" modifier
 		if (this.getModifier().equals("text")) {
 			pathExtList = new ArrayList<String>(Arrays.asList(
-					"/coding/(code|display)/@value/string()",
-					"/CodeableConcept/(code|text)/@value/string()",
-					"/Identifier/(value|label)/@value/string()"));
+					"/coding/(code|display)/@value/string()",//Codeable concept
+					"/identifier/(value|label)/@value/string()"//Identifier
+					
+					));
 		} else {
 			pathExtList = new ArrayList<String>(Arrays.asList(
 					"/coding/code/@value/string()",
-					"/CodeableConcept/code/@value/string()",
-					"/Identifier/value/@value/string()"));
+					"/identifier/value/@value/string()"
+					,"/"+getLastElementOfParameterPath()+"/@value/string()"
+					));
 		}
 		ArrayList<String> list = new ArrayList<String>();
 		for (String ext : pathExtList) {
@@ -112,6 +114,8 @@ public class QueryToken extends Query {
 		}
 		return false;
 	}
+
+	
 
 	@Override
 	public void validateParameter() throws QueryParameterException {
