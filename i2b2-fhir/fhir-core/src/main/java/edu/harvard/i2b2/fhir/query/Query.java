@@ -49,8 +49,9 @@ public abstract class Query {
 		if (m.matches()) {
 			this.parameter = m.group(1);
 			this.modifier = m.group(2);
-		}else{
-			throw new QueryParameterException("Parameter does not match template"+rawParameter);
+		} else {
+			throw new QueryParameterException(
+					"Parameter does not match template" + rawParameter);
 		}
 
 		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
@@ -72,9 +73,8 @@ public abstract class Query {
 			throw new QueryParameterException("Parameter is null");
 
 		if (this.parameterPath == null)
-			throw new QueryParameterException(
-					"Path not found for parameter " + this.parameter
-							+ " for " + this.resourceClass);
+			throw new QueryParameterException("Path not found for parameter "
+					+ this.parameter + " for " + this.resourceClass);
 	}
 
 	abstract public boolean match(Resource r);
@@ -120,12 +120,11 @@ public abstract class Query {
 		ArrayList<String> list = new ArrayList<String>();
 
 		String xml = FhirUtil.resourceToXml(r);
-		String xqueryStr="declare default element namespace \"http://hl7.org/fhir\";"
+		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
 				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
 				+ (explodeF ? "/" : "") + "/@value/string()";
-		logger.trace("xqueryStr:"+xqueryStr);
-		list = XQueryUtil.getStringSequence(
-				xqueryStr, xml);
+		logger.trace("xqueryStr:" + xqueryStr);
+		list = XQueryUtil.getStringSequence(xqueryStr, xml);
 
 		logger.trace("list:" + list.toString());
 		return list;
@@ -133,24 +132,26 @@ public abstract class Query {
 
 	protected ArrayList<String> getListFromParameterPath(Resource r,
 			String parPath) {
-		ArrayList<String> list = new ArrayList<String>();
-		String xml = FhirUtil.resourceToXml(r);
-		String xqueryStr="declare default element namespace \"http://hl7.org/fhir\";"
+		return getListFromParameterPath(FhirUtil.resourceToXml(r), parPath);
+	}
+
+	protected ArrayList<String> getListFromParameterPath(String xml,
+			String parPath) {
+		ArrayList<String> list=new ArrayList<String>();
+		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
 				+ "/" + parPath.replace(".", "/");
-				
-		logger.trace("xqueryStr:"+xqueryStr);
-		list = XQueryUtil.getStringSequence(
-				xqueryStr, xml);
+
+		logger.trace("xqueryStr:" + xqueryStr);
+		list = XQueryUtil.getStringSequence(xqueryStr, xml);
 
 		logger.trace("list:" + list.toString());
 		return list;
 	}
 
-	
-	private String getXmlFromParameterPath(String xml, String parPath) {
+	protected String getXmlFromParameterPath(String xml, String parPath) {
 		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
-				+ "/" + this.parameterPath.replace(".", "/") + parPath;// "/Patient/gender;
-		// logger.trace("xqueryStr:" + xqueryStr);
+				 +  parPath;// "/Patient/gender;
+		logger.trace("xqueryStr:" + xqueryStr);
 
 		String msg = XQueryUtil.processXQuery(xqueryStr, xml).toString();
 
@@ -159,10 +160,9 @@ public abstract class Query {
 	}
 
 	protected String getXmlFromParameterPath(Resource r, String parPath) {
-		return getXmlFromParameterPath(FhirUtil.resourceToXml(r),parPath);
+		return getXmlFromParameterPath(FhirUtil.resourceToXml(r), parPath);
 	}
 
-	
 	protected String getRawValue() {
 		return rawValue;
 	}
@@ -190,9 +190,9 @@ public abstract class Query {
 	public String toString() {
 		return "resourceClass=" + this.resourceClass.getCanonicalName()
 				+ "\nrawparameter=" + this.rawParameter + "\nparameter="
-				+ this.parameter + "\nrawValue=" + this.rawValue 
-				+ "\ntype=" + this.type + "\nparameterPath:"
-				+ this.parameterPath + "\nmodifier:" + this.modifier;
+				+ this.parameter + "\nrawValue=" + this.rawValue + "\ntype="
+				+ this.type + "\nparameterPath:" + this.parameterPath
+				+ "\nmodifier:" + this.modifier;
 	}
 
 }

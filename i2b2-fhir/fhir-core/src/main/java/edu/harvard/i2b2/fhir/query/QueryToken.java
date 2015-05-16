@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.fhir.query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,58 +55,55 @@ public class QueryToken extends Query {
 
 	@Override
 	public boolean match(Resource r) {
-		String xml;
-		if (this.namespace.equals("")) {
-			xml = getXmlFromParameterPath(r, "/coding/code/@value/string()");
-			logger.info("xml:" + xml);
-			if (xml.equals(code)) {
-				logger.info("matched");
-				return true;
-			}
-			// if modifier is text
-			if(textSearch(r)) return true;
-		
-
-		} else {
-			xml = getXmlFromParameterPath(r, "/coding");
+		ArrayList<String> typeList;
+		typeList = new ArrayList<String>(Arrays.asList("/coding",
+				"/CodeableConcept", "/Identifier"));
+		for (String type : typeList) {
+			String xml = getXmlFromParameterPath(r, this.getParameterPath()
+					.replace(".", "/") + type);
 			logger.trace("xml:" + xml);
-			String xqSystem = "declare default element namespace \"http://hl7.org/fhir\";"
-					+ "/coding/system/@value/string()";
-			String resultSystem = XQueryUtil.processXQuery(xqSystem, xml);
-			String xqCode = "declare default element namespace \"http://hl7.org/fhir\";"
-					+ "/coding/code/@value/string()";
-			String resultCode = XQueryUtil.processXQuery(xqCode, xml);
+			if (xml.equals(""))	continue;
+			String resultSystem = getXmlFromParameterPath(xml,
+					"//system/@value/string()");
+			logger.trace("resultSystem:" + resultSystem);
 
-			// logger.trace("resultCode:"+resultCode);
-			// logger.trace("resultSystem:"+resultSystem);
-			if ( resultSystem.equals(namespace)) {
-				if(resultCode.equals(code)){
-					logger.info("matched");
-					return true;
-				}
-				// if modifier is text
-				if(textSearch(r)) return true;
-			}
+			// consider namespace
+			if (this.namespace.length() > 0
+					&& (!resultSystem.equals(namespace)))
+				return false;
+
+			if (textSearch(xml))
+				return true;
 		}
 
-
 		return false;
-
 	}
 
 	// CodeableConcept.text, Coding.display, or Identifier.label
-	private boolean textSearch(Resource r) {
+	private boolean textSearch(String xml) {
+		ArrayList<String> pathExtList;
+		// consider "text" modifier
 		if (this.getModifier().equals("text")) {
-			ArrayList<String> list = this.getListFromParameterPath(r, this.getParameterPath()+"/coding/(code|system|display)/@value/string()");
-			list.addAll(getListFromParameterPath(r, this.getParameterPath()+"/CodeableConcept/text/@value/string()"));
-			list.addAll(getListFromParameterPath(r, this.getParameterPath()+"/Indentifier/label/@value/string()"));
-			
-			logger.trace("list:"+list.toString());
-			for(String v:list){
-				if(v.equals(code)){
-					logger.info("matched");
-					return true;
-				}
+			pathExtList = new ArrayList<String>(Arrays.asList(
+					"/coding/(code|display)/@value/string()",
+					"/CodeableConcept/(code|text)/@value/string()",
+					"/Identifier/(value|label)/@value/string()"));
+		} else {
+			pathExtList = new ArrayList<String>(Arrays.asList(
+					"/coding/code/@value/string()",
+					"/CodeableConcept/code/@value/string()",
+					"/Identifier/value/@value/string()"));
+		}
+		ArrayList<String> list = new ArrayList<String>();
+		for (String ext : pathExtList) {
+			list.addAll(getListFromParameterPath(xml, ext));
+		}
+
+		logger.trace("list:" + list.toString());
+		for (String v : list) {
+			if (v.equals(code)) {
+				logger.info("matched");
+				return true;
 			}
 		}
 		return false;
@@ -113,10 +111,10 @@ public class QueryToken extends Query {
 
 	@Override
 	public void validateParameter() throws QueryParameterException {
-		if((this.getModifier().length()>0) & 
-				(!(this.getModifier().equals("text")))
-				){
-				throw new QueryParameterException("undefined modifier <"+this.getModifier()+"> for Query of type token");
+		if ((this.getModifier().length() > 0)
+				& (!(this.getModifier().equals("text")))) {
+			throw new QueryParameterException("undefined modifier <"
+					+ this.getModifier() + "> for Query of type token");
 		}
 	}
 
