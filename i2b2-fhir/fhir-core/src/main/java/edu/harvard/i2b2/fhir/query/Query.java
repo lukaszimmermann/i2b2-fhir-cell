@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.fhir.query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,14 +154,25 @@ public abstract class Query {
 				 +  parPath;// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
-		String msg = XQueryUtil.processXQuery(xqueryStr, xml).toString();
+		String msg = XQueryUtil.processXQuery(xqueryStr, xml);
+
+		logger.trace("msg:" + msg.toString());
+		return msg;
+	}
+	
+	protected List<String> getXmlListFromParameterPath(String xml, String parPath) {
+		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+				 +  parPath;// "/Patient/gender;
+		logger.trace("xqueryStr:" + xqueryStr);
+
+		ArrayList<String> msg = XQueryUtil.getStringSequence(xqueryStr, xml);
 
 		logger.trace("msg:" + msg.toString());
 		return msg;
 	}
 
-	protected String getXmlFromParameterPath(Resource r, String parPath) {
-		return getXmlFromParameterPath(FhirUtil.resourceToXml(r), parPath);
+	protected List<String> getXmlListFromParameterPath(Resource r, String parPath) {
+		return getXmlListFromParameterPath(FhirUtil.resourceToXml(r), parPath);
 	}
 
 	protected String getRawValue() {
