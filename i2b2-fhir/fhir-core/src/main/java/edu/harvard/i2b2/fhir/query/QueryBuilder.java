@@ -3,6 +3,8 @@ package edu.harvard.i2b2.fhir.query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
+
 public class QueryBuilder {
 	static Logger logger = LoggerFactory.getLogger(QueryBuilder.class);
 
@@ -16,7 +18,7 @@ public class QueryBuilder {
 
 	// will aply rules to parameter name and value to identify type of query and
 	// create it
-	public Query build() throws QueryParameterException, QueryValueException {
+	public Query build() throws QueryParameterException, QueryValueException, FhirCoreException {
 		String parameter=this.rawParameter.split("\\:")[0];
 		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
 				this.resourceClass,parameter );
@@ -25,7 +27,7 @@ public class QueryBuilder {
 			this.queryTypeStr = t.getType();
 		Query q = null;
 
-		switch (this.queryTypeStr) {
+		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
 			q = new QueryDate(resourceClass, rawParameter, rawValue);
 			logger.info("created query:"+(QueryDate)q);

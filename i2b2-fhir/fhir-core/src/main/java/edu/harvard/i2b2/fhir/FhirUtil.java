@@ -53,6 +53,10 @@ public class FhirUtil {
 	private static HashMap<Class, JAXBContext> hmJaxbc = null;
 
 	private static Validator v;
+	
+	static{
+		initResourceClassList();
+	}
 
 	public static String resourceToXml(Resource r, Class c) {
 		StringWriter strw = new StringWriter();
@@ -294,14 +298,15 @@ public class FhirUtil {
 				kinds, recurse);
 
 		for (JavaFileObject javaFileObject : list) {
-			commands.add(javaFileObject.getClass());
+			
+			//commands.add(javaFileObject.getClass());
 		}
 
 		Class c = null;
 		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement"
 				.split("\\|")) {
 			c = Utils.getClassFromClassPath(x);
-			if (c != null)
+			if (c != null )
 				commands.add(c);
 		}
 		// logger.trace(commands.toString());

@@ -12,6 +12,8 @@ import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
+
 public class QueryDate extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryDate.class);
 	String operator;
@@ -19,7 +21,7 @@ public class QueryDate extends Query {
 	GregorianCalendar dateValueExpected;
 
 	public QueryDate(Class resourceClass, String parameter, String value)
-			throws QueryParameterException, QueryValueException {
+			throws QueryParameterException, QueryValueException, FhirCoreException {
 		super(resourceClass, parameter, value);
 		
 	}

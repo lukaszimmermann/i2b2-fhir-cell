@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryTest {
 
@@ -28,7 +29,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testDate() throws QueryParameterException, QueryValueException {
+	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException {
 		logger.info("Running tests for QueryDate...");
 		try{
 			q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("05-15-2015").build();
@@ -42,7 +43,8 @@ public class QueryTest {
 		}
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<2015-05-15").build();
-		//logger.trace("RES:"+q.match(p));
+		logger.trace("Q:"+q);
+		logger.trace("RES:"+q.match(p));
 		assertTrue(q.match(p));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue(">1941-05-15").build();
 		//logger.trace("RES:"+q.match(p));
@@ -57,7 +59,7 @@ public class QueryTest {
 	
 	
 	@Test
-	public void testTokenCode() throws QueryParameterException, QueryValueException {
+	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
 		//logger.trace("RES:"+q.match(p));
 		assertTrue(q.match(p));
@@ -102,7 +104,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenIdentifier() throws QueryParameterException, QueryValueException {
+	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
 		assertTrue(q.match(p));
@@ -116,7 +118,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException {
+	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
 		assertTrue(q.match(p));

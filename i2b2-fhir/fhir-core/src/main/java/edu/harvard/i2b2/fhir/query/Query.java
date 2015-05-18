@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
@@ -27,7 +29,6 @@ public abstract class Query {
 	private String parameter;
 
 	QueryType type;
-
 	/*
 	 * The raw Parameter and raw Value have protected Function access by
 	 * children Child will be init first and then validation will first be at
@@ -55,10 +56,17 @@ public abstract class Query {
 					"Parameter does not match template" + rawParameter);
 		}
 
-		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
+		/*SearchParameterTuple t = SearchParameterTupleMap.getTuple(
 				this.resourceClass, this.parameter);
 		if (t != null)
 			this.parameterPath = t.getPath();
+		*/
+		try {
+			this.parameterPath=new SearchParameterMap().getParameterPath(resourceClass, this.parameter);
+		} catch (FhirCoreException e) {
+			throw new QueryParameterException("no ParamPath found",e);
+		}
+	
 		init();
 		validate();
 		validateParameter();
@@ -207,7 +215,7 @@ public abstract class Query {
 				+ "\nmodifier:" + this.modifier;
 	}
 	protected String getLastElementOfParameterPath() {
-		Pattern p = Pattern.compile(".*\\.([^\\.]*)$");
+		Pattern p = Pattern.compile(".*/([^\\.]*)$");
 		Matcher m = p.matcher(this.getParameterPath());
 		m.matches();
 		return m.group(1);
