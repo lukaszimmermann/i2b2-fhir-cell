@@ -5,7 +5,10 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({})
+@SuiteClasses({ AllTests.class, MetaResourceDbTest.class,
+		PdoEGtoFhirBundle.class, SearchParameterMapTest.class, WSi2b2.class,
+		xmlIOMetaResourceSet.class })
+
 public class AllTests {
 
 	
