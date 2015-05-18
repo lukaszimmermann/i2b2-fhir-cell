@@ -18,29 +18,40 @@ public class QueryBuilder {
 
 	// will aply rules to parameter name and value to identify type of query and
 	// create it
-	public Query build() throws QueryParameterException, QueryValueException, FhirCoreException {
-		String parameter=this.rawParameter.split("\\:")[0];
-		
+	public Query build() throws QueryParameterException, QueryValueException,
+			FhirCoreException {
+		String parameter = this.rawParameter.split("\\:")[0];
+
 		Query q = null;
-		
+
 		try {
-			this.queryTypeStr=new SearchParameterMap().getType(this.getResourceClass(), this.rawParameter.split(":")[0]);
+			this.queryTypeStr = new SearchParameterMap().getType(
+					this.getResourceClass(), this.rawParameter.split(":")[0]);
 		} catch (FhirCoreException e) {
-			throw new QueryParameterException("no ParamPath found",e);
+			throw new QueryParameterException("no ParamPath found.Query could not be built for "+
+					this.toString(), e);
 		}
 
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
 			q = new QueryDate(resourceClass, rawParameter, rawValue);
-			logger.info("created query:"+(QueryDate)q);
+			logger.info("created query:" + (QueryDate) q);
 			break;
 		case "token":
 			q = new QueryToken(resourceClass, rawParameter, rawValue);
-			logger.info("created query:"+(QueryToken)q);
-			
+			logger.info("created query:" + (QueryToken) q);
+
 			break;
+		case "string":
+			q = new QueryString(resourceClass, rawParameter, rawValue);
+			logger.info("created query:" + (QueryString) q);
+
+			break;
+		default:
+			throw new FhirCoreException(
+					"Query could not be built for:"+ this.toString());
 		}
-		
+
 		return q;
 	}
 
@@ -69,6 +80,13 @@ public class QueryBuilder {
 	public QueryBuilder setRawValue(String value) {
 		this.rawValue = value;
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "QueryBuilder [resourceClass=" + resourceClass
+				+ ", rawParameter=" + rawParameter + ", rawValue=" + rawValue
+				+ ", queryTypeStr=" + queryTypeStr + "]";
 	}
 	
 	
