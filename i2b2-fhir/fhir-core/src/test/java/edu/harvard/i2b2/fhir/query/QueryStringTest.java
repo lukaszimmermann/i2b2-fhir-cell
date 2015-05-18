@@ -29,7 +29,7 @@ public class QueryStringTest {
 		qb = new QueryBuilder();
 	}
 
-	@Test
+	//@Test
 	public void testString() throws QueryParameterException,
 			QueryValueException, FhirCoreException {
 		logger.info("Running tests for QueryString...");
@@ -50,5 +50,23 @@ public class QueryStringTest {
 			assert (true);
 		}
 
+		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
+				.setRawValue("van de Heuvel").build();
+		assertTrue(q.match(p));
+
+		q = qb.setResourceClass(Patient.class).setRawParameter("family")
+				.setRawValue(" van  de").build();
+		assertTrue(q.match(p));
+
+		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
+				.setRawValue("van de Heuvel1").build();
+		assertFalse(q.match(p));
+
+	}
+	
+	@Test
+	public void testParserUrl() throws QueryParameterException{
+		new QueryBuilder("patient?name=pieter");
+		
 	}
 }
