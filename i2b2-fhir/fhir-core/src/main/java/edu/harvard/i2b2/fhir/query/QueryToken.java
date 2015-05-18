@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryToken extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryToken.class);
@@ -22,13 +23,13 @@ public class QueryToken extends Query {
 	String namespace;
 
 	public QueryToken(Class resourceClass, String parameter, String value)
-			throws QueryParameterException, QueryValueException {
+			throws QueryParameterException, QueryValueException, FhirCoreException {
 		super(resourceClass, parameter, value);
 	}
 
 	@Override
 	protected void init() throws QueryValueException, QueryParameterException {
-		this.type = QueryType.DATE;
+		this.type = QueryType.TOKEN;
 
 		// [parameter]=[namespace]|[code]
 		// [parameter]=|[code]

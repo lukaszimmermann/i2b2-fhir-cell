@@ -9,6 +9,7 @@
 		<module>fhir-server</module>
 		<module>fhir-core</module>
 		<module>xquery</module>
+		<module>preprocess-spec</module>
 	</modules>
 
 	<properties>
