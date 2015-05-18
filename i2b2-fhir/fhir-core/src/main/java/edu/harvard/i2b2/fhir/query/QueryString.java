@@ -35,7 +35,9 @@ public class QueryString extends Query {
 		if (this.getModifier().equals("exact"))
 			searchText = this.getRawValue();
 		else {
-			searchText = this.getRawValue().toLowerCase();
+			searchText = this.getRawValue().toLowerCase()
+					.replaceAll("\\s+", " ").replaceAll("^\\s", "")
+					.replaceAll("\\s$", "");
 
 		}
 	}
@@ -58,18 +60,24 @@ public class QueryString extends Query {
 
 	// CodeableConcept.text, Coding.display, or Identifier.label
 	private boolean textSearch(String xml) {
-		
+
 		ArrayList<String> list = new ArrayList<String>();
 		list.addAll(getListFromParameterPath(xml, "//@value/string()"));
 
 		logger.trace("list:" + list.toString());
 		for (String v : list) {
-			if (!this.getModifier().equals("exact")) {
-				v = v.toLowerCase();
-			}
-			if (v.equals(this.searchText)) {
-				logger.info("matched");
-				return true;
+			if (this.getModifier().equals("exact")) {
+				if (v.equals(this.searchText)) {
+					logger.info("matched");
+					return true;
+				}
+			} else {
+				v = v.toLowerCase().replaceAll("\\s+", " ")
+						.replaceAll("^\\s", "").replaceAll("\\s$", "");
+				if (v.contains(this.searchText)) {
+					logger.info("matched");
+					return true;
+				}
 			}
 		}
 		return false;

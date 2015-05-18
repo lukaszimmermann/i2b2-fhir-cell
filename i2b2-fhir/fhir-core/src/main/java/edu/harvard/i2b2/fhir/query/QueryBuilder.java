@@ -1,8 +1,16 @@
 package edu.harvard.i2b2.fhir.query;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryBuilder {
@@ -14,6 +22,29 @@ public class QueryBuilder {
 	String queryTypeStr;
 
 	public QueryBuilder() {
+	}
+	
+	public QueryBuilder(String url) {
+		Pattern  p=Pattern.compile(  "(["+FhirUtil.RESOURCE_LIST+"]);*([^&\\?;]*)\\?([^=&\\?]*)=([^=&\\?]*)", Pattern.CASE_INSENSITIVE);
+		Matcher m= p.matcher(url);
+		if(m.matches()){
+			this.resourceClass=FhirUtil.getResourceClass(m.group(1));
+			this.rawParameter=m.group(3);
+			this.rawValue=m.group(4);
+		}
+		
+		logger.trace(""+this.toString()+FhirUtil.RESOURCE_LIST);
+	}
+	
+	public QueryBuilder(Class resourceClass,String url) {
+		Pattern  p=Pattern.compile( "([^=&\\?]*)=([^=&\\?]*)");
+		Matcher m= p.matcher(url);
+		if(m.matches()){
+			this.rawParameter=m.group(2);
+			this.rawValue=m.group(3);
+		}
+		
+		logger.trace(""+this.toString());
 	}
 
 	// will aply rules to parameter name and value to identify type of query and
@@ -90,5 +121,4 @@ public class QueryBuilder {
 	}
 	
 	
-
 }
