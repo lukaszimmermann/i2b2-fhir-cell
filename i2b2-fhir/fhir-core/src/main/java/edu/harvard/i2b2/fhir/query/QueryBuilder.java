@@ -20,12 +20,14 @@ public class QueryBuilder {
 	// create it
 	public Query build() throws QueryParameterException, QueryValueException, FhirCoreException {
 		String parameter=this.rawParameter.split("\\:")[0];
-		SearchParameterTuple t = SearchParameterTupleMap.getTuple(
-				this.resourceClass,parameter );
-
-		if (t != null)
-			this.queryTypeStr = t.getType();
+		
 		Query q = null;
+		
+		try {
+			this.queryTypeStr=new SearchParameterMap().getType(this.getResourceClass(), this.rawParameter.split(":")[0]);
+		} catch (FhirCoreException e) {
+			throw new QueryParameterException("no ParamPath found",e);
+		}
 
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
@@ -68,5 +70,7 @@ public class QueryBuilder {
 		this.rawValue = value;
 		return this;
 	}
+	
+	
 
 }
