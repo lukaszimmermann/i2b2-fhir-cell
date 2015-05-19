@@ -220,6 +220,23 @@ public abstract class Query {
 		m.matches();
 		return m.group(1);
 	}
+
+	public List<Resource> search(List<Resource> resourceList) {
+		List<Resource> resultList= new ArrayList<Resource>();
+		for(Resource r:resourceList){
+			if(this.match(r))resultList.add(r);
+		}
+		return resultList;
+	}
+
+	public MetaResourceSet search(MetaResourceSet s) {
+		MetaResourceSet s2=new MetaResourceSet();;
+		for(MetaResource mr:s.getMetaResource()){
+			Resource r=mr.getResource();
+			if(this.match(r)) s2.getMetaResource().add(mr);
+		}
+		return s2;
+	}
 	
 	
 }

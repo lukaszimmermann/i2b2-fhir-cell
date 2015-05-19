@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaResource;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 /*
  * Creates QueryList from String and
@@ -54,12 +56,24 @@ public class QueryEngine {
 		}
 	}
 
-	public List<Resource> executeQuery(List<Resource> resList) {
-		List<Resource> resultList = new ArrayList<Resource>();
-
+	public List<Resource> search(List<Resource> resList) {
+		logger.trace("running query");
+		List<Resource> resultList=resList;
+		for(Query q:this.queryList){
+			resultList=q.search(resultList);
+		}
 		return resultList;
 	}
 
+	public MetaResourceSet search(MetaResourceSet s) {
+		logger.trace("running query");
+		MetaResourceSet resultS=new MetaResourceSet();
+		for(Query q:this.queryList){
+			resultS=q.search(s);
+		}
+		return resultS;
+	}
+	
 	@Override
 	public String toString() {
 		return "QueryEngine [queryList=" + queryList + ", resourceClass="

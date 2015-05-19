@@ -109,7 +109,7 @@ public class QueryToken extends Query {
 		logger.trace("list:" + list.toString());
 		for (String v : list) {
 			if (v.equals(code)) {
-				logger.info("matched");
+				logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 				return true;
 			}
 		}

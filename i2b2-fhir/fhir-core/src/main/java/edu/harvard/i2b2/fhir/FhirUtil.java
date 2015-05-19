@@ -1,6 +1,5 @@
 package edu.harvard.i2b2.fhir;
 
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -9,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +25,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.abdera.Abdera;
@@ -38,27 +40,28 @@ import org.hl7.fhir.instance.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class FhirUtil {
-	//public static boolean validateFhirResourceBeforeAddingFlag=false;
-	
-	static Logger logger = LoggerFactory.getLogger(FhirUtil.class); 
-	
+	// public static boolean validateFhirResourceBeforeAddingFlag=false;
 
-	//final public static  String RESOURCE_LIST_REGEX = "("+FhirUtil.getResourceList().toString().replace(",", "|")
-	//		.replaceAll("[\\s\\[\\]]+", "")+")";
-	
-	final public static  String RESOURCE_LIST_REGEX="(Medication|MedicationStatement|Observation|Patient)";
+	static Logger logger = LoggerFactory.getLogger(FhirUtil.class);
+
+	// final public static String RESOURCE_LIST_REGEX =
+	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
+	// .replaceAll("[\\s\\[\\]]+", "")+")";
+
+	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
 	private static HashMap<Class, JAXBContext> hmJaxbc = null;
 
 	private static Validator v;
-	
-	static{
+
+	static {
 		initResourceClassList();
 	}
 
@@ -131,8 +134,8 @@ public class FhirUtil {
 		return resList;
 	}
 
-	public static String getResourceBundle(
-			MetaResourceSet s, String uriInfoString,String urlString) {
+	public static String getResourceBundle(MetaResourceSet s,
+			String uriInfoString, String urlString) {
 		String fhirBase = uriInfoString;
 
 		Abdera abdera = new Abdera();
@@ -154,7 +157,7 @@ public class FhirUtil {
 			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result",
 					"os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
-		
+
 			if (hmJaxbc == null) {
 				hmJaxbc = new HashMap<Class, JAXBContext>();
 
@@ -302,15 +305,15 @@ public class FhirUtil {
 				kinds, recurse);
 
 		for (JavaFileObject javaFileObject : list) {
-			
-			//commands.add(javaFileObject.getClass());
+
+			// commands.add(javaFileObject.getClass());
 		}
 
 		Class c = null;
 		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement"
 				.split("\\|")) {
 			c = Utils.getClassFromClassPath(x);
-			if (c != null )
+			if (c != null)
 				commands.add(c);
 		}
 		// logger.trace(commands.toString());
@@ -337,8 +340,7 @@ public class FhirUtil {
 			if (c.isInstance(resource))
 				return c;
 		}
-		logger.trace("Class Not Found for FHIR resource:"
-				+ resource.getId());
+		logger.trace("Class Not Found for FHIR resource:" + resource.getId());
 		return null;
 
 	}
@@ -362,7 +364,7 @@ public class FhirUtil {
 
 	}
 
-	 static Object getChild(Resource r, String pathStr)
+	static Object getChild(Resource r, String pathStr)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -391,36 +393,55 @@ public class FhirUtil {
 		}
 
 	}
-	
-	static public String getPatientId(MetaResource mr){
-		String id=mr.getResource().getId();
-		Resource r= mr.getResource();
-		if(Patient.class.isInstance(r)){
-			if(id.contains("/")){
+
+	static public String getPatientId(MetaResource mr) {
+		String id = mr.getResource().getId();
+		Resource r = mr.getResource();
+		if (Patient.class.isInstance(r)) {
+			if (id.contains("/")) {
 				return id.split("/")[1];
-			}else throw new RuntimeException("id is malformed:"+id);
-		}else{
-			if(id.contains("/")&& id.contains("-")){
+			} else
+				throw new RuntimeException("id is malformed:" + id);
+		} else {
+			if (id.contains("/") && id.contains("-")) {
 				return id.split("/")[1].split("-")[0];
-			}else throw new RuntimeException("id is malformed:"+id);
-			
-			}	
+			} else
+				throw new RuntimeException("id is malformed:" + id);
+
+		}
 	}
-	
-	static public ResourceReference getResourceReferenceForRessource(Resource r ){
-		ResourceReference rRef=null;
-		if(r.getId()!=null){
-			rRef=new ResourceReference();
-			org.hl7.fhir.String shl7=new org.hl7.fhir.String();
+
+	static public ResourceReference getResourceReferenceForRessource(Resource r) {
+		ResourceReference rRef = null;
+		if (r.getId() != null) {
+			rRef = new ResourceReference();
+			org.hl7.fhir.String shl7 = new org.hl7.fhir.String();
 			shl7.setValue(r.getId());
 			rRef.setReference(shl7);
 		}
 		return rRef;
 	}
-	
-	public static List<String> getResourceList(){
+
+	public static List<String> getResourceList() {
 		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
 	}
-	
-	
+
+	public static MetaResource getMetaResource(Resource r) throws FhirCoreException {
+
+		MetaData md = new MetaData();
+		GregorianCalendar gc = new GregorianCalendar();
+		try {
+			md.setLastUpdated(DatatypeFactory.newInstance()
+					.newXMLGregorianCalendar(gc));
+		} catch (DatatypeConfigurationException e) {
+			throw new FhirCoreException("error",e);
+		}
+
+		MetaResource mr = new MetaResource();
+		mr.setResource((Resource) r);
+		mr.setMetaData(md);
+
+		return mr;
+
+	}
 }
