@@ -3,10 +3,6 @@ package edu.harvard.i2b2.fhir.query;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,34 +19,44 @@ public class QueryBuilder {
 
 	public QueryBuilder() {
 	}
-	
+
 	public QueryBuilder(String url) {
-		Pattern  p=Pattern.compile(  "(["+FhirUtil.RESOURCE_LIST+"]);*([^&\\?;]*)\\?([^=&\\?]*)=([^=&\\?]*)", Pattern.CASE_INSENSITIVE);
-		Matcher m= p.matcher(url);
-		if(m.matches()){
-			this.resourceClass=FhirUtil.getResourceClass(m.group(1));
-			this.rawParameter=m.group(3);
-			this.rawValue=m.group(4);
+		String fhirClassExp="("+FhirUtil.getResourceList().toString().replace(",", "|")
+				.replaceAll("[\\s\\[\\]]+", "")+")";
+		Pattern p = Pattern.compile(
+				fhirClassExp
+				+ ";*([^&\\?;]*)\\?([^=&\\?]*)=([^=&\\?]*)",
+				Pattern.CASE_INSENSITIVE);
+		// String.join(",", FhirUtil.getResourceList());//java 8
+		Matcher m = p.matcher(url);
+		if (m.matches()) {
+			this.resourceClass = FhirUtil.getResourceClass(m.group(1));
+			this.rawParameter = m.group(3);
+			this.rawValue = m.group(4);
 		}
+
 		
-		logger.trace(""+this.toString()+FhirUtil.RESOURCE_LIST);
-	}
-	
-	public QueryBuilder(Class resourceClass,String url) {
-		Pattern  p=Pattern.compile( "([^=&\\?]*)=([^=&\\?]*)");
-		Matcher m= p.matcher(url);
-		if(m.matches()){
-			this.rawParameter=m.group(2);
-			this.rawValue=m.group(3);
-		}
-		
-		logger.trace(""+this.toString());
 	}
 
+	
+	
+	public QueryBuilder(Class resourceClass, String url) throws FhirCoreException {
+		this.resourceClass=resourceClass;
+		Pattern p = Pattern.compile("([^=&\\?]*)=([^=&\\?]*)");
+		Matcher m = p.matcher(url);
+		if (m.matches()) {
+			this.rawParameter = m.group(1);
+			this.rawValue = m.group(2);
+		}
+		logger.trace("" + this.toString());
+	}
+
+	
 	// will aply rules to parameter name and value to identify type of query and
 	// create it
 	public Query build() throws QueryParameterException, QueryValueException,
 			FhirCoreException {
+		if(resourceClass==null) throw new FhirCoreException("resource class is null");
 		String parameter = this.rawParameter.split("\\:")[0];
 
 		Query q = null;
@@ -59,8 +65,9 @@ public class QueryBuilder {
 			this.queryTypeStr = new SearchParameterMap().getType(
 					this.getResourceClass(), this.rawParameter.split(":")[0]);
 		} catch (FhirCoreException e) {
-			throw new QueryParameterException("no ParamPath found.Query could not be built for "+
-					this.toString(), e);
+			throw new QueryParameterException(
+					"no ParamPath found.Query could not be built for "
+							+ this.toString(), e);
 		}
 
 		switch (this.queryTypeStr.toLowerCase()) {
@@ -79,8 +86,8 @@ public class QueryBuilder {
 
 			break;
 		default:
-			throw new FhirCoreException(
-					"Query could not be built for:"+ this.toString());
+			throw new FhirCoreException("Query could not be built for:"
+					+ this.toString());
 		}
 
 		return q;
@@ -119,6 +126,5 @@ public class QueryBuilder {
 				+ ", rawParameter=" + rawParameter + ", rawValue=" + rawValue
 				+ ", queryTypeStr=" + queryTypeStr + "]";
 	}
-	
-	
+
 }

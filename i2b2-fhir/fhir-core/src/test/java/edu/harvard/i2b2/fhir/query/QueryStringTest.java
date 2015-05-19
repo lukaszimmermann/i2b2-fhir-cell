@@ -67,6 +67,8 @@ public class QueryStringTest {
 	@Test
 	public void testParserUrl() throws QueryParameterException{
 		new QueryBuilder("patient?name=pieter");
+		new QueryBuilder("medication?name=pieter");
+		logger.trace(""+FhirUtil.getResourceList());
 		
 	}
 }

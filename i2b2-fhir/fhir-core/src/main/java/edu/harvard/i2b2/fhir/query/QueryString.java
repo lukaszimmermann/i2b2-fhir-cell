@@ -97,8 +97,8 @@ public class QueryString extends Query {
 
 	}
 
+	@Override
 	public String toString() {
-		return super.toString() + "\nsearchText=" + this.searchText;
-
+		return "QueryString "+super.toString()+ "searchText=" + searchText + "]\n";
 	}
 }
