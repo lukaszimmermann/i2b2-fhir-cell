@@ -51,7 +51,7 @@ public class QueryDate extends Query {
 				this.getParameterPath());
 		for (String v : list) {
 			GregorianCalendar dateValueFound;
-			logger.info("matching on:"+v);
+			logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 			
 			try {
 				dateValueFound = DatatypeFactory.newInstance()
@@ -61,17 +61,17 @@ public class QueryDate extends Query {
 			}
 			if (operator.contains("=")) {
 				if (dateValueFound.equals(this.dateValueExpected)){
-					logger.info("matched");
+					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
 			}else if (operator.contains("<")) {
 				if (dateValueFound.before(this.dateValueExpected)){
-					logger.info("matched");
+					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
 			}else if (operator.contains(">")) {
 				if (dateValueFound.after(this.dateValueExpected)){
-					logger.info("matched");
+					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
 			}

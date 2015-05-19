@@ -68,14 +68,14 @@ public class QueryString extends Query {
 		for (String v : list) {
 			if (this.getModifier().equals("exact")) {
 				if (v.equals(this.searchText)) {
-					logger.info("matched");
+					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
 			} else {
 				v = v.toLowerCase().replaceAll("\\s+", " ")
 						.replaceAll("^\\s", "").replaceAll("\\s$", "");
 				if (v.contains(this.searchText)) {
-					logger.info("matched");
+					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
 			}
