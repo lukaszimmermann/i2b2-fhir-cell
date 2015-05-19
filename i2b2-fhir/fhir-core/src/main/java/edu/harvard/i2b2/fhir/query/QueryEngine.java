@@ -2,6 +2,7 @@ package edu.harvard.i2b2.fhir.query;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +27,9 @@ public class QueryEngine {
 	private String rawQuery;
 
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
-	QueryEngine(String queryUrl) throws QueryParameterException, QueryValueException, FhirCoreException {
-		queryList=new ArrayList<Query>();
+	QueryEngine(String queryUrl) throws QueryParameterException,
+			QueryValueException, FhirCoreException {
+		queryList = new ArrayList<Query>();
 		this.queryUrl = queryUrl;
 		String fhirClassExp = "("
 				+ FhirUtil.getResourceList().toString().replace(",", "|")
@@ -43,37 +45,48 @@ public class QueryEngine {
 		}
 		String suffix = m.group(2);
 
-		while(suffix.length()>0) {
+		while (suffix.length() > 0) {
 			p = Pattern.compile("([^?&]*)&*([^?&]*)");
 			m = p.matcher(suffix);
 			if (m.matches()) {
 				suffix = m.group(2);
 			}
-			logger.trace("prefix:"+m.group(1)+"\nsuffix:"+m.group(2));
-			
-			Query q=new QueryBuilder(this.resourceClass,m.group(1)).build();
+			logger.trace("prefix:" + m.group(1) + "\nsuffix:" + m.group(2));
+
+			Query q = new QueryBuilder(this.resourceClass, m.group(1)).build();
+			queryList.add(q);
+		}
+	}
+
+	public QueryEngine(Class c, Map<String, String> queryParamMap) throws QueryParameterException, QueryValueException, FhirCoreException {
+		queryList = new ArrayList<Query>();
+		
+		for (String k : queryParamMap.keySet()) {
+			if(k==null) continue;
+			Query q = new QueryBuilder(this.resourceClass, k,queryParamMap.get(k)).build();
 			queryList.add(q);
 		}
 	}
 
 	public List<Resource> search(List<Resource> resList) {
 		logger.trace("running query");
-		List<Resource> resultList=resList;
-		for(Query q:this.queryList){
-			resultList=q.search(resultList);
+		List<Resource> resultList = resList;
+		for (Query q : this.queryList) {
+			resultList = q.search(resultList);
 		}
 		return resultList;
 	}
 
 	public MetaResourceSet search(MetaResourceSet s) {
 		logger.trace("running query");
-		MetaResourceSet resultS=new MetaResourceSet();
-		for(Query q:this.queryList){
-			resultS=q.search(s);
+		if(this.queryList.size()==0) return s;
+		MetaResourceSet resultS = new MetaResourceSet();
+		for (Query q : this.queryList) {
+			resultS = q.search(s);
 		}
 		return resultS;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "QueryEngine [queryList=" + queryList + ", resourceClass="

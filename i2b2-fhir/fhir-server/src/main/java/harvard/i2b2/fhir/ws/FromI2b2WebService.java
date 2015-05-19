@@ -42,7 +42,11 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import edu.harvard.i2b2.fhir.*;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.fhir.query.QueryEngine;
+import edu.harvard.i2b2.fhir.query.QueryParameterException;
+import edu.harvard.i2b2.fhir.query.QueryValueException;
 
 @Path("a") 
 public class FromI2b2WebService {
@@ -156,7 +160,7 @@ public class FromI2b2WebService {
 			ParserConfigurationException, SAXException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException,
-			DatatypeConfigurationException {
+			DatatypeConfigurationException, QueryParameterException, QueryValueException, FhirCoreException {
 		
 		logger.info("Query param:"+request.getParameterMap().keySet().toString());
 		
@@ -199,7 +203,13 @@ public class FromI2b2WebService {
 			s = md.filterMetaResources(c, filter);
 			if( filter.size()==0) s = md.getAll(c);
 		//}
-		
+			
+			logger.info("running sophisticated query");
+			q.remove("_id");q.remove("_date");
+			
+			QueryEngine qe= new QueryEngine(c,q);
+			logger.info("created QE:"+qe);
+			s=qe.search(s);
 		
 		logger.info("including...._include:"
 				+ includeResources.toString());
