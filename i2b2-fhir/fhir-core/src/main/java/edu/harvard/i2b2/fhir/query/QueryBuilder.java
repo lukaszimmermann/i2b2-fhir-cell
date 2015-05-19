@@ -52,6 +52,12 @@ public class QueryBuilder {
 	}
 
 	
+	public QueryBuilder(Class resourceClass, String rawParam, String rawValue) {
+		this.resourceClass=resourceClass;
+		this.rawParameter = rawParam;
+		this.rawValue = rawValue;
+	}
+
 	// will aply rules to parameter name and value to identify type of query and
 	// create it
 	public Query build() throws QueryParameterException, QueryValueException,
