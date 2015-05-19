@@ -143,7 +143,7 @@ public class FromI2b2WebService {
 
 	@GET
 	// @Path("MedicationStatement")
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST + "}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getQueryResult(
 			@PathParam("resourceName") String resourceName,
@@ -228,7 +228,7 @@ public class FromI2b2WebService {
 
 	@GET
 	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST + "}/{id:[0-9|-]+}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,

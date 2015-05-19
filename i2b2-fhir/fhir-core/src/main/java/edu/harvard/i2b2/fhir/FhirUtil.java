@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,7 +48,10 @@ public class FhirUtil {
 	static Logger logger = LoggerFactory.getLogger(FhirUtil.class); 
 	
 
-	public static final String RESOURCE_LIST = "(Patient)|(Medication)|(Observation)|(MedicationStatement)";
+	//final public static  String RESOURCE_LIST_REGEX = "("+FhirUtil.getResourceList().toString().replace(",", "|")
+	//		.replaceAll("[\\s\\[\\]]+", "")+")";
+	
+	final public static  String RESOURCE_LIST_REGEX="(Medication|MedicationStatement|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
 	private static HashMap<Class, JAXBContext> hmJaxbc = null;
@@ -250,7 +254,7 @@ public class FhirUtil {
 
 	public List<Class> getResourceClasses() {
 		List<Class> classList = new ArrayList<Class>();
-		for (String x : RESOURCE_LIST.split("|")) {
+		for (String x : RESOURCE_LIST_REGEX.split("|")) {
 			x = x.replace("(", "").replace(")", "");
 			Class y = getResourceClass(x);
 			if (y != null)
@@ -414,6 +418,9 @@ public class FhirUtil {
 		return rRef;
 	}
 	
+	public static List<String> getResourceList(){
+		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
+	}
 	
 	
 }

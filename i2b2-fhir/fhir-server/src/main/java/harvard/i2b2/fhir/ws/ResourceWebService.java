@@ -60,7 +60,7 @@ public class ResourceWebService {
 
 	@GET
 	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST + "}/{id:[0-9]+}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,
@@ -94,7 +94,7 @@ public class ResourceWebService {
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST  + "}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX  + "}")
 	public Response putParticularResource(
 			@PathParam("resourceName") String resourceName,
 			String xml
@@ -138,7 +138,7 @@ public class ResourceWebService {
 
 	//XXX to delegate to FhirHelper
 	@GET
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST  + "(//_search)[0,1]}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX  + "(//_search)[0,1]}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public String getResourceBundle(
 			@PathParam("resourceName") String resourceName,

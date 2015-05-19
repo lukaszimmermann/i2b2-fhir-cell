@@ -207,12 +207,12 @@ public abstract class Query {
 		return modifier;
 	}
 
+	@Override
 	public String toString() {
-		return "resourceClass=" + this.resourceClass.getCanonicalName()
-				+ "\nrawparameter=" + this.rawParameter + "\nparameter="
-				+ this.parameter + "\nrawValue=" + this.rawValue + "\ntype="
-				+ this.type + "\nparameterPath:" + this.parameterPath
-				+ "\nmodifier:" + this.modifier;
+		return " [rawParameter=" + rawParameter + ", rawValue=" + rawValue
+				+ ", parameterPath=" + parameterPath + ", resourceClass="
+				+ resourceClass + ", modifier=" + modifier + ", parameter="
+				+ parameter + ", type=" + type + ",";
 	}
 	protected String getLastElementOfParameterPath() {
 		Pattern p = Pattern.compile(".*/([^\\.]*)$");
@@ -220,4 +220,6 @@ public abstract class Query {
 		m.matches();
 		return m.group(1);
 	}
+	
+	
 }

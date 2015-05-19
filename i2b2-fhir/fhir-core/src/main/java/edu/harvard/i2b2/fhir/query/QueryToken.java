@@ -132,9 +132,8 @@ public class QueryToken extends Query {
 
 	}
 
+	@Override
 	public String toString() {
-		return super.toString() + "\ncode=" + this.code + "\nnamespace="
-				+ this.namespace;
-
+		return "QueryToken "+super.toString()+"code=" + code + ", namespace=" + namespace + "]\n";
 	}
 }
