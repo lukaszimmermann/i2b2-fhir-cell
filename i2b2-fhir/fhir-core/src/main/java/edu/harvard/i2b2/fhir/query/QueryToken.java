@@ -55,12 +55,12 @@ public class QueryToken extends Query {
 	}
 
 	@Override
-	public boolean match(Resource r) {
+	public boolean match(String resourceXml) {
 		ArrayList<String> typeList;
 		typeList = new ArrayList<String>(Arrays.asList("/coding",//codeable concept
 					""));//identifier
 		for (String type : typeList) {
-			List<String> xmlList = getXmlListFromParameterPath(r, this
+			List<String> xmlList = getXmlListFromParameterPath(resourceXml, this
 					.getParameterPath().replace(".", "/") + type);
 			for (String xml : xmlList) {
 				logger.trace("xml:" + xml);

@@ -86,7 +86,11 @@ public abstract class Query {
 					+ this.parameter + " for " + this.resourceClass);
 	}
 
-	abstract public boolean match(Resource r);
+	final public boolean match(Resource r){
+		return match(FhirUtil.resourceToXml(r));
+	}
+
+	abstract public boolean match(String resourceXml);
 
 	final public boolean match(MetaResource mr) {
 		return match(mr.getResource());
@@ -111,29 +115,30 @@ public abstract class Query {
 
 	abstract public void validateValue() throws QueryValueException;
 
-	public ArrayList<String> getValuesBelowParameterPath(Resource r,
+	public ArrayList<String> getValuesBelowParameterPath(String xmlResource,
 			String parPath) {
-		return getValuesFromParameterPath(r, parPath, true);
+		return getValuesFromParameterPath( xmlResource, parPath, true);
 	}
 
-	public ArrayList<String> getValuesAtParameterPath(Resource r, String parPath) {
-		return getValuesFromParameterPath(r, parPath, false);
+	
+	public ArrayList<String> getValuesAtParameterPath(String xmlResource, String parPath) {
+		return getValuesFromParameterPath(xmlResource, parPath, false);
 	}
 
 	// perhaps xquery might be faster than Java reflection, as the latter may
 	// involve making call for
 	// elements that may not be initialized
 
-	private ArrayList<String> getValuesFromParameterPath(Resource r,
+	private ArrayList<String> getValuesFromParameterPath(String xmlResource,
 			String parPath, boolean explodeF) {
 		ArrayList<String> list = new ArrayList<String>();
 
-		String xml = FhirUtil.resourceToXml(r);
+
 		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
 				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
 				+ (explodeF ? "/" : "") + "/@value/string()";
 		logger.trace("xqueryStr:" + xqueryStr);
-		list = XQueryUtil.getStringSequence(xqueryStr, xml);
+		list = XQueryUtil.getStringSequence(xqueryStr, xmlResource);
 
 		logger.trace("list:" + list.toString());
 		return list;
@@ -182,6 +187,11 @@ public abstract class Query {
 	protected List<String> getXmlListFromParameterPath(Resource r, String parPath) {
 		return getXmlListFromParameterPath(FhirUtil.resourceToXml(r), parPath);
 	}
+
+	protected String getXmlFromParameterPath(Resource r, String parPath) {
+		return getXmlFromParameterPath(FhirUtil.resourceToXml(r), parPath);
+	}
+
 
 	protected String getRawValue() {
 		return rawValue;

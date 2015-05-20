@@ -86,6 +86,12 @@ public class QueryBuilder {
 			logger.info("created query:" + (QueryToken) q);
 
 			break;
+		case "reference":
+			q = new QueryReference(resourceClass, rawParameter, rawValue);
+			logger.info("created query:" + (QueryReference) q);
+
+			break;
+
 		case "string":
 			q = new QueryString(resourceClass, rawParameter, rawValue);
 			logger.info("created query:" + (QueryString) q);
