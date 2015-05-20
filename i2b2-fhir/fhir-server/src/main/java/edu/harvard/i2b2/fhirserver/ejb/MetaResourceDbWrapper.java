@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.ejb;
+package edu.harvard.i2b2.fhirserver.ejb;
 
 
 import java.lang.reflect.InvocationTargetException;

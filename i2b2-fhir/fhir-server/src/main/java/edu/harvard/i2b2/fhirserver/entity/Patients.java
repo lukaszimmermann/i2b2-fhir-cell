@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.entity;
+package edu.harvard.i2b2.fhirserver.entity;
 
 import java.util.ArrayList;
 import java.util.List;

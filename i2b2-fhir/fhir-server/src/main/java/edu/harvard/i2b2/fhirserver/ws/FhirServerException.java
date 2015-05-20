@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.ws;
+package edu.harvard.i2b2.fhirserver.ws;
 
 import javax.xml.bind.JAXBException;
 

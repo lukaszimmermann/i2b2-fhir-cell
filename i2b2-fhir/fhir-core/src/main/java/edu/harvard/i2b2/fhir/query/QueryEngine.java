@@ -27,8 +27,9 @@ public class QueryEngine {
 	private String rawQuery;
 
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
-	QueryEngine(String queryUrl) throws QueryParameterException,
+	public QueryEngine(String queryUrl) throws QueryParameterException,
 			QueryValueException, FhirCoreException {
+		logger.debug("queryUrl:"+queryUrl);
 		queryList = new ArrayList<Query>();
 		this.queryUrl = queryUrl;
 		String fhirClassExp = "("
@@ -61,9 +62,12 @@ public class QueryEngine {
 	public QueryEngine(Class c, Map<String, String> queryParamMap) throws QueryParameterException, QueryValueException, FhirCoreException {
 		queryList = new ArrayList<Query>();
 		
-		for (String k : queryParamMap.keySet()) {
+		for (String k1 : queryParamMap.keySet()) {
+			logger.info("queryParamMap:"+queryParamMap.toString());
+			String k=(String) k1;
 			if(k==null) continue;
-			Query q = new QueryBuilder(this.resourceClass, k,queryParamMap.get(k)).build();
+			String v=(String)queryParamMap.get(k);
+			Query q = new QueryBuilder(this.resourceClass, k,v).build();
 			queryList.add(q);
 		}
 	}
@@ -79,11 +83,14 @@ public class QueryEngine {
 
 	public MetaResourceSet search(MetaResourceSet s) {
 		logger.trace("running query");
+		logger.debug("size before query:"+s.getMetaResource().size());
 		if(this.queryList.size()==0) return s;
 		MetaResourceSet resultS = new MetaResourceSet();
 		for (Query q : this.queryList) {
 			resultS = q.search(s);
 		}
+		logger.debug("size after query:"+resultS.getMetaResource().size());
+		
 		return resultS;
 	}
 

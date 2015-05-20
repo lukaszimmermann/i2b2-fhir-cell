@@ -1,4 +1,4 @@
-package harvard.i2b2.fhir.ws;
+package edu.harvard.i2b2.fhirserver.ws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
@@ -48,9 +48,9 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
 
-@Path("a") 
+@Path("a")
 public class FromI2b2WebService {
-	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class); 
+	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
 	// contains ids of patients already called.
 
@@ -59,7 +59,7 @@ public class FromI2b2WebService {
 
 	@javax.ws.rs.core.Context
 	ServletContext context;
- 
+
 	@PostConstruct
 	private void init() {
 
@@ -78,23 +78,22 @@ public class FromI2b2WebService {
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
 			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm)  {
-		//Exception e1=new RuntimeException("test error");
-			//logger.error("test error1:",e1);
-		//if(1==1) throw (RuntimeException)e1;
+			@FormParam("i2b2url") String i2b2urlForm) {
+		// Exception e1=new RuntimeException("test error");
+		// logger.error("test error1:",e1);
+		// if(1==1) throw (RuntimeException)e1;
 		logger.info("Got Auth request");
 		HttpSession session = request.getSession(false);
-		if(session!=null) {
+		if (session != null) {
 			logger.info("invalidated session");
 			session.invalidate();
 		}
-		
-		
+
 		String username = request.getHeader("username");
 		String password = request.getHeader("password");
 		String i2b2domain = request.getHeader("i2b2domain");
-		String i2b2url = request.getHeader("i2b2url"); 
-		String basePath = request 
+		String i2b2url = request.getHeader("i2b2url");
+		String basePath = request
 				.getRequestURL()
 				.toString()
 				.replaceAll(
@@ -115,13 +114,13 @@ public class FromI2b2WebService {
 
 		try {
 			if (username != null && password != null) {
-				//ArrayList<String> PDOcallHistory= new ArrayList<String> ();
-				
+				// ArrayList<String> PDOcallHistory= new ArrayList<String> ();
+
 				session.setAttribute("i2b2domain", i2b2domain);
 				session.setAttribute("i2b2domainUrl", i2b2url);
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
-				//session.setAttribute("PDOcallHistory", PDOcallHistory);
+				// session.setAttribute("PDOcallHistory", PDOcallHistory);
 				MetaResourceDb md = new MetaResourceDb();
 				session.setAttribute("md", md);
 
@@ -155,83 +154,87 @@ public class FromI2b2WebService {
 			@QueryParam("filterf") String filterf,
 			// @HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request,
-			@Context ServletContext servletContext 
-			) throws IOException,
-			ParserConfigurationException, SAXException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException,
-			DatatypeConfigurationException, QueryParameterException, QueryValueException, FhirCoreException {
-		
-		logger.info("Query param:"+request.getParameterMap().keySet().toString());
-		
-		
-		Class c = FhirUtil.getResourceClass(resourceName);
-		MetaResourceDb md = null;
-		MetaResourceSet s = new MetaResourceSet();
-		HttpSession session = request.getSession(false);
-		String basePath = request.getRequestURL().toString()
-				.split(resourceName)[0];
+			@Context ServletContext servletContext) {
+		try {
+			logger.info("Query param:"
+					+ request.getParameterMap().keySet().toString());
 
-		if (session == null) {
-			return Response.status(Status.BAD_REQUEST)
-					.type(MediaType.APPLICATION_XML).entity("login first ")
-					.build();
-		}
+			Class c = FhirUtil.getResourceClass(resourceName);
+			MetaResourceDb md = null;
+			MetaResourceSet s = new MetaResourceSet();
+			HttpSession session = request.getSession(false);
+			String basePath = request.getRequestURL().toString()
+					.split(resourceName)[0];
 
-		
-		md = (MetaResourceDb) session.getAttribute("md");
+			if (session == null) {
+				return Response.status(Status.BAD_REQUEST)
+						.type(MediaType.APPLICATION_XML).entity("login first ")
+						.build();
+			}
 
-		// filter if patientId is mentioned in query string
-		
+			md = (MetaResourceDb) session.getAttribute("md");
+
+			// filter if patientId is mentioned in query string
+
 			HashMap<String, String> filter = new HashMap<String, String>();
-			
+
 			String patientId = extractPatientId(request.getQueryString());
-			logger.info("PatientId:"+patientId);
+			logger.info("PatientId:" + patientId);
 			if (patientId != null) {
 				filter.put("Patient", "Patient/" + patientId);
 				scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
-			Map<String,String> q=request.getParameterMap();
-			for(String k:q.keySet()){
-				if(k.equals("_include")
-				  ||k.equals("patient")) continue;
-				filter.put(k, new String(request.getParameter(k)));
+			Map<String, String> q = request.getParameterMap();
+			for (String k : q.keySet()) {
+				if (k.equals("_include") || k.equals("patient"))
+					continue;
+				
+				//filter.put(k, new String(request.getParameter(k)));
 			}
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
-			logger.info("running filter..."+filter.toString());
+			logger.info("running filter..." + filter.toString());
 			s = md.filterMetaResources(c, filter);
-			if( filter.size()==0) s = md.getAll(c);
-		//}
-			
-			logger.info("running sophisticated query");
-			q.remove("_id");q.remove("_date");
-			
-			QueryEngine qe= new QueryEngine(c,q);
-			logger.info("created QE:"+qe);
-			s=qe.search(s);
+			if (filter.size() == 0) {
+				s = md.getAll(c);
+			} else {
+				s = md.filterMetaResources(c, filter);
+
+			}
 		
-		logger.info("including...._include:"
-				+ includeResources.toString());
-		if (s.getMetaResource().size() > 0) {
-			s = md.getIncludedMetaResources(c, s, includeResources);
+			
+			 logger.info("running sophisticated query for:"+request.getQueryString());
+			//q.remove("_id");q.remove("_date");
+			
+			// QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString());
+			// logger.info("created QE:"+qe); s=qe.search(s);
+			 
+			logger.info("including...._include:" + includeResources.toString());
+			if (s.getMetaResource().size() > 0) {
+				s = md.getIncludedMetaResources(c, s, includeResources);
+			}
+
+			logger.info("getting bundle string...");
+
+			String url = request.getRequestURL().toString();
+			if (url.contains(";"))
+				url = url.substring(0, url.indexOf(";"));
+			if (request.getQueryString() != null)
+				url += "?" + request.getQueryString();
+
+			String returnString = FhirUtil.getResourceBundle(s, basePath, url);
+			logger.info("size of db:" + md.getSize());
+			logger.info("returning response...");
+
+			return Response.ok().type(MediaType.APPLICATION_XML)
+					.header("session_id", session.getId())
+					.entity(removeSpace(returnString)).build();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return Response.serverError().header("xreason", e.getMessage())
+					.build();
 		}
 
-		logger.info("getting bundle string...");
-
-		String url=request.getRequestURL().toString();
-		if(url.contains(";"))url=url.substring(0, url.indexOf(";"));
-		if(request.getQueryString()!=null) 
-			url+="?" + request.getQueryString();
-		
-		String returnString = FhirUtil.getResourceBundle(s, basePath,
-				 url);
-		logger.info("size of db:"+md.getSize());
-		logger.info("returning response...");
-
-		return Response.ok().type(MediaType.APPLICATION_XML)
-				.header("session_id", session.getId())
-				.entity(removeSpace(returnString)).build();
 	}
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
@@ -282,7 +285,7 @@ public class FromI2b2WebService {
 							resourceName + " with id:" + id + " NOT found")
 					.header("session_id", session.getId()).build();
 		}
-	} 
+	}
 
 	private MetaResourceSet initAllPatients(HttpSession session)
 			throws AuthenticationFailure, FhirServerException {
@@ -311,11 +314,11 @@ public class FromI2b2WebService {
 
 		String oStr = webTarget
 				.request()
-				 .accept("Context-Type", "application/xml")
+				.accept("Context-Type", "application/xml")
 				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
 						String.class);
-		//logger.debug("got::"
-				//+ oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
+		// logger.debug("got::"
+		// + oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
 		logger.debug("got Response::" + oStr);
 
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
@@ -335,8 +338,7 @@ public class FromI2b2WebService {
 		} catch (JAXBException e) {
 			throw new FhirServerException("JAXBException", e);
 		}
-		logger.info("Got MetaResourceSet of size:"
-				+ s.getMetaResource().size());
+		logger.info("Got MetaResourceSet of size:" + s.getMetaResource().size());
 		md.addMetaResourceSet(s);
 		return s;
 	}
@@ -353,7 +355,7 @@ public class FromI2b2WebService {
 			return;// avoid recall on historical patient
 		}
 		PDOcallHistory.add(patientId);
-  
+
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 
 		String requestStr = Utils
@@ -396,10 +398,10 @@ public class FromI2b2WebService {
 			String queryString) {
 		if (queryString != null) {
 			String pid = extractPatientId(queryString);
-			if(pid!=null){
+			if (pid != null) {
 				logger.info("will fetch Patient with id:" + pid);
 				getPdo(session, pid);
-			}else{
+			} else {
 				logger.info("will not fetch Patient as there is no Patient id in query");
 			}
 
@@ -461,7 +463,7 @@ public class FromI2b2WebService {
 			throws ParserConfigurationException, SAXException, IOException {
 		return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
 				"(?m)^[ \t]*\r?\n", "")));
-		//return input;
+		// return input;
 	}
 
 	private static String processXquery(String query, String input) {

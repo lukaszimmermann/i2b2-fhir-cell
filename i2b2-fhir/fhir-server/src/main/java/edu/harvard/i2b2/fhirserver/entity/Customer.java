@@ -5,7 +5,7 @@
  * compliance with  the terms of the License at:
  * http://java.net/projects/javaeetutorial/pages/BerkeleyLicense
  */
-package harvard.i2b2.fhir.entity;
+package edu.harvard.i2b2.fhirserver.entity;
 
 import java.io.Serializable;
 import java.util.logging.Level;

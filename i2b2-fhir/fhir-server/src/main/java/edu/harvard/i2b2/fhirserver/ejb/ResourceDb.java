@@ -1,8 +1,6 @@
-package harvard.i2b2.fhir.ejb;
+package edu.harvard.i2b2.fhirserver.ejb;
 
 
-
-import harvard.i2b2.fhir.ws.FromI2b2WebService;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,6 +17,8 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.harvard.i2b2.fhirserver.ws.FromI2b2WebService;
 
 @Startup
 @Singleton
