@@ -56,9 +56,9 @@ public class QueryEngine {
 			p = Pattern.compile("([^?&]*)&*([^?&]*)");
 			m = p.matcher(suffix);
 			if (m.matches()) {
-				suffix = m.group(2);
+				suffix = m.group(1);
 			}
-			logger.trace("prefix:" + m.group(1) + "\nsuffix:" + m.group(2));
+			logger.trace("suffix:" + m.group(1));
 
 			Query q = new QueryBuilder(this.resourceClass, suffix,db).build();
 			queryList.add(q);

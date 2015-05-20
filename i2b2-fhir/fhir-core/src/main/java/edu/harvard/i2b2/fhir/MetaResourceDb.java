@@ -1,25 +1,33 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.apache.abdera.model.Entry;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class MetaResourceDb {
 	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
+	MetaResourceSet set;
 	List<MetaResource> metaResources;
-	HashMap<String,String> resourcesXml;
 
 	// MetaResourcePrimaryDb metaResources;
 
@@ -32,8 +40,8 @@ public class MetaResourceDb {
 	}
 
 	public void init() {
-		metaResources = new ArrayList<MetaResource>();
-		resourcesXml = new HashMap<String,String>();
+		set = new MetaResourceSet();
+		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
 		logger.trace("created resourcedb");
 		logger.trace("resources size:" + metaResources.size());
@@ -63,7 +71,6 @@ public class MetaResourceDb {
 			metaResources.remove(presentRes);
 		}
 		metaResources.add(p);
-		resourcesXml.put(p.getResource().getId(), FhirUtil.resourceToXml(p.getResource()));
 
 		logger.trace("EJB resources (after adding) size:"
 				+ metaResources.size());
@@ -349,9 +356,32 @@ public class MetaResourceDb {
 		}
 		return s;
 	}
-	
-	public String getResourceXml(String id){
-		return this.resourcesXml.get(id);
+
+	public String getMetaResourceSetXml() throws JAXBException {
+		StringWriter rwriter = new StringWriter();
+		JAXBContext jaxbContext = JAXBContext
+				.newInstance(MetaResourceSet.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+				Boolean.TRUE);
+		jaxbMarshaller.marshal(this.set, rwriter);
+		return rwriter.toString();
+	}
+
+	public String getResourceXml(String id) throws FhirCoreException {
+		String xml;
+		String xQuery = "//Resource[@id='"+id+"']";
+
+		try {
+			xml = getMetaResourceSetXml();
+			logger.trace("xml:"+xml);
+		} catch (JAXBException e) {
+			throw new FhirCoreException("", e);
+		}
+		String res=XQueryUtil.processXQuery(xQuery, xml);
+		logger.trace("res:"+res);
+		return res;
+
 	}
 
 }
