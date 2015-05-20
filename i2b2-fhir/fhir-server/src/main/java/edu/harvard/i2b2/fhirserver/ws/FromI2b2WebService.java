@@ -184,6 +184,7 @@ public class FromI2b2WebService {
 				scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
 			
+			
 			Map<String, String> q = request.getParameterMap();
 			for (String k : q.keySet()) {
 				if (k.equals("_include") || k.equals("patient"))
@@ -194,20 +195,24 @@ public class FromI2b2WebService {
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
 			logger.info("running filter..." + filter.toString());
+			s = md.getAll(c);
+			/*
 			s = md.filterMetaResources(c, filter);
 			if (filter.size() == 0) {
 				s = md.getAll(c);
 			} else {
 				s = md.filterMetaResources(c, filter);
 
-			}
+			}*/
 		
 			
 			 logger.info("running sophisticated query for:"+request.getQueryString());
 			//q.remove("_id");q.remove("_date");
 			
-			/QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString(),md);
-			// logger.info("created QE:"+qe); s=qe.search(s);
+			 if(request.getQueryString()!=null){
+				 QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString(),md);
+				 logger.info("created QE:"+qe); s=qe.search(s);
+			 }
 			 
 			logger.info("including...._include:" + includeResources.toString());
 			if (s.getMetaResource().size() > 0) {

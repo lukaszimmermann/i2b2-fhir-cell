@@ -41,13 +41,16 @@ public class QueryEngine {
 		Pattern p = Pattern.compile(fhirClassExp
 				+ ";*([^&\\?;]*)\\?([^&\\?]*)$", Pattern.CASE_INSENSITIVE);
 
-		p = Pattern.compile("(patient)\\?*([^?]*)", Pattern.CASE_INSENSITIVE);
+		p = Pattern.compile( FhirUtil.RESOURCE_LIST_REGEX+"\\?*([^\\?]*)", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(queryUrl);
 		if (m.matches()) {
 			this.resourceClass = FhirUtil.getResourceClass(m.group(1));
 			this.rawQuery = m.group(2);
+		}else{
+			throw new FhirCoreException("query part of url is not is correct format:"+queryUrl);
 		}
-		String suffix = m.group(2);
+		String suffix =null;
+		if(m.groupCount()>1) suffix=m.group(2);
 
 		while (suffix.length() > 0) {
 			p = Pattern.compile("([^?&]*)&*([^?&]*)");
@@ -57,7 +60,7 @@ public class QueryEngine {
 			}
 			logger.trace("prefix:" + m.group(1) + "\nsuffix:" + m.group(2));
 
-			Query q = new QueryBuilder(this.resourceClass, m.group(1),db).build();
+			Query q = new QueryBuilder(this.resourceClass, suffix,db).build();
 			queryList.add(q);
 		}
 	}
@@ -67,6 +70,7 @@ public class QueryEngine {
 		queryList = new ArrayList<Query>();
 		
 		for (String k1 : queryParamMap.keySet()) {
+			if(k1.matches("^_")) continue;
 			logger.info("queryParamMap:"+queryParamMap.toString());
 			String k=(String) k1;
 			if(k==null) continue;
