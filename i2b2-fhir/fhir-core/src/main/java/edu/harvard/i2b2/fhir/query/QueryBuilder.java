@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryBuilder {
@@ -16,11 +17,13 @@ public class QueryBuilder {
 	String rawParameter;
 	String rawValue;
 	String queryTypeStr;
+	private MetaResourceDb db;
 
 	public QueryBuilder() {
 	}
 
-	public QueryBuilder(String url) {
+	public QueryBuilder(String url,MetaResourceDb db) {
+		this.db=db;
 		String fhirClassExp="("+FhirUtil.getResourceList().toString().replace(",", "|")
 				.replaceAll("[\\s\\[\\]]+", "")+")";
 		Pattern p = Pattern.compile(
@@ -40,7 +43,8 @@ public class QueryBuilder {
 
 	
 	
-	public QueryBuilder(Class resourceClass, String url) throws FhirCoreException {
+	public QueryBuilder(Class resourceClass, String url,MetaResourceDb db) throws FhirCoreException {
+		this.db=db;
 		this.resourceClass=resourceClass;
 		Pattern p = Pattern.compile("([^=&\\?]*)=([^=&\\?]*)");
 		Matcher m = p.matcher(url);
@@ -52,7 +56,8 @@ public class QueryBuilder {
 	}
 
 	
-	public QueryBuilder(Class resourceClass, String rawParam, String rawValue) {
+	public QueryBuilder(Class resourceClass, String rawParam, String rawValue,MetaResourceDb db) {
+		this.db=db;
 		this.resourceClass=resourceClass;
 		this.rawParameter = rawParam;
 		this.rawValue = rawValue;
@@ -78,22 +83,22 @@ public class QueryBuilder {
 
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
-			q = new QueryDate(resourceClass, rawParameter, rawValue);
+			q = new QueryDate(resourceClass, rawParameter, rawValue,db);
 			logger.info("created query:" + (QueryDate) q);
 			break;
 		case "token":
-			q = new QueryToken(resourceClass, rawParameter, rawValue);
+			q = new QueryToken(resourceClass, rawParameter, rawValue,db);
 			logger.info("created query:" + (QueryToken) q);
 
 			break;
 		case "reference":
-			q = new QueryReference(resourceClass, rawParameter, rawValue);
+			q = new QueryReference(resourceClass, rawParameter, rawValue,db);
 			logger.info("created query:" + (QueryReference) q);
 
 			break;
 
 		case "string":
-			q = new QueryString(resourceClass, rawParameter, rawValue);
+			q = new QueryString(resourceClass, rawParameter, rawValue,db);
 			logger.info("created query:" + (QueryString) q);
 
 			break;
@@ -139,4 +144,14 @@ public class QueryBuilder {
 				+ ", queryTypeStr=" + queryTypeStr + "]";
 	}
 
+	public MetaResourceDb getDb() {
+		return db;
+	}
+
+	public QueryBuilder setDb(MetaResourceDb db) {
+		this.db = db;
+		return this;
+	}
+
+	
 }

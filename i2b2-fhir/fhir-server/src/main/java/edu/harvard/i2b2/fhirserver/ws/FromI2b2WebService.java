@@ -206,7 +206,7 @@ public class FromI2b2WebService {
 			 logger.info("running sophisticated query for:"+request.getQueryString());
 			//q.remove("_id");q.remove("_date");
 			
-			// QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString());
+			/QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString(),md);
 			// logger.info("created QE:"+qe); s=qe.search(s);
 			 
 			logger.info("including...._include:" + includeResources.toString());
