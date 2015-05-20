@@ -69,7 +69,9 @@ public class QueryBuilder {
 			FhirCoreException {
 		if(resourceClass==null) throw new FhirCoreException("resource class is null");
 		String parameter = this.rawParameter.split("\\:")[0];
+		if(parameter.contains(":"))parameter=parameter.split("\\:")[0];
 
+		
 		Query q = null;
 
 		try {

@@ -91,8 +91,9 @@ public abstract class Query {
 
 	final public boolean match(Resource r) throws FhirCoreException{
 		//return match(FhirUtil.resourceToXml(r));
-		if(db==null) throw new FhirCoreException("db has not been set");
 		if(r==null || r.getId()==null) throw new FhirCoreException("resource or its id is null/not set");
+		if(db==null) throw new FhirCoreException("db has not been set");
+		if(!this.getResourceClass().isInstance(r)) return false;
 		return match(db.getResourceXml(r.getId()));
 	}
 
