@@ -8,7 +8,6 @@ import java.net.URI;
 import java.util.Collection;
 
 import harvard.i2b2.fhir.del.ejb.PatientDb;
-import harvard.i2b2.fhir.entity.Patients;
 
 import javax.ejb.EJB;
 import javax.jws.WebService;
@@ -35,6 +34,8 @@ import org.hl7.fhir.Patient;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import edu.harvard.i2b2.fhirserver.entity.Patients;
 
 @Path("patient")
 public class PatientWebservice {
