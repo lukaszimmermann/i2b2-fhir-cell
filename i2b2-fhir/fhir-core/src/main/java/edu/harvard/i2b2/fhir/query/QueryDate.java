@@ -12,6 +12,7 @@ import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryDate extends Query {
@@ -20,9 +21,9 @@ public class QueryDate extends Query {
 	String dateValue;
 	GregorianCalendar dateValueExpected;
 
-	public QueryDate(Class resourceClass, String parameter, String value)
+	public QueryDate(Class resourceClass, String parameter, String value,MetaResourceDb db)
 			throws QueryParameterException, QueryValueException, FhirCoreException {
-		super(resourceClass, parameter, value);
+		super(resourceClass, parameter, value,db);
 		
 	}
 	

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
@@ -43,7 +44,8 @@ public class QueryEngineTest {
 	@Test
 	public void testQueryUrl() throws QueryParameterException,
 			QueryValueException, FhirCoreException, DatatypeConfigurationException {
-		qe = new QueryEngine("Patient?name=pieter&gender=M");
+		MetaResourceDb db= new MetaResourceDb();
+		qe = new QueryEngine("Patient?name=pieter&gender=M",db);
 		logger.trace(qe.toString());
 		List<Resource> resourceList = new ArrayList<Resource>();
 		resourceList.add(p);

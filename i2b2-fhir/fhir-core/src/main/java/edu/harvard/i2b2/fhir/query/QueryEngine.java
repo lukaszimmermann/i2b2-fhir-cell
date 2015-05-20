@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -25,11 +26,13 @@ public class QueryEngine {
 	private Class resourceClass;
 	private String queryUrl;
 	private String rawQuery;
-
+	private MetaResourceDb db;
+	
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
-	public QueryEngine(String queryUrl) throws QueryParameterException,
+	public QueryEngine(String queryUrl, MetaResourceDb db) throws QueryParameterException,
 			QueryValueException, FhirCoreException {
 		logger.debug("queryUrl:"+queryUrl);
+		this.db=db;
 		queryList = new ArrayList<Query>();
 		this.queryUrl = queryUrl;
 		String fhirClassExp = "("
@@ -54,12 +57,13 @@ public class QueryEngine {
 			}
 			logger.trace("prefix:" + m.group(1) + "\nsuffix:" + m.group(2));
 
-			Query q = new QueryBuilder(this.resourceClass, m.group(1)).build();
+			Query q = new QueryBuilder(this.resourceClass, m.group(1),db).build();
 			queryList.add(q);
 		}
 	}
 
-	public QueryEngine(Class c, Map<String, String> queryParamMap) throws QueryParameterException, QueryValueException, FhirCoreException {
+	public QueryEngine(Class c, Map<String, String> queryParamMap,MetaResourceDb db) throws QueryParameterException, QueryValueException, FhirCoreException {
+		this.db=db;
 		queryList = new ArrayList<Query>();
 		
 		for (String k1 : queryParamMap.keySet()) {
@@ -67,12 +71,12 @@ public class QueryEngine {
 			String k=(String) k1;
 			if(k==null) continue;
 			String v=(String)queryParamMap.get(k);
-			Query q = new QueryBuilder(this.resourceClass, k,v).build();
+			Query q = new QueryBuilder(this.resourceClass, k,v,db).build();
 			queryList.add(q);
 		}
 	}
 
-	public List<Resource> search(List<Resource> resList) {
+	public List<Resource> search(List<Resource> resList) throws FhirCoreException {
 		logger.trace("running query");
 		List<Resource> resultList = resList;
 		for (Query q : this.queryList) {
@@ -81,7 +85,7 @@ public class QueryEngine {
 		return resultList;
 	}
 
-	public MetaResourceSet search(MetaResourceSet s) {
+	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException {
 		logger.trace("running query");
 		logger.debug("size before query:"+s.getMetaResource().size());
 		if(this.queryList.size()==0) return s;

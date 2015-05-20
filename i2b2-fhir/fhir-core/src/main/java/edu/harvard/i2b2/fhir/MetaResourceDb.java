@@ -16,22 +16,25 @@ import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class MetaResourceDb {
-	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class); 
-	
+	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
+
 	List<MetaResource> metaResources;
-	//MetaResourcePrimaryDb metaResources;
-	
+	HashMap<String,String> resourcesXml;
+
+	// MetaResourcePrimaryDb metaResources;
+
 	public MetaResourceDb() {
 		init();
 	}
-	
-	public int getSize(){
+
+	public int getSize() {
 		return this.metaResources.size();
 	}
 
 	public void init() {
 		metaResources = new ArrayList<MetaResource>();
-		//metaResources = new MetaResourcePrimaryDb();
+		resourcesXml = new HashMap<String,String>();
+		// metaResources = new MetaResourcePrimaryDb();
 		logger.trace("created resourcedb");
 		logger.trace("resources size:" + metaResources.size());
 	}
@@ -41,39 +44,38 @@ public class MetaResourceDb {
 		try {
 			logger.trace("EJB Put MetaResource:"
 					+ c.cast(p.getResource()).getClass().getSimpleName());
-			} catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
-		Resource r=p.getResource();
-		
+		Resource r = p.getResource();
+
 		if (r.getId() == null) {
 			r.setId(Integer.toString(getMetaResourceTypeCount(c)));
-			
+
 		}
 
 		MetaResource presentRes = getMetaResource(r.getId(), c);
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			logger.trace("replacing resource with id:"
-					+ r.getId());
+			logger.trace("replacing resource with id:" + r.getId());
 			metaResources.remove(presentRes);
 		}
 		metaResources.add(p);
+		resourcesXml.put(p.getResource().getId(), FhirUtil.resourceToXml(p.getResource()));
 
 		logger.trace("EJB resources (after adding) size:"
 				+ metaResources.size());
 		return p.getResource().getId();
 	}
-	
+
 	public void addMetaResourceSet(MetaResourceSet s) {
 		for (MetaResource mr : s.getMetaResource()) {
 			this.addMetaResource(mr,
 					FhirUtil.getResourceClass(mr.getResource()));
 		}
 	}
-
 
 	public MetaResource getMetaResource(String id, Class c) {
 		logger.trace("EJB searching for resource with id:" + id);
@@ -82,9 +84,10 @@ public class MetaResourceDb {
 			Resource r = p.getResource();
 			if (!c.isInstance(r))
 				continue;
-			//logger.trace("examining resource with id:<" + r.getId()+ "> for match to qid:<" + id + ">");
+			// logger.trace("examining resource with id:<" + r.getId()+
+			// "> for match to qid:<" + id + ">");
 			if (r.getId().equals(id)) {
-				//logger.trace("matched resource with id:" + r.getId());
+				// logger.trace("matched resource with id:" + r.getId());
 				return p;
 			}
 		}
@@ -92,8 +95,7 @@ public class MetaResourceDb {
 	}
 
 	public int getMetaResourceTypeCount(Class c) {
-		logger.trace("EJB searching for resource type:"
-				+ c.getSimpleName());
+		logger.trace("EJB searching for resource type:" + c.getSimpleName());
 		logger.trace("resources size:" + metaResources.size());
 		int count = 0;
 
@@ -109,35 +111,23 @@ public class MetaResourceDb {
 		metaResources.remove(p1);
 	}
 
-	/*public List<MetaResource> getQueried(Class c,
-			HashMap<String, String> qp// Query Parameters
-	) {
-		List<MetaResource> list = new ArrayList<MetaResource>();
-		for (MetaResource p : getAll(c).getMetaResource()) {
-			for (String k : qp.keySet()) {
-				Object returnValue = null;
-				String returnStr = null;
-				try {
-					logger.trace("searching for parameter:" + k
-							+ " with value " + qp.get(k));
-					getValueOfFirstLevelChild(p, c, k);
-
-				} catch (IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException | NoSuchMethodException
-						| SecurityException e) {
-					e.printStackTrace();
-				}
-				logger.trace("returnStr:" + returnStr);
-				logger.trace("qp.getFirst(k):" + qp.get(k));
-
-				if (returnStr.toString().contains(qp.get(k))) {
-					list.add(p);
-				}
-			}
-		}
-		return list;
-	}
-*/
+	/*
+	 * public List<MetaResource> getQueried(Class c, HashMap<String, String>
+	 * qp// Query Parameters ) { List<MetaResource> list = new
+	 * ArrayList<MetaResource>(); for (MetaResource p :
+	 * getAll(c).getMetaResource()) { for (String k : qp.keySet()) { Object
+	 * returnValue = null; String returnStr = null; try {
+	 * logger.trace("searching for parameter:" + k + " with value " +
+	 * qp.get(k)); getValueOfFirstLevelChild(p, c, k);
+	 * 
+	 * } catch (IllegalAccessException | IllegalArgumentException |
+	 * InvocationTargetException | NoSuchMethodException | SecurityException e)
+	 * { e.printStackTrace(); } logger.trace("returnStr:" + returnStr);
+	 * logger.trace("qp.getFirst(k):" + qp.get(k));
+	 * 
+	 * if (returnStr.toString().contains(qp.get(k))) { list.add(p); } } } return
+	 * list; }
+	 */
 	public static String getValueOfFirstLevelChild(MetaResource p, Class c,
 			String k) throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -168,7 +158,7 @@ public class MetaResourceDb {
 	}
 
 	public MetaResourceSet getAll(Class c) {
-		MetaResourceSet  s= new MetaResourceSet();
+		MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = s.getMetaResource();
 		for (MetaResource p : metaResources) {
 			if (c.isInstance(p.getResource())) {
@@ -190,9 +180,8 @@ public class MetaResourceDb {
 		return null;
 	}
 
-	
 	public MetaResource searchById(String id) {
-		//logger.trace("searching id:" + id);
+		// logger.trace("searching id:" + id);
 		for (MetaResource mr : metaResources) {
 			if (mr.getResource().getId().equals(id))
 				return mr;
@@ -208,7 +197,7 @@ public class MetaResourceDb {
 		return null;
 	}
 
-	//child can be a element in the resource or element of a reference element
+	// child can be a element in the resource or element of a reference element
 	public Object getChildOfResource(Resource r, String pathStr)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
@@ -232,9 +221,9 @@ public class MetaResourceDb {
 			if (ResourceReference.class.isInstance(o)) {
 				ResourceReference rr = (ResourceReference) o;
 				logger.trace("returning from reference:");
-				//String idn = rr.getId();// rr.getReference().getValue();
-				//logger.trace(":" + rr.getId());
-				
+				// String idn = rr.getId();// rr.getReference().getValue();
+				// logger.trace(":" + rr.getId());
+
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
@@ -248,22 +237,22 @@ public class MetaResourceDb {
 			logger.trace("Suffix is not null");
 
 			Object o = method.invoke(c.cast(r));
-			Resource nextR=null;
+			Resource nextR = null;
 			if (ResourceReference.class.isInstance(o)) {
 				ResourceReference rr = (ResourceReference) o;
 				logger.trace("returning from reference:");
-				//String idn = rr.getId();// rr.getReference().getValue();
-				//logger.trace(":" + rr.getId());
-				
+				// String idn = rr.getId();// rr.getReference().getValue();
+				// logger.trace(":" + rr.getId());
+
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
-				 nextR=searchResourceById(idn);
+				nextR = searchResourceById(idn);
 			} else {
 				logger.trace("returning NOT from reference");
 				return o;
 			}
-			
+
 			return getChildOfResource(nextR, suffix);
 			// return getChildOfResource(r, suffix);
 		}
@@ -271,13 +260,13 @@ public class MetaResourceDb {
 	}
 
 	public MetaResourceSet getIncludedMetaResources(Class c,
-			MetaResourceSet inputSet, List<String> includeResources) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
-		//MetaResourceSet s = new MetaResourceSet();
+			MetaResourceSet inputSet, List<String> includeResources)
+			throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
+		// MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = inputSet.getMetaResource();
 		// list.addAll(metaResourceDb.getAll(Medication.class));
-		//list.addAll(this.getAll(c));
+		// list.addAll(this.getAll(c));
 		// XXX include dependent resources based on include portion of query
 		// XXX to make the resource id accessible via cRud(readOnly) webservice
 
@@ -289,7 +278,8 @@ public class MetaResourceDb {
 			String methodName = ir.split("\\.")[1];
 			logger.trace("MethodName:" + methodName);
 			for (MetaResource mr : inputSet.getMetaResource()) {
-				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,methodName)).getReference().getValue();
+				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,
+						methodName)).getReference().getValue();
 
 				logger.trace("Found dep:" + id);
 				MetaResource depMr = searchById(id);
@@ -314,30 +304,33 @@ public class MetaResourceDb {
 		MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = s.getMetaResource();
 
-		logger.trace("filtering by:"+filter.toString());
-		
-		logger.trace("size:"+this.getAll(c).getMetaResource().size());
+		logger.trace("filtering by:" + filter.toString());
+
+		logger.trace("size:" + this.getAll(c).getMetaResource().size());
 		for (MetaResource mr : this.getAll(c).getMetaResource()) {
 			Resource r = mr.getResource();
 			logger.trace("filtering on:" + r.getId());
 
-			boolean matchF=false;
+			boolean matchF = false;
 			for (String k : filter.keySet()) {
-				if(matchF==true) continue;
+				if (matchF == true)
+					continue;
 				String v = filter.get(k);
 				logger.trace("filter:" + k + "=" + v);
 
-				//child 
-				Resource child=null;
-				Object obj=getChildOfResource(r, k);
-				try{
-					child = (Resource) obj ;
-				}catch(ClassCastException e){
-					
-					logger.trace("Not a Resource:<"+ obj+">. Its a "+e.getMessage());
-					String gotVal=(String)obj;
-					logger.trace("comparing <"+v+ "> with <"+gotVal+">");
-					if(gotVal.equals(v)) matchF=true;
+				// child
+				Resource child = null;
+				Object obj = getChildOfResource(r, k);
+				try {
+					child = (Resource) obj;
+				} catch (ClassCastException e) {
+
+					logger.trace("Not a Resource:<" + obj + ">. Its a "
+							+ e.getMessage());
+					String gotVal = (String) obj;
+					logger.trace("comparing <" + v + "> with <" + gotVal + ">");
+					if (gotVal.equals(v))
+						matchF = true;
 				}
 				if (child != null) {
 					logger.trace("filterinput child:" + child.getId());
@@ -345,16 +338,20 @@ public class MetaResourceDb {
 					logger.trace("filterinput child:NULL");
 				}
 				if (child != null && child.getId().equals(v)) {
-					matchF=true;
+					matchF = true;
 					continue;
 				}
 			}
-			if(matchF==true) {
-				logger.trace("adding:"+r.getId());
+			if (matchF == true) {
+				logger.trace("adding:" + r.getId());
 				list.add(mr);
 			}
 		}
 		return s;
+	}
+	
+	public String getResourceXml(String id){
+		return this.resourcesXml.get(id);
 	}
 
 }

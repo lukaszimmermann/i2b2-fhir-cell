@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
@@ -24,14 +25,21 @@ public class QueryReferenceTest {
 	
 	QueryBuilder qb;
 	Query q;
+	MetaResourceDb db;
 
 	@Before
-	public void setup() {
+	public void setup() throws FhirCoreException {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) FhirUtil.xmlToResource(xml);
-		xml = Utils.getFile("example/fhir/MedicationStatement.xml");
-		ms = (MedicationStatement) FhirUtil.xmlToResource(xml);
 		qb = new QueryBuilder();
+			xml = Utils.getFile("example/fhir/MedicationStatement.xml");
+		ms = (MedicationStatement) FhirUtil.xmlToResource(xml);
+		ms.setId("1-1");
+		qb = new QueryBuilder();
+		db=new MetaResourceDb();
+		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
+		db.addMetaResource(FhirUtil.getMetaResource(ms), MedicationStatement.class);
+	
 	}
 
 	@Test
@@ -39,10 +47,10 @@ public class QueryReferenceTest {
 			QueryValueException, FhirCoreException {
 		logger.info("Running tests for QueryString...");
 
-		q = qb.setResourceClass(MedicationStatement.class).setRawParameter("patient")
+		q = qb.setResourceClass(MedicationStatement.class).setDb(db).setRawParameter("patient")
 				.setRawValue("example").build();
-		logger.trace("RES:"+q.match(ms));
-		//assertTrue(q.match(p));
+		//logger.trace("RES:"+q.match(ms));
+		assertTrue(q.match(ms));
 		
 		
 	}

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
@@ -20,6 +21,7 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public abstract class Query {
 	static Logger logger = LoggerFactory.getLogger(Query.class);
 
+	static MetaResourceDb db;
 	private String rawParameter;
 	private String rawValue;
 	private String parameterPath;// this will be resource specific defined at
@@ -34,14 +36,15 @@ public abstract class Query {
 	 * children Child will be init first and then validation will first be at
 	 * parent then child level
 	 */
-	private Query() {
-	}
+	
 
 	abstract protected void init() throws QueryValueException,
 			QueryParameterException;
 
-	public Query(Class resourceClass, String rawParameter, String rawValue)
+	public Query(Class resourceClass, String rawParameter, String rawValue,MetaResourceDb db)
 			throws QueryParameterException, QueryValueException {
+		this.db=db;
+		
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
 		this.rawParameter = rawParameter;
@@ -86,18 +89,21 @@ public abstract class Query {
 					+ this.parameter + " for " + this.resourceClass);
 	}
 
-	final public boolean match(Resource r){
-		return match(FhirUtil.resourceToXml(r));
+	final public boolean match(Resource r) throws FhirCoreException{
+		//return match(FhirUtil.resourceToXml(r));
+		if(db==null) throw new FhirCoreException("db has not been set");
+		if(r==null || r.getId()==null) throw new FhirCoreException("resource or its id is null/not set");
+		return match(db.getResourceXml(r.getId()));
 	}
 
 	abstract public boolean match(String resourceXml);
 
-	final public boolean match(MetaResource mr) {
+	final public boolean match(MetaResource mr) throws FhirCoreException {
 		return match(mr.getResource());
 
 	}
 
-	final public void removeNonMatching(MetaResourceSet s) {
+	final public void removeNonMatching(MetaResourceSet s) throws FhirCoreException {
 		MetaResourceSet s2 = new MetaResourceSet();
 		ArrayList<MetaResource> list = (ArrayList<MetaResource>) s2
 				.getMetaResource();
@@ -231,7 +237,7 @@ public abstract class Query {
 		return m.group(1);
 	}
 
-	public List<Resource> search(List<Resource> resourceList) {
+	public List<Resource> search(List<Resource> resourceList) throws FhirCoreException {
 		List<Resource> resultList= new ArrayList<Resource>();
 		for(Resource r:resourceList){
 			if(this.match(r))resultList.add(r);
@@ -239,7 +245,7 @@ public abstract class Query {
 		return resultList;
 	}
 
-	public MetaResourceSet search(MetaResourceSet s) {
+	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException {
 		MetaResourceSet s2=new MetaResourceSet();;
 		for(MetaResource mr:s.getMetaResource()){
 			Resource r=mr.getResource();

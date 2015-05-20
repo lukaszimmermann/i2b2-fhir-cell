@@ -14,6 +14,7 @@ import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
@@ -22,9 +23,9 @@ public class QueryToken extends Query {
 	String code;
 	String namespace;
 
-	public QueryToken(Class resourceClass, String parameter, String value)
+	public QueryToken(Class resourceClass, String parameter, String value,MetaResourceDb db)
 			throws QueryParameterException, QueryValueException, FhirCoreException {
-		super(resourceClass, parameter, value);
+		super(resourceClass, parameter, value,db);
 	}
 
 	@Override
