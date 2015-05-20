@@ -30,7 +30,7 @@ public class QueryReferenceTest {
 	Query q;
 	MetaResourceDb db;
 
-	//@Before
+	@Before
 	public void setup() throws FhirCoreException {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) FhirUtil.xmlToResource(xml);
@@ -49,7 +49,7 @@ public class QueryReferenceTest {
 	public void testReference() throws QueryParameterException,
 			QueryValueException, FhirCoreException {
 
-		String url="MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient";
+		/*String url="MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient";
 		Pattern p = Pattern.compile( FhirUtil.RESOURCE_LIST_REGEX+"\\?*([^\\?]*)", Pattern.CASE_INSENSITIVE);
 		Matcher m = p.matcher(url);
 		if (m.matches()) {
@@ -59,12 +59,12 @@ public class QueryReferenceTest {
 			logger.info("false");
 			
 		}
-		logger.info("Running tests for QueryString...");
+		*/logger.info("Running tests for QueryString...");
 
 		q = qb.setResourceClass(MedicationStatement.class).setDb(db).setRawParameter("patient")
 				.setRawValue("example").build();
 		//logger.trace("RES:"+q.match(ms));
-		//assertTrue(q.match(ms));
+		assertTrue(q.match(ms));
 		
 		
 	}

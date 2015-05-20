@@ -241,7 +241,8 @@ public abstract class Query {
 	public List<Resource> search(List<Resource> resourceList) throws FhirCoreException {
 		List<Resource> resultList= new ArrayList<Resource>();
 		for(Resource r:resourceList){
-			if(this.match(r))resultList.add(r);
+			String xml=db.getMetaResourceXml(r.getId());
+			if(this.match(xml))resultList.add(r);
 		}
 		return resultList;
 	}
