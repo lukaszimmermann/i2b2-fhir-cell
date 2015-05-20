@@ -175,15 +175,15 @@ public class FromI2b2WebService {
 			md = (MetaResourceDb) session.getAttribute("md");
 
 			// filter if patientId is mentioned in query string
-
 			HashMap<String, String> filter = new HashMap<String, String>();
 
 			String patientId = extractPatientId(request.getQueryString());
 			logger.info("PatientId:" + patientId);
 			if (patientId != null) {
-				filter.put("Patient", "Patient/" + patientId);
+				//filter.put("Patient", "Patient/" + patientId);
 				scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
+			
 			Map<String, String> q = request.getParameterMap();
 			for (String k : q.keySet()) {
 				if (k.equals("_include") || k.equals("patient"))

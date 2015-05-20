@@ -45,9 +45,9 @@ public class QueryDate extends Query {
 		}
 	}
 
-	@Override
-	public boolean match(Resource r) {
-		ArrayList<String> list = getValuesAtParameterPath(r,
+	@Override	
+	public boolean match(String resourceXml) {
+		ArrayList<String> list = getValuesAtParameterPath(resourceXml,
 				this.getParameterPath());
 		for (String v : list) {
 			GregorianCalendar dateValueFound;
