@@ -187,7 +187,7 @@ public class FromI2b2WebService {
 			
 			Map<String, String> q = request.getParameterMap();
 			for (String k : q.keySet()) {
-				if (k.equals("_include") || k.equals("patient"))
+				if (k.equals("_include") )//|| k.equals("patient"))
 					continue;
 				
 				//filter.put(k, new String(request.getParameter(k)));
@@ -210,8 +210,9 @@ public class FromI2b2WebService {
 			//q.remove("_id");q.remove("_date");
 			
 			 if(request.getQueryString()!=null){
-				 QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString(),md);
-				 logger.info("created QE:"+qe); s=qe.search(s);
+				 QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString());
+				 logger.info("created QE:"+qe);
+				 s=qe.search(s);
 			 }
 			 
 			logger.info("including...._include:" + includeResources.toString());

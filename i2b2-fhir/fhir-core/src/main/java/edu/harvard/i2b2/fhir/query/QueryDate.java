@@ -49,10 +49,10 @@ public class QueryDate extends Query {
 	@Override	
 	public boolean match(String resourceXml) {
 		ArrayList<String> list = getValuesAtParameterPath(resourceXml,
-				this.getParameterPath());
+				this.getAugmentedParameterPath());
 		for (String v : list) {
 			GregorianCalendar dateValueFound;
-			logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
+			logger.info("matching:"+ this.getRawParameter()+"="+this.getRawValue());
 			
 			try {
 				dateValueFound = DatatypeFactory.newInstance()
@@ -60,7 +60,8 @@ public class QueryDate extends Query {
 			} catch (DatatypeConfigurationException e) {
 				throw new RuntimeException(e);
 			}
-			if (operator.contains("=")) {
+			
+			if (operator.contains("=")||operator.equals("")) {
 				if (dateValueFound.equals(this.dateValueExpected)){
 					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;

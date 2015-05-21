@@ -29,9 +29,7 @@ public abstract class Query {
 	private String modifier;
 	private String parameter;
 	
-	final String namespaceDeclaration="declare default element namespace \"http://hl7.org/fhir\";"
-									+"declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
-
+	
 	QueryType type;
 	/*
 	 * The raw Parameter and raw Value have protected Function access by
@@ -130,7 +128,7 @@ public abstract class Query {
 		ArrayList<String> list = new ArrayList<String>();
 
 
-		String xqueryStr = namespaceDeclaration
+		String xqueryStr = FhirUtil.namespaceDeclaration
 				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
 				+ (explodeF ? "/" : "") + "/@value/string()";
 		logger.trace("xqueryStr:" + xqueryStr);
@@ -148,8 +146,9 @@ public abstract class Query {
 	protected ArrayList<String> getListFromParameterPath(String xml,
 			String parPath) {
 		ArrayList<String> list=new ArrayList<String>();
-		String xqueryStr = namespaceDeclaration
-				 + parPath.replace(".", "/");
+		String xqueryStr = FhirUtil.namespaceDeclaration
+				//+  getAugmentedParameterPath()
+				 +parPath;
 
 		logger.trace("xqueryStr:" + xqueryStr);
 		list = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -159,9 +158,10 @@ public abstract class Query {
 	}
 
 	protected String getXmlFromParameterPath(String xml, String parPath) {
-		String xqueryStr = namespaceDeclaration
-				 +  parPath;// "/Patient/gender;
-		logger.trace("xqueryStr:" + xqueryStr);
+		String xqueryStr = FhirUtil.namespaceDeclaration
+				 //+  getAugmentedParameterPath()
+				 +parPath;// "/Patient/gender;
+		logger.trace(" XmlFromParamPath xquery:" + xqueryStr);
 
 		String msg = XQueryUtil.processXQuery(xqueryStr, xml);
 
@@ -170,8 +170,8 @@ public abstract class Query {
 	}
 	
 	protected List<String> getXmlListFromParameterPath(String xml, String parPath) {
-		String xqueryStr = namespaceDeclaration
-				 +  parPath;// "/Patient/gender;
+		String xqueryStr = FhirUtil.namespaceDeclaration
+				 +  getAugmentedParameterPath();// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
 		ArrayList<String> msg = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -180,15 +180,7 @@ public abstract class Query {
 		return msg;
 	}
 
-	protected List<String> getXmlListFromParameterPath(Resource r, String parPath) {
-		return getXmlListFromParameterPath(FhirUtil.resourceToXml(r), parPath);
-	}
-
-	protected String getXmlFromParameterPath(Resource r, String parPath) {
-		return getXmlFromParameterPath(FhirUtil.resourceToXml(r), parPath);
-	}
-
-
+	
 	protected String getRawValue() {
 		return rawValue;
 	}
@@ -198,8 +190,15 @@ public abstract class Query {
 	}
 
 	protected String getParameterPath() {
-		
 		return parameterPath;
+	}
+	
+	/*
+	 * allows xml queries even on i2b2.resource
+	 */
+	protected String getAugmentedParameterPath() {
+		String f=this.getFirstElementOfParameterPath();
+		return parameterPath.replace(f ,"("+f+"|i:Resource)");
 	}
 
 	protected String getParameter() {
@@ -223,7 +222,7 @@ public abstract class Query {
 	}
 	protected String getLastElementOfParameterPath() {
 		String s=this.getParameterPath();
-		Pattern p = Pattern.compile(".*/([^\\.]*)$");
+		Pattern p = Pattern.compile(".*//*([^//]+)$");
 		Matcher m = p.matcher(s);
 		if(m.matches()) s=m.group(1);
 		return s;
@@ -231,33 +230,13 @@ public abstract class Query {
 	
 	protected String getFirstElementOfParameterPath() {
 		String s=this.getParameterPath();
-		Pattern p = Pattern.compile("^([^\\.]*).*/");
+		Pattern p = Pattern.compile("^([^//]+)//*.*");
 		Matcher m = p.matcher(s);
 		if(m.matches()) s=m.group(1);
 		return s;
 	}
 
-		
-
 	
-
-	/*public List<Resource> search(List<Resource> resourceList) throws FhirCoreException {
-		List<Resource> resultList= new ArrayList<Resource>();
-		for(Resource r:resourceList){
-			String xml=db.getMetaResourceXml(r.getId());
-			if(this.match(xml))resultList.add(r);
-		}
-		return resultList;
-	}
-
-	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException {
-		MetaResourceSet s2=new MetaResourceSet();;
-		for(MetaResource mr:s.getMetaResource()){
-			Resource r=mr.getResource();
-			if(this.match(r)) s2.getMetaResource().add(mr);
-		}
-		return s2;
-	}
-	*/
+	
 	
 }

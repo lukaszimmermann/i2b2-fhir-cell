@@ -62,6 +62,9 @@ public class FhirUtil {
 
 	private static Validator v;
 
+	public final static String namespaceDeclaration="declare default element namespace \"http://hl7.org/fhir\";"
+			+"declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
+
 	static {
 		initResourceClassList();
 		// inithmJaxbc();
@@ -476,7 +479,7 @@ public class FhirUtil {
 	public static String getResourceXml(String id, String metaResourceSetXml)
 			throws FhirCoreException {
 		String xml;
-		String xQuery = "//Resource[@id='" + id + "']";
+		String xQuery = namespaceDeclaration+"//i:Resource[@id='" + id + "']";
 
 		logger.trace("xml:" + metaResourceSetXml);
 		String res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);

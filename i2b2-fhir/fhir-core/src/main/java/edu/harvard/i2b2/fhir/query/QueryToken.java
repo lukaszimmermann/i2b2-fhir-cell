@@ -62,7 +62,8 @@ public class QueryToken extends Query {
 					""));//identifier
 		for (String type : typeList) {
 			List<String> xmlList = getXmlListFromParameterPath(resourceXml, "//"+this
-					.getParameterPath().replace(".", "/").replace("Patient", "(Patient|i:Resource)") + type);
+					.getParameterPath()
+					+ type);
 			for (String xml : xmlList) {
 				logger.trace("xml:" + xml);
 				if (xml.equals(""))
@@ -98,13 +99,13 @@ public class QueryToken extends Query {
 		} else {
 			pathExtList = new ArrayList<String>(Arrays.asList(
 					"/coding/code/@value/string()",
-					"/identifier/value/@value/string()"
-					,"/"+getLastElementOfParameterPath()+"/@value/string()"
+					"/identifier/value/@value/string()",
+					"/@value/string()"
 					));
 		}
 		ArrayList<String> list = new ArrayList<String>();
 		for (String ext : pathExtList) {
-			list.addAll(getListFromParameterPath(xml, ext));
+			list.addAll(getListFromParameterPath(xml, "/"+getLastElementOfParameterPath()+"/"+ext));
 		}
 
 		logger.trace("list:" + list.toString());

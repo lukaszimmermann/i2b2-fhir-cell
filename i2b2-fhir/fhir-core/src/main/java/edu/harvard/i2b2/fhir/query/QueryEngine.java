@@ -31,9 +31,8 @@ public class QueryEngine {
 	private MetaResourceDb db;
 
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
-	public QueryEngine(String queryUrl)
-			throws QueryParameterException, QueryValueException,
-			FhirCoreException {
+	public QueryEngine(String queryUrl) throws QueryParameterException,
+			QueryValueException, FhirCoreException {
 		logger.debug("queryUrl:" + queryUrl);
 		this.db = db;
 		queryList = new ArrayList<Query>();
@@ -54,22 +53,25 @@ public class QueryEngine {
 			throw new FhirCoreException(
 					"query part of url is not is correct format:" + queryUrl);
 		}
-		String suffix = null;
-		if (m.groupCount() > 1)
-			suffix = m.group(2);
+		String suffix = this.rawQuery;
 
-		while (suffix.length()>0) {
-			p = Pattern.compile("([^?&]*)&*([^?&]*)");
+		while (suffix !=null && suffix.length() > 0) {
+			p = Pattern.compile("([^\\?&]+)([^\\?]*)");
+			logger.trace("processing:"+suffix);
 			m = p.matcher(suffix);
 			if (m.matches()) {
 				String prefix = m.group(1);
 				suffix = m.group(2);
-				Query q = new QueryBuilder(this.resourceClass, prefix).build();
-				queryList.add(q);
-			}else{
-				suffix=null;
+				if (prefix.matches("^_")) {
+					logger.info("excluding paramerters begining with _:"+prefix);
+				} else {
+					Query q = new QueryBuilder(this.resourceClass, prefix)
+							.build();
+					queryList.add(q);
+				}
+			} else {
+				suffix = null;
 			}
-			logger.trace("suffix:" + m.group(2));
 		}
 	}
 
@@ -80,8 +82,9 @@ public class QueryEngine {
 		queryList = new ArrayList<Query>();
 
 		for (String k1 : queryParamMap.keySet()) {
-			if (k1.matches("^_"))
+			if (k1.matches("^_")){
 				continue;
+			}
 			logger.info("queryParamMap:" + queryParamMap.toString());
 			String k = (String) k1;
 			if (k == null)
@@ -99,27 +102,29 @@ public class QueryEngine {
 		String inputMRSXml;
 		try {
 			inputMRSXml = FhirUtil.getMetaResourceSetXml(s);
-			//logger.trace("inputMRSXml:"+inputMRSXml);
+			// logger.trace("inputMRSXml:"+inputMRSXml);
 		} catch (JAXBException e) {
 			throw new FhirCoreException("JAXB error ", e);
 		}
-		if (this.queryList.size() == 0)
+		if (this.queryList.size() == 0){
+			logger.trace("returning from sophisQuery as queryList is empty");
 			return s;
-		
+		}
 		for (MetaResource mr : s.getMetaResource()) {
 			Resource r = mr.getResource();
-			
-			
-				try {
-					if(r==null)
-					throw new FhirCoreException("Resource is Null:"+FhirUtil.metaResourceToXml(mr));
-				} catch (JAXBException e) {
-					throw new FhirCoreException("JaxB Error:",e);
-				}
-			
-			if(r.getId()==null)
-				throw new FhirCoreException("Id is not given in resource:"+FhirUtil.resourceToXml(r));
-			
+
+			try {
+				if (r == null)
+					throw new FhirCoreException("Resource is Null:"
+							+ FhirUtil.metaResourceToXml(mr));
+			} catch (JAXBException e) {
+				throw new FhirCoreException("JaxB Error:", e);
+			}
+
+			if (r.getId() == null)
+				throw new FhirCoreException("Id is not given in resource:"
+						+ FhirUtil.resourceToXml(r));
+
 			String resourceXml = FhirUtil
 					.getResourceXml(r.getId(), inputMRSXml);
 			for (Query q : this.queryList) {
