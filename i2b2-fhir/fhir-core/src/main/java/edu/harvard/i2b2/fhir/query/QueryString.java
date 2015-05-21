@@ -45,9 +45,8 @@ public class QueryString extends Query {
 
 	@Override
 	public boolean match(String resourceXml) {
-
-		List<String> xmlList = getXmlListFromParameterPath(resourceXml, this
-				.getParameterPath().replace(".", "/"));
+		logger.trace("resourceXml:"+resourceXml);
+		List<String> xmlList = getXmlListFromParameterPath(resourceXml, this.getAugmentedParameterPath());
 		for (String xml : xmlList) {
 			logger.trace("xml:" + xml);
 			if (xml.equals(""))

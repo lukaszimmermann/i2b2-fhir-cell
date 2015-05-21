@@ -43,18 +43,18 @@ public class QueryReference extends Query {
 
 	@Override
 	public boolean match(String resourceXml) {
-		String rawId = getXmlFromParameterPath(resourceXml, "//"
-				+ this.getParameterPath().replace(".", "/")
-				+ "/reference/@value/string()");
+		String rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
 		// id=this.getLastElementOfParameterPath()+"/"+id;
-		Pattern p = Pattern.compile("//([^//.]*)$");
+		Pattern p = Pattern.compile(".*/([^/]+)$");
 		Matcher m = p.matcher(rawId);
+		id="-";
 		if (m.matches()) {
 			id = m.group(1);
+			logger.trace("id is:"+id);
 		}
 		// logger.info("matching "+id+" to value:"+this.getRawValue());
 		if (id.equals(this.getRawValue())) {
-			logger.info("matched:" + this.getRawParameter() + "="
+			logger.info("id:"+id+" matched:" + this.getRawParameter() + "="
 					+ this.getRawValue());
 			return true;
 		}
@@ -62,28 +62,7 @@ public class QueryReference extends Query {
 		return false;
 	}
 
-	// CodeableConcept.text, Coding.display, or Identifier.label
-	private boolean textSearch(String xml) {
-		ArrayList<String> pathExtList;
-		// consider "text" modifier
-		pathExtList = new ArrayList<String>(
-				Arrays.asList("/reference/@value/string()"));
-
-		ArrayList<String> list = new ArrayList<String>();
-		for (String ext : pathExtList) {
-			list.addAll(getListFromParameterPath(xml, ext));
-		}
-
-		logger.trace("list:" + list.toString());
-		for (String v : list) {
-			if (v.equals(this.getRawValue())) {
-				logger.info("matched:" + this.getRawParameter() + "="
-						+ this.getRawValue());
-				return true;
-			}
-		}
-		return false;
-	}
+	
 
 	@Override
 	public void validateParameter() throws QueryParameterException {

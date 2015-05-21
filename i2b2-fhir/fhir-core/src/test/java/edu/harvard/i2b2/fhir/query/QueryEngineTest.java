@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -44,29 +46,52 @@ public class QueryEngineTest {
 		p2.setId("myid2");
 	}
 
-	@Test
-	public void testQueryUrl() throws QueryParameterException,
+	// @Test
+	public void testQuery() throws QueryParameterException,
 			QueryValueException, FhirCoreException,
 			DatatypeConfigurationException, JAXBException {
-		
-		
-		//qe = new QueryEngine("Patient?name=Pieter&gender=M");
-		qe = new QueryEngine("Patient?gender=M");
-		
+
+		// qe = new QueryEngine("Patient?name=Pieter&gender=M");
+		qe = new QueryEngine("Patient?name=Pieter");
+
 		logger.trace(qe.toString());
 
 		MetaResourceSet s = new MetaResourceSet();
 		MetaResource mr = FhirUtil.getMetaResource(p);
 		s.getMetaResource().add(mr);
 		MetaResource mr2 = FhirUtil.getMetaResource(p2);
-		//s.getMetaResource().add(mr2);
-		//s.getMetaResource().add(
-			//	SetupExamples.getEGPatient().getMetaResource().get(0));
-		//logger.trace("Input:" + FhirUtil.toXml(p));
+		// s.getMetaResource().add(mr2);
+		// s.getMetaResource().add(
+		// SetupExamples.getEGPatient().getMetaResource().get(0));
+		// logger.trace("Input:" + FhirUtil.toXml(p));
 
 		MetaResourceSet s2 = qe.search(s);
-		logger.trace("Input:" + s.getMetaResource().size());
-		logger.trace("Result:" + s2.getMetaResource().size());
+		logger.info("Input:" + s.getMetaResource().size());
+		logger.info("Result:" + s2.getMetaResource().size());
 
+	}
+
+	@Test
+	public void testQueryUrl() throws QueryParameterException,
+			QueryValueException, FhirCoreException {
+
+		//qe = new QueryEngine(
+			//	"MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient");
+		//logger.info("qe:"+qe);
+		
+				String s="Patient/1000000005";
+				Pattern p = Pattern.compile(".*/([^/]+)$");
+				
+				Matcher m = p.matcher(s);
+				if(m.matches()){
+					logger.info("grp1:"+m.group(1));
+				}else{
+					logger.info("no match");
+				}
+				
+				//XXX //TODO
+		//		http://localhost:8080/fhir-server/a/a/Patient?gender=M
+			//	http://localhost:8080/fhir-server/a/a/Patient?birthdate=1966-08-29
+			//	http://localhost:8080/fhir-server/a/a/Patient?birthdate=>1966-08-29
 	}
 }

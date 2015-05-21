@@ -64,6 +64,8 @@ public class QueryBuilder {
 	public Query build() throws QueryParameterException, QueryValueException,
 			FhirCoreException {
 		if(resourceClass==null) throw new FhirCoreException("resource class is null");
+		
+		//logger.trace("rawParameter:"+this.rawParameter);
 		String parameter = this.rawParameter;
 		if(parameter.contains(":"))parameter=parameter.split(":")[0];
 
@@ -72,7 +74,7 @@ public class QueryBuilder {
 
 		try {
 			this.queryTypeStr = new SearchParameterMap().getType(
-					this.getResourceClass(), this.rawParameter.split(":")[0]);
+					this.getResourceClass(), parameter);
 		} catch (FhirCoreException e) {
 			throw new QueryParameterException(
 					"no ParamPath found.Query could not be built for "

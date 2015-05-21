@@ -27,7 +27,7 @@ public class QueryStringTest {
 	
 	@Before
 	public void setup() throws FhirCoreException {
-		String xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
 		qb = new QueryBuilder();
 	}
