@@ -19,113 +19,111 @@ public class QueryTest {
 
 	static Logger logger = LoggerFactory.getLogger(QueryTest.class); 
 	Patient p;
+	String xmlPatient;
 	QueryBuilder qb;
 	Query q;
-	MetaResourceDb db;
-
+	
 	@Before
 	public void setup() throws FhirCoreException {
-		String xml = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xml);
+		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
 		qb = new QueryBuilder();
-		db=new MetaResourceDb();
-		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
 	}
 	
 	@Test
 	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException {
 		logger.info("Running tests for QueryDate...");
 		try{
-			q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("birthdate").setRawValue("05-15-2015").build();
+			q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("05-15-2015").build();
 		}catch(QueryValueException e){
 			assert(true);
 		}
 		try{
-			q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("undefined").setRawValue("2015-05-15").build();
+			q=qb.setResourceClass(Patient.class).setRawParameter("undefined").setRawValue("2015-05-15").build();
 		}catch(QueryParameterException e){
 			assert(true);
 		}
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("birthdate").setRawValue("<2015-05-15").build();
+		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<2015-05-15").build();
 		logger.trace("Q:"+q);
-		logger.trace("RES:"+q.match(p));
-		assertTrue(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("birthdate").setRawValue(">1941-05-15").build();
-		//logger.trace("RES:"+q.match(p));
-		//assertTrue(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("birthdate").setRawValue("<1941-05-15").build();
-		//logger.trace("RES:"+q.match(p));
-		assertFalse(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("birthdate").setRawValue("=<1944-11-17").build();
-		//logger.trace("RES:"+q.match(p));
-		assertTrue(q.match(p));
+		logger.trace("RES:"+q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue(">1941-05-15").build();
+		//logger.trace("RES:"+q.match(xmlPatient));
+		//assertTrue(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<1941-05-15").build();
+		//logger.trace("RES:"+q.match(xmlPatient));
+		assertFalse(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("=<1944-11-17").build();
+		//logger.trace("RES:"+q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient));
 	}
 	
 	
 	@Test
 	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException {
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender").setRawValue("M").build();
-		//logger.trace("RES:"+q.match(p));
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
+		//logger.trace("RES:"+q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient));
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender:text").setRawValue("M").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("M").build();
+		assertTrue(q.match(xmlPatient));
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender:text").setRawValue("F").build();
-		assertFalse(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("F").build();
+		assertFalse(q.match(xmlPatient));
 		
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender").setRawValue("F").build();
-		assertFalse(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
-		assertTrue(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
-		assertTrue(q.match(p));
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|Male").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("F").build();
+		assertFalse(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
+		assertTrue(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
+		assertTrue(q.match(xmlPatient));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|Male").build();
+		assertTrue(q.match(xmlPatient));
 	
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
-		assertFalse(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
+		assertFalse(q.match(xmlPatient));
 	
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("language").setRawValue("urn:ietf:bcp:47|nl").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("language").setRawValue("urn:ietf:bcp:47|nl").build();
+		assertTrue(q.match(xmlPatient));
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("language:text").setRawValue("Dutch").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("language:text").setRawValue("Dutch").build();
+		assertTrue(q.match(xmlPatient));
 		
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
-		assertFalse(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
+		assertFalse(q.match(xmlPatient));
 	
 		
 		
 		String xml=Utils.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
 		p=(Patient) FhirUtil.xmlToResource(xml);
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("gender").setRawValue("|M").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
+		assertTrue(q.match(xmlPatient));
 	}
 	
 	@Test
 	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException {
 	
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("identifier").setRawValue("738472983").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
+		assertTrue(q.match(xmlPatient));
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("identifier").setRawValue("738472981").build();
-		assertFalse(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472981").build();
+		assertFalse(q.match(xmlPatient));
 		
 		
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("identifier").setRawValue("urn:oid:2.16.840.1.113883.2.4.6.3|738472983").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("urn:oid:2.16.840.1.113883.2.4.6.3|738472983").build();
+		assertTrue(q.match(xmlPatient));
 	}
 	
 	@Test
 	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException {
 	
-		q=qb.setResourceClass(Patient.class).setDb(db).setRawParameter("active").setRawValue("true").build();
-		assertTrue(q.match(p));
+		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
+		assertTrue(q.match(xmlPatient));
 	}	
 	
 	

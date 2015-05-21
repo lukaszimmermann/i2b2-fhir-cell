@@ -426,7 +426,8 @@ public class FhirUtil {
 		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
 	}
 
-	public static MetaResource getMetaResource(Resource r) throws FhirCoreException {
+	public static MetaResource getMetaResource(Resource r)
+			throws FhirCoreException {
 
 		MetaData md = new MetaData();
 		GregorianCalendar gc = new GregorianCalendar();
@@ -434,7 +435,7 @@ public class FhirUtil {
 			md.setLastUpdated(DatatypeFactory.newInstance()
 					.newXMLGregorianCalendar(gc));
 		} catch (DatatypeConfigurationException e) {
-			throw new FhirCoreException("error",e);
+			throw new FhirCoreException("error", e);
 		}
 
 		MetaResource mr = new MetaResource();
@@ -444,4 +445,40 @@ public class FhirUtil {
 		return mr;
 
 	}
+
+	public static String getMetaResourceSetXml(MetaResourceSet s)
+			throws JAXBException {
+		StringWriter rwriter = new StringWriter();
+		JAXBContext jaxbContext = JAXBContext
+				.newInstance(MetaResourceSet.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+				Boolean.TRUE);
+		jaxbMarshaller.marshal(s, rwriter);
+		return rwriter.toString();
+	}
+
+	public static String getResourceXml(String id, String metaResourceSetXml)
+			throws FhirCoreException {
+		String xml;
+		String xQuery = "//Resource[@id='" + id + "']";
+
+		logger.trace("xml:" + metaResourceSetXml);
+		String res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);
+		logger.trace("res:" + res);
+		return res;
+
+	}
+
+	public static String metaResourceToXml(MetaResource mr) throws JAXBException {
+		StringWriter rwriter = new StringWriter();
+		JAXBContext jaxbContext = JAXBContext
+				.newInstance(MetaResourceSet.class);
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+				Boolean.TRUE);
+		jaxbMarshaller.marshal(mr, rwriter);
+		return rwriter.toString();
+	}
+
 }

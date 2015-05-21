@@ -20,17 +20,16 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 public class QueryStringTest {
 	static Logger logger = LoggerFactory.getLogger(QueryStringTest.class);
 	Patient p;
+	String xmlPatient;
 	QueryBuilder qb;
 	Query q;
-	MetaResourceDb db;
-
+	
+	
 	@Before
 	public void setup() throws FhirCoreException {
-		String xml = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xml);
+		String xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
 		qb = new QueryBuilder();
-		db=new MetaResourceDb();
-		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
 	}
 
 	@Test
@@ -38,41 +37,41 @@ public class QueryStringTest {
 			QueryValueException, FhirCoreException {
 		logger.info("Running tests for QueryString...");
 
-		q = qb.setResourceClass(Patient.class).setDb(db).setRawParameter("name")
+		q = qb.setResourceClass(Patient.class).setRawParameter("name")
 				.setRawValue("pieter").build();
-		// logger.trace("RES:"+q.match(p));
-		assertTrue(q.match(p));
-		q = qb.setResourceClass(Patient.class).setDb(db).setRawParameter("name:exact")
+		// logger.trace("RES:"+q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient));
+		q = qb.setResourceClass(Patient.class).setRawParameter("name:exact")
 				.setRawValue("Pieter").build();
-		assertTrue(q.match(p));
+		assertTrue(q.match(xmlPatient));
 
 		try {
-			q = qb.setResourceClass(Patient.class).setDb(db)
+			q = qb.setResourceClass(Patient.class)
 					.setRawParameter("name1:exact").setRawValue("Pieter")
 					.build();
 		} catch (QueryParameterException e) {
 			assert (true);
 		}
 
-		q = qb.setResourceClass(Patient.class).setDb(db).setRawParameter("family:exact")
+		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel").build();
-		assertTrue(q.match(p));
+		assertTrue(q.match(xmlPatient));
 
-		q = qb.setResourceClass(Patient.class).setDb(db).setRawParameter("family")
+		q = qb.setResourceClass(Patient.class).setRawParameter("family")
 				.setRawValue(" van  de").build();
-		assertTrue(q.match(p));
+		assertTrue(q.match(xmlPatient));
 
-		q = qb.setResourceClass(Patient.class).setDb(db).setRawParameter("family:exact")
+		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel1").build();
-		assertFalse(q.match(p));
+		assertFalse(q.match(xmlPatient));
 
 	}
 	
 	@Test
 	public void testParserUrl() throws QueryParameterException{
 		MetaResourceDb db= new MetaResourceDb();
-		new QueryBuilder("patient?name=pieter",db);
-		new QueryBuilder("medication?name=pieter",db);
+		new QueryBuilder("patient?name=pieter");
+		new QueryBuilder("medication?name=pieter");
 		logger.trace(""+FhirUtil.getResourceList());
 		
 	}

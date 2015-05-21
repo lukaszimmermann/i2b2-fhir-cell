@@ -22,15 +22,15 @@ public class QueryString extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryString.class);
 	String searchText;
 
-	public QueryString(Class resourceClass, String parameter, String value, MetaResourceDb db)
+	public QueryString(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException,
 			FhirCoreException {
-		super(resourceClass, parameter, value,db);
+		super(resourceClass, parameter, value);
 	}
 
 	@Override
 	protected void init() throws QueryValueException, QueryParameterException {
-		this.type = QueryType.TOKEN;
+		this.type = QueryType.STRING;
 		logger.trace(">>>MOD:" + this.getModifier() + "--rawVal:"
 				+ this.getRawValue());
 		if (this.getModifier().equals("exact"))

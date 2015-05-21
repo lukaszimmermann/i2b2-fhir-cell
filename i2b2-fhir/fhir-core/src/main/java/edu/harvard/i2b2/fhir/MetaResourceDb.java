@@ -357,31 +357,7 @@ public class MetaResourceDb {
 		return s;
 	}
 
-	public String getMetaResourceSetXml() throws JAXBException {
-		StringWriter rwriter = new StringWriter();
-		JAXBContext jaxbContext = JAXBContext
-				.newInstance(MetaResourceSet.class);
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-				Boolean.TRUE);
-		jaxbMarshaller.marshal(this.set, rwriter);
-		return rwriter.toString();
-	}
+	
 
-	public String getResourceXml(String id) throws FhirCoreException {
-		String xml;
-		String xQuery = "//Resource[@id='"+id+"']";
-
-		try {
-			xml = getMetaResourceSetXml();
-			logger.trace("xml:"+xml);
-		} catch (JAXBException e) {
-			throw new FhirCoreException("", e);
-		}
-		String res=XQueryUtil.processXQuery(xQuery, xml);
-		logger.trace("res:"+res);
-		return res;
-
-	}
-
+	
 }
