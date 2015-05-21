@@ -123,8 +123,8 @@ public class QueryEngine {
 			String resourceXml = FhirUtil
 					.getResourceXml(r.getId(), inputMRSXml);
 			for (Query q : this.queryList) {
-				//if (q.match(resourceXml))
-					//resultS.getMetaResource().add(mr);
+				if (q.match(resourceXml))
+					resultS.getMetaResource().add(mr);
 			}
 		}
 		logger.debug("size after query:" + resultS.getMetaResource().size());

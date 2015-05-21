@@ -28,6 +28,9 @@ public abstract class Query {
 	private Class resourceClass;
 	private String modifier;
 	private String parameter;
+	
+	final String namespaceDeclaration="declare default element namespace \"http://hl7.org/fhir\";"
+									+"declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
 
 	QueryType type;
 	/*
@@ -127,7 +130,7 @@ public abstract class Query {
 		ArrayList<String> list = new ArrayList<String>();
 
 
-		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+		String xqueryStr = namespaceDeclaration
 				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
 				+ (explodeF ? "/" : "") + "/@value/string()";
 		logger.trace("xqueryStr:" + xqueryStr);
@@ -145,7 +148,7 @@ public abstract class Query {
 	protected ArrayList<String> getListFromParameterPath(String xml,
 			String parPath) {
 		ArrayList<String> list=new ArrayList<String>();
-		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+		String xqueryStr = namespaceDeclaration
 				 + parPath.replace(".", "/");
 
 		logger.trace("xqueryStr:" + xqueryStr);
@@ -156,7 +159,7 @@ public abstract class Query {
 	}
 
 	protected String getXmlFromParameterPath(String xml, String parPath) {
-		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+		String xqueryStr = namespaceDeclaration
 				 +  parPath;// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
@@ -167,7 +170,7 @@ public abstract class Query {
 	}
 	
 	protected List<String> getXmlListFromParameterPath(String xml, String parPath) {
-		String xqueryStr = "declare default element namespace \"http://hl7.org/fhir\";"
+		String xqueryStr = namespaceDeclaration
 				 +  parPath;// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
@@ -195,6 +198,7 @@ public abstract class Query {
 	}
 
 	protected String getParameterPath() {
+		
 		return parameterPath;
 	}
 
@@ -218,10 +222,19 @@ public abstract class Query {
 				+ parameter + ", type=" + type + ",";
 	}
 	protected String getLastElementOfParameterPath() {
+		String s=this.getParameterPath();
 		Pattern p = Pattern.compile(".*/([^\\.]*)$");
-		Matcher m = p.matcher(this.getParameterPath());
-		m.matches();
-		return m.group(1);
+		Matcher m = p.matcher(s);
+		if(m.matches()) s=m.group(1);
+		return s;
+	}
+	
+	protected String getFirstElementOfParameterPath() {
+		String s=this.getParameterPath();
+		Pattern p = Pattern.compile("^([^\\.]*).*/");
+		Matcher m = p.matcher(s);
+		if(m.matches()) s=m.group(1);
+		return s;
 	}
 
 		

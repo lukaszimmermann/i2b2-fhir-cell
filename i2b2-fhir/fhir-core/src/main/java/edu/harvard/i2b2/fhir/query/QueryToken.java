@@ -61,8 +61,8 @@ public class QueryToken extends Query {
 		typeList = new ArrayList<String>(Arrays.asList("/coding",//codeable concept
 					""));//identifier
 		for (String type : typeList) {
-			List<String> xmlList = getXmlListFromParameterPath(resourceXml, this
-					.getParameterPath().replace(".", "/") + type);
+			List<String> xmlList = getXmlListFromParameterPath(resourceXml, "//"+this
+					.getParameterPath().replace(".", "/").replace("Patient", "(Patient|i:Resource)") + type);
 			for (String xml : xmlList) {
 				logger.trace("xml:" + xml);
 				if (xml.equals(""))
