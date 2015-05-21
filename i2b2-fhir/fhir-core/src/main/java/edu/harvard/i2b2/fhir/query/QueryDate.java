@@ -21,9 +21,9 @@ public class QueryDate extends Query {
 	String dateValue;
 	GregorianCalendar dateValueExpected;
 
-	public QueryDate(Class resourceClass, String parameter, String value,MetaResourceDb db)
+	public QueryDate(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException, FhirCoreException {
-		super(resourceClass, parameter, value,db);
+		super(resourceClass, parameter, value);
 		
 	}
 	

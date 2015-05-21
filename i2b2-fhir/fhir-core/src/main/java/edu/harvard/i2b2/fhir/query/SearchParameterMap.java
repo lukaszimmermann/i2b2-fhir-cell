@@ -41,7 +41,7 @@ public class SearchParameterMap {
 		Unmarshaller um = context.createUnmarshaller();
 		Profile p = null;
 		for (Class c : FhirUtil.resourceClassList) {
-			logger.trace(">" + c.getSimpleName());
+			//logger.trace(">" + c.getSimpleName());
 			String xml = Utils.getFile("profiles/"
 					+ c.getSimpleName().toLowerCase() + ".profile.xml");
 
@@ -72,7 +72,7 @@ public class SearchParameterMap {
 		
 		for (ProfileSearchParam s : p.getStructure().get(0).getSearchParam()) {
 			if(s.getName().getValue().equals(parName)){
-				logger.trace("FOUND profile" + s.getName().getValue());
+				logger.trace("FOUND profile:" + s.getName().getValue());
 				return  s;
 			}
 		

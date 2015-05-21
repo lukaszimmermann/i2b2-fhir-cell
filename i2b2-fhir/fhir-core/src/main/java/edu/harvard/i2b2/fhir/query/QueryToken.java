@@ -23,9 +23,9 @@ public class QueryToken extends Query {
 	String code;
 	String namespace;
 
-	public QueryToken(Class resourceClass, String parameter, String value,MetaResourceDb db)
+	public QueryToken(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException, FhirCoreException {
-		super(resourceClass, parameter, value,db);
+		super(resourceClass, parameter, value);
 	}
 
 	@Override

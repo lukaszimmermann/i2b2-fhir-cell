@@ -24,6 +24,8 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 public class QueryReferenceTest {
 	static Logger logger = LoggerFactory.getLogger(QueryReferenceTest.class);
 	Patient p;
+	String xmlPatient;
+	String xmlMedicationStatement;
 	MedicationStatement ms;
 	
 	QueryBuilder qb;
@@ -32,11 +34,11 @@ public class QueryReferenceTest {
 
 	@Before
 	public void setup() throws FhirCoreException {
-		String xml = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xml);
+		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
 		qb = new QueryBuilder();
-			xml = Utils.getFile("example/fhir/MedicationStatement.xml");
-		ms = (MedicationStatement) FhirUtil.xmlToResource(xml);
+		xmlMedicationStatement = Utils.getFile("example/fhir/MedicationStatement.xml");
+		ms = (MedicationStatement) FhirUtil.xmlToResource(xmlMedicationStatement);
 		ms.setId("1-1");
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();
@@ -61,10 +63,10 @@ public class QueryReferenceTest {
 		}
 		*/logger.info("Running tests for QueryString...");
 
-		q = qb.setResourceClass(MedicationStatement.class).setDb(db).setRawParameter("patient")
+		q = qb.setResourceClass(MedicationStatement.class).setRawParameter("patient")
 				.setRawValue("example").build();
 		//logger.trace("RES:"+q.match(ms));
-		assertTrue(q.match(ms));
+		assertTrue(q.match(xmlMedicationStatement));
 		
 		
 	}

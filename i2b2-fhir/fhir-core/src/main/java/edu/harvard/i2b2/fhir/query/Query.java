@@ -21,7 +21,6 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public abstract class Query {
 	static Logger logger = LoggerFactory.getLogger(Query.class);
 
-	static MetaResourceDb db;
 	private String rawParameter;
 	private String rawValue;
 	private String parameterPath;// this will be resource specific defined at
@@ -41,9 +40,8 @@ public abstract class Query {
 	abstract protected void init() throws QueryValueException,
 			QueryParameterException;
 
-	public Query(Class resourceClass, String rawParameter, String rawValue,MetaResourceDb db)
+	public Query(Class resourceClass, String rawParameter, String rawValue)
 			throws QueryParameterException, QueryValueException {
-		this.db=db;
 		
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
@@ -89,22 +87,10 @@ public abstract class Query {
 					+ this.parameter + " for " + this.resourceClass);
 	}
 
-	final public boolean match(Resource r) throws FhirCoreException{
-		//return match(FhirUtil.resourceToXml(r));
-		if(r==null || r.getId()==null) throw new FhirCoreException("resource or its id is null/not set");
-		if(db==null) throw new FhirCoreException("db has not been set");
-		if(!this.getResourceClass().isInstance(r)) return false;
-		return match(db.getResourceXml(r.getId()));
-	}
 
 	abstract public boolean match(String resourceXml);
 
-	final public boolean match(MetaResource mr) throws FhirCoreException {
-		return match(mr.getResource());
-
-	}
-
-	final public void removeNonMatching(MetaResourceSet s) throws FhirCoreException {
+	/*final public void removeNonMatching(MetaResourceSet s) throws FhirCoreException {
 		MetaResourceSet s2 = new MetaResourceSet();
 		ArrayList<MetaResource> list = (ArrayList<MetaResource>) s2
 				.getMetaResource();
@@ -116,7 +102,7 @@ public abstract class Query {
 		}
 		slist.clear();
 		slist.addAll(list);
-	}
+	}*/
 
 	abstract public void validateParameter() throws QueryParameterException;
 
@@ -238,7 +224,11 @@ public abstract class Query {
 		return m.group(1);
 	}
 
-	public List<Resource> search(List<Resource> resourceList) throws FhirCoreException {
+		
+
+	
+
+	/*public List<Resource> search(List<Resource> resourceList) throws FhirCoreException {
 		List<Resource> resultList= new ArrayList<Resource>();
 		for(Resource r:resourceList){
 			String xml=db.getMetaResourceXml(r.getId());
@@ -255,6 +245,6 @@ public abstract class Query {
 		}
 		return s2;
 	}
-	
+	*/
 	
 }

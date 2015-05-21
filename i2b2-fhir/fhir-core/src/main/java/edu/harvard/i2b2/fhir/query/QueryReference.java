@@ -23,10 +23,10 @@ public class QueryReference extends Query {
 	String id;
 	String url;
 
-	public QueryReference(Class resourceClass, String parameter, String value, MetaResourceDb db)
+	public QueryReference(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException,
 			FhirCoreException {
-		super(resourceClass, parameter, value,db);
+		super(resourceClass, parameter, value);
 	}
 
 	@Override
