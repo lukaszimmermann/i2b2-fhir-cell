@@ -33,32 +33,40 @@ public class QueryEngineTest {
 
 	QueryEngine qe;
 
-	//@Before
+	@Before
 	public void setup() {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) FhirUtil.xmlToResource(xml);
+		p.setId("myid1");
 		xml = Utils
 				.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
 		p2 = (Patient) FhirUtil.xmlToResource(xml);
+		p2.setId("myid2");
 	}
 
 	@Test
 	public void testQueryUrl() throws QueryParameterException,
-			QueryValueException, FhirCoreException, DatatypeConfigurationException, JAXBException {
-		qe = new QueryEngine("Patient?name=pieter&gender=M");
-		logger.trace(qe.toString());
+			QueryValueException, FhirCoreException,
+			DatatypeConfigurationException, JAXBException {
 		
+		
+		//qe = new QueryEngine("Patient?name=Pieter&gender=M");
+		qe = new QueryEngine("Patient?gender=M");
+		
+		logger.trace(qe.toString());
+
 		MetaResourceSet s = new MetaResourceSet();
 		MetaResource mr = FhirUtil.getMetaResource(p);
 		s.getMetaResource().add(mr);
 		MetaResource mr2 = FhirUtil.getMetaResource(p2);
-		s.getMetaResource().add(mr2);
-		s.getMetaResource().add(SetupExamples.getEGPatient().getMetaResource().get(0));
+		//s.getMetaResource().add(mr2);
+		//s.getMetaResource().add(
+			//	SetupExamples.getEGPatient().getMetaResource().get(0));
+		//logger.trace("Input:" + FhirUtil.toXml(p));
 
+		MetaResourceSet s2 = qe.search(s);
+		logger.trace("Input:" + s.getMetaResource().size());
+		logger.trace("Result:" + s2.getMetaResource().size());
 
-		MetaResourceSet s2=qe.search(s);
-		logger.trace("Input:"+s.getMetaResource().size());
-		logger.trace("Result:"+s2.getMetaResource().size());
-		
 	}
 }

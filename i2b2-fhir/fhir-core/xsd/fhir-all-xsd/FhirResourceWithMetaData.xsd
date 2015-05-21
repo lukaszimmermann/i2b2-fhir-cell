@@ -1,5 +1,5 @@
 <xs:schema xmlns:ns7="http://i2b2.harvard.edu/fhir/core" targetNamespace="http://i2b2.harvard.edu/fhir/core"
-	xmlns:ns9="http://hl7.org/fhir" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	xmlns:ns9="http://hl7.org/fhir" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" >
 	
 	<xs:import  schemaLocation="fhir-base.xsd"
 	 namespace="http://hl7.org/fhir"  />

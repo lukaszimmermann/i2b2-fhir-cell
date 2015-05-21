@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -63,6 +64,28 @@ public class FhirUtil {
 
 	static {
 		initResourceClassList();
+		// inithmJaxbc();
+	}
+
+	private static void inithmJaxbc() {
+		try {
+			if (hmJaxbc == null) {
+				hmJaxbc = new HashMap<Class, JAXBContext>();
+
+				for (Class c : getResourceClassList()) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(c);
+					hmJaxbc.put(c, jaxbContext);
+				}
+				Class[] list = { MetaResourceSet.class, MetaResource.class,
+						Resource.class };
+				for (Class c : Arrays.asList(list)) {
+					JAXBContext jaxbContext = JAXBContext.newInstance(c);
+					hmJaxbc.put(c, jaxbContext);
+				}
+			}
+		} catch (JAXBException e) {
+			throw new RuntimeException("JaxB Error", e);
+		}
 	}
 
 	public static String resourceToXml(Resource r, Class c) {
@@ -158,21 +181,13 @@ public class FhirUtil {
 					"os").setText(Integer.toString(s.getMetaResource().size()));
 			StringWriter rwriter = new StringWriter();
 
-			if (hmJaxbc == null) {
-				hmJaxbc = new HashMap<Class, JAXBContext>();
-
-				for (Class c : getResourceClassList()) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(c);
-					hmJaxbc.put(c, jaxbContext);
-				}
-			}
 			for (MetaResource mr : s.getMetaResource()) {
 				Resource r = mr.getResource();
 				MetaData m = mr.getMetaData();
 				for (Class c : getResourceClassList()) {
 
 					if (c.isInstance(r)) {
-						JAXBContext jaxbContext = hmJaxbc.get(c);// JAXBContext.newInstance(c);
+						JAXBContext jaxbContext = getJaxBContext(c);// JAXBContext.newInstance(c);
 						Marshaller jaxbMarshaller = jaxbContext
 								.createMarshaller();
 						jaxbMarshaller.setProperty(
@@ -439,8 +454,8 @@ public class FhirUtil {
 		}
 
 		MetaResource mr = new MetaResource();
-		mr.setResource((Resource) r);
 		mr.setMetaData(md);
+		mr.setResource(r);
 
 		return mr;
 
@@ -470,7 +485,8 @@ public class FhirUtil {
 
 	}
 
-	public static String metaResourceToXml(MetaResource mr) throws JAXBException {
+	public static String metaResourceToXml(MetaResource mr)
+			throws JAXBException {
 		StringWriter rwriter = new StringWriter();
 		JAXBContext jaxbContext = JAXBContext
 				.newInstance(MetaResourceSet.class);
@@ -481,4 +497,59 @@ public class FhirUtil {
 		return rwriter.toString();
 	}
 
+	public static MetaResource xmlToMetaResource(String xml)
+			throws JAXBException {
+		if (xml.equals("") || xml == null)
+			return null;
+		MetaResource mr = null;
+
+		try {
+			JAXBContext jc = getJaxBContext(Resource.class);
+			Unmarshaller unMarshaller = jc.createUnmarshaller();
+
+			mr = (MetaResource) unMarshaller.unmarshal(new StringReader(xml));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return mr;
+	}
+
+	public static <C> String toXml(C c) throws JAXBException{
+		if(c==null) throw new IllegalArgumentException("input object is null");
+		StringWriter rwriter = new StringWriter();
+		JAXBContext jaxbContext = getJaxBContext(c.getClass());
+		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
+				Boolean.TRUE);
+		jaxbMarshaller.marshal(c, rwriter);
+		return rwriter.toString();
+	}
+	
+	public static <C> C fromXml(String xml) throws JAXBException{
+		if (xml.equals("") || xml == null)
+			return null;
+		C mr = null;
+
+		try {
+			JAXBContext jc = getJaxBContext(Resource.class);
+			Unmarshaller unMarshaller = jc.createUnmarshaller();
+
+			mr = (C) unMarshaller.unmarshal(new StringReader(xml));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return mr;
+	}
+	
+	public static JAXBContext getJaxBContext(Class c) throws JAXBException {
+		if (hmJaxbc == null) {
+			hmJaxbc = new HashMap<Class, JAXBContext>();
+		}
+		if (hmJaxbc.get(c) == null) {
+			JAXBContext jaxbContext = JAXBContext.newInstance(c);
+			hmJaxbc.put(c, jaxbContext);
+		}
+		return hmJaxbc.get(c);
+
+	}
 }

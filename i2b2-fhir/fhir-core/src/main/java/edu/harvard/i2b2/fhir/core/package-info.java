@@ -5,5 +5,5 @@
 // Generated on: 2015.05.01 at 11:38:06 AM EDT 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://i2b2.harvard.edu/fhir/core")
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://i2b2.harvard.edu/fhir/core", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package edu.harvard.i2b2.fhir.core;
