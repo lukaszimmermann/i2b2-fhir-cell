@@ -9,6 +9,7 @@
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
+<stringAttribute key="org.eclipse.dltk.launching.INTERPRETER_CONTAINER" value="org.eclipse.dltk.launching.INTERPRETER_CONTAINER/org.eclipse.wst.xquery.launching.JavaInterpreterInstallType/BaseX"/>
 <booleanAttribute key="org.eclipse.dltk.launching.debugConsole" value="false"/>
 <stringAttribute key="project" value="xquery"/>
 </launchConfiguration>
