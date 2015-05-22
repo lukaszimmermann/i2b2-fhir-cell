@@ -1,4 +1,4 @@
-<Patient xmlns="http://hl7.org/fhir">
+<Patient xmlns="http://hl7.org/fhir" id="Patient/example">
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
