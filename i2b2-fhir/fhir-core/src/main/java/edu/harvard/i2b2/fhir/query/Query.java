@@ -30,22 +30,21 @@ public abstract class Query {
 	private Class resourceClass;
 	private String modifier;
 	private String parameter;
-	
-	
+
 	QueryType type;
+
 	/*
 	 * The raw Parameter and raw Value have protected Function access by
 	 * children Child will be init first and then validation will first be at
 	 * parent then child level
 	 */
-	
 
 	abstract protected void init() throws QueryValueException,
 			QueryParameterException;
 
 	public Query(Class resourceClass, String rawParameter, String rawValue)
 			throws QueryParameterException, QueryValueException {
-		
+
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
 		this.rawParameter = rawParameter;
@@ -60,17 +59,18 @@ public abstract class Query {
 					"Parameter does not match template" + rawParameter);
 		}
 
-		/*SearchParameterTuple t = SearchParameterTupleMap.getTuple(
-				this.resourceClass, this.parameter);
-		if (t != null)
-			this.parameterPath = t.getPath();
-		*/
+		/*
+		 * SearchParameterTuple t = SearchParameterTupleMap.getTuple(
+		 * this.resourceClass, this.parameter); if (t != null)
+		 * this.parameterPath = t.getPath();
+		 */
 		try {
-			this.parameterPath=new SearchParameterMap().getParameterPath(resourceClass, this.parameter);
+			this.parameterPath = new SearchParameterMap().getParameterPath(
+					resourceClass, this.parameter);
 		} catch (FhirCoreException e) {
-			throw new QueryParameterException("no ParamPath found",e);
+			throw new QueryParameterException("no ParamPath found", e);
 		}
-	
+
 		init();
 		validate();
 		validateParameter();
@@ -90,22 +90,7 @@ public abstract class Query {
 					+ this.parameter + " for " + this.resourceClass);
 	}
 
-
 	abstract public boolean match(String resourceXml);
-
-	/*final public void removeNonMatching(MetaResourceSet s) throws FhirCoreException {
-		MetaResourceSet s2 = new MetaResourceSet();
-		ArrayList<MetaResource> list = (ArrayList<MetaResource>) s2
-				.getMetaResource();
-		ArrayList<MetaResource> slist = (ArrayList<MetaResource>) s
-				.getMetaResource();
-		for (MetaResource mr : slist) {
-			if (match(mr))
-				list.add(mr);
-		}
-		slist.clear();
-		slist.addAll(list);
-	}*/
 
 	abstract public void validateParameter() throws QueryParameterException;
 
@@ -113,11 +98,11 @@ public abstract class Query {
 
 	public ArrayList<String> getValuesBelowParameterPath(String xmlResource,
 			String parPath) {
-		return getValuesFromParameterPath( xmlResource, parPath, true);
+		return getValuesFromParameterPath(xmlResource, parPath, true);
 	}
 
-	
-	public ArrayList<String> getValuesAtParameterPath(String xmlResource, String parPath) {
+	public ArrayList<String> getValuesAtParameterPath(String xmlResource,
+			String parPath) {
 		return getValuesFromParameterPath(xmlResource, parPath, false);
 	}
 
@@ -129,9 +114,8 @@ public abstract class Query {
 			String parPath, boolean explodeF) {
 		ArrayList<String> list = new ArrayList<String>();
 
-
-		String xqueryStr = FhirUtil.namespaceDeclaration
-				+ "/" + parPath.replace(".", "/")// "/Patient/birthDate+"
+		String xqueryStr = FhirUtil.namespaceDeclaration + "/"
+				+ parPath.replace(".", "/")// "/Patient/birthDate+"
 				+ (explodeF ? "/" : "") + "/@value/string()";
 		logger.trace("xqueryStr:" + xqueryStr);
 		list = XQueryUtil.getStringSequence(xqueryStr, xmlResource);
@@ -147,10 +131,10 @@ public abstract class Query {
 
 	protected ArrayList<String> getListFromParameterPath(String xml,
 			String parPath) {
-		ArrayList<String> list=new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<String>();
 		String xqueryStr = FhirUtil.namespaceDeclaration
-				//+  getAugmentedParameterPath()
-				 +parPath;
+		// + getAugmentedParameterPath()
+				+ parPath;
 
 		logger.trace("xqueryStr:" + xqueryStr);
 		list = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -161,8 +145,8 @@ public abstract class Query {
 
 	protected String getXmlFromParameterPath(String xml, String parPath) {
 		String xqueryStr = FhirUtil.namespaceDeclaration
-				 //+  getAugmentedParameterPath()
-				 +parPath;// "/Patient/gender;
+		// + getAugmentedParameterPath()
+				+ parPath;// "/Patient/gender;
 		logger.trace(" XmlFromParamPath xquery:" + xqueryStr);
 
 		String msg = XQueryUtil.processXQuery(xqueryStr, xml);
@@ -170,10 +154,11 @@ public abstract class Query {
 		logger.trace("msg:" + msg.toString());
 		return msg;
 	}
-	
-	protected List<String> getXmlListFromParameterPath(String xml, String parPath) {
+
+	protected List<String> getXmlListFromParameterPath(String xml,
+			String parPath) {
 		String xqueryStr = FhirUtil.namespaceDeclaration
-				 +  getAugmentedParameterPath();// "/Patient/gender;
+				+ getAugmentedParameterPath();// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
 		ArrayList<String> msg = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -182,7 +167,6 @@ public abstract class Query {
 		return msg;
 	}
 
-	
 	protected String getRawValue() {
 		return rawValue;
 	}
@@ -194,13 +178,13 @@ public abstract class Query {
 	protected String getParameterPath() {
 		return parameterPath;
 	}
-	
+
 	/*
 	 * allows xml queries even on i2b2.resource
 	 */
 	protected String getAugmentedParameterPath() {
-		String f=this.getFirstElementOfParameterPath();
-		return parameterPath.replace(f ,"("+f+"|i:Resource)");
+		String f = this.getFirstElementOfParameterPath();
+		return parameterPath.replace(f, "(" + f + "|i:Resource)");
 	}
 
 	protected String getParameter() {
@@ -222,23 +206,23 @@ public abstract class Query {
 				+ resourceClass + ", modifier=" + modifier + ", parameter="
 				+ parameter + ", type=" + type + ",";
 	}
+
 	protected String getLastElementOfParameterPath() {
-		String s=this.getParameterPath();
+		String s = this.getParameterPath();
 		Pattern p = Pattern.compile(".*//*([^//]+)$");
 		Matcher m = p.matcher(s);
-		if(m.matches()) s=m.group(1);
-		return s;
-	}
-	
-	protected String getFirstElementOfParameterPath() {
-		String s=this.getParameterPath();
-		Pattern p = Pattern.compile("^([^//]+)//*.*");
-		Matcher m = p.matcher(s);
-		if(m.matches()) s=m.group(1);
+		if (m.matches())
+			s = m.group(1);
 		return s;
 	}
 
-	
-	
-	
+	protected String getFirstElementOfParameterPath() {
+		String s = this.getParameterPath();
+		Pattern p = Pattern.compile("^([^//]+)//*.*");
+		Matcher m = p.matcher(s);
+		if (m.matches())
+			s = m.group(1);
+		return s;
+	}
+
 }
