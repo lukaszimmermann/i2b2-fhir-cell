@@ -6,6 +6,9 @@ import org.hl7.fhir.Resource;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -32,18 +35,22 @@ public class QueryEngineTest {
 	static Logger logger = LoggerFactory.getLogger(QueryEngineTest.class);
 	Patient p;
 	Patient p2;
-
+	MetaResourceSet s;
 	QueryEngine qe;
 
 	@Before
-	public void setup() {
+	public void setup() throws JAXBException, FhirCoreException {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xml);
+		p = (Patient) FhirUtil.fromXml(xml);
 		p.setId("myid1");
 		xml = Utils
 				.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
-		p2 = (Patient) FhirUtil.xmlToResource(xml);
+		p2 = (Patient) FhirUtil.fromXml(xml);
 		p2.setId("myid2");
+		
+		 s = new MetaResourceSet();
+		MetaResource mr = FhirUtil.getMetaResource(p);
+		s.getMetaResource().add(mr);
 	}
 
 	// @Test
@@ -56,9 +63,7 @@ public class QueryEngineTest {
 
 		logger.trace(qe.toString());
 
-		MetaResourceSet s = new MetaResourceSet();
-		MetaResource mr = FhirUtil.getMetaResource(p);
-		s.getMetaResource().add(mr);
+		
 		MetaResource mr2 = FhirUtil.getMetaResource(p2);
 		// s.getMetaResource().add(mr2);
 		// s.getMetaResource().add(
@@ -73,25 +78,34 @@ public class QueryEngineTest {
 
 	@Test
 	public void testQueryUrl() throws QueryParameterException,
-			QueryValueException, FhirCoreException {
+			QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {
 
-		//qe = new QueryEngine(
-			//	"MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient");
-		//logger.info("qe:"+qe);
+		String url="http://localhost:8080/fhir-server/a/a/Patient?birthdate=%3C1966-08-29";
+		logger.trace(url+"\n"+URLDecoder.decode(url,"UTF-8"));
 		
-				String s="Patient/1000000005";
-				Pattern p = Pattern.compile(".*/([^/]+)$");
-				
-				Matcher m = p.matcher(s);
-				if(m.matches()){
-					logger.info("grp1:"+m.group(1));
-				}else{
-					logger.info("no match");
-				}
-				
-				//XXX //TODO
-		//		http://localhost:8080/fhir-server/a/a/Patient?gender=M
-			//	http://localhost:8080/fhir-server/a/a/Patient?birthdate=1966-08-29
-			//	http://localhost:8080/fhir-server/a/a/Patient?birthdate=>1966-08-29
+	/*	qe = new QueryEngine(
+		// "MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient"
+				"Patient?birthdate=<1966-08-29");
+
+		logger.info("qe:" + qe);
+		logger.info(""+qe.search(s));
+*/
+		// XXX //TODO
+		// http://localhost:8080/fhir-server/a/a/Patient?gender=M
+		// http://localhost:8080/fhir-server/a/a/Patient?birthdate=1966-08-29
+		// http://localhost:8080/fhir-server/a/a/Patient?birthdate=>1966-08-29
+	}
+
+	public void RegexTest() {
+
+		String s = "Patient/1000000005";
+		Pattern p = Pattern.compile(".*/([^/]+)$");
+
+		Matcher m = p.matcher(s);
+		if (m.matches()) {
+			logger.info("grp1:" + m.group(1));
+		} else {
+			logger.info("no match");
+		}
 	}
 }

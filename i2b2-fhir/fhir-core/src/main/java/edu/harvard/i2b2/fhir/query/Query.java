@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBException;
+
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
@@ -139,8 +141,8 @@ public abstract class Query {
 	}
 
 	protected ArrayList<String> getListFromParameterPath(Resource r,
-			String parPath) {
-		return getListFromParameterPath(FhirUtil.resourceToXml(r), parPath);
+			String parPath) throws JAXBException {
+		return getListFromParameterPath(FhirUtil.toXml(r), parPath);
 	}
 
 	protected ArrayList<String> getListFromParameterPath(String xml,

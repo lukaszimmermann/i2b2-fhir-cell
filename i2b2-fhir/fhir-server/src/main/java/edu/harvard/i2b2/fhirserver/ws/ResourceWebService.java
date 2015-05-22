@@ -47,6 +47,7 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Resource;
+import org.json.JSONException;
 import org.json.XML;
 
 @Path("res")
@@ -65,7 +66,7 @@ public class ResourceWebService {
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
-			@HeaderParam("accept") String acceptHeader) {
+			@HeaderParam("accept") String acceptHeader) throws JSONException, JAXBException {
 		String msg = null;
 		Resource r = null;
 		System.out.println("searhcing particular resource2:<" + resourceName
@@ -75,9 +76,9 @@ public class ResourceWebService {
 			throw new RuntimeException("class not found for resource:"+ resourceName);
 
 		r = resourcedb.getParticularResource(c, id);
-		msg = FhirUtil.resourceToXml(r, c);
+		msg = FhirUtil.resourceToFhirXml(r, c);
 		if (acceptHeader.equals("application/json")) {
-			msg = Utils.xmlToJson(FhirUtil.resourceToXml(r, c));
+			msg = Utils.xmlToJson(FhirUtil.resourceToFhirXml(r, c));
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 				r != null) {
@@ -99,9 +100,9 @@ public class ResourceWebService {
 			@PathParam("resourceName") String resourceName,
 			String xml
 			//,Object r
-			) {
+			) throws JAXBException {
 		
-		Resource r= FhirUtil.xmlToResource(xml);
+		Resource r= FhirUtil.fromXml(xml);
 			
 			System.out.println("putting  particular resource2:<" + resourceName
 					+ ">");

@@ -124,7 +124,7 @@ public class xmlIOMetaResourceSet {
 		testResources(s);
 	}
 
-	private void testResources(MetaResourceSet s2){
+	private void testResources(MetaResourceSet s2) throws JAXBException{
 		// System.out.println(Utils.getFile(xmlFileName));
 				
 				// System.out.println("FhirResourceSet: "
@@ -147,12 +147,11 @@ public class xmlIOMetaResourceSet {
 
 				for (MetaResource mr : s2.getMetaResource()) {
 					Resource r = mr.getResource();
-					if (FhirUtil.isValid(FhirUtil.resourceToXml(r))) {
+					if (FhirUtil.isValid(FhirUtil.toXml(r))) {
 						System.out.println("#################Valid");
 					} else {
 						throw new RuntimeException(
-								FhirUtil.getValidatorErrorMessage(FhirUtil
-										.resourceToXml(r)));
+								FhirUtil.getValidatorErrorMessage(FhirUtil.toXml(r)));
 					}
 
 				}
@@ -197,10 +196,10 @@ public class xmlIOMetaResourceSet {
 	 * as demonstrated here
 	 */
 	//@Test
-	public void Test6() throws DatatypeConfigurationException{ 
+	public void Test6() throws DatatypeConfigurationException, JAXBException{ 
 		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
 		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
-		Patient p=(Patient) FhirUtil.xmlToResource(inValidPatient);
+		Patient p=(Patient) FhirUtil.fromXml(inValidPatient);
 		MetaResource mr= new MetaResource();
 		MetaData md= new MetaData();
 		GregorianCalendar gc = new GregorianCalendar();
@@ -215,7 +214,7 @@ public class xmlIOMetaResourceSet {
 		MetaResourceDb db=new MetaResourceDb();
 		
 		db.addMetaResourceSet(s);
-		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(FhirUtil.resourceToXml(p)));
+		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(FhirUtil.toXml(p)));
 		
 	}
 	

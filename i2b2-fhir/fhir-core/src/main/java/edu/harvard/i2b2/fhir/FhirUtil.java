@@ -91,75 +91,12 @@ public class FhirUtil {
 		}
 	}
 
-	public static String resourceToXml(Resource r, Class c) {
-		StringWriter strw = new StringWriter();
+	
+	
 
-		JAXBElement jbe = null;
-		jbe = new JAXBElement(new QName("http://hl7.org/fhir",
-				c.getSimpleName()), c, c.cast(r));
-		try {
-			JAXBContext jc = JAXBContext.newInstance(c);
-			Marshaller marshaller = jc.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
-			marshaller.marshal(jbe, strw);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return strw.toString();
-	}
+	
 
-	public static String resourceToXml(Resource r) {
-		init();
-
-		StringWriter strw = new StringWriter();
-		JAXBElement jbe = null;
-		boolean classFound = false;
-		for (Class c : resourceClassList) {
-			// logger.trace("instanceOf:"+c.getSimpleName());
-			if (c.isInstance(r)) {
-				try {
-					jbe = new JAXBElement(new QName("http://hl7.org/fhir",
-							c.getSimpleName()), c, c.cast(r));
-					JAXBContext jc = JAXBContext.newInstance(c);
-					Marshaller marshaller = jc.createMarshaller();
-					marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-							Boolean.TRUE);
-					marshaller.marshal(jbe, strw);
-				} catch (JAXBException e) {
-					e.printStackTrace();
-				}
-				classFound = true;
-			}
-		}
-		if (!classFound)
-			throw new RuntimeException("could not find class of the resource");
-		return strw.toString();
-	}
-
-	public static Resource xmlToResource(String xml) {
-		if (xml.equals("") || xml == null)
-			return null;
-		Resource r = null;
-
-		try {
-			JAXBContext jc = JAXBContext.newInstance(Resource.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			r = (Resource) unMarshaller.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return r;
-	}
-
-	public static List<Resource> xmlToResource(List<String> xmlList) {
-		List<Resource> resList = new ArrayList<Resource>();
-		for (String xmlStr : xmlList)
-			resList.add(xmlToResource(xmlStr));
-		return resList;
-	}
-
+	
 	public static String getResourceBundle(MetaResourceSet s,
 			String uriInfoString, String urlString) {
 		String fhirBase = uriInfoString;
@@ -464,17 +401,7 @@ public class FhirUtil {
 
 	}
 
-	public static String getMetaResourceSetXml(MetaResourceSet s)
-			throws JAXBException {
-		StringWriter rwriter = new StringWriter();
-		JAXBContext jaxbContext = JAXBContext
-				.newInstance(MetaResourceSet.class);
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-				Boolean.TRUE);
-		jaxbMarshaller.marshal(s, rwriter);
-		return rwriter.toString();
-	}
+	
 
 	public static String getResourceXml(String id, String metaResourceSetXml)
 			throws FhirCoreException {
@@ -488,34 +415,7 @@ public class FhirUtil {
 
 	}
 
-	public static String metaResourceToXml(MetaResource mr)
-			throws JAXBException {
-		StringWriter rwriter = new StringWriter();
-		JAXBContext jaxbContext = JAXBContext
-				.newInstance(MetaResourceSet.class);
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-				Boolean.TRUE);
-		jaxbMarshaller.marshal(mr, rwriter);
-		return rwriter.toString();
-	}
-
-	public static MetaResource xmlToMetaResource(String xml)
-			throws JAXBException {
-		if (xml.equals("") || xml == null)
-			return null;
-		MetaResource mr = null;
-
-		try {
-			JAXBContext jc = getJaxBContext(Resource.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			mr = (MetaResource) unMarshaller.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return mr;
-	}
+	
 
 	public static <C> String toXml(C c) throws JAXBException{
 		if(c==null) throw new IllegalArgumentException("input object is null");
@@ -554,5 +454,9 @@ public class FhirUtil {
 		}
 		return hmJaxbc.get(c);
 
+	}
+
+	public static String resourceToFhirXml(Resource r, Class c) throws JAXBException {
+		return toXml(c.cast(r));
 	}
 }

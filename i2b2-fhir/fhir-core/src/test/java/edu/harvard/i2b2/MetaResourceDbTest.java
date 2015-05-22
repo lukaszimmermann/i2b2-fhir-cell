@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.hl7.fhir.Patient;
@@ -25,9 +26,9 @@ public class MetaResourceDbTest {
 
 	static Logger logger = LoggerFactory.getLogger(MetaResourceDbTest.class); 
 	@Test
-	public void filterTest() throws DatatypeConfigurationException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	public void filterTest() throws DatatypeConfigurationException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException{
 		MetaResourceSet s =ResourceSetup.getPatientAndMedicationStatementEg();
-	logger.info(""+FhirUtil.resourceToXml(s.getMetaResource().get(1).getResource()));
+	logger.info(""+FhirUtil.toXml(s.getMetaResource().get(1).getResource()));
 		
 		MetaResourceSet s1 =ResourceSetup.getPatientAndMedicationStatementEg();
 		Patient p=(Patient) s1.getMetaResource().get(0).getResource();
