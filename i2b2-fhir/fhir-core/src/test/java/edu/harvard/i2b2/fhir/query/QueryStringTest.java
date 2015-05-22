@@ -3,6 +3,10 @@ package edu.harvard.i2b2.fhir.query;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+
+import javax.xml.bind.JAXBException;
+
 import org.hl7.fhir.Patient;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,9 +30,9 @@ public class QueryStringTest {
 	
 	
 	@Before
-	public void setup() throws FhirCoreException {
+	public void setup() throws FhirCoreException, JAXBException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
+		p = (Patient) FhirUtil.fromXml(xmlPatient);
 		qb = new QueryBuilder();
 	}
 
@@ -68,7 +72,7 @@ public class QueryStringTest {
 	}
 	
 	@Test
-	public void testParserUrl() throws QueryParameterException{
+	public void testParserUrl() throws QueryParameterException, UnsupportedEncodingException{
 		MetaResourceDb db= new MetaResourceDb();
 		new QueryBuilder("patient?name=pieter");
 		new QueryBuilder("medication?name=pieter");

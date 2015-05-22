@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.fhirserver.ws;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLDecoder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.hl7.fhir.Resource;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -255,7 +257,7 @@ public class FromI2b2WebService {
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request)
 			throws DatatypeConfigurationException,
-			ParserConfigurationException, SAXException, IOException {
+			ParserConfigurationException, SAXException, IOException, JAXBException, JSONException {
 
 		HttpSession session = request.getSession();
 		if (session == null) {
@@ -276,9 +278,9 @@ public class FromI2b2WebService {
 					+ resourceName);
 
 		r = md.getParticularResource(c, id);
-		msg = FhirUtil.resourceToXml(r, c);
+		msg = FhirUtil.resourceToFhirXml(r, c);
 		if (acceptHeader.equals("application/json")) {
-			msg = Utils.xmlToJson(FhirUtil.resourceToXml(r, c));
+			msg = Utils.xmlToJson(FhirUtil.resourceToFhirXml(r, c));
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {

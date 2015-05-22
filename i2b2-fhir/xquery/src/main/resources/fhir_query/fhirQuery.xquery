@@ -65,28 +65,26 @@ as xs:boolean
     let $I:=local:getResource("Patient/example",$U)
     let $v:=xs:date(string(functx:dynamic-path($I,$path)))
     let $r:= 
-    if($operator eq "=") then
-        if ($v eq $eValue) then boolean('true') else boolean(())
-        else if($operator eq "<") then
+    if($operator eq "=" or $operator eq ">=" or $operator eq "<=") then
+        if ($v eq $eValue) then boolean('true') 
+        else if($operator eq "<" or $operator eq "<=") then
         if ($v lt $eValue) then boolean('true') else boolean(())
-        else if($operator eq ">") then
+        else if($operator eq ">" or $operator eq ">=") then
         if ($v gt $eValue) then boolean('true') else boolean(())
         else boolean(())
+    else boolean(())
     return  $r
 };
 
 let $path:="birthDate/@value"
 return local:matchDate($path,xs:date("1944-11-17"),"<",/root())
-(:
-f
-functx:dynamic-path(/root(),"Patient/birthDate")
 
-let $path:="Patient/birthDate"
-return local:matchDate($path,xs:date("1944-11-17"),local:getResource("Patient/example",/root()))
-local:getResource("Patient/example")
- 
-if ($t=$eValue)  then xs:boolean('true')
-else xs:boolean('false')
+
+
+
+(:
+true return local:matchDate($path,xs:date("1944-11-17"),"=",/root())
+false return local:matchDate($path,xs:date("1943-11-17"),"=",/root())
 :)
 
 

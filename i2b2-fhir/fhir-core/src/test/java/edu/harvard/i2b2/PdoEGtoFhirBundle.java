@@ -63,7 +63,7 @@ public class PdoEGtoFhirBundle {
 		String input = Utils.getFile("example/fhir/mixedResource.xml");
 
 		List<String> xmlList = XQueryUtil.getStringSequence(input, query);
-		List<Resource> resList = FhirUtil.xmlToResource(xmlList);
+		//List<Resource> resList = FhirUtil.fromXml(xmlList);
 		//System.out
 			//	.println(FhirUtil.getResourceBundle(resList, "uriInfoString"));
 	}

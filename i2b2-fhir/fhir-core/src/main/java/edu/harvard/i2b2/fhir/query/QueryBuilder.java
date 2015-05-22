@@ -1,5 +1,8 @@
 package edu.harvard.i2b2.fhir.query;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,7 +24,8 @@ public class QueryBuilder {
 	public QueryBuilder() {
 	}
 
-	public QueryBuilder(String url) {
+	public QueryBuilder(String url) throws UnsupportedEncodingException {
+		 url=URLEncoder.encode(url,"UTF-8");
 		String fhirClassExp="("+FhirUtil.getResourceList().toString().replace(",", "|")
 				.replaceAll("[\\s\\[\\]]+", "")+")";
 		Pattern p = Pattern.compile(

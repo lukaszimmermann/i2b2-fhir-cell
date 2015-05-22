@@ -79,7 +79,7 @@ String query = Utils
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		//System.out.println(xQueryResultString);
 		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xQueryResultString);
-		System.out.println(FhirUtil.resourceToXml(s.getMetaResource().get(0).getResource()));
+		System.out.println(FhirUtil.toXml(s.getMetaResource().get(0).getResource()));
 		md.addMetaResourceSet(s);
 	}
 	

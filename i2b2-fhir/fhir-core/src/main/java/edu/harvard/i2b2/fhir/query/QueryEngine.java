@@ -1,5 +1,7 @@
 package edu.harvard.i2b2.fhir.query;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,11 @@ public class QueryEngine {
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
 	public QueryEngine(String queryUrl) throws QueryParameterException,
 			QueryValueException, FhirCoreException {
+		try {
+			queryUrl=URLDecoder.decode(queryUrl,"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new FhirCoreException("Error",e);
+		}
 		logger.debug("queryUrl:" + queryUrl);
 		this.db = db;
 		queryList = new ArrayList<Query>();
@@ -95,13 +102,13 @@ public class QueryEngine {
 		}
 	}
 
-	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException {
+	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException, JAXBException {
 		MetaResourceSet resultS = new MetaResourceSet();
 		logger.trace("running query");
 		logger.debug("size before query:" + s.getMetaResource().size());
 		String inputMRSXml;
 		try {
-			inputMRSXml = FhirUtil.getMetaResourceSetXml(s);
+			inputMRSXml = FhirUtil.toXml(s);
 			// logger.trace("inputMRSXml:"+inputMRSXml);
 		} catch (JAXBException e) {
 			throw new FhirCoreException("JAXB error ", e);
@@ -116,14 +123,14 @@ public class QueryEngine {
 			try {
 				if (r == null)
 					throw new FhirCoreException("Resource is Null:"
-							+ FhirUtil.metaResourceToXml(mr));
+							+ FhirUtil.toXml(mr));
 			} catch (JAXBException e) {
 				throw new FhirCoreException("JaxB Error:", e);
 			}
 
 			if (r.getId() == null)
 				throw new FhirCoreException("Id is not given in resource:"
-						+ FhirUtil.resourceToXml(r));
+						+ FhirUtil.toXml(r));
 
 			String resourceXml = FhirUtil
 					.getResourceXml(r.getId(), inputMRSXml);

@@ -20,6 +20,7 @@ public class QueryDate extends Query {
 	String operator;
 	String dateValue;
 	GregorianCalendar dateValueExpected;
+	String reEncodedValue;
 
 	public QueryDate(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException, FhirCoreException {
@@ -29,12 +30,13 @@ public class QueryDate extends Query {
 	
 	protected void init() throws QueryValueException, QueryParameterException{
 		this.type = QueryType.DATE;
-		Pattern p = Pattern.compile("^([<=>]*)[^\\s]*");
-		Matcher m = p.matcher(this.getRawValue());
+		reEncodedValue=this.getRawValue().replace("%3E", ">").replace("%3C", "<").replace("%3D", "=");
+		Pattern p = Pattern.compile("^([<=>]*)[^\\s<=>]+");
+		Matcher m = p.matcher(reEncodedValue);
 		this.operator = m.matches() ? m.group(1) : "";
 		logger.info("operator:" + this.operator);
-		this.dateValue = (this.operator.length() > 0) ? this.getRawValue()
-				.substring(this.operator.length()) : this.getRawValue();
+		this.dateValue = (this.operator.length() > 0) ? reEncodedValue
+				.substring(this.operator.length()) : reEncodedValue;
 				
 		try {
 			validateDate();
@@ -66,12 +68,14 @@ public class QueryDate extends Query {
 					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
-			}else if (operator.contains("<")) {
+			}
+			if (operator.contains("<")) {
 				if (dateValueFound.before(this.dateValueExpected)){
 					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
 				}
-			}else if (operator.contains(">")) {
+			}
+			if (operator.contains(">")) {
 				if (dateValueFound.after(this.dateValueExpected)){
 					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
 					return true;
@@ -107,8 +111,8 @@ public class QueryDate extends Query {
 	}
 
 	public String toString() {
-		return super.toString() + "\noperator=" + operator + "\ndateValue="
-				+ this.dateValue;
+		return super.toString() + ", operator=" + operator + ", dateValue="+ this.dateValue+ "reEncodedValue="
+				+ this.reEncodedValue;
 
 	}
 }

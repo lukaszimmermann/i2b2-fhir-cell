@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBException;
+
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.junit.Before;
@@ -33,12 +35,12 @@ public class QueryReferenceTest {
 	MetaResourceDb db;
 
 	@Before
-	public void setup() throws FhirCoreException {
+	public void setup() throws FhirCoreException, JAXBException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
+		p = (Patient) FhirUtil.fromXml(xmlPatient);
 		qb = new QueryBuilder();
 		xmlMedicationStatement = Utils.getFile("example/fhir/MedicationStatement.xml");
-		ms = (MedicationStatement) FhirUtil.xmlToResource(xmlMedicationStatement);
+		ms = (MedicationStatement) FhirUtil.fromXml(xmlMedicationStatement);
 		ms.setId("1-1");
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();

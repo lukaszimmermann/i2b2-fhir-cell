@@ -2,6 +2,8 @@ package edu.harvard.i2b2.fhir.query;
 
 import static org.junit.Assert.*;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.io.FileUtils;
 import org.hl7.fhir.Patient;
 import org.junit.Before;
@@ -24,9 +26,9 @@ public class QueryTest {
 	Query q;
 	
 	@Before
-	public void setup() throws FhirCoreException {
+	public void setup() throws FhirCoreException, JAXBException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.xmlToResource(xmlPatient);
+		p = (Patient) FhirUtil.fromXml(xmlPatient);
 		qb = new QueryBuilder();
 	}
 	
@@ -61,7 +63,7 @@ public class QueryTest {
 	
 	
 	@Test
-	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException {
+	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
 		assertTrue(q.match(xmlPatient));
@@ -100,7 +102,7 @@ public class QueryTest {
 		
 		
 		String xml=Utils.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
-		p=(Patient) FhirUtil.xmlToResource(xml);
+		p=(Patient) FhirUtil.fromXml(xml);
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
 		assertTrue(q.match(xmlPatient));
 	}
