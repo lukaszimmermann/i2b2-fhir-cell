@@ -111,8 +111,8 @@ public class QueryDate extends Query {
 	}
 
 	public String toString() {
-		return super.toString() + ", operator=" + operator + ", dateValue="+ this.dateValue+ "reEncodedValue="
-				+ this.reEncodedValue;
+		return "QueryDate "+super.toString() + ", operator=" + operator + ", dateValue="+ this.dateValue+ "reEncodedValue="
+				+ this.reEncodedValue+ "]\n";
 
 	}
 }

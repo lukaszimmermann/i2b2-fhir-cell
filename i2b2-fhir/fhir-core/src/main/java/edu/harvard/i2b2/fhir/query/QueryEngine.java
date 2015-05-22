@@ -36,9 +36,9 @@ public class QueryEngine {
 	public QueryEngine(String queryUrl) throws QueryParameterException,
 			QueryValueException, FhirCoreException {
 		try {
-			queryUrl=URLDecoder.decode(queryUrl,"UTF-8");
+			queryUrl = URLDecoder.decode(queryUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new FhirCoreException("Error",e);
+			throw new FhirCoreException("Error", e);
 		}
 		logger.debug("queryUrl:" + queryUrl);
 		this.db = db;
@@ -62,18 +62,27 @@ public class QueryEngine {
 		}
 		String suffix = this.rawQuery;
 
-		while (suffix !=null && suffix.length() > 0) {
+		while (suffix != null && suffix.length() > 0) {
 			p = Pattern.compile("([^\\?&]+)([^\\?]*)");
-			logger.trace("processing:"+suffix);
+			logger.trace("processing:" + suffix);
 			m = p.matcher(suffix);
 			if (m.matches()) {
 				String prefix = m.group(1);
 				suffix = m.group(2);
+				if(suffix.length()>0) suffix=suffix.substring(1);//to drop preceding&
 				if (prefix.matches("^_")) {
-					logger.info("excluding paramerters begining with _:"+prefix);
+					logger.info("excluding paramerters begining with _:"
+							+ prefix);
 				} else {
-					Query q = new QueryBuilder(this.resourceClass, prefix)
+					Query q=null ;
+					try{
+						logger.trace("creating:" + prefix);
+					q = new QueryBuilder(this.resourceClass, prefix)
 							.build();
+					}catch(Exception e){
+						throw new FhirCoreException("Error in search param:"+prefix,e);
+					}
+					
 					queryList.add(q);
 				}
 			} else {
@@ -89,7 +98,7 @@ public class QueryEngine {
 		queryList = new ArrayList<Query>();
 
 		for (String k1 : queryParamMap.keySet()) {
-			if (k1.matches("^_")){
+			if (k1.matches("^_")) {
 				continue;
 			}
 			logger.info("queryParamMap:" + queryParamMap.toString());
@@ -102,18 +111,19 @@ public class QueryEngine {
 		}
 	}
 
-	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException, JAXBException {
+	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException,
+			JAXBException {
 		MetaResourceSet resultS = new MetaResourceSet();
 		logger.trace("running query");
 		logger.debug("size before query:" + s.getMetaResource().size());
 		String inputMRSXml;
-		try {
+		/*try {
 			inputMRSXml = FhirUtil.toXml(s);
 			// logger.trace("inputMRSXml:"+inputMRSXml);
 		} catch (JAXBException e) {
 			throw new FhirCoreException("JAXB error ", e);
-		}
-		if (this.queryList.size() == 0){
+		}*/            
+		if (this.queryList.size() == 0) {
 			logger.trace("returning from sophisQuery as queryList is empty");
 			return s;
 		}
@@ -129,16 +139,24 @@ public class QueryEngine {
 			}
 
 			if (r.getId() == null)
-				throw new FhirCoreException("Id is not given in resource:"
+				throw new FhirCoreException("Id is not mentioned in resource:"
 						+ FhirUtil.toXml(r));
 
 			String resourceXml =
-					//FhirUtil.getResourceXml(r.getId(), inputMRSXml);
+					// FhirUtil.getResourceXml(r.getId(), inputMRSXml);
 					FhirUtil.toXml(r);
+			boolean matchF = true;
 			for (Query q : this.queryList) {
-				if (q.match(resourceXml))
-					resultS.getMetaResource().add(mr);
+				
+				//if match fails on a query skip other queries
+				if (matchF == true && (q.match(resourceXml)==false)){
+						matchF = false;
+						
+				}
 			}
+			//if match is true on all queries include in result
+			logger.info("match res:"+matchF);
+			if (matchF == true){resultS.getMetaResource().add(mr);}
 		}
 		logger.debug("size after query:" + resultS.getMetaResource().size());
 

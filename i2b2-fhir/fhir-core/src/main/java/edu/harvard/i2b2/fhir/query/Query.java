@@ -44,7 +44,6 @@ public abstract class Query {
 
 	public Query(Class resourceClass, String rawParameter, String rawValue)
 			throws QueryParameterException, QueryValueException {
-
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
 		this.rawParameter = rawParameter;
@@ -58,15 +57,40 @@ public abstract class Query {
 			throw new QueryParameterException(
 					"Parameter does not match template" + rawParameter);
 		}
+		initalize(true);
+	}
 
-		/*
-		 * SearchParameterTuple t = SearchParameterTupleMap.getTuple(
-		 * this.resourceClass, this.parameter); if (t != null)
-		 * this.parameterPath = t.getPath();
-		 */
+	// to skip construction of queryParam for CUSTOM query
+	public Query(Class resourceClass, String rawParameter, String rawValue,Object object) throws QueryParameterException,
+			QueryValueException {
+		rawParameter=rawParameter.substring(1);//to skip #
+		this.resourceClass = resourceClass;
+		this.rawValue = rawValue;
+		this.rawParameter = rawParameter;
+
+		Pattern p = Pattern.compile("^([^:]*)[:]*(.*)$");
+		Matcher m = p.matcher(rawParameter);
+		if (m.matches()) {
+			this.parameter = m.group(1);
+			this.modifier = m.group(2);
+		} else {
+			throw new QueryParameterException(
+					"Parameter does not match template" + rawParameter);
+		}
+		initalize(false);
+	}
+
+	// flag indicates if Path will be initialized
+	private void initalize(boolean flag) throws QueryParameterException,
+			QueryValueException {
+
 		try {
-			this.parameterPath = new SearchParameterMap().getParameterPath(
-					resourceClass, this.parameter);
+			if (flag){
+				this.parameterPath = new SearchParameterMap().getParameterPath(
+						resourceClass, this.parameter);
+			}else{
+				this.parameterPath=this.parameter.replace(".", "/");
+			}
 		} catch (FhirCoreException e) {
 			throw new QueryParameterException("no ParamPath found", e);
 		}

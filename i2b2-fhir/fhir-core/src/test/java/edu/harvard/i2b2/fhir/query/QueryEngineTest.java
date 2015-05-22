@@ -76,7 +76,7 @@ public class QueryEngineTest {
 
 	}
 
-	@Test
+	//@Test
 	public void testQueryUrl() throws QueryParameterException,
 			QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {
 
@@ -96,6 +96,24 @@ public class QueryEngineTest {
 		// http://localhost:8080/fhir-server/a/a/Patient?birthdate=>1966-08-29
 	}
 
+	//@Test
+	public void testMultiParamQueryUrl() throws QueryParameterException,
+	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {	
+		String url="Patient?gender=M&birthdate=<1965-08-29";
+		qe = new QueryEngine(url);
+		logger.info(""+qe);
+		logger.info(""+qe.search(s));
+	}
+	
+	@Test
+	public void testMultiParamQueryUrlThree() throws QueryParameterException,
+	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {	
+		String url="Patient?gender=M&birthdate=<1965-08-29&maritalStatus=S";
+		qe = new QueryEngine(url);
+		logger.info(""+qe);
+		//logger.info(""+qe.search(s));
+	}
+	
 	public void RegexTest() {
 
 		String s = "Patient/1000000005";
