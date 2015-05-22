@@ -408,9 +408,9 @@ public class FhirUtil {
 		String xml;
 		String xQuery = namespaceDeclaration+"//i:Resource[@id='" + id + "']";
 
-		logger.trace("xml:" + metaResourceSetXml);
+		//logger.trace("xml:" + metaResourceSetXml);
 		String res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);
-		logger.trace("res:" + res);
+		//logger.trace("res:" + res);
 		return res;
 
 	}

@@ -239,7 +239,7 @@ public class FromI2b2WebService {
 					.entity(removeSpace(returnString)).build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.serverError().header("xreason", e.getMessage())
+			return Response.status(Status.BAD_REQUEST).header("xreason", e.getMessage())
 					.build();
 		}
 

@@ -132,8 +132,9 @@ public class QueryEngine {
 				throw new FhirCoreException("Id is not given in resource:"
 						+ FhirUtil.toXml(r));
 
-			String resourceXml = FhirUtil
-					.getResourceXml(r.getId(), inputMRSXml);
+			String resourceXml =
+					//FhirUtil.getResourceXml(r.getId(), inputMRSXml);
+					FhirUtil.toXml(r);
 			for (Query q : this.queryList) {
 				if (q.match(resourceXml))
 					resultS.getMetaResource().add(mr);
