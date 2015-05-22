@@ -5,6 +5,23 @@ declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{
 fn:replace($r,'.000Z$','') 
 };
 
+declare function local:getIdentifier() as node(){ 
+
+ <identifier>
+    <use value="usual"/>
+    <label value="MRN"/>
+    <system value="urn:oid:1.2.36.146.595.217.0.1"/>
+    <value value="12345"/>
+    <period>
+      <start value="2001-05-06"/>
+    </period>
+    <assigner>
+      <display value="Acme Healthcare"/>
+    </assigner>
+  </identifier>
+
+};
+
 declare function local:fnrace($r as xs:string?) as xs:string
 { 
 (:let $map := map:map()
@@ -44,6 +61,7 @@ else if ($r="partner")  then  "T"
 else if ($r="seperated")  then  "L"
 else if ($r="unknown")  then  "UNK" 
 else if ($r="widowed") then "W"
+else if ($r="single") then "S"
 else "UNK"
 };
 
@@ -93,20 +111,7 @@ declare function local:fnPatient($zip as xs:string?,
     </div>
   </text>
 
-  <!--   MRN assigned by ACME healthcare on 6-May 2001   -->
-  <identifier>
-    <use value="usual"/>
-    <label value="MRN"/>
-    <system value="urn:oid:1.2.36.146.595.217.0.1"/>
-    <value value="12345"/>
-    <period>
-      <start value="2001-05-06"/>
-    </period>
-    <assigner>
-      <display value="Acme Healthcare"/>
-    </assigner>
-  </identifier>
-
+<!--  {$local:getIdentifier()}-->
   
   <!--   use FHIR code system for male / female   -->
   <gender>
@@ -138,7 +143,14 @@ declare function local:fnPatient($zip as xs:string?,
     <reference value="Organization/1"/>
   </managingOrganization>
   
-   <maritalStatus value="{$marital_status}"/>
+  <maritalStatus>
+    <coding>
+      <system value="http://hl7.org/fhir/v3/MaritalStatus"/>
+      <code value="{$marital_status}"/>
+      <display value="{$marital_status_raw}"/>
+    </coding>
+   </maritalStatus>
+   
    
   <active value="true"/>
 
@@ -152,7 +164,7 @@ let $zip:=$p/param[(@column='zip_cd')]/text()
 let $gender:=$p/param[(@column='sex_cd')]/text()
 let $gender_expanded:=if ($gender='M') then 'Male' else 'Female'
 let $marital_status_raw:=$p/param[(@column='marital_status_cd')]/text()
-let $marital_status:=local:fnrace(fn:lower-case($marital_status_raw))
+let $marital_status:=local:fnMaritalStatus(fn:lower-case($marital_status_raw))
 let $race_code:=local:fnrace(fn:lower-case($p/param[(@column='race')]/text()))
 let $birthdate:=$p/param[(@column='birth_date')]/text()
 let $updateDate := local:fnI2b2TimeToFhirTime($p/@update_date)
