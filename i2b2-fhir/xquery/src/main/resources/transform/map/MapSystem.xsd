@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified"
+    targetNamespace="http://i2b2.harvard.edu/map"
+    xmlns:i="http://i2b2.harvard.edu/map"
+    vc:minVersion="1.1">
+    
+    <xs:element name="MapSystemSet" type="i:mapSystemSet">
+    </xs:element>
+    <xs:element name="MapSystem" type="i:MapSystem">
+    </xs:element>
+    
+    <xs:complexType name="mapSystemSet">
+        <xs:sequence>
+            <xs:element name="MapSystem" type="i:MapSystem"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="MapSystem">
+        <xs:sequence >
+            <xs:element name="ToPath" type="i:ToPath" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="FromPath" type="i:FromPath" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Map" type="i:Map" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>   
+    
+    <xs:complexType name="Map">
+        <xs:sequence>
+            <xs:element name="ValueMap" type="i:ValueMap" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="defaultToValue" type="xs:string" use="required" />
+    </xs:complexType>
+    
+    <xs:complexType name="ValueMap">
+        <xs:attribute name="to" type="xs:string" use="required" />
+        <xs:attribute name="from" type="xs:string" use="required" />
+    </xs:complexType>
+    
+    
+    <xs:complexType name="ToPath">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="NameSystem" type="xs:string"/>
+            <xs:element name="Path" type="xs:string"/>
+            <xs:element name="DefaultGenerate" type="xs:boolean" default="false" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="FromPath">
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:element name="NameSystem" type="xs:string"/>
+            <xs:element name="Path" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+</xs:schema>
