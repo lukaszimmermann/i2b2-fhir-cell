@@ -1,56 +1,75 @@
 module namespace dp = "http://edu.harvard.i2b2/dynamicPath";
-declare function dp:dynamic-path
-  ( $parent as node() ,
-    $path as xs:string )  as item()* {
 
-  let $nextStep := dp:substring-before-if-contains($path,'/')
-  let $restOfSteps := substring-after($path,'/')
-  for $child in
-    ($parent/*[dp:name-test(name(),$nextStep)],
-     $parent/@*[dp:name-test(name(),
-                              substring-after($nextStep,'@'))])
-  return if ($restOfSteps)
-         then dp:dynamic-path($child, $restOfSteps)
-         else $child
- } ;
+declare function dp:make-nested-elements(
+  $element-names as xs:string*
+) as element()*
+{
+  if (empty($element-names)) then ()
+  else element { $element-names[1] } {
+    dp:make-nested-elements(subsequence($element-names, 2))
+  }
+};
 
-declare function dp:name-test
-  ( $testname as xs:string? ,
-    $names as xs:string* )  as xs:boolean {
+declare function dp:add-path(
+  $xml as node()?,
+  $paths as xs:string*
+) as node()
+{
+  let $first := $paths[1]
+  let $rest := subsequence($paths, 2)
+  return
+    if (empty($first)) then $xml
+    else if ($xml instance of text()) then $xml
+    else if (node-name($xml) = xs:QName($first))
+    then element { $first } {
+        $xml/@*,
+        for $n in $xml/node()
+        return dp:add-path($n, $rest)
+      }
+    else element { node-name($xml) } {
+        $xml/@*, $xml/node(),
+        dp:make-nested-elements($paths)
+      }
+};
 
-$testname = $names
-or
-$names = '*'
-or
-dp:substring-after-if-contains($testname,':') =
-   (for $name in $names
-   return substring-after($name,'*:'))
-or
-substring-before($testname,':') =
-   (for $name in $names[contains(.,':*')]
-   return substring-before($name,':*'))
+declare function dp:dynamic($path as xs:string,$I as node()*) as item()*{
+    let $xq:=concat('declare namespace ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/";declare namespace m="http://i2b2.harvard.edu/map" ;declare variable $xml external;',
+    ' $xml/',$path,'')
+    return xquery:eval(
+  $xq,
+  map { 'xml': $I })
+
+};
+
+declare function dp:update-attributes
+  ( $elements as element()* ,
+    $attrNames as xs:QName* ,
+    $attrValues as xs:anyAtomicType* )  as element()? {
+
+   for $element in $elements
+   return element { node-name($element)}
+                  { for $attrName at $seq in $attrNames
+                    return if ($element/@*[node-name(.) = $attrName])
+                           then attribute {$attrName}
+                                     {$attrValues[$seq]}
+                           else (),
+                    $element/@*[not(node-name(.) = $attrNames)],
+                    $element/node() }
  } ;
  
- 
- declare function dp:substring-after-if-contains
-  ( $arg as xs:string? ,
-    $delim as xs:string )  as xs:string? {
+ declare function dp:add-attributes
+  ( $elements as element()* ,
+    $attrNames as xs:QName* ,
+    $attrValues as xs:anyAtomicType* )  as element()? {
 
-   if (contains($arg,$delim))
-   then substring-after($arg,$delim)
-   else $arg
+   for $element in $elements
+   return element { node-name($element)}
+                  { for $attrName at $seq in $attrNames
+                    return if ($element/@*[node-name(.) = $attrName])
+                           then ()
+                           else attribute {$attrName}
+                                          {$attrValues[$seq]},
+                    $element/@*,
+                    $element/node() }
  } ;
- 
-declare function dp:substring-before-if-contains
-  ( $arg as xs:string? ,
-    $delim as xs:string )  as xs:string? {
-
-   if (contains($arg,$delim))
-   then substring-before($arg,$delim)
-   else $arg
- } ;
-
-
-
-
 
