@@ -70,7 +70,7 @@ public class QueryEngine {
 				String prefix = m.group(1);
 				suffix = m.group(2);
 				if(suffix.length()>0) suffix=suffix.substring(1);//to drop preceding&
-				if (prefix.matches("^_")) {
+				if (prefix.matches("^_.*")) {
 					logger.info("excluding paramerters begining with _:"
 							+ prefix);
 				} else {
@@ -80,7 +80,7 @@ public class QueryEngine {
 					q = new QueryBuilder(this.resourceClass, prefix)
 							.build();
 					}catch(Exception e){
-						throw new FhirCoreException("Error in search param:"+prefix,e);
+						throw new FhirCoreException("Error in search param :"+prefix,e);
 					}
 					
 					queryList.add(q);
