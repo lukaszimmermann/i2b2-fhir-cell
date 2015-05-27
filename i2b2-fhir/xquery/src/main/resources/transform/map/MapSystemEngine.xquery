@@ -1,6 +1,7 @@
 import module namespace dp="http://edu.harvard.i2b2/dynamicPath" at "../modules/dynamicPath.xquery";
 declare namespace m="http://i2b2.harvard.edu/map" ;
 declare namespace ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" ;
+ declare namespace functx = "http:// www.functx.com";
 
 
 declare function local:insert($I as node(),$value as item(),$path as xs:string) as xs:string*{
@@ -20,21 +21,95 @@ declare function local:ev($I as node(),$i as xs:string)as node(){
      $xq,
      map { 'xml': $I })
  };
- 
- declare function local:addAttrib($I as node(),$q as xs:string) as node(){
- let $xq:=
-    concat('declare namespace ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/";declare namespace m="http://i2b2.harvard.edu/map" ;import module namespace dp="http://edu.harvard.i2b2/dynamicPath" at "../modules/dynamicPath.xquery";
-    declare variable $xml external;',$q)
 
-    return xquery:eval(
-     $xq,
-     map { 'xml': $I })
- };
+declare function local:add-attribute-Path ($ xml as element()*, $path as xs:string, $name as xs:string, $ value as xs:anyAtomicType?) 
+ as item()* {
+    
+  let $first:=tokenize($path,"/")[1]
+    return $first
+   };
+ 
+
+ declare function functx:add-attribute ($ element as element( ), $ name as xs:string, $ value as xs:anyAtomicType?) 
+ as element( ) {
+    element { node-name( $ element)} { 
+      attribute {$ name} {
+        $ value},
+       $ element/@*, 
+       $ element/ node( ) }
+     };
+     
+  
+   declare function local:overwrite-path(
+  $xml as node()?,
+  $paths as xs:string*
+) as node()
+{
+   $xml
+};   
+ 
+
+declare function local:createNode($xml as node(),$path as xs:string,$value as xs:string) as node(){
+  
+  (:tokenize :)
+ 
+  let $seq:=tokenize($path,"/")
+  let $testLast:=$seq[last()]
+  let $last:= if(contains($testLast,"@")) then $testLast else ""
+  let $acPath:= if(contains($testLast,"@")) then fn:string-join(subsequence($seq,1,fn:index-of($seq,$testLast)-1),"/") else $path 
+  
+  return  local:overwrite-path($xml/Patient, tokenize($acPath, '/'))
+  
+};
+
+    declare function local:overwrite-path1(
+  $xml as node()?,
+  $pathSeq as item()*
+) as item()*
+{
+ 
+  let $pathRemSeq:=subsequence($pathSeq,2)
+  let $cT:=$pathSeq[1]
+  let $cN:= string(node-name($xml))
+   let $cNODE:= $xml/*[node-name() eq xs:QName($cN)]
+  let $msg:=
+   if ( empty($xml) ) then dp:make-nested-elements($pathSeq)
+   else if (  empty($cN) or empty($cT) ) then $xml
+   else if($cT ne $cN) then 
+   (
+       element {$cN} {   
+         $xml/*[node-name() ne xs:QName($cT)],   
+         $cNODE/@*, 
+         $cNODE/descendant::*[node-name() ne xs:QName($cT)],
+           local:overwrite-path1( $xml/*[node-name() eq xs:QName($cT)],
+           $pathSeq)   
+       }
+   )
+   else element {$cT} { 
+          $xml/@*, 
+         $xml/descendant::*[node-name() ne xs:QName($cT)],
+         dp:make-nested-elements($pathRemSeq) 
+       }
+  
+   
+ 
+   return $msg
+};
+
+let $P:=<a><Patient id="123"><gender x="3"/></Patient><Medication/><MedicationStatement/></a>
+let $path:="Patient/maritalStatus/Coding/Code"
+return local:overwrite-path1($P, tokenize($path,"/")) 
+(: 
+local:add-attribute-Path($P,$path,"value","M")
+contains("@value","@")
+functx:add-attribute(*,"value","M")
+
 
 let $I:=doc("../../example/i2b2/AllPatients.xml")
 
 let $M:=doc("../../example/map/MapSystem1.xml")
 
+let $PT:=<Patient/>
 
 for $MS in $M//m:MapSystem
     let $toPath:=$MS/m:ToPath/m:Path/text()
@@ -45,7 +120,9 @@ for $MS in $M//m:MapSystem
         
         let $struct:=dp:add-path(<a></a>, tokenize($toPath, '/'))
         let $structWithAttrStr:=concat('dp:add-attributes($xml/',$toPath,', xs:QName("value"), "',$toValue,'")')
-       let $newCodeNode:=local:addAttrib($struct,$structWithAttrStr)
+       return $struct 
+    
+      let $newCodeNode:=local:addAttrib($struct,$structWithAttrStr)
        return local:ev($struct,concat('<Code value="',$toValue,'"></Code>'))
      
        
@@ -53,7 +130,7 @@ for $MS in $M//m:MapSystem
 
 
 
-(:
+
 local:ev1($struct,$structWithAttrStr)
 
 dp:add-attributes($struct/Patient/maritalStatus/Coding/Code, xs:QName('value'), $toValue)
