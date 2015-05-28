@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
@@ -33,7 +34,7 @@ public class QueryStringTest {
 	@Before
 	public void setup() throws FhirCoreException, JAXBException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.fromXml(xmlPatient);
+		p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
 		qb = new QueryBuilder();
 	}
 

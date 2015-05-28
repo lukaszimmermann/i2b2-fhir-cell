@@ -35,6 +35,7 @@ import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
@@ -148,11 +149,11 @@ public class xmlIOMetaResourceSet {
 
 				for (MetaResource mr : s2.getMetaResource()) {
 					Resource r = mr.getResource();
-					if (FhirUtil.isValid(FhirUtil.toXml(r))) {
+					if (FhirUtil.isValid(JAXBUtil.toXml(r))) {
 						System.out.println("#################Valid");
 					} else {
 						throw new RuntimeException(
-								FhirUtil.getValidatorErrorMessage(FhirUtil.toXml(r)));
+								FhirUtil.getValidatorErrorMessage(JAXBUtil.toXml(r)));
 					}
 
 				}
@@ -201,7 +202,7 @@ public class xmlIOMetaResourceSet {
 	public void Test6() throws DatatypeConfigurationException, JAXBException{ 
 		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
 		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
-		Patient p=(Patient) FhirUtil.fromXml(inValidPatient);
+		Patient p=(Patient) JAXBUtil.fromXml(inValidPatient,Patient.class);
 		MetaResource mr= new MetaResource();
 		MetaData md= new MetaData();
 		GregorianCalendar gc = new GregorianCalendar();
@@ -216,7 +217,7 @@ public class xmlIOMetaResourceSet {
 		MetaResourceDb db=new MetaResourceDb();
 		
 		db.addMetaResourceSet(s);
-		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(FhirUtil.toXml(p)));
+		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(JAXBUtil.toXml(p)));
 		
 	}
 	

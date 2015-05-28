@@ -17,6 +17,7 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
@@ -80,7 +81,7 @@ String query = Utils
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		//System.out.println(xQueryResultString);
 		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xQueryResultString);
-		System.out.println(FhirUtil.toXml(s.getMetaResource().get(0).getResource()));
+		System.out.println(JAXBUtil.toXml(s.getMetaResource().get(0).getResource()));
 		md.addMetaResourceSet(s);
 	}
 	

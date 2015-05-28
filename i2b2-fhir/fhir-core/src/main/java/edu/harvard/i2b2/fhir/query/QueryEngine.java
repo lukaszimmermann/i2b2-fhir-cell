@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
@@ -134,18 +135,18 @@ public class QueryEngine {
 			try {
 				if (r == null)
 					throw new FhirCoreException("Resource is Null:"
-							+ FhirUtil.toXml(mr));
+							+ JAXBUtil.toXml(mr));
 			} catch (JAXBException e) {
 				throw new FhirCoreException("JaxB Error:", e);
 			}
 
 			if (r.getId() == null)
 				throw new FhirCoreException("Id is not mentioned in resource:"
-						+ FhirUtil.toXml(r));
+						+ JAXBUtil.toXml(r));
 
 			String resourceXml =
 					// FhirUtil.getResourceXml(r.getId(), inputMRSXml);
-					FhirUtil.toXml(r);
+					JAXBUtil.toXml(r);
 			boolean matchF = true;
 			for (Query q : this.queryList) {
 				

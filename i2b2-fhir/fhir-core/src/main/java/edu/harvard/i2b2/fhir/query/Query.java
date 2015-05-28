@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
@@ -151,7 +152,7 @@ public abstract class Query {
 
 	protected ArrayList<String> getListFromParameterPath(Resource r,
 			String parPath) throws JAXBException, XQueryUtilException {
-		return getListFromParameterPath(FhirUtil.toXml(r), parPath);
+		return getListFromParameterPath(JAXBUtil.toXml(r), parPath);
 	}
 
 	protected ArrayList<String> getListFromParameterPath(String xml,
