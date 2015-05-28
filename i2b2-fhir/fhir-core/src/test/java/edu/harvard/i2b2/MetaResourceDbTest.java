@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -28,7 +29,7 @@ public class MetaResourceDbTest {
 	@Test
 	public void filterTest() throws DatatypeConfigurationException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException{
 		MetaResourceSet s =ResourceSetup.getPatientAndMedicationStatementEg();
-	logger.info(""+FhirUtil.toXml(s.getMetaResource().get(1).getResource()));
+	logger.info(""+JAXBUtil.toXml(s.getMetaResource().get(1).getResource()));
 		
 		MetaResourceSet s1 =ResourceSetup.getPatientAndMedicationStatementEg();
 		Patient p=(Patient) s1.getMetaResource().get(0).getResource();

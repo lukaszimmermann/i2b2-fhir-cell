@@ -58,7 +58,6 @@ public class FhirUtil {
 	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
-	private static HashMap<Class, JAXBContext> hmJaxbc = null;
 
 	private static Validator v;
 
@@ -67,35 +66,7 @@ public class FhirUtil {
 
 	static {
 		initResourceClassList();
-		// inithmJaxbc();
 	}
-
-	private static void inithmJaxbc() {
-		try {
-			if (hmJaxbc == null) {
-				hmJaxbc = new HashMap<Class, JAXBContext>();
-
-				for (Class c : getResourceClassList()) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(c);
-					hmJaxbc.put(c, jaxbContext);
-				}
-				Class[] list = { MetaResourceSet.class, MetaResource.class,
-						Resource.class };
-				for (Class c : Arrays.asList(list)) {
-					JAXBContext jaxbContext = JAXBContext.newInstance(c);
-					hmJaxbc.put(c, jaxbContext);
-				}
-			}
-		} catch (JAXBException e) {
-			throw new RuntimeException("JaxB Error", e);
-		}
-	}
-
-	
-	
-
-	
-
 	
 	public static String getResourceBundle(MetaResourceSet s,
 			String uriInfoString, String urlString) {
@@ -127,7 +98,7 @@ public class FhirUtil {
 				for (Class c : getResourceClassList()) {
 
 					if (c.isInstance(r)) {
-						JAXBContext jaxbContext = getJaxBContext(c);// JAXBContext.newInstance(c);
+						JAXBContext jaxbContext = JAXBUtil.getJaxBContext(c);// JAXBContext.newInstance(c);
 						Marshaller jaxbMarshaller = jaxbContext
 								.createMarshaller();
 						jaxbMarshaller.setProperty(
@@ -420,48 +391,4 @@ public class FhirUtil {
 
 	}
 
-	
-
-	public static <C> String toXml(C c) throws JAXBException{
-		if(c==null) throw new IllegalArgumentException("input object is null");
-		StringWriter rwriter = new StringWriter();
-		JAXBContext jaxbContext = getJaxBContext(c.getClass());
-		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-				Boolean.TRUE);
-		jaxbMarshaller.marshal(c, rwriter);
-		return rwriter.toString();
-	}
-	
-	public static <C> C fromXml(String xml) throws JAXBException{
-		if (xml.equals("") || xml == null)
-			return null;
-		C mr = null;
-
-		try {
-			JAXBContext jc = getJaxBContext(Resource.class);
-			Unmarshaller unMarshaller = jc.createUnmarshaller();
-
-			mr = (C) unMarshaller.unmarshal(new StringReader(xml));
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
-		return mr;
-	}
-	
-	public static JAXBContext getJaxBContext(Class c) throws JAXBException {
-		if (hmJaxbc == null) {
-			hmJaxbc = new HashMap<Class, JAXBContext>();
-		}
-		if (hmJaxbc.get(c) == null) {
-			JAXBContext jaxbContext = JAXBContext.newInstance(c);
-			hmJaxbc.put(c, jaxbContext);
-		}
-		return hmJaxbc.get(c);
-
-	}
-
-	public static String resourceToFhirXml(Resource r, Class c) throws JAXBException {
-		return toXml(c.cast(r));
-	}
 }

@@ -1,3 +1,5 @@
 Afet changing schema
 rm -rf ../src/main/java/org/;xjc FhirResourceWithMetaData.xsd -d ../src/main/java
 add @XmlRootElement annotation to generated java files
+
+xjc -d src/main/java/ ../xquery/src/main/resources/transform/map/MapSystem.xsd

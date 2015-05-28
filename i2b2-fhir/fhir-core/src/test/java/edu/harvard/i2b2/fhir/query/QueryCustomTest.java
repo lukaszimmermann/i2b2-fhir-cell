@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
@@ -42,11 +43,11 @@ public class QueryCustomTest {
 	@Before
 	public void setup() throws JAXBException, FhirCoreException {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
-		p = (Patient) FhirUtil.fromXml(xml);
+		p = (Patient) JAXBUtil.fromXml(xml,Patient.class);
 		p.setId("myid1");
 		xml = Utils
 				.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
-		p2 = (Patient) FhirUtil.fromXml(xml);
+		p2 = (Patient) JAXBUtil.fromXml(xml,Patient.class);
 		p2.setId("myid2");
 		
 		 s = new MetaResourceSet();
