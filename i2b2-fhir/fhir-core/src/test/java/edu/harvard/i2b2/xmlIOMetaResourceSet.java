@@ -39,6 +39,7 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 
 public class xmlIOMetaResourceSet {
 
@@ -112,12 +113,12 @@ public class xmlIOMetaResourceSet {
 
 	
 	//@Test
-		public void printXqueryResult() throws JAXBException {
+		public void printXqueryResult() throws JAXBException, XQueryUtilException {
 			String xmlString = PdoEGtoFhirBundle.defaultread();
 			System.out.println(xmlString);
 		}
 	//@Test
-	public void testI2b2toFhirMedPDOtransform() throws JAXBException {
+	public void testI2b2toFhirMedPDOtransform() throws JAXBException, XQueryUtilException {
 		String xmlString = PdoEGtoFhirBundle.defaultread();
 		System.out.println(xmlString);
 		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xmlString); 
@@ -158,10 +159,11 @@ public class xmlIOMetaResourceSet {
 		
 	}
 	
-	// @Test
-	public void Test4() throws JAXBException {
-		String str = "<a>{fn:replace('2009-09-10T00:00:00.000Z','.000Z$','')}</a>";
-		System.out.println(XQueryUtil.processXQuery(str));
+	 @Test
+	public void Test4() throws JAXBException, XQueryUtilException {
+		String str = "fn:replace('2009-09-10T00:00:00.000Z','.000Z$','')";
+		System.out.println(XQueryUtil.processXQuery(str,""));
+		assertEquals("2009-09-10T00:00:00", XQueryUtil.processXQuery(str,""));
 	}
 	
 	//@Test

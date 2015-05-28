@@ -409,7 +409,12 @@ public class FhirUtil {
 		String xQuery = namespaceDeclaration+"//i:Resource[@id='" + id + "']";
 
 		//logger.trace("xml:" + metaResourceSetXml);
-		String res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);
+		String res;
+		try {
+			res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);
+		} catch (XQueryUtilException e) {
+			throw new FhirCoreException(e);
+		}
 		//logger.trace("res:" + res);
 		return res;
 

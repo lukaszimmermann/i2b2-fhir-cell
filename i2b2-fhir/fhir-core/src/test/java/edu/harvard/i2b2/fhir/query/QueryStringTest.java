@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryStringTest {
@@ -38,7 +39,7 @@ public class QueryStringTest {
 
 	@Test
 	public void testString() throws QueryParameterException,
-			QueryValueException, FhirCoreException {
+			QueryValueException, FhirCoreException, XQueryUtilException {
 		logger.info("Running tests for QueryString...");
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("name")

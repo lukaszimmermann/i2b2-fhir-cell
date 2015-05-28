@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryDate extends Query {
@@ -49,9 +50,11 @@ public class QueryDate extends Query {
 	}
 
 	@Override	
-	public boolean match(String resourceXml) {
-		ArrayList<String> list = getValuesAtParameterPath(resourceXml,
-				this.getAugmentedParameterPath());
+	public boolean match(String resourceXml) throws XQueryUtilException  {
+		ArrayList<String> list;
+			list = getValuesAtParameterPath(resourceXml,
+					this.getAugmentedParameterPath());
+		
 		for (String v : list) {
 			GregorianCalendar dateValueFound;
 			logger.info("matching:"+ this.getRawParameter()+"="+this.getRawValue());

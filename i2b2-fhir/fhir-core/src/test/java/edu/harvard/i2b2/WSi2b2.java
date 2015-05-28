@@ -21,12 +21,13 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class WSi2b2 {
 
 	//@Test
-	public void test() {
+	public void test() throws XQueryUtilException {
 String request = Utils.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
 String query = Utils
 .getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
@@ -41,7 +42,7 @@ String query = Utils
 	}
 	
 	//@Test
-	public void test2() {
+	public void test2() throws XQueryUtilException {
 		String request = Utils.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
 		String query="declare namespace ns3=\"http://www.i2b2.org/xsd/cell/crc/pdo/1.1/\";"
 				+"copy $c :=//fn:root() "
@@ -58,7 +59,7 @@ String query = Utils
 	
 	
 	//@Test
-	public void Test3() throws JAXBException{
+	public void Test3() throws JAXBException, XQueryUtilException{
 		MetaResourceDb md= new MetaResourceDb();
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
@@ -95,7 +96,7 @@ String query = Utils
         }
     }
 	@Test
-	public void Test4(){
+	public void Test4() throws XQueryUtilException{
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
 		String query="replace node / with <a/>";
 		String xQueryResultString = XQueryUtil.processXQuery(query, requestStr);

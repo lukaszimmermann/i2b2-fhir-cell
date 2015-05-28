@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryTest {
@@ -33,7 +34,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException {
+	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException {
 		logger.info("Running tests for QueryDate...");
 		try{
 			q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("05-15-2015").build();
@@ -63,7 +64,7 @@ public class QueryTest {
 	
 	
 	@Test
-	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException {
+	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
 		assertTrue(q.match(xmlPatient));
@@ -108,7 +109,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException {
+	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
 		assertTrue(q.match(xmlPatient));
@@ -122,7 +123,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException {
+	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
 		assertTrue(q.match(xmlPatient));
