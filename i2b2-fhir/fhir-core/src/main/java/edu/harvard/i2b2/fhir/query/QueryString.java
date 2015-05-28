@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryString extends Query {
@@ -44,9 +45,12 @@ public class QueryString extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml) {
-		logger.trace("resourceXml:"+resourceXml);
-		List<String> xmlList = getXmlListFromParameterPath(resourceXml, this.getAugmentedParameterPath());
+	public boolean match(String resourceXml) throws XQueryUtilException  {
+			logger.trace("resourceXml:"+resourceXml);
+		List<String> xmlList;
+		
+			xmlList = getXmlListFromParameterPath(resourceXml, this.getAugmentedParameterPath());
+		
 		for (String xml : xmlList) {
 			logger.trace("xml:" + xml);
 			if (xml.equals(""))
@@ -56,10 +60,11 @@ public class QueryString extends Query {
 				return true;
 		}
 		return false;
+		
 	}
 
 	// CodeableConcept.text, Coding.display, or Identifier.label
-	private boolean textSearch(String xml) {
+	private boolean textSearch(String xml) throws XQueryUtilException {
 
 		ArrayList<String> list = new ArrayList<String>();
 		list.addAll(getListFromParameterPath(xml, "//@value/string()"));

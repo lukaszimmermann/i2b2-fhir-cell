@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -114,19 +115,19 @@ public abstract class Query {
 					+ this.parameter + " for " + this.resourceClass);
 	}
 
-	abstract public boolean match(String resourceXml);
+	abstract public boolean match(String resourceXml) throws  XQueryUtilException;
 
 	abstract public void validateParameter() throws QueryParameterException;
 
 	abstract public void validateValue() throws QueryValueException;
 
 	public ArrayList<String> getValuesBelowParameterPath(String xmlResource,
-			String parPath) {
+			String parPath) throws XQueryUtilException {
 		return getValuesFromParameterPath(xmlResource, parPath, true);
 	}
 
 	public ArrayList<String> getValuesAtParameterPath(String xmlResource,
-			String parPath) {
+			String parPath) throws XQueryUtilException {
 		return getValuesFromParameterPath(xmlResource, parPath, false);
 	}
 
@@ -135,7 +136,7 @@ public abstract class Query {
 	// elements that may not be initialized
 
 	private ArrayList<String> getValuesFromParameterPath(String xmlResource,
-			String parPath, boolean explodeF) {
+			String parPath, boolean explodeF) throws XQueryUtilException {
 		ArrayList<String> list = new ArrayList<String>();
 
 		String xqueryStr = FhirUtil.namespaceDeclaration + "/"
@@ -149,12 +150,12 @@ public abstract class Query {
 	}
 
 	protected ArrayList<String> getListFromParameterPath(Resource r,
-			String parPath) throws JAXBException {
+			String parPath) throws JAXBException, XQueryUtilException {
 		return getListFromParameterPath(FhirUtil.toXml(r), parPath);
 	}
 
 	protected ArrayList<String> getListFromParameterPath(String xml,
-			String parPath) {
+			String parPath) throws XQueryUtilException {
 		ArrayList<String> list = new ArrayList<String>();
 		String xqueryStr = FhirUtil.namespaceDeclaration
 		// + getAugmentedParameterPath()
@@ -167,7 +168,7 @@ public abstract class Query {
 		return list;
 	}
 
-	protected String getXmlFromParameterPath(String xml, String parPath) {
+	protected String getXmlFromParameterPath(String xml, String parPath) throws XQueryUtilException {
 		String xqueryStr = FhirUtil.namespaceDeclaration
 		// + getAugmentedParameterPath()
 				+ parPath;// "/Patient/gender;
@@ -180,7 +181,7 @@ public abstract class Query {
 	}
 
 	protected List<String> getXmlListFromParameterPath(String xml,
-			String parPath) {
+			String parPath) throws XQueryUtilException {
 		String xqueryStr = FhirUtil.namespaceDeclaration
 				+ getAugmentedParameterPath();// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);

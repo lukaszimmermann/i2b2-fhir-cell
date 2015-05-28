@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -112,7 +113,7 @@ public class QueryEngine {
 	}
 
 	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException,
-			JAXBException {
+			JAXBException, XQueryUtilException {
 		MetaResourceSet resultS = new MetaResourceSet();
 		logger.trace("running query");
 		logger.debug("size before query:" + s.getMetaResource().size());

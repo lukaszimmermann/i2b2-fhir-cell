@@ -27,6 +27,7 @@ import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -54,7 +55,7 @@ public class QueryCustomTest {
 	}
 
 	@Test
-	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException {
+	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException {
 		//String url="Patient?#Patient.maritalStatus:exact=M";
 		String url="Patient?gender=F&birthdate=>1966-08-29&@Patient.maritalStatus:exact=S";
 		qe = new QueryEngine(url);

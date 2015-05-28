@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryReference extends Query {
@@ -42,8 +43,10 @@ public class QueryReference extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml) {
-		String rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
+	public boolean match(String resourceXml) throws XQueryUtilException {
+		String rawId;
+			rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
+		
 		// id=this.getLastElementOfParameterPath()+"/"+id;
 		Pattern p = Pattern.compile(".*/([^/]+)$");
 		Matcher m = p.matcher(rawId);

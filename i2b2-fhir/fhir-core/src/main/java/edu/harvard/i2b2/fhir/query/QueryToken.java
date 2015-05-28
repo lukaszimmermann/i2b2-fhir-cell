@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryToken extends Query {
@@ -56,14 +57,17 @@ public class QueryToken extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml) {
-		ArrayList<String> typeList;
+	public boolean match(String resourceXml) throws  XQueryUtilException {
+			ArrayList<String> typeList;
 		typeList = new ArrayList<String>(Arrays.asList("/coding",//codeable concept
 					""));//identifier
 		for (String type : typeList) {
-			List<String> xmlList = getXmlListFromParameterPath(resourceXml, "//"+this
-					.getParameterPath()
-					+ type);
+			List<String> xmlList;
+			
+				xmlList = getXmlListFromParameterPath(resourceXml, "//"+this
+						.getParameterPath()
+						+ type);
+			
 			for (String xml : xmlList) {
 				logger.trace("xml:" + xml);
 				if (xml.equals(""))
@@ -84,10 +88,11 @@ public class QueryToken extends Query {
 		}
 
 		return false;
+		
 	}
 
 	// CodeableConcept.text, Coding.display, or Identifier.label
-	private boolean textSearch(String xml) {
+	private boolean textSearch(String xml) throws XQueryUtilException {
 		ArrayList<String> pathExtList;
 		// consider "text" modifier
 		if (this.getModifier().equals("text")) {

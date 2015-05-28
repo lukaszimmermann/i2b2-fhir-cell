@@ -22,8 +22,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
@@ -34,6 +32,7 @@ import org.apache.abdera.parser.Parser;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
@@ -57,7 +56,7 @@ public class PdoEGtoFhirBundle {
 	}
 
 	// @Test
-	public void test() {
+	public void test() throws XQueryUtilException {
 		String query = "declare namespace ns=\"http://hl7.org/fhir\";"
 				+ "\n//(ns:Medication|ns:Patient)";
 		String input = Utils.getFile("example/fhir/mixedResource.xml");
@@ -131,11 +130,11 @@ public class PdoEGtoFhirBundle {
 
 	*/
 	@Test
-	public void Test23(){
+	public void Test23() throws XQueryUtilException{
 		
 		System.out.println(defaultread());
 	}
-	static public String defaultread() {
+	static public String defaultread() throws XQueryUtilException {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
 		String input = Utils.getFile("example/i2b2/medicationsForAPatient2.xml");

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryReferenceTest {
@@ -51,7 +52,7 @@ public class QueryReferenceTest {
 
 	@Test
 	public void testReference() throws QueryParameterException,
-			QueryValueException, FhirCoreException {
+			QueryValueException, FhirCoreException, XQueryUtilException {
 
 		/*String url="MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient";
 		Pattern p = Pattern.compile( FhirUtil.RESOURCE_LIST_REGEX+"\\?*([^\\?]*)", Pattern.CASE_INSENSITIVE);

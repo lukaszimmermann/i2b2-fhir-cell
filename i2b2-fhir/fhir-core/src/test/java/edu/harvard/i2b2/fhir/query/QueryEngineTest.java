@@ -27,6 +27,7 @@ import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -56,7 +57,7 @@ public class QueryEngineTest {
 	// @Test
 	public void testQuery() throws QueryParameterException,
 			QueryValueException, FhirCoreException,
-			DatatypeConfigurationException, JAXBException {
+			DatatypeConfigurationException, JAXBException, XQueryUtilException {
 
 		// qe = new QueryEngine("Patient?name=Pieter&gender=M");
 		qe = new QueryEngine("Patient?name=Pieter");
@@ -98,7 +99,7 @@ public class QueryEngineTest {
 
 	//@Test
 	public void testMultiParamQueryUrl() throws QueryParameterException,
-	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {	
+	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException, XQueryUtilException {	
 		String url="Patient?gender=M&birthdate=<1965-08-29";
 		qe = new QueryEngine(url);
 		logger.info(""+qe);
