@@ -10,24 +10,21 @@ package edu.harvard.i2b2.map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for FromPath complex type.
+ * <p>Java class for NameSpaceDeclaration complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FromPath">
+ * &lt;complexType name="NameSpaceDeclaration">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="NameSystem" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Path" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="uri" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,19 +33,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FromPath", propOrder = {
-    "name",
-    "nameSystem",
-    "path"
-})
-public class FromPath {
+@XmlType(name = "NameSpaceDeclaration")
+public class NameSpaceDeclaration {
 
-    @XmlElement(name = "Name", required = true)
+    @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlElement(name = "NameSystem", required = true)
-    protected String nameSystem;
-    @XmlElement(name = "Path", required = true)
-    protected String path;
+    @XmlAttribute(name = "uri", required = true)
+    protected String uri;
 
     /**
      * Gets the value of the name property.
@@ -75,51 +66,27 @@ public class FromPath {
     }
 
     /**
-     * Gets the value of the nameSystem property.
+     * Gets the value of the uri property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getNameSystem() {
-        return nameSystem;
+    public String getUri() {
+        return uri;
     }
 
     /**
-     * Sets the value of the nameSystem property.
+     * Sets the value of the uri property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setNameSystem(String value) {
-        this.nameSystem = value;
-    }
-
-    /**
-     * Gets the value of the path property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Sets the value of the path property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setPath(String value) {
-        this.path = value;
+    public void setUri(String value) {
+        this.uri = value;
     }
 
 }

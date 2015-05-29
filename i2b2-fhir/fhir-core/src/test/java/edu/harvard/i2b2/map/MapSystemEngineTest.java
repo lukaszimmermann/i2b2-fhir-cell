@@ -35,14 +35,18 @@ public class MapSystemEngineTest {
 	}
 	
 	@Test
-	public void test1() throws MalformedURLException, JAXBException, IOException  {
+	public void test1() throws MalformedURLException, JAXBException, IOException, XQueryUtilException  {
 		//MapSystemEngine me= new MapSystemEngine(Utils.getFile("example/map/MapSystem1.xml"));
-		String xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		/*String xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
 		Patient p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
 		logger.trace(JAXBUtil.toXml(p));
-		
-		//MapSystemEngine me= new MapSystemEngine(Utils.getFile("example/map/MapSystem1.xml"));
-		MapSystemSet mss=new MapSystemSet();
+		*/
+		MapSystemEngine me= new MapSystemEngine(Utils.getFile("example/map/MapSystem1.xml"));
+		//logger.trace(me.runMapSystem(Utils.getFile("example/i2b2/AllPatients.xml")));
+		//logger.trace(me.appendPath("<a></a>", "Patient/maritalStatus/Coding/Code", ""));
+		logger.trace(me.appendPath("<a></a>", "Patient/maritalStatus/Coding/Code/@value", ""));
+		//me.runMapSystem(Utils.getFile("example/i2b2/medicationsForAPatient.xml"));
+		/*MapSystemSet mss=new MapSystemSet();
 		MapSystem ms=new MapSystem();
 		FromPath fp=new FromPath();fp.setName("f");
 		ToPath tp=new ToPath();tp.setName("f");
@@ -52,6 +56,7 @@ public class MapSystemEngineTest {
 		mss.getMapSystem().add(ms);
 		
 		logger.trace(JAXBUtil.toXml(mss));
+		*/
 	}
 	
 }
