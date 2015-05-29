@@ -1,7 +1,3 @@
-(:declare default element namespace "http://hl7.org/fhir";:)
-declare namespace ns1="";
-declare namespace ns3="http://hl7.org/fhir";
-declare namespace ns2="http://hl7.org/fhir/Patient";
-declare namespace ns4="http://i2b2.harvard.edu/fhir/core";
-(:/root()/*/*/namespace-uri(/*):)
-//Resource
+declare namespace ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/";
+let $A:=doc("/Users/kbw19/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/i2b2/AllPatients.xml")
+return $A//ns2:patient_set/patient/param[(@column='marital_status_cd')]/text()
