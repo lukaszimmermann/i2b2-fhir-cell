@@ -96,9 +96,81 @@ declare function local:createNode($xml as node(),$path as xs:string,$value as xs
    return $msg
 };
 
+declare function functx:add-attributes
+  ( $elements as element()* ,
+    $attrNames as xs:QName* ,
+    $attrValues as xs:anyAtomicType* )  as element()? {
+
+   for $element in $elements
+   return element { node-name($element)}
+                  { for $attrName at $seq in $attrNames
+                    return if ($element/@*[node-name(.) = $attrName])
+                           then ()
+                           else attribute {$attrName}
+                                          {$attrValues[$seq]},
+                    $element/@*,
+                    $element/node() }
+ } ;
+ 
+declare function dp:overwrite-path(
+  $xml as node()?,
+  $pathSeqI as item()*
+) as item()*
+{
+  (:Remove attribute:)
+  let $testLast:=$pathSeqI[last()]
+  let $attr:= if(contains($testLast,"@")) then $testLast else "undef"
+  let $pathSeq:= if(contains($testLast,"@")) then subsequence($pathSeqI,1,fn:index-of($pathSeqI,$testLast)-1) else $pathSeqI
+  
+ 
+  let $pathRemSeq:=subsequence($pathSeq,2)
+  let $cT:=$pathSeq[1]
+  let $cN:= string(node-name($xml))
+   let $cNODE:= $xml/*[node-name() eq xs:QName($cN)]
+  let $msg:= if (empty($pathSeq))then <r>$xml</r>
+   (:else if ($attr ne "" and empty($cT) ) then (
+      element {$cN} {   
+         attribute {"attr1"} {
+         "undefined"},
+         $xml/*[node-name() ne xs:QName($cT)],   
+        
+         $cNODE/@*,
+     
+         $cNODE/descendant::*[node-name() ne xs:QName($cT)],
+           dp:overwrite-path( $xml/*[node-name() eq xs:QName($cT)],
+           $pathSeqI)   
+       }
+   )
+  :) 
+   else if ( empty($xml) ) then dp:make-nested-elements($pathSeq)
+   else if (  empty($cN) or empty($cT) ) then $xml
+   else if($cT ne $cN) then 
+   (
+       element {$cN} {   
+         $xml/*[node-name() ne xs:QName($cT)],   
+         $cNODE/@*, 
+         $cNODE/descendant::*[node-name() ne xs:QName($cT)],
+           dp:overwrite-path( $xml/*[node-name() eq xs:QName($cT)],
+           $pathSeqI)   
+       }
+   )
+   else element {$cT} { 
+          $xml/@*, 
+         $xml/child::*[node-name() ne xs:QName($cT)],
+         dp:make-nested-elements($pathRemSeq) 
+       }
+  
+   
+ 
+   return $msg
+};
+
+
 let $P:=<a><Patient id="123"><gender x="3"/></Patient><Medication/><MedicationStatement/></a>
 let $path:="Patient/maritalStatus/Coding/Code"
-return local:overwrite-path1($P, tokenize($path,"/")) 
+let $path2:="Patient/gender/Coding/Code/@value"
+let $A:= dp:overwrite-path($P, tokenize($path,"/")) 
+return dp:overwrite-path($A, tokenize($path2,"/")) 
 (: 
 local:add-attribute-Path($P,$path,"value","M")
 contains("@value","@")

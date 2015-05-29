@@ -72,4 +72,6 @@ declare function dp:update-attributes
                     $element/@*,
                     $element/node() }
  } ;
+ 
+
 
