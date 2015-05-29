@@ -112,37 +112,20 @@ declare function functx:add-attributes
                     $element/node() }
  } ;
  
+
+
 declare function dp:overwrite-path(
   $xml as node()?,
-  $pathSeqI as item()*
+  $pathSeq as item()*
 ) as item()*
 {
-  (:Remove attribute:)
-  let $testLast:=$pathSeqI[last()]
-  let $attr:= if(contains($testLast,"@")) then $testLast else "undef"
-  let $pathSeq:= if(contains($testLast,"@")) then subsequence($pathSeqI,1,fn:index-of($pathSeqI,$testLast)-1) else $pathSeqI
   
- 
+
   let $pathRemSeq:=subsequence($pathSeq,2)
   let $cT:=$pathSeq[1]
   let $cN:= string(node-name($xml))
    let $cNODE:= $xml/*[node-name() eq xs:QName($cN)]
-  let $msg:= if (empty($pathSeq))then <r>$xml</r>
-   (:else if ($attr ne "" and empty($cT) ) then (
-      element {$cN} {   
-         attribute {"attr1"} {
-         "undefined"},
-         $xml/*[node-name() ne xs:QName($cT)],   
-        
-         $cNODE/@*,
-     
-         $cNODE/descendant::*[node-name() ne xs:QName($cT)],
-           dp:overwrite-path( $xml/*[node-name() eq xs:QName($cT)],
-           $pathSeqI)   
-       }
-   )
-  :) 
-   else if ( empty($xml) ) then dp:make-nested-elements($pathSeq)
+  let $msg:= if ( empty($xml) ) then dp:make-nested-elements($pathSeq)
    else if (  empty($cN) or empty($cT) ) then $xml
    else if($cT ne $cN) then 
    (
@@ -151,7 +134,7 @@ declare function dp:overwrite-path(
          $cNODE/@*, 
          $cNODE/descendant::*[node-name() ne xs:QName($cT)],
            dp:overwrite-path( $xml/*[node-name() eq xs:QName($cT)],
-           $pathSeqI)   
+           $pathSeq)   
        }
    )
    else element {$cT} { 
@@ -170,7 +153,7 @@ let $P:=<a><Patient id="123"><gender x="3"/></Patient><Medication/><MedicationSt
 let $path:="Patient/maritalStatus/Coding/Code"
 let $path2:="Patient/gender/Coding/Code/@value"
 let $A:= dp:overwrite-path($P, tokenize($path,"/")) 
-return dp:overwrite-path($A, tokenize($path2,"/")) 
+return dp:check-attr($A, tokenize($path2,"/")) 
 (: 
 local:add-attribute-Path($P,$path,"value","M")
 contains("@value","@")
