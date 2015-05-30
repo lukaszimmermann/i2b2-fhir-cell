@@ -33,7 +33,7 @@ declare function dp:overwrite-path(
   let $cN:= string(node-name($xml))
   let $cNODE:= $xml/*[node-name() eq xs:QName($cN)]
   let $msg:= if ( empty($xml) ) then dp:make-nested-elements($pathSeq)
-   else if($cT eq $cN) then 
+   else if($cN eq $cT) then 
    (
        element {$cN} {   
          $xml/@*, 
@@ -42,13 +42,13 @@ declare function dp:overwrite-path(
            $pathRemSeq)   
        }
    )
-   else if($cT ne $cN) then 
-     element {$cN} {
+   else if($cN ne $cT) then 
+     (element {$cN} {
           $xml/@*,
-          $xml/*,
-           dp:make-nested-elements($pathRemSeq) 
-     }
-  else <s/>
+          $xml/*
+           
+     },dp:make-nested-elements($pathSeq) )
+  else ()
   
    
  
@@ -83,11 +83,12 @@ declare function local:setValueOrAttrbute($xml as node(),$path as xs:string,$Val
   let $seq:=tokenize($path,"/")
   let $testLast:=$seq[last()]
  
-  let $last:= if(contains($testLast,"@")) then $seq[last()] else "undef"
+  let $last:= if(contains($testLast,"@")) then substring($testLast,2) else "undef"
   let $acSeq:= if(contains($testLast,"@")) then subsequence($seq,1,fn:index-of($seq,$testLast)-1) else $seq
    let $xml:= dp:overwrite-path($xml,$acSeq)
-  (:local:traversePathAndSetText:)
-  return $xml
+  (::)
+  return if($last eq "undef") then local:traversePathAndSetText($xml,$acSeq,$Value)
+  else local:traversePathAndSetAttribute($xml,$acSeq,$last,$Value)
 };
 
 declare function local:addPathAttribute($xml as node(),$pathSeq as item()*,$attrName as xs:string,$attrValue as xs:string) as node(){
@@ -111,9 +112,12 @@ let $d:= local:traversePathAndSetAttribute($b,tokenize("a/Patient/gender/Coding/
 
 let $e:= local:traversePathAndSetText($c,tokenize("a/Patient/maritalStatus/Coding/Code","/"),"val1")
 
-let $f:= local:setValueOrAttrbute($c,"a/Patient/maritalStatus/Coding/Code","val1")
 
-return dp:overwrite-path($c,tokenize("Patient/gender/Coding/Code","/"))
+let $g:= dp:overwrite-path($c,tokenize("Patient/gender/Coding/Code","/"))
+
+let $h:= local:setValueOrAttrbute($c,"Patient/maritalStatus/Coding/@Code","val1")
+return local:setValueOrAttrbute($c,"Patient/gender/Coding/Code","val1")
+
 (:
 copy $c :=<a>
   <Patient>
