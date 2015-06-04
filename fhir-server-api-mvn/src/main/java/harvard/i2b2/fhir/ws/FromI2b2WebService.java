@@ -183,7 +183,7 @@ public class FromI2b2WebService {
 
 		String returnString = FhirUtil.getResourceBundle(s, basePath,
 				request.getRequestURL().toString() );
-		if(request.getQueryString()!=null) returnString+="?" + request.getQueryString();
+		//if(request.getQueryString()!=null) returnString+="?" + request.getQueryString();
 		logger.debug("returning response...");
 
 		return Response.ok().type(MediaType.APPLICATION_XML)
