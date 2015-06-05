@@ -73,7 +73,7 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
             id="Medication/{$pid}-{$count}"
  >
 
-    <text>
+	<text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
     </text>
@@ -188,8 +188,8 @@ let $distobs :=
     return  <set>{functx:distinct-nodes($distobs)}</set>
  };
  
- let $I:= root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/i2b2/MedicationsForAPatient3.xml')
-:)let $distObs:=local:distinctObservations($I)
+ let $I:= doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/i2b2/MedicationsForAPatient3.xml')
+let $distObs:=local:distinctObservations($I)
  
 
 let $A:=$distObs

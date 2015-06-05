@@ -2,6 +2,7 @@ package edu.harvard.i2b2.fhirserver.ws;
 
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhirserver.ejb.ResourceDb;
 
@@ -76,9 +77,9 @@ public class ResourceWebService {
 			throw new RuntimeException("class not found for resource:"+ resourceName);
 
 		r = resourcedb.getParticularResource(c, id);
-		msg = FhirUtil.resourceToFhirXml(r, c);
+		msg = JAXBUtil.toXml(r);
 		if (acceptHeader.equals("application/json")) {
-			msg = Utils.xmlToJson(FhirUtil.resourceToFhirXml(r, c));
+			msg = Utils.xmlToJson(JAXBUtil.toXml(r));
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 				r != null) {
@@ -102,7 +103,7 @@ public class ResourceWebService {
 			//,Object r
 			) throws JAXBException {
 		
-		Resource r= FhirUtil.fromXml(xml);
+		Resource r= JAXBUtil.fromXml(xml,Resource.class);
 			
 			System.out.println("putting  particular resource2:<" + resourceName
 					+ ">");

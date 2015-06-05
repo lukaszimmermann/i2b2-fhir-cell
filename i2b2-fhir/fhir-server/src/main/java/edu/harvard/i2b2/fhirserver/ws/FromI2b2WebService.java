@@ -80,7 +80,7 @@ public class FromI2b2WebService {
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
 			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm) {
+			@FormParam("i2b2url") String i2b2urlForm) throws XQueryUtilException {
 		// Exception e1=new RuntimeException("test error");
 		// logger.error("test error1:",e1);
 		// if(1==1) throw (RuntimeException)e1;
@@ -278,9 +278,9 @@ public class FromI2b2WebService {
 					+ resourceName);
 
 		r = md.getParticularResource(c, id);
-		msg = FhirUtil.resourceToFhirXml(r, c);
+		msg = JAXBUtil.toXml(r);
 		if (acceptHeader.equals("application/json")) {
-			msg = Utils.xmlToJson(FhirUtil.resourceToFhirXml(r, c));
+			msg = Utils.xmlToJson(msg);
 		}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
@@ -296,7 +296,7 @@ public class FromI2b2WebService {
 	}
 
 	private MetaResourceSet initAllPatients(HttpSession session)
-			throws AuthenticationFailure, FhirServerException {
+			throws AuthenticationFailure, FhirServerException, XQueryUtilException {
 		if (session == null) {
 			return new MetaResourceSet();
 		}
@@ -330,13 +330,13 @@ public class FromI2b2WebService {
 		logger.debug("got Response::" + oStr);
 
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
-		String loginError = XQueryUtil.processXQuery(loginStatusquery, oStr);
+		String loginError = processXquery(loginStatusquery, oStr);
 		logger.trace("ERROR:<" + loginError + ">");
 
 		if (loginError.equals("ERROR"))
 			throw new AuthenticationFailure();
 
-		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
+		String xQueryResultString = processXquery(query, oStr);
 
 		logger.debug("Got xQueryResultString :" + xQueryResultString);
 		MetaResourceSet s = new MetaResourceSet();
@@ -351,7 +351,7 @@ public class FromI2b2WebService {
 		return s;
 	}
 
-	private void getPdo(HttpSession session, String patientId) {
+	private void getPdo(HttpSession session, String patientId) throws XQueryUtilException {
 		ArrayList<String> PDOcallHistory = (ArrayList<String>) session
 				.getAttribute("PDOcallHistory");
 		if (PDOcallHistory == null) {
@@ -385,7 +385,7 @@ public class FromI2b2WebService {
 				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
 						String.class);
 		logger.info("running transformation...");
-		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
+		String xQueryResultString = processXquery(query, oStr);
 		// logger.info(xQueryResultString);
 
 		// md.addMetaResourceSet(getEGPatient());
@@ -403,7 +403,7 @@ public class FromI2b2WebService {
 	}
 
 	private void scanQueryParametersToGetPdo(HttpSession session,
-			String queryString) {
+			String queryString) throws XQueryUtilException {
 		if (queryString != null) {
 			String pid = extractPatientId(queryString);
 			if (pid != null) {
@@ -417,7 +417,7 @@ public class FromI2b2WebService {
 	}
 
 	private static String insertSessionParametersInXml(String xml,
-			HttpSession session) {
+			HttpSession session) throws XQueryUtilException {
 		String username = (String) session.getAttribute("username");
 		String password = (String) session.getAttribute("password");
 		String i2b2domain = (String) session.getAttribute("i2b2domain");
@@ -433,12 +433,12 @@ public class FromI2b2WebService {
 	}
 
 	private static String replaceXMLString(String xmlInput, String path,
-			String value) {
+			String value) throws XQueryUtilException {
 		String query = "copy $c := root()\n"
 				+ "modify ( replace value of node $c" + path + " with \""
 				+ value + "\")\n" + " return $c";
 		logger.trace("query:" + query);
-		return XQueryUtil.processXQuery(query, xmlInput);
+		return processXquery(query, xmlInput);
 	}
 
 	private static String extractPatientIdFromQuery(HashMap<String, String> hm) {
@@ -474,7 +474,8 @@ public class FromI2b2WebService {
 		// return input;
 	}
 
-	private static String processXquery(String query, String input) {
+	private static String processXquery(String query, String input) throws XQueryUtilException {
+		logger.trace("will run query:"+query+"\n input"+input);
 		return XQueryUtil.processXQuery(query, input);
 	}
 }
