@@ -15,11 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 
 public class PreProcessFhirSpec {
 	static Logger logger = LoggerFactory.getLogger(PreProcessFhirSpec.class);
 
-	public PreProcessFhirSpec() throws IOException {
+	public PreProcessFhirSpec() throws IOException, XQueryUtilException {
 		logger.trace("hi");
 		ArrayList<String> resourceList = new ArrayList<String>();
 		resourceList.add("Patient".toLowerCase());
@@ -58,7 +59,7 @@ public class PreProcessFhirSpec {
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, XQueryUtilException {
 		new PreProcessFhirSpec();
 
 	}
