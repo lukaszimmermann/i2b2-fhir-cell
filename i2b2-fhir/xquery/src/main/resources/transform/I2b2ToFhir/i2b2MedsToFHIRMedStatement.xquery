@@ -141,8 +141,9 @@ declare function functx:distinct-nodes
                                 .,$nodes[position() < $seq]))]
  } ;
  
- 
+ (:to link modifier_cds that are for same concept_cd instance:)
 declare function local:distinctObservations($I as node()?) as node ()?{
+
 
 
 let $distobs :=
@@ -151,7 +152,7 @@ let $distobs :=
  let $eid := $t/event_id/text()
  let $pid := $t/patient_id/text()
  let $cid := $t/concept_cd/text()
- let $cn := $t/concept_cd/@name
+ let $cn := $t/concept_cd/@name/string()
  let $sourceSystem := $t/@sourcesystem_cd
  let $importDate := local:fnI2b2TimeToFhirTime($t/@import_date)
  let $downloadDate := local:fnI2b2TimeToFhirTime($t/@download_date)
@@ -165,9 +166,9 @@ let $distobs :=
   let $instNum := $t/instance_num/text()
   let $loc := $t/location_cd/text()
  
-  let $id := concat($pid,"-",$eid,"-",$cid,"-",$sd,"-",$instNum)
+  let $id := concat($pid,"-",$eid,"-",$cid,"-",$sd,"-",$oid,"-",$instNum) (:all in primary key except modifier_cd, but includes instNum:)
 
- return
+ return 
   
              <observation sourcesystem_cd="{$sourceSystem}" import_date="{$importDate}" download_date="{$downloadDate}" update_date="{$updateDate}">
                         <id>{$id}</id>
