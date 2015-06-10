@@ -1,5 +1,6 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,6 +15,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.abdera.model.Entry;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Medication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,16 +24,16 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class MetaResourceDb {
 	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
 	MetaResourceSet set;
 	List<MetaResource> metaResources;
+	static RxNormAdapter rxNormAdapter = null;
 
-	// MetaResourcePrimaryDb metaResources;
-
-	public MetaResourceDb() {
+	public MetaResourceDb() throws IOException {
 		init();
 	}
 
@@ -39,7 +41,9 @@ public class MetaResourceDb {
 		return this.metaResources.size();
 	}
 
-	public void init() {
+	public void init() throws IOException {
+		if (rxNormAdapter == null)
+			rxNormAdapter = new RxNormAdapter();
 		set = new MetaResourceSet();
 		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
@@ -47,7 +51,7 @@ public class MetaResourceDb {
 		logger.trace("resources size:" + metaResources.size());
 	}
 
-	public String addMetaResource(MetaResource p, Class c) {
+	public String addMetaResource(MetaResource p, Class c) throws JAXBException {
 		logger.trace("EJB Putting resource:" + c.getSimpleName());
 		try {
 			logger.trace("EJB Put MetaResource:"
@@ -70,6 +74,12 @@ public class MetaResourceDb {
 			logger.trace("replacing resource with id:" + r.getId());
 			metaResources.remove(presentRes);
 		}
+		
+		if (Medication.class.isInstance(r)) {
+			Medication m=Medication.class.cast(r);
+			rxNormAdapter.addRxCui(m);
+			p.setResource(m);
+		}
 		metaResources.add(p);
 
 		logger.trace("EJB resources (after adding) size:"
@@ -77,7 +87,7 @@ public class MetaResourceDb {
 		return p.getResource().getId();
 	}
 
-	public void addMetaResourceSet(MetaResourceSet s) {
+	public void addMetaResourceSet(MetaResourceSet s) throws JAXBException {
 		for (MetaResource mr : s.getMetaResource()) {
 			this.addMetaResource(mr,
 					FhirUtil.getResourceClass(mr.getResource()));
@@ -357,7 +367,4 @@ public class MetaResourceDb {
 		return s;
 	}
 
-	
-
-	
 }

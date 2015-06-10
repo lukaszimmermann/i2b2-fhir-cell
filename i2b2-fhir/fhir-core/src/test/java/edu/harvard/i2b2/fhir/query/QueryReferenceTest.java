@@ -3,6 +3,7 @@ package edu.harvard.i2b2.fhir.query;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +38,7 @@ public class QueryReferenceTest {
 	MetaResourceDb db;
 
 	@Before
-	public void setup() throws FhirCoreException, JAXBException {
+	public void setup() throws FhirCoreException, JAXBException, IOException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
 		qb = new QueryBuilder();

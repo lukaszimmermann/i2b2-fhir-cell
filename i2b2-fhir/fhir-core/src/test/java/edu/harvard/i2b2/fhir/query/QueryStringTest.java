@@ -3,6 +3,7 @@ package edu.harvard.i2b2.fhir.query;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.bind.JAXBException;
@@ -74,7 +75,7 @@ public class QueryStringTest {
 	}
 	
 	@Test
-	public void testParserUrl() throws QueryParameterException, UnsupportedEncodingException{
+	public void testParserUrl() throws QueryParameterException, IOException{
 		MetaResourceDb db= new MetaResourceDb();
 		new QueryBuilder("patient?name=pieter");
 		new QueryBuilder("medication?name=pieter");

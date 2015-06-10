@@ -80,7 +80,7 @@ public class FromI2b2WebService {
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
 			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm) throws XQueryUtilException {
+			@FormParam("i2b2url") String i2b2urlForm) throws XQueryUtilException, IOException, JAXBException {
 		// Exception e1=new RuntimeException("test error");
 		// logger.error("test error1:",e1);
 		// if(1==1) throw (RuntimeException)e1;
@@ -296,7 +296,7 @@ public class FromI2b2WebService {
 	}
 
 	private MetaResourceSet initAllPatients(HttpSession session)
-			throws AuthenticationFailure, FhirServerException, XQueryUtilException {
+			throws AuthenticationFailure, FhirServerException, XQueryUtilException, JAXBException {
 		if (session == null) {
 			return new MetaResourceSet();
 		}
