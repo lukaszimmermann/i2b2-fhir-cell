@@ -60,7 +60,7 @@ String query = Utils
 	
 	
 	//@Test
-	public void Test3() throws JAXBException, XQueryUtilException{
+	public void Test3() throws JAXBException, XQueryUtilException, IOException{
 		MetaResourceDb md= new MetaResourceDb();
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");

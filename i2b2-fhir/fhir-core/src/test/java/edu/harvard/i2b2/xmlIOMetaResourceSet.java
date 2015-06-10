@@ -168,7 +168,7 @@ public class xmlIOMetaResourceSet {
 	}
 	
 	//@Test
-	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException{
+	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JAXBException{
 		MetaResourceDb mrDb= new MetaResourceDb();
 		Patient p= new Patient();
 		p.setId("Patient/123");
@@ -199,7 +199,7 @@ public class xmlIOMetaResourceSet {
 	 * as demonstrated here
 	 */
 	//@Test
-	public void Test6() throws DatatypeConfigurationException, JAXBException{ 
+	public void Test6() throws DatatypeConfigurationException, JAXBException, IOException{ 
 		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
 		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
 		Patient p=(Patient) JAXBUtil.fromXml(inValidPatient,Patient.class);

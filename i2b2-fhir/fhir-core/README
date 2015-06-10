@@ -3,3 +3,9 @@ rm -rf ../src/main/java/org/;xjc FhirResourceWithMetaData.xsd -d ../src/main/jav
 add @XmlRootElement annotation to generated java files
 
 xjc -d src/main/java/ ../xquery/src/main/resources/transform/map/MapSystem.xsd
+
+
+//creation of rxnorm resources
+grep NDC RXNSAT.RRF |cut -d "|" -f1,11 > /tmp/RXNSAT_NDC.RRF
+//the grep on prmary terms below needs to run on the 13th field in cut
+grep "RXNORM|" RXNCONSO.RRF |grep "|N|" | grep -w "BN\|BPCK\|DF\|DFG\|GPCK\|IN\|MIN\|PIN\|SBD\|SBDC\|SBDF\|SBDG\|SCD\|SCDC\|SCDF\|SCDG" |cut -d"|" -f1,13,15 > /tmp/RXCONSO_NORM.RRF

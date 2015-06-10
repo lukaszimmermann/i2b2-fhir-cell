@@ -3,6 +3,7 @@ package edu.harvard.i2b2;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
@@ -27,7 +28,7 @@ public class MetaResourceDbTest {
 
 	static Logger logger = LoggerFactory.getLogger(MetaResourceDbTest.class); 
 	@Test
-	public void filterTest() throws DatatypeConfigurationException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException{
+	public void filterTest() throws DatatypeConfigurationException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException, IOException{
 		MetaResourceSet s =ResourceSetup.getPatientAndMedicationStatementEg();
 	logger.info(""+JAXBUtil.toXml(s.getMetaResource().get(1).getResource()));
 		
