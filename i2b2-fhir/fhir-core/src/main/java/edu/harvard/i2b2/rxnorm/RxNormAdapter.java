@@ -41,7 +41,7 @@ public class RxNormAdapter {
 		InputStream fileIS = null;
 		try {
 			rxCuiMap = new HashMap<Integer, String>();
-			fileIS = Utils.getInputStream("rxnorm/RXCONSO_NORM.RRF");
+			fileIS = Utils.getInputStream("rxnorm/RXNCONSO_NORM.RRF");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					fileIS));
 			// logger.trace("read line:"+reader.readLine());
