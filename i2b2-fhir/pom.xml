@@ -10,6 +10,7 @@
 		<module>fhir-core</module>
 		<module>xquery</module>
 		<module>preprocess-spec</module>
+		<module>rxnorm-adapter</module>
 	</modules>
 
 	<properties>
