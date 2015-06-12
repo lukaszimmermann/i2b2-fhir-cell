@@ -139,6 +139,7 @@ public class PrepareBinaryResourceFilesFromRXNormData {
 			// fileIS.close();
 		}
 	}
+	
 
 	public void serializerxCuiMap() throws IOException {
 

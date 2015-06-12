@@ -1,5 +1,7 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -134,6 +136,31 @@ public class Utils {
 		ClassLoader classLoader = Thread.currentThread()
 				.getContextClassLoader();
 		return classLoader.getResourceAsStream(fileName);
+		
+	}
+	
+	public static int countLines(String fileName) throws IOException {
+		ClassLoader classLoader = Thread.currentThread()
+				.getContextClassLoader();
+		
+	    InputStream is = new BufferedInputStream(new FileInputStream(fileName));
+	    try {
+	        byte[] c = new byte[1024];
+	        int count = 0;
+	        int readChars = 0;
+	        boolean empty = true;
+	        while ((readChars = is.read(c)) != -1) {
+	            empty = false;
+	            for (int i = 0; i < readChars; ++i) {
+	                if (c[i] == '\n') {
+	                    ++count;
+	                }
+	            }
+	        }
+	        return (count == 0 && !empty) ? 1 : count;
+	    } finally {
+	        is.close();
+	    }
 	}
 
 }

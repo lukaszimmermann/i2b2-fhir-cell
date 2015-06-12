@@ -38,6 +38,9 @@ public class RxNormAdapter {
 	}
 
 	public void initRxCuiMap() throws IOException {
+		rxCuiMap=BinResourceFromRXNormData.deSerializeRxCuiMap();
+		
+		/*
 		InputStream fileIS = null;
 		try {
 			rxCuiMap = new HashMap<Integer, String>();
@@ -67,9 +70,12 @@ public class RxNormAdapter {
 		} finally {
 			fileIS.close();
 		}
+		*/
 	}
 
 	public void initNdc2CuiMap() throws IOException {
+		Ndc2CuiMap=BinResourceFromRXNormData.deSerializeNdc2CuiMap();
+		/*
 		InputStream fileIS = null;
 		try {
 			Ndc2CuiMap = new HashMap<String, Integer>();
@@ -93,6 +99,7 @@ public class RxNormAdapter {
 		} finally {
 			fileIS.close();
 		}
+		*/
 	}
 
 	public String getRxCui(String ndcString) {
