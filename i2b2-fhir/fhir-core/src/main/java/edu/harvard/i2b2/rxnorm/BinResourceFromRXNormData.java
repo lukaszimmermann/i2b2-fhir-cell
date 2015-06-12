@@ -41,8 +41,8 @@ public class BinResourceFromRXNormData {
 			throws IOException {
 
 		this.rxNormFileFolder = rxNormFileFolder;
-		// initRxCuiMap();
-		// serializerxCuiMap();
+		initRxCuiMap();
+		serializerxCuiMap();
 		initNdc2CuiMap();
 		serializeNdc2CuiMap();
 
@@ -154,7 +154,7 @@ public class BinResourceFromRXNormData {
 	public void initNdc2CuiMap() throws IOException {
 		String inputFilePath = "/Users/***REMOVED***/Downloads/RxNorm_full_06012015/rrf/RXNSAT.RRF";
 		int maxLines = Utils.countLines(inputFilePath);
-		Ndc2CuiMap= new HashMap<String,Integer>();
+		Ndc2CuiMap = new HashMap<String, Integer>();
 		InputStream fileIS = null;
 		BufferedReader reader = null;
 		String nonEscapedLine = "([0-9]*)||||||||NDC|(.*)|(.*)|||";
@@ -164,7 +164,7 @@ public class BinResourceFromRXNormData {
 
 		String escapedLine = nonEscapedLine.replace("|", "\\|").replace("#",
 				"|");
-		
+
 		if (1 == 0) {
 			System.out.println(escapedLine);
 			return;
@@ -173,7 +173,7 @@ public class BinResourceFromRXNormData {
 		String line = null;
 		try {
 			rxCuiMap = new HashMap<Integer, String>();
-		
+
 			reader = new BufferedReader(new FileReader(inputFilePath));
 			// logger.trace("read line:"+reader.readLine());
 
@@ -188,10 +188,10 @@ public class BinResourceFromRXNormData {
 					matchedC++;
 					Integer cuiCode = Integer.parseInt(m.group(1));
 					String ndc = m.group(3);
-					//System.out.println("matched:" + ndc + "-" + cuiCode);
+					// System.out.println("matched:" + ndc + "-" + cuiCode);
 					Ndc2CuiMap.put(ndc, cuiCode);
 				} else {
-					//System.out.println("NOT matched:" + line);
+					// System.out.println("NOT matched:" + line);
 				}
 				line = reader.readLine();
 				if (counter % 100000 == 0)

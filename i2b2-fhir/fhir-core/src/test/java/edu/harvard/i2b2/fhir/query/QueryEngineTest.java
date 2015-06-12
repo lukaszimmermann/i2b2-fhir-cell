@@ -55,7 +55,7 @@ public class QueryEngineTest {
 		s.getMetaResource().add(mr);
 	}
 
-	// @Test
+	 @Test
 	public void testQuery() throws QueryParameterException,
 			QueryValueException, FhirCoreException,
 			DatatypeConfigurationException, JAXBException, XQueryUtilException {
@@ -78,7 +78,7 @@ public class QueryEngineTest {
 
 	}
 
-	//@Test
+	@Test
 	public void testQueryUrl() throws QueryParameterException,
 			QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {
 
@@ -98,7 +98,7 @@ public class QueryEngineTest {
 		// http://localhost:8080/fhir-server/a/a/Patient?birthdate=>1966-08-29
 	}
 
-	//@Test
+	@Test
 	public void testMultiParamQueryUrl() throws QueryParameterException,
 	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException, XQueryUtilException {	
 		String url="Patient?gender=M&birthdate=<1965-08-29";
@@ -110,7 +110,7 @@ public class QueryEngineTest {
 	@Test
 	public void testMultiParamQueryUrlThree() throws QueryParameterException,
 	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException {	
-		String url="Patient?gender=M&birthdate=<1965-08-29&maritalStatus=S";
+		String url="Patient?gender=M&birthdate=<1965-08-29&active=true";
 		qe = new QueryEngine(url);
 		logger.info(""+qe);
 		//logger.info(""+qe.search(s));
