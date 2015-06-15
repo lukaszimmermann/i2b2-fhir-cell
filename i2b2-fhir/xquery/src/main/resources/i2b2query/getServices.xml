@@ -23,9 +23,9 @@
         </receiving_facility>
         <datetime_of_message>2015-04-03T11:24:11-04:00</datetime_of_message>
 		<security>
-			<domain>i2b2demo</domain>
-			<username>demo</username>
-			<password>demouser</password>
+			<domain>XX</domain>
+			<username>XX</username>
+			<password is_token="false">XX</password>
 		</security>
         <message_control_id>
             <message_num>b4dY5z7Lb9ETW7v5rekT2</message_num>

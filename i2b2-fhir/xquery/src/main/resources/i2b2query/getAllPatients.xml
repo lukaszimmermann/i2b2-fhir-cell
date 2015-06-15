@@ -28,9 +28,9 @@
 			<event_type>EQQ</event_type>
 		</message_type>
 		<security>
-			<domain>i2b2demo</domain>
-			<username>demo</username>
-			<password is_token="false">demouser</password>
+			<domain>XX</domain>
+			<username>XX</username>
+			<password is_token="false">XXX</password>
 		</security>
 		<message_control_id>
 			<message_num>RW8Y7K59u2KB7tJ40339D</message_num>
