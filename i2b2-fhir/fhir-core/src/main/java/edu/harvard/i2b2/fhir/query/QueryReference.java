@@ -21,24 +21,24 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
 public class QueryReference extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryReference.class);
-	String id;
+	String param;
 	String url;
 
-	public QueryReference(Class resourceClass, String parameter, String value)
+	public QueryReference(Class resourceClass, String param, String value)
 			throws QueryParameterException, QueryValueException,
 			FhirCoreException {
-		super(resourceClass, parameter, value);
+		super(resourceClass, param, value);
 	}
 
 	@Override
 	protected void init() throws QueryValueException, QueryParameterException {
 		this.type = QueryType.REFERENCE;
-		// [parameter]=[url]
-		// [parameter]=[id]
+		// [param]=[url]
+		// [param]=[id]
 		if (this.getRawValue().contains("/")) {
 			this.url = this.getRawValue();
 		} else {
-			this.id = this.getRawValue();
+			this.param = this.getRawValue();
 		}
 	}
 
@@ -47,17 +47,17 @@ public class QueryReference extends Query {
 		String rawId;
 			rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
 		
-		// id=this.getLastElementOfParameterPath()+"/"+id;
+		// id=this.getLastElementOfparamPath()+"/"+id;
 		Pattern p = Pattern.compile(".*/([^/]+)$");
 		Matcher m = p.matcher(rawId);
-		id="-";
+		param="-";
 		if (m.matches()) {
-			id = m.group(1);
-			logger.trace("id is:"+id);
+			param = m.group(1);
+			logger.trace("id is:"+param);
 		}
 		// logger.info("matching "+id+" to value:"+this.getRawValue());
-		if (id.equals(this.getRawValue())) {
-			logger.info("id:"+id+" matched:" + this.getRawParameter() + "="
+		if (param.equals(this.getRawValue())) {
+			logger.info("param:"+param+" matched:" + this.getRawParameter() + "="
 					+ this.getRawValue());
 			return true;
 		}
@@ -83,7 +83,7 @@ public class QueryReference extends Query {
 
 	@Override
 	public String toString() {
-		return "QueryReference " + super.toString() + ", id=" + id + ", url="
+		return "QueryReference " + super.toString() + ", param=" + param + ", url="
 				+ url + "]";
 	}
 

@@ -25,6 +25,7 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryReferenceTest {
 	static Logger logger = LoggerFactory.getLogger(QueryReferenceTest.class);
@@ -36,7 +37,8 @@ public class QueryReferenceTest {
 	QueryBuilder qb;
 	Query q;
 	MetaResourceDb db;
-
+	QueryEngine qe;
+	MetaResourceSet s;
 	@Before
 	public void setup() throws FhirCoreException, JAXBException, IOException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
@@ -49,12 +51,12 @@ public class QueryReferenceTest {
 		db=new MetaResourceDb();
 		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
 		db.addMetaResource(FhirUtil.getMetaResource(ms), MedicationStatement.class);
-	
+		s=db.getAll(Patient.class);
 	}
 
 	@Test
 	public void testReference() throws QueryParameterException,
-			QueryValueException, FhirCoreException, XQueryUtilException {
+			QueryValueException, FhirCoreException, XQueryUtilException, JAXBException {
 
 		/*String url="MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient";
 		Pattern p = Pattern.compile( FhirUtil.RESOURCE_LIST_REGEX+"\\?*([^\\?]*)", Pattern.CASE_INSENSITIVE);
@@ -72,6 +74,10 @@ public class QueryReferenceTest {
 				.setRawValue("example").build();
 		//logger.trace("RES:"+q.match(ms));
 		assertTrue(q.match(xmlMedicationStatement));
+		
+		String url="Patient?gender=F&birthdate=>1966-08-29&@Patient.maritalStatus:exact=S";
+		qe = new QueryEngine(url);
+		logger.info(""+qe.search(s));	
 		
 		
 	}

@@ -24,11 +24,13 @@
    var ds2=new DataStore(fhirServerBase+"/fhir-server/a/a/Patient/1000000005","Get particular patient");
    var ds3=new DataStore(fhirServerBase+"/fhir-server/a/a/MedicationStatement?patient=1000000005","Get Medication Statements for a particular patient");
    var ds4=new DataStore(fhirServerBase+"/fhir-server/a/a/MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient","Get Medication Statements for a particular patient and include Medications and the Patient");
-  
+   var ds5=new DataStore(fhirServerBase+"/fhir-server/a/a/Patient?gender=M&birthdate=<1970-01-01","Get Male Patients born before 1970");
+   
    DSArray.push(ds1);
    DSArray.push(ds2);
    DSArray.push(ds3);
    DSArray.push(ds4);
+   DSArray.push(ds5);
    
    var theDiv=document.getElementById("nav1");
    //theDiv.innerHTML='<div style="width:100%;" onclick="return null">Use Cases</div>';
