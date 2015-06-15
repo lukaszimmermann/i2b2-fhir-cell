@@ -169,10 +169,15 @@ public class FromI2b2WebService {
 					.split(resourceName)[0];
 
 			if (session == null) {
+				/*
 				return Response.status(Status.BAD_REQUEST)
 						.type(MediaType.APPLICATION_XML).entity("login first ")
 						.build();
+						*/
+				doAuthentication(request, "demo", "demouser","i2b2demo","http://services.i2b2.org:9090/i2b2");
+				session = request.getSession(false);
 			}
+			
 
 			md = (MetaResourceDb) session.getAttribute("md");
 
