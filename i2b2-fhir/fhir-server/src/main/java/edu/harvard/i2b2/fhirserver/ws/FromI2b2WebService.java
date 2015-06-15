@@ -87,8 +87,8 @@ public class FromI2b2WebService {
 		logger.info("Got Auth request");
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			logger.info("invalidated session");
-			session.invalidate();
+			//logger.info("invalidated session");
+			//session.invalidate();
 		}
 
 		String username = request.getHeader("username");
@@ -174,7 +174,15 @@ public class FromI2b2WebService {
 						.type(MediaType.APPLICATION_XML).entity("login first ")
 						.build();
 						*/
-				doAuthentication(request, "demo", "demouser","i2b2demo","http://services.i2b2.org:9090/i2b2");
+				String username = request.getHeader("username");
+				String password = request.getHeader("password");
+				String i2b2domain = request.getHeader("i2b2domain");
+				String i2b2url = request.getHeader("i2b2url");
+				doAuthentication(request,
+				 username==null?"demo":username, 
+						password==null?"demouser":password,
+						i2b2domain==null?"i2b2demo":i2b2domain,
+						i2b2url==null?"http://services.i2b2.org:9090/i2b2":i2b2url);
 				session = request.getSession(false);
 			}
 			
@@ -373,11 +381,15 @@ public class FromI2b2WebService {
 
 		String requestStr = Utils
 				.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+		requestStr=insertSessionParametersInXml(requestStr,
+				session);
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
+		String query = Utils
+				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+		
+		
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
 		Client client = ClientBuilder.newClient();
