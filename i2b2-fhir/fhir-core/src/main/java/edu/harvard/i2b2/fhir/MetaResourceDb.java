@@ -74,9 +74,9 @@ public class MetaResourceDb {
 			logger.trace("replacing resource with id:" + r.getId());
 			metaResources.remove(presentRes);
 		}
-		
+
 		if (Medication.class.isInstance(r)) {
-			Medication m=Medication.class.cast(r);
+			Medication m = Medication.class.cast(r);
 			rxNormAdapter.addRxCui(m);
 			p.setResource(m);
 		}
@@ -181,6 +181,15 @@ public class MetaResourceDb {
 			if (c.isInstance(p.getResource())) {
 				list.add(p);
 			}
+		}
+		return s;
+	}
+
+	public MetaResourceSet getAll() {
+		MetaResourceSet s = new MetaResourceSet();
+		List<MetaResource> list = s.getMetaResource();
+		for (MetaResource p : metaResources) {
+			list.add(p);
 		}
 		return s;
 	}

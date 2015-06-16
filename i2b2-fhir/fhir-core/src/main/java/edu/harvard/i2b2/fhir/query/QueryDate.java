@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryDate extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryDate.class);
@@ -50,7 +51,7 @@ public class QueryDate extends Query {
 	}
 
 	@Override	
-	public boolean match(String resourceXml) throws XQueryUtilException  {
+	public boolean match(String resourceXml,Resource r, MetaResourceSet s) throws XQueryUtilException  {
 		ArrayList<String> list;
 			list = getValuesAtParameterPath(resourceXml,
 					this.getAugmentedParameterPath());

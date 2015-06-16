@@ -58,16 +58,15 @@ public class FhirUtil {
 	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
-
 	private static Validator v;
 
-	public final static String namespaceDeclaration="declare default element namespace \"http://hl7.org/fhir\";"
-			+"declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
+	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";"
+			+ "declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
 
 	static {
 		initResourceClassList();
 	}
-	
+
 	public static String getResourceBundle(MetaResourceSet s,
 			String uriInfoString, String urlString) {
 		String fhirBase = uriInfoString;
@@ -290,7 +289,60 @@ public class FhirUtil {
 
 	}
 
-	static Object getChild(Resource r, String pathStr)
+	public static Object getChildThruChain(Resource r, String pathStr,
+			MetaResourceSet s)
+			// is dot separated path
+			throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		Class c = FhirUtil.getResourceClass(r);
+		String returnStr = null;
+		String suffix = null;
+		String prefix = pathStr;
+		logger.trace("pathStr:" + pathStr);
+		if (pathStr.indexOf('.') > -1) {
+			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
+			prefix = pathStr.substring(0, pathStr.indexOf('.'));
+		}
+		String methodName = prefix.substring(0, 1).toUpperCase()
+				+ prefix.subSequence(1, prefix.length());
+		Method method = c.getMethod("get" + methodName, null);
+		Object o = method.invoke(c.cast(r));
+		if (suffix == null) {
+			return o;
+
+		} else {
+			if (ResourceReference.class.isInstance(o)) {
+				ResourceReference rr = ResourceReference.class.cast(o);
+				logger.trace("gotc:" + o.getClass());
+
+				try {
+					logger.trace("seek:" + JAXBUtil.toXml(rr));
+					logger.trace("seek:" + rr.getReference().getValue());
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				Resource r1= FhirUtil.findResourceById(rr.getReference().getValue(),s);
+				return getChildThruChain(r1, suffix, s);
+			} else {
+				return getChildThruChain(r, suffix, s);
+			}
+		}
+	}
+
+	public static Resource findResourceById(String id, MetaResourceSet s) {
+		for (MetaResource mr : s.getMetaResource()) {
+			Resource r = mr.getResource();
+			if (r.getId().equals(id))
+				return r;
+		}
+		return null;
+
+	}
+
+	public static Object getChild(Resource r, String pathStr)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -372,21 +424,19 @@ public class FhirUtil {
 
 	}
 
-	
-
 	public static String getResourceXml(String id, String metaResourceSetXml)
 			throws FhirCoreException {
 		String xml;
-		String xQuery = namespaceDeclaration+"//i:Resource[@id='" + id + "']";
+		String xQuery = namespaceDeclaration + "//i:Resource[@id='" + id + "']";
 
-		//logger.trace("xml:" + metaResourceSetXml);
+		// logger.trace("xml:" + metaResourceSetXml);
 		String res;
 		try {
 			res = XQueryUtil.processXQuery(xQuery, metaResourceSetXml);
 		} catch (XQueryUtilException e) {
 			throw new FhirCoreException(e);
 		}
-		//logger.trace("res:" + res);
+		// logger.trace("res:" + res);
 		return res;
 
 	}

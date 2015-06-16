@@ -18,6 +18,7 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryReference extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryReference.class);
@@ -43,7 +44,7 @@ public class QueryReference extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml) throws XQueryUtilException {
+	public boolean match(String resourceXml,Resource r, MetaResourceSet s) throws XQueryUtilException {
 		String rawId;
 			rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
 		
