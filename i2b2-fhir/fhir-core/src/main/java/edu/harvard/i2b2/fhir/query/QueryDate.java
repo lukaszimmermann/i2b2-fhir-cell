@@ -25,7 +25,7 @@ public class QueryDate extends Query {
 	String reEncodedValue;
 
 	public QueryDate(Class resourceClass, String parameter, String value)
-			throws QueryParameterException, QueryValueException, FhirCoreException {
+			throws QueryParameterException, QueryValueException, FhirCoreException, QueryException {
 		super(resourceClass, parameter, value);
 		
 	}

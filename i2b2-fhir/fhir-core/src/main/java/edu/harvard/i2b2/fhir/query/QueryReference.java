@@ -27,7 +27,7 @@ public class QueryReference extends Query {
 
 	public QueryReference(Class resourceClass, String param, String value)
 			throws QueryParameterException, QueryValueException,
-			FhirCoreException {
+			FhirCoreException, QueryException {
 		super(resourceClass, param, value);
 	}
 

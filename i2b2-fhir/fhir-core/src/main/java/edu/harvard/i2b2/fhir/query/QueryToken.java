@@ -26,7 +26,7 @@ public class QueryToken extends Query {
 	String namespace;
 
 	public QueryToken(Class resourceClass, String parameter, String value)
-			throws QueryParameterException, QueryValueException, FhirCoreException {
+			throws QueryParameterException, QueryValueException, FhirCoreException, QueryException {
 		super(resourceClass, parameter, value);
 	}
 

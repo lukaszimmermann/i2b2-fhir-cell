@@ -67,10 +67,22 @@ public class QueryChainedTest {
 	@Test
 	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//logger.trace("ms:"+JAXBUtil.toXml(ms));
-		logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));
-		String url="MedicationStatement?MedicationStatement.Patient.id=example";
+		//logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));
+		String url="MedicationStatement?MedicationStatement.Patient.name:exact=Pieter";
 		qe = new QueryEngine(url);
-		logger.info("res:"+qe.search(s));	
+		logger.trace("qe:"+qe);
+		MetaResourceSet resSet=qe.search(s);
+		//logger.info("res:"+JAXBUtil.toXml(resSet));	
+		assertTrue(resSet.getMetaResource().size()>0);
+		
+		url="MedicationStatement?MedicationStatement.Patient.name:exact=Pi3eter";
+		//String url="Patient?name:exact=Pieter";
+		qe = new QueryEngine(url);
+		logger.trace("qe:"+qe);
+		resSet=qe.search(s);
+		//logger.info("res:"+JAXBUtil.toXml(resSet));	
+		assertTrue(resSet.getMetaResource().size()==0);
+		
 	
 		}
 }

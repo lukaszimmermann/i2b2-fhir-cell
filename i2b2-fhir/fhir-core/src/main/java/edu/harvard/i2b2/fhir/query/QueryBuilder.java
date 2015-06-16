@@ -63,7 +63,7 @@ public class QueryBuilder {
 	// will aply rules to parameter name and value to identify type of query and
 	// create it
 	public Query build() throws QueryParameterException, QueryValueException,
-			FhirCoreException {
+			FhirCoreException, QueryException {
 		if (resourceClass == null)
 			throw new FhirCoreException("resource class is null");
 

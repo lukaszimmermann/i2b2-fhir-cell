@@ -26,7 +26,7 @@ public class QueryString extends Query {
 
 	public QueryString(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException,
-			FhirCoreException {
+			FhirCoreException, QueryException {
 		super(resourceClass, parameter, value);
 	}
 
