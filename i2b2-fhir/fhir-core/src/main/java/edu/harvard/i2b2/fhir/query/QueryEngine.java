@@ -96,7 +96,7 @@ public class QueryEngine {
 
 	public QueryEngine(Class c, Map<String, String> queryParamMap,
 			MetaResourceDb db) throws QueryParameterException,
-			QueryValueException, FhirCoreException {
+			QueryValueException, FhirCoreException, QueryException {
 		this.db = db;
 		queryList = new ArrayList<Query>();
 
@@ -157,6 +157,7 @@ public class QueryEngine {
 						
 				}
 			}
+			if(this.queryList.size()==0) matchF=false;
 			//if match is true on all queries include in result
 			logger.info("match res:"+matchF);
 			if (matchF == true){resultS.getMetaResource().add(mr);}
@@ -171,6 +172,16 @@ public class QueryEngine {
 		return "QueryEngine [queryList=" + queryList + ", resourceClass="
 				+ resourceClass + ", queryUrl=" + queryUrl + ", rawQuery="
 				+ rawQuery + "]\n";
+	}
+
+	public MetaResourceSet search(Resource r1) throws FhirCoreException,
+			JAXBException, XQueryUtilException, QueryException {
+			MetaResourceSet s1 = new MetaResourceSet();
+			MetaResource mr1;
+			mr1 = FhirUtil.getMetaResource(r1);
+			logger.trace("running subquery");
+			s1.getMetaResource().add(mr1);
+			return search(s1);
 	}
 
 }

@@ -34,7 +34,7 @@ public class QueryCustom extends Query {
 
 	public QueryCustom(Class resourceClass, String parameter, String value,boolean dummy)
 			throws QueryParameterException, QueryValueException,
-			FhirCoreException {
+			FhirCoreException, QueryException {
 		super(resourceClass, parameter, value, dummy);
 		
 	}

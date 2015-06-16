@@ -42,10 +42,10 @@ public abstract class Query {
 	 */
 
 	abstract protected void init() throws QueryValueException,
-			QueryParameterException;
+			QueryParameterException, QueryException;
 
 	public Query(Class resourceClass, String rawParameter, String rawValue)
-			throws QueryParameterException, QueryValueException {
+			throws QueryParameterException, QueryValueException, QueryException {
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
 		this.rawParameter = rawParameter;
@@ -64,7 +64,7 @@ public abstract class Query {
 
 	// to skip construction of queryParam for CUSTOM query
 	public Query(Class resourceClass, String rawParameter, String rawValue,Object object) throws QueryParameterException,
-			QueryValueException {
+			QueryValueException, QueryException {
 		rawParameter=rawParameter.substring(1);//to skip #
 		this.resourceClass = resourceClass;
 		this.rawValue = rawValue;
@@ -84,7 +84,7 @@ public abstract class Query {
 
 	// flag indicates if Path will be initialized
 	private void initalize(boolean flag) throws QueryParameterException,
-			QueryValueException {
+			QueryValueException, QueryException {
 
 		try {
 			if (flag){
