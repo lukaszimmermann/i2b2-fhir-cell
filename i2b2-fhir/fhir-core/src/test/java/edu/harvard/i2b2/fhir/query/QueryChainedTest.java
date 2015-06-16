@@ -68,9 +68,9 @@ public class QueryChainedTest {
 	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//logger.trace("ms:"+JAXBUtil.toXml(ms));
 		logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));
-		/*String url="MedicationStatement?MedicationStatement.Patient=example";
+		String url="MedicationStatement?MedicationStatement.Patient.id=example";
 		qe = new QueryEngine(url);
-		logger.info(""+qe.search(s));	
-	*/
+		logger.info("res:"+qe.search(s));	
+	
 		}
 }

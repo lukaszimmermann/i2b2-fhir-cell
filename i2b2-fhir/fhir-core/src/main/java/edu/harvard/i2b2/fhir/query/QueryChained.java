@@ -39,7 +39,7 @@ public class QueryChained extends Query {
 	@Override
 	protected void init() throws QueryValueException, QueryParameterException {
 		this.type = QueryType.CHAINED;
-		Pattern p=Pattern.compile("([^\\s]+)\\.(.*)");
+		Pattern p=Pattern.compile("([^\\.]+)\\.(.*)");
 		Matcher m=p.matcher(this.getRawParameter());
 		if(m.matches()){
 			this.className=m.group(1);
@@ -74,6 +74,7 @@ public class QueryChained extends Query {
 			throw new QueryException("Chained query path may be invalid:+"+this.path);
 		}
 		
+		logger.trace("actualValue:"+actualValue);
 		if (actualValue.equals(this.getRawValue())) {
 			logger.info("actualValue:"+actualValue+" matched:" + this.getRawParameter() + "="
 					+ this.getRawValue());
