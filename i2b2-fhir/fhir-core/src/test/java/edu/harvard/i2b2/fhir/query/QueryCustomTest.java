@@ -56,7 +56,7 @@ public class QueryCustomTest {
 	}
 
 	@Test
-	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException {
+	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException {
 		//String url="Patient?#Patient.maritalStatus:exact=M";
 		String url="Patient?gender=F&birthdate=>1966-08-29&@Patient.maritalStatus:exact=S";
 		qe = new QueryEngine(url);

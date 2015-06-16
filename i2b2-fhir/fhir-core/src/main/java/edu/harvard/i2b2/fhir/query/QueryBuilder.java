@@ -86,11 +86,13 @@ public class QueryBuilder {
 						this.getResourceClass(), parameter);
 			}
 		} catch (FhirCoreException e) {
-			throw new QueryParameterException(
-					"no ParamPath found.Query could not be built for "
-							+ this.toString(), e);
+			
+			//throw new QueryParameterException(
+				//	"no ParamPath found.Query could not be built for "
+					//		+ this.toString(), e);
 		}
 
+		if(this.queryTypeStr==null){this.queryTypeStr="";}
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
 			q = new QueryDate(resourceClass, rawParameter, rawValue);
@@ -117,8 +119,11 @@ public class QueryBuilder {
 			logger.info("created query:" + (QueryCustom) q);
 			break;
 		default:
-			throw new FhirCoreException("Query could not be built for:"
-					+ this.toString());
+			q = new QueryChained(resourceClass, rawParameter, rawValue);
+			logger.info("created query:" + (QueryChained) q);
+			break;
+			//throw new FhirCoreException("Query could not be built for:"
+				//	+ this.toString());
 		}
 
 		return q;

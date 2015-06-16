@@ -41,16 +41,16 @@ public class QueryStringTest {
 
 	@Test
 	public void testString() throws QueryParameterException,
-			QueryValueException, FhirCoreException, XQueryUtilException {
+			QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
 		logger.info("Running tests for QueryString...");
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("name")
 				.setRawValue("pieter").build();
 		// logger.trace("RES:"+q.match(xmlPatient));
-		assertTrue(q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient,null,null));
 		q = qb.setResourceClass(Patient.class).setRawParameter("name:exact")
 				.setRawValue("Pieter").build();
-		assertTrue(q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient,null,null));
 
 		try {
 			q = qb.setResourceClass(Patient.class)
@@ -62,15 +62,15 @@ public class QueryStringTest {
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel").build();
-		assertTrue(q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient,null,null));
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family")
 				.setRawValue(" van  de").build();
-		assertTrue(q.match(xmlPatient));
+		assertTrue(q.match(xmlPatient,null,null));
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel1").build();
-		assertFalse(q.match(xmlPatient));
+		assertFalse(q.match(xmlPatient,null,null));
 
 	}
 	

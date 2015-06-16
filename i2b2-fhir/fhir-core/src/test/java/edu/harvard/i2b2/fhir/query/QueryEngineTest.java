@@ -58,7 +58,7 @@ public class QueryEngineTest {
 	 @Test
 	public void testQuery() throws QueryParameterException,
 			QueryValueException, FhirCoreException,
-			DatatypeConfigurationException, JAXBException, XQueryUtilException {
+			DatatypeConfigurationException, JAXBException, XQueryUtilException, QueryException {
 
 		// qe = new QueryEngine("Patient?name=Pieter&gender=M");
 		qe = new QueryEngine("Patient?name=Pieter");
@@ -100,7 +100,7 @@ public class QueryEngineTest {
 
 	@Test
 	public void testMultiParamQueryUrl() throws QueryParameterException,
-	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException, XQueryUtilException {	
+	QueryValueException, FhirCoreException, JAXBException, UnsupportedEncodingException, XQueryUtilException, QueryException {	
 		String url="Patient?gender=M&birthdate=<1965-08-29";
 		qe = new QueryEngine(url);
 		logger.info(""+qe);

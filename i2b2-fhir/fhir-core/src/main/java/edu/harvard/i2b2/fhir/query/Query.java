@@ -94,7 +94,7 @@ public abstract class Query {
 				this.parameterPath=this.parameter.replace(".", "/");
 			}
 		} catch (FhirCoreException e) {
-			throw new QueryParameterException("no ParamPath found", e);
+			//throw new QueryParameterException("no ParamPath found", e);
 		}
 
 		init();
@@ -111,12 +111,15 @@ public abstract class Query {
 		if (this.parameter == null)
 			throw new QueryParameterException("Parameter is null");
 
-		if (this.parameterPath == null)
-			throw new QueryParameterException("Path not found for parameter "
-					+ this.parameter + " for " + this.resourceClass);
+		//if (this.parameterPath == null)
+			//throw new QueryParameterException("Path not found for parameter "
+				//	+ this.parameter + " for " + this.resourceClass);
 	}
 
-	abstract public boolean match(String resourceXml) throws  XQueryUtilException;
+	/*
+	 * provide either resourceXml or resource and MetaResourceSet is optional
+	 */
+	abstract public boolean match(String resourceXml, Resource r, MetaResourceSet s) throws  XQueryUtilException, QueryException;
 
 	abstract public void validateParameter() throws QueryParameterException;
 

@@ -82,6 +82,7 @@ public class QueryEngine {
 					q = new QueryBuilder(this.resourceClass, prefix)
 							.build();
 					}catch(Exception e){
+						logger.error("",e);
 						throw new FhirCoreException("Error in search param :"+prefix,e);
 					}
 					
@@ -114,7 +115,7 @@ public class QueryEngine {
 	}
 
 	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException,
-			JAXBException, XQueryUtilException {
+			JAXBException, XQueryUtilException, QueryException {
 		MetaResourceSet resultS = new MetaResourceSet();
 		logger.trace("running query");
 		logger.debug("size before query:" + s.getMetaResource().size());
@@ -151,7 +152,7 @@ public class QueryEngine {
 			for (Query q : this.queryList) {
 				
 				//if match fails on a query skip other queries
-				if (matchF == true && (q.match(resourceXml)==false)){
+				if (matchF == true && (q.match(resourceXml,r,s)==false)){
 						matchF = false;
 						
 				}
