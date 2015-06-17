@@ -78,6 +78,7 @@ public class SearchParameterMap {
 		
 		}
 		
+		
 		 throw new FhirCoreException("No profileSearchParam found for class:"+c.getCanonicalName()+" for param:"+parName) ;
 	}
 }

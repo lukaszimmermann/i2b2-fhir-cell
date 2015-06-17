@@ -28,6 +28,9 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public class QueryChained extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryChained.class);
 
+	// resource?param:Resource.param:
+	// resource?subResource.param
+
 	String className;
 	String path;
 	String param;
@@ -78,9 +81,9 @@ public class QueryChained extends Query {
 			return false;
 
 		String actualValue;
-		Object o = null;
+		List<Object> o = null;
 		try {
-			o = FhirUtil.getChildThruChain(r, path, s);
+			o = FhirUtil.getChildrenThruChain(r, path, s);
 		} catch (NoSuchMethodException e) {
 			logger.error("", e);
 			throw new QueryException("", e);
@@ -89,14 +92,22 @@ public class QueryChained extends Query {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ResourceReference rr = ResourceReference.class.cast(o);
-		Resource r1 = FhirUtil
-				.findResourceById(rr.getReference().getValue(), s);
-		try{
-			return (subQe.search(r1).getMetaResource().size()) > 0 ? true : false;
-		} catch (FhirCoreException | JAXBException e) {
-			throw new QueryException(e);
+		boolean matchF = false;
+		for (Object child : o) {
+			
+			ResourceReference rr = ResourceReference.class.cast(child);
+			Resource r1 = FhirUtil.findResourceById(rr.getReference()
+					.getValue(), s);
+			try {
+				logger.trace(">>>>>>>>>runing:"+r1.getId());
+				if (matchF == false
+						&& (subQe.search(r1).getMetaResource().size() > 0))
+					matchF = true;
+			} catch (FhirCoreException | JAXBException e) {
+				throw new QueryException(e);
+			}
 		}
+		return matchF;
 		/*
 		 * if(Resource.class.isInstance(o)){ Resource r1=Resource.class.cast(o);
 		 * actualValue=r1.getId(); }else if(String.class.isInstance(o)){
@@ -115,7 +126,7 @@ public class QueryChained extends Query {
 
 	@Override
 	public void validateParameter() throws QueryParameterException {
-		
+
 	}
 
 	@Override
