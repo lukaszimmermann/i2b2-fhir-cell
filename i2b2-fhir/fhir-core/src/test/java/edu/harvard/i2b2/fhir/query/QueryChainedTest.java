@@ -59,12 +59,28 @@ public class QueryChainedTest {
 		ms.setId("1-1");
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();
-		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
+		//db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
 		db.addMetaResource(FhirUtil.getMetaResource(ms), MedicationStatement.class);
 		s=db.getAll();
 	}
 
 	@Test
+	public void testChainedMulipleObjects() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException, FhirCoreException, QueryParameterException, QueryValueException, XQueryUtilException, QueryException 
+	{
+		String xmlPatientMultiIdentifier = Utils.getFile("example/fhir/singlePatientMultiIdentifiers.xml");
+		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier,Patient.class);
+		logger.trace("id:"+FhirUtil.getChildrenThruChain(p,"identifier", s));
+		
+		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
+		s=db.getAll();
+		String url="MedicationStatement?MedicationStatement.Patient.identifier=738472983-2";
+		//String url="Patient?identifier=738472983-2";
+		qe = new QueryEngine(url);
+		logger.trace("qe:"+qe);
+		MetaResourceSet resSet=qe.search(s);
+	}
+	
+	//@Test
 	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		//logger.trace("ms:"+JAXBUtil.toXml(ms));
 		//logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));

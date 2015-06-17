@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -288,6 +289,67 @@ public class FhirUtil {
 		return false;
 
 	}
+	
+	public static List<Object> getChildrenThruChain(Resource r, String pathStr,
+			MetaResourceSet s)
+			// is dot separated path
+			throws NoSuchMethodException, SecurityException,
+			IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+		
+		List<Object> children= new ArrayList<Object>();
+		List<Object> resolvedChildren= new ArrayList<Object>();
+		logger.trace("got obj:"+r);
+		Class c = FhirUtil.getResourceClass(r);
+		
+		String suffix = null;
+		String prefix = pathStr;
+		logger.trace("pathStr:" + pathStr);
+		
+		if (pathStr.indexOf('.') > -1) {
+			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
+			prefix = pathStr.substring(0, pathStr.indexOf('.'));
+		}
+		
+		String methodName = prefix.substring(0, 1).toUpperCase()
+				+ prefix.subSequence(1, prefix.length());
+		Method method = c.getMethod("get" + methodName, null);
+		Object o = method.invoke(c.cast(r));
+		
+		if (List.class.isInstance(o)){
+			children.addAll((List<Object>) o);
+		}else {children.add(o);}
+		
+		if (suffix == null) {
+			return children;
+
+		} else {
+			
+			
+			for(Object child:children){
+				if (ResourceReference.class.isInstance(child)) {
+				ResourceReference rr = ResourceReference.class.cast(child);
+				logger.trace("gotc:" + child.getClass());
+			
+				/*try {
+					logger.trace("seek:" + JAXBUtil.toXml(rr));
+					logger.trace("seek:" + rr.getReference().getValue());
+				} catch (JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}*/
+
+				Resource r1= FhirUtil.findResourceById(rr.getReference().getValue(),s);
+				resolvedChildren.add( getChildrenThruChain(r1, suffix, s));
+				
+				} else {
+					resolvedChildren.add(getChildrenThruChain(r, suffix, s));
+				}
+				
+			}
+		}
+		return resolvedChildren;
+	}
 
 	public static Object getChildThruChain(Resource r, String pathStr,
 			MetaResourceSet s)
@@ -296,18 +358,21 @@ public class FhirUtil {
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		Class c = FhirUtil.getResourceClass(r);
-		String returnStr = null;
+		
 		String suffix = null;
 		String prefix = pathStr;
 		logger.trace("pathStr:" + pathStr);
+		
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
+		
 		String methodName = prefix.substring(0, 1).toUpperCase()
 				+ prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		Object o = method.invoke(c.cast(r));
+		
 		if (suffix == null) {
 			return o;
 
@@ -316,13 +381,13 @@ public class FhirUtil {
 				ResourceReference rr = ResourceReference.class.cast(o);
 				logger.trace("gotc:" + o.getClass());
 
-				try {
+				/*try {
 					logger.trace("seek:" + JAXBUtil.toXml(rr));
 					logger.trace("seek:" + rr.getReference().getValue());
 				} catch (JAXBException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				}*/
 
 				Resource r1= FhirUtil.findResourceById(rr.getReference().getValue(),s);
 				return getChildThruChain(r1, suffix, s);
