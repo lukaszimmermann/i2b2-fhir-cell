@@ -13,8 +13,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.abdera.model.Entry;
+import org.hl7.fhir.Id;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Reference;
 import org.hl7.fhir.Medication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,11 +64,13 @@ public class MetaResourceDb {
 		Resource r = p.getResource();
 
 		if (r.getId() == null) {
-			r.setId(Integer.toString(getMetaResourceTypeCount(c)));
+			Id id=new Id();
+			id.setValue(Integer.toString(getMetaResourceTypeCount(c)));
+			r.setId(id);
 
 		}
 
-		MetaResource presentRes = getMetaResource(r.getId(), c);
+		MetaResource presentRes = getMetaResource(r.getId().getValue(), c);
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
@@ -84,7 +87,7 @@ public class MetaResourceDb {
 
 		logger.trace("EJB resources (after adding) size:"
 				+ metaResources.size());
-		return p.getResource().getId();
+		return p.getResource().getId().toString();
 	}
 
 	public void addMetaResourceSet(MetaResourceSet s) throws JAXBException {
@@ -197,22 +200,25 @@ public class MetaResourceDb {
 	public Resource getParticularResource(Class c, String id) {
 		for (MetaResource mr : metaResources) {
 			Resource r = mr.getResource();
-			logger.trace(r.getId());
+			logger.trace(r.getId().getValue().toString());
 			if (c.isInstance(r)
-					&& r.getId().equals(c.getSimpleName() + "/" + id)) {
+					&& r.getId().getValue().toString().equals(c.getSimpleName() + "/" + id)) {
 				return r;
 			}
 		}
 		return null;
 	}
 
-	public MetaResource searchById(String id) {
+	public MetaResource searchById(String idStr) {
 		// logger.trace("searching id:" + id);
 		for (MetaResource mr : metaResources) {
+			Id id=new Id();
+			id.setValue(idStr);
+			
 			if (mr.getResource().getId().equals(id))
 				return mr;
 		}
-		logger.trace("id NOT found:" + id);
+		logger.trace("id NOT found:" + idStr);
 		return null;
 	}
 
@@ -244,8 +250,8 @@ public class MetaResourceDb {
 		if (suffix == null) {
 			Object o = method.invoke(c.cast(r));
 
-			if (ResourceReference.class.isInstance(o)) {
-				ResourceReference rr = (ResourceReference) o;
+			if (Reference.class.isInstance(o)) {
+				Reference rr = (Reference) o;
 				logger.trace("returning from reference:");
 				// String idn = rr.getId();// rr.getReference().getValue();
 				// logger.trace(":" + rr.getId());
@@ -264,8 +270,8 @@ public class MetaResourceDb {
 
 			Object o = method.invoke(c.cast(r));
 			Resource nextR = null;
-			if (ResourceReference.class.isInstance(o)) {
-				ResourceReference rr = (ResourceReference) o;
+			if (Reference.class.isInstance(o)) {
+				Reference rr = (Reference) o;
 				logger.trace("returning from reference:");
 				// String idn = rr.getId();// rr.getReference().getValue();
 				// logger.trace(":" + rr.getId());
@@ -304,7 +310,7 @@ public class MetaResourceDb {
 			String methodName = ir.split("\\.")[1];
 			logger.trace("MethodName:" + methodName);
 			for (MetaResource mr : inputSet.getMetaResource()) {
-				String id = ((ResourceReference) this.getFirstLevelChild(mr, c,
+				String id = ((Reference) this.getFirstLevelChild(mr, c,
 						methodName)).getReference().getValue();
 
 				logger.trace("Found dep:" + id);

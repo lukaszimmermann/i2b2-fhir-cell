@@ -13,7 +13,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +95,7 @@ public class QueryChained extends Query {
 		boolean matchF = false;
 		for (Object child : o) {
 			
-			ResourceReference rr = ResourceReference.class.cast(child);
+			Reference rr = Reference.class.cast(child);
 			Resource r1 = FhirUtil.findResourceById(rr.getReference()
 					.getValue(), s);
 			try {

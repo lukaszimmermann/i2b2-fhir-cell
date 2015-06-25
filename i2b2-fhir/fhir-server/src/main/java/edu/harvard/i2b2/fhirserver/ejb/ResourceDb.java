@@ -18,6 +18,7 @@ import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhirserver.ws.FromI2b2WebService;
 
 @Startup
@@ -47,10 +48,10 @@ public class ResourceDb {
 		}
 		
 		if (p.getId()==null) {
-			p.setId(Integer.toString(getResourceTypeCount(c)));
+			FhirUtil.setId(p,Integer.toString(getResourceTypeCount(c)));
 		}
 		
-		Resource presentRes=getResource(p.getId(),c);
+		Resource presentRes=getResource(p.getId().toString(),c);
 		if (presentRes!=null) {
 				//throw new RuntimeException("resource with id:"+p.getId()+" already exists");
 				logger.debug("replacing resource with id:"+p.getId());
@@ -59,7 +60,7 @@ public class ResourceDb {
 		resources.add(p);
 		
 		logger.debug("EJB resources (after adding) size:"+resources.size());
-		return p.getId();
+		return p.getId().toString();
 		}
 	
 	@Lock(LockType.READ)

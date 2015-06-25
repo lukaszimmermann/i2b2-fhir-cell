@@ -35,9 +35,11 @@ import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.writer.Writer;
+import org.hl7.fhir.Id;
 import org.hl7.fhir.Patient;
+import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Reference;
 import org.hl7.fhir.instance.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -327,8 +329,8 @@ public class FhirUtil {
 			
 			
 			for(Object child:children){
-				if (ResourceReference.class.isInstance(child)) {
-				ResourceReference rr = ResourceReference.class.cast(child);
+				if (Reference.class.isInstance(child)) {
+				Reference rr = Reference.class.cast(child);
 				logger.trace("gotc:" + child.getClass());
 			
 				/*try {
@@ -377,8 +379,8 @@ public class FhirUtil {
 			return o;
 
 		} else {
-			if (ResourceReference.class.isInstance(o)) {
-				ResourceReference rr = ResourceReference.class.cast(o);
+			if (Reference.class.isInstance(o)) {
+				Reference rr = Reference.class.cast(o);
 				logger.trace("gotc:" + o.getClass());
 
 				/*try {
@@ -426,7 +428,7 @@ public class FhirUtil {
 		Method method = c.getMethod("get" + methodName, null);
 		if (suffix == null) {
 			Object o = method.invoke(c.cast(r));
-			if (ResourceReference.class.isInstance(o)) {
+			if (Reference.class.isInstance(o)) {
 				return o;
 			} else {
 				return o;
@@ -438,7 +440,7 @@ public class FhirUtil {
 	}
 
 	static public String getPatientId(MetaResource mr) {
-		String id = mr.getResource().getId();
+		String id = mr.getResource().getId().getValue();
 		Resource r = mr.getResource();
 		if (Patient.class.isInstance(r)) {
 			if (id.contains("/")) {
@@ -454,16 +456,7 @@ public class FhirUtil {
 		}
 	}
 
-	static public ResourceReference getResourceReferenceForRessource(Resource r) {
-		ResourceReference rRef = null;
-		if (r.getId() != null) {
-			rRef = new ResourceReference();
-			org.hl7.fhir.String shl7 = new org.hl7.fhir.String();
-			shl7.setValue(r.getId());
-			rRef.setReference(shl7);
-		}
-		return rRef;
-	}
+
 
 	public static List<String> getResourceList() {
 		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
@@ -504,6 +497,21 @@ public class FhirUtil {
 		// logger.trace("res:" + res);
 		return res;
 
+	}
+	
+	public static Resource setId(Resource r, String idStr){
+		Id id =new Id();
+		id.setValue(idStr);;
+		r.setId(id);
+		return r;
+	}
+
+	public static Reference getReference(Resource r) {
+		Reference pRef = new Reference();
+		org.hl7.fhir.String str1=new org.hl7.fhir.String();
+		str1.setValue(r.getId().getValue());
+		pRef.setReference(str1);
+		return pRef;
 	}
 
 }

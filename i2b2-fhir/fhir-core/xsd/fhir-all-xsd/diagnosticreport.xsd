@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  Copyright (c) 2011-2013, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -27,9 +27,9 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Tue, Sep 30, 2014 18:08+1000 for FHIR v0.0.82 
+  Generated on Fri, Apr 3, 2015 14:24+1100 for FHIR v0.5.0 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="0.0.82">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="1.0">
   <xs:include schemaLocation="fhir-base.xsd"/>
   <xs:element name="DiagnosticReport" type="DiagnosticReport">
     <xs:annotation>
@@ -42,7 +42,7 @@
       <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="Resource">
+      <xs:extension base="DomainResource">
         <xs:sequence>
           <xs:element name="name" minOccurs="1" maxOccurs="1" type="CodeableConcept">
             <xs:annotation>
@@ -59,22 +59,27 @@
               <xs:documentation>The date and/or time that this version of the report was released from the source diagnostic service.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="subject" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="subject" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The subject of the report. Usually, but not always, this is a patient. However diagnostic services also perform analyses on specimens collected from a variety of other sources.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="performer" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="performer" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The diagnostic service that is responsible for issuing the report.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="identifier" minOccurs="0" maxOccurs="1" type="Identifier">
+          <xs:element name="encounter" minOccurs="0" maxOccurs="1" type="Reference">
+            <xs:annotation>
+              <xs:documentation>The link to the health care event (encounter) when the order was made.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="identifier" minOccurs="0" maxOccurs="unbounded" type="Identifier">
             <xs:annotation>
               <xs:documentation>The local ID assigned to the report by the order filler, usually by the Information System of the diagnostic service provider.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="requestDetail" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="requestDetail" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>Details concerning a test requested.</xs:documentation>
            </xs:annotation>
@@ -91,17 +96,17 @@
             <xs:element name="diagnosticDateTime" type="dateTime"/>
             <xs:element name="diagnosticPeriod" type="Period"/>
           </xs:choice>
-          <xs:element name="specimen" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="specimen" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
-              <xs:documentation>Details about the specimens on which this Disagnostic report is based.</xs:documentation>
+              <xs:documentation>Details about the specimens on which this diagnostic report is based.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="result" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="result" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>Observations that are part of this diagnostic report. Observations can be simple name/value pairs (e.g. &quot;atomic&quot; results), or they can be grouping observations that include references to other members of the group (e.g. &quot;panels&quot;).</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="imagingStudy" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="imagingStudy" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>One or more links to full details of any imaging performed during the diagnostic investigation. Typically, this is imaging performed by DICOM enabled modalities, but this is not required. A fully enabled PACS viewer can use this information to provide views of the source images.</xs:documentation>
            </xs:annotation>
@@ -142,7 +147,7 @@
               <xs:documentation>A comment about the image. Typically, this is used to provide an explanation for why the image is included, or to draw the viewer's attention to important features.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="link" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="link" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Reference to the image source.</xs:documentation>
            </xs:annotation>
@@ -173,11 +178,6 @@
           <xs:documentation>The report has been modified subsequent to being Final, and is complete and verified by an authorized person.</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="amended">
-        <xs:annotation>
-          <xs:documentation>The report has been modified subsequent to being Final, and is complete and verified by an authorized person, and data has been changed.</xs:documentation>
-        </xs:annotation>
-      </xs:enumeration>
       <xs:enumeration value="appended">
         <xs:annotation>
           <xs:documentation>The report has been modified subsequent to being Final, and is complete and verified by an authorized person. New content has been added, but existing content hasn't changed.</xs:documentation>
@@ -188,7 +188,7 @@
           <xs:documentation>The report is unavailable because the measurement was not started or not completed (also sometimes called &quot;aborted&quot;).</xs:documentation>
         </xs:annotation>
       </xs:enumeration>
-      <xs:enumeration value="entered in error">
+      <xs:enumeration value="entered-in-error">
         <xs:annotation>
           <xs:documentation>The report has been withdrawn following previous Final release.</xs:documentation>
         </xs:annotation>

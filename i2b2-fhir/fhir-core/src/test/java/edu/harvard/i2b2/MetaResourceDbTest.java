@@ -13,7 +13,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.MedicationStatement;
-import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Reference;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +34,10 @@ public class MetaResourceDbTest {
 		
 		MetaResourceSet s1 =ResourceSetup.getPatientAndMedicationStatementEg();
 		Patient p=(Patient) s1.getMetaResource().get(0).getResource();
-		p.setId("Patient/1000000001");
+		FhirUtil.setId(p,"Patient/1000000001");
 		MedicationStatement ms=(MedicationStatement) s1.getMetaResource().get(1).getResource();
-		ms.setId("MedicationStatement/1000000001-1");
-		ms.setPatient(FhirUtil.getResourceReferenceForRessource(p));
+		FhirUtil.setId(ms,"MedicationStatement/1000000001-1");
+		ms.setPatient(FhirUtil.getReference(p));
 	
 		s1.getMetaResource().get(0).setResource(p);
 		s1.getMetaResource().get(1).setResource(ms);

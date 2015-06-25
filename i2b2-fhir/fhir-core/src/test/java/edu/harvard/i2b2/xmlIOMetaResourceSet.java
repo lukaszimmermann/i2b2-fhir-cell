@@ -28,7 +28,7 @@ import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.Reference;
 import org.junit.Test;
 
 import edu.harvard.i2b2.fhir.core.MetaData;
@@ -171,16 +171,14 @@ public class xmlIOMetaResourceSet {
 	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JAXBException{
 		MetaResourceDb mrDb= new MetaResourceDb();
 		Patient p= new Patient();
-		p.setId("Patient/123");
+		FhirUtil.setId(p,"Patient/123");
 		MetaResource mrP=new MetaResource();mrP.setResource(p);
 		MetaData md1=new MetaData();mrP.setMetaData(md1);
 		
 		
 		MedicationStatement ms=new MedicationStatement();
-		ms.setId("MedicationStatement/234");
-		ResourceReference pRef=new ResourceReference();
-		pRef.setId(p.getId());
-		ms.setPatient(pRef);
+		FhirUtil.setId(ms,"MedicationStatement/234");
+		ms.setPatient(	FhirUtil.getReference(p));
 		
 		
 		MetaResource mrMS=new MetaResource();mrMS.setResource(ms);

@@ -44,11 +44,11 @@ public class QueryCustomTest {
 	public void setup() throws JAXBException, FhirCoreException {
 		String xml = Utils.getFile("example/fhir/singlePatient.xml");
 		p = (Patient) JAXBUtil.fromXml(xml,Patient.class);
-		p.setId("myid1");
+		FhirUtil.setId(p,"myid1");
 		xml = Utils
 				.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
 		p2 = (Patient) JAXBUtil.fromXml(xml,Patient.class);
-		p2.setId("myid2");
+		FhirUtil.setId(p2,"myid2");
 		
 		 s = new MetaResourceSet();
 		MetaResource mr = FhirUtil.getMetaResource(p);

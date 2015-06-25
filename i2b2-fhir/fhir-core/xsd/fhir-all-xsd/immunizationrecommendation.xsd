@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  Copyright (c) 2011-2013, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -27,9 +27,9 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Tue, Sep 30, 2014 18:08+1000 for FHIR v0.0.82 
+  Generated on Fri, Apr 3, 2015 14:24+1100 for FHIR v0.5.0 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="0.0.82">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="1.0">
   <xs:include schemaLocation="fhir-base.xsd"/>
   <xs:element name="ImmunizationRecommendation" type="ImmunizationRecommendation">
     <xs:annotation>
@@ -42,16 +42,16 @@
       <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="Resource">
+      <xs:extension base="DomainResource">
         <xs:sequence>
           <xs:element name="identifier" minOccurs="0" maxOccurs="unbounded" type="Identifier">
             <xs:annotation>
               <xs:documentation>A unique identifier assigned to this particular recommendation record.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="subject" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="patient" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
-              <xs:documentation>The patient who is the subject of the profile.</xs:documentation>
+              <xs:documentation>The patient for whom the recommendations are for.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="recommendation" type="ImmunizationRecommendation.Recommendation" minOccurs="1" maxOccurs="unbounded">
@@ -80,7 +80,7 @@
               <xs:documentation>Vaccine that pertains to the recommendation.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="doseNumber" minOccurs="0" maxOccurs="1" type="integer">
+          <xs:element name="doseNumber" minOccurs="0" maxOccurs="1" type="positiveInt">
             <xs:annotation>
               <xs:documentation>This indicates the next recommended dose number (e.g. dose 2 is the next recommended dose).</xs:documentation>
            </xs:annotation>
@@ -100,12 +100,12 @@
               <xs:documentation>Contains information about the protocol under which the vaccine was administered.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="supportingImmunization" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="supportingImmunization" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>Immunization event history that supports the status and recommendation.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="supportingPatientInformation" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="supportingPatientInformation" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>Patient Information that supports the status and recommendation.  This includes patient observations, adverse reactions and allergy/intolerance information.</xs:documentation>
            </xs:annotation>
@@ -152,7 +152,7 @@
               <xs:documentation>Contains the description about the protocol under which the vaccine was administered.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="authority" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="authority" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Indicates the authority who published the protocol?  E.g. ACIP.</xs:documentation>
            </xs:annotation>
