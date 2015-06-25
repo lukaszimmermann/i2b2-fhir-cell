@@ -80,7 +80,8 @@ declare function local:fnPatient($zip as xs:string?,
                                  $marital_status_raw as xs:string?,
                                  $race_code as xs:string?
 ) as node()?{
-<Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:Patient" id="Patient/{$id}">
+<Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:Patient" >
+  <id value="Patient/{$id}"/>
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">

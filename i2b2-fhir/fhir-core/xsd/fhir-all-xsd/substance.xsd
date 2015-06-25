@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  Copyright (c) 2011-2013, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -27,9 +27,9 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Tue, Sep 30, 2014 18:08+1000 for FHIR v0.0.82 
+  Generated on Fri, Apr 3, 2015 14:24+1100 for FHIR v0.5.0 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="0.0.82">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="1.0">
   <xs:include schemaLocation="fhir-base.xsd"/>
   <xs:element name="Substance" type="Substance">
     <xs:annotation>
@@ -42,7 +42,7 @@
       <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="Resource">
+      <xs:extension base="DomainResource">
         <xs:sequence>
           <xs:element name="type" minOccurs="1" maxOccurs="1" type="CodeableConcept">
             <xs:annotation>
@@ -106,7 +106,7 @@
               <xs:documentation>The amount of the ingredient in the substance - a concentration ratio.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="substance" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="substance" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Another substance that is a component of this substance.</xs:documentation>
            </xs:annotation>

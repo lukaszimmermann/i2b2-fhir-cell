@@ -46,7 +46,7 @@ public class QueryReferenceTest {
 		qb = new QueryBuilder();
 		xmlMedicationStatement = Utils.getFile("example/fhir/MedicationStatement.xml");
 		ms = (MedicationStatement) JAXBUtil.fromXml(xmlMedicationStatement,MedicationStatement.class);
-		ms.setId("1-1");
+		FhirUtil.setId(ms,"1-1");
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();
 		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  Copyright (c) 2011-2013, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -27,9 +27,9 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Tue, Sep 30, 2014 18:08+1000 for FHIR v0.0.82 
+  Generated on Fri, Apr 3, 2015 14:24+1100 for FHIR v0.5.0 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="0.0.82">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="1.0">
   <xs:include schemaLocation="fhir-base.xsd"/>
   <xs:element name="List" type="List">
     <xs:annotation>
@@ -42,11 +42,16 @@
       <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="Resource">
+      <xs:extension base="DomainResource">
         <xs:sequence>
           <xs:element name="identifier" minOccurs="0" maxOccurs="unbounded" type="Identifier">
             <xs:annotation>
               <xs:documentation>Identifier for the List assigned for business purposes outside the context of FHIR.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="title" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation>A label for the list assigned by the author.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="code" minOccurs="0" maxOccurs="1" type="CodeableConcept">
@@ -54,14 +59,19 @@
               <xs:documentation>This code defines the purpose of the list - why it was created.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="subject" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="subject" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The common subject (or patient) of the resources that are in the list, if there is one.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="source" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="source" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The entity responsible for deciding what the contents of the list were.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="status" minOccurs="1" maxOccurs="1" type="ListStatus">
+            <xs:annotation>
+              <xs:documentation>Indicates the current state of this list.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="date" minOccurs="0" maxOccurs="1" type="dateTime">
@@ -69,14 +79,19 @@
               <xs:documentation>The date that the list was prepared.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="ordered" minOccurs="0" maxOccurs="1" type="boolean">
+          <xs:element name="orderedBy" minOccurs="0" maxOccurs="1" type="CodeableConcept">
             <xs:annotation>
-              <xs:documentation>Whether items in the list have a meaningful order.</xs:documentation>
+              <xs:documentation>What order applies to the items in the list.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="mode" minOccurs="1" maxOccurs="1" type="ListMode">
             <xs:annotation>
               <xs:documentation>How this list was prepared - whether it is a working list that is suitable for being maintained on an ongoing basis, or if it represents a snapshot of a list of items from another source, or whether it is a prepared list where items may be marked as added, modified or deleted.</xs:documentation>
+           </xs:annotation>
+          </xs:element>
+          <xs:element name="note" minOccurs="0" maxOccurs="1" type="string">
+            <xs:annotation>
+              <xs:documentation>Comments that apply to the overall list.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="entry" type="List.Entry" minOccurs="0" maxOccurs="unbounded">
@@ -115,12 +130,42 @@
               <xs:documentation>When this item was added to the list.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="item" minOccurs="1" maxOccurs="1" type="ResourceReference">
+          <xs:element name="item" minOccurs="1" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>A reference to the actual resource from which data was derived.</xs:documentation>
            </xs:annotation>
           </xs:element>
         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="ListStatus-list">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="current">
+        <xs:annotation>
+          <xs:documentation>The list is considered to be an active part of the patient's record.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="retired">
+        <xs:annotation>
+          <xs:documentation>The list is &quot;old&quot; and should no longer be considered accurate or relevant.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="entered-in-error">
+        <xs:annotation>
+          <xs:documentation>The list was never accurate.  It is retained for medico-legal purposes only.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ListStatus">
+    <xs:annotation>
+      <xs:documentation>The current state of the list</xs:documentation>
+      <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="Element">
+        <xs:attribute name="value" type="ListStatus-list" use="optional"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

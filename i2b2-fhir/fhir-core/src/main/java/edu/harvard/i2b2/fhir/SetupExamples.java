@@ -12,7 +12,8 @@ public class SetupExamples {
 	public static MetaResourceSet getEGPatient()
 			throws DatatypeConfigurationException {
 		Patient p = new Patient();
-		p.setId("Patient/1000000005");
+		Id id=p.getId();
+		id.setValue("Patient/1000000005");
 
 		MetaData md1 = new MetaData();
 		GregorianCalendar gc = new GregorianCalendar();
@@ -36,12 +37,19 @@ public class SetupExamples {
 		MetaResourceSet s1 = new MetaResourceSet();
 
 		Patient p = new Patient();
-		p.setId("Patient/1000000005");
+		Id id=p.getId();
+		id.setValue("Patient/1000000005");
+		
 
 		MedicationStatement ms = new MedicationStatement();
-		ms.setId("MedicationStatement/1000000005-1");
-		ResourceReference pRef = new ResourceReference();
-		pRef.setId(p.getId());
+		Id id1=new Id();
+		id1.setValue("MedicationStatement/1000000005-1");
+		ms.setId(id1);
+		
+		Reference pRef = new Reference();
+		Id id2=new Id();
+		id2.setValue(p.getId().getValue());
+		pRef.setId(id2.getValue());
 		ms.setPatient(pRef);
 
 		MetaResource mr1 = new MetaResource();

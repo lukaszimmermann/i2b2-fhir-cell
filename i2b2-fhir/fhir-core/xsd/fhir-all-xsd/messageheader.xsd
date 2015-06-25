@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- 
-  Copyright (c) 2011-2013, HL7, Inc.
+  Copyright (c) 2011+, HL7, Inc.
   All rights reserved.
   
   Redistribution and use in source and binary forms, with or without modification, 
@@ -27,22 +27,22 @@
   POSSIBILITY OF SUCH DAMAGE.
   
 
-  Generated on Tue, Sep 30, 2014 18:08+1000 for FHIR v0.0.82 
+  Generated on Fri, Apr 3, 2015 14:24+1100 for FHIR v0.5.0 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="0.0.82">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://hl7.org/fhir" xmlns:xhtml="http://www.w3.org/1999/xhtml" targetNamespace="http://hl7.org/fhir" elementFormDefault="qualified" version="1.0">
   <xs:include schemaLocation="fhir-base.xsd"/>
   <xs:element name="MessageHeader" type="MessageHeader">
     <xs:annotation>
-      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The resource(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
+      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="MessageHeader">
     <xs:annotation>
-      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The resource(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
+      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
       <xs:documentation>If the element is present, it must have either a @value, an @id, or extensions</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="Resource">
+      <xs:extension base="DomainResource">
         <xs:sequence>
           <xs:element name="identifier" minOccurs="1" maxOccurs="1" type="id">
             <xs:annotation>
@@ -56,7 +56,7 @@
           </xs:element>
           <xs:element name="event" minOccurs="1" maxOccurs="1" type="Coding">
             <xs:annotation>
-              <xs:documentation>Code that identifies the event this message represents and connects it with it's definition. Events defined as part of the FHIR specification have the system value &quot;http://hl7.org/fhir/message-type&quot;.</xs:documentation>
+              <xs:documentation>Code that identifies the event this message represents and connects it with its definition. Events defined as part of the FHIR specification have the system value &quot;http://hl7.org/fhir/message-type&quot;.</xs:documentation>
            </xs:annotation>
           </xs:element>
           <xs:element name="response" type="MessageHeader.Response" minOccurs="0" maxOccurs="1">
@@ -74,22 +74,22 @@
               <xs:documentation>The destination application which the message is intended for.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="enterer" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="enterer" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The person or device that performed the data entry leading to this message. Where there is more than one candidate, pick the most proximal to the message. Can provide other enterers in extensions.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="author" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="author" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The logical author of the message - the person or device that decided the described event should happen. Where there is more than one candidate, pick the most proximal to the MessageHeader. Can provide other authors in extensions.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="receiver" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="receiver" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Allows data conveyed by a message to be addressed to a particular person or department when routing to a specific application isn't sufficient.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="responsible" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="responsible" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>The person or organization that accepts overall responsibility for the contents of the message. The implication is that the message event happened under the policies of the responsible party.</xs:documentation>
            </xs:annotation>
@@ -99,7 +99,7 @@
               <xs:documentation>Coded indication of the cause for the event - indicates  a reason for the occurance of the event that is a focus of this message.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="data" minOccurs="0" maxOccurs="unbounded" type="ResourceReference">
+          <xs:element name="data" minOccurs="0" maxOccurs="unbounded" type="Reference">
             <xs:annotation>
               <xs:documentation>The actual data of the message - a reference to the root/focus class of the event.</xs:documentation>
            </xs:annotation>
@@ -110,7 +110,7 @@
   </xs:complexType>
   <xs:complexType name="MessageHeader.Response">
     <xs:annotation>
-      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The resource(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
+      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BackboneElement">
@@ -125,7 +125,7 @@
               <xs:documentation>Code that identifies the type of response to the message - whether it was successful or not, and whether it should be resent or not.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="details" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="details" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Full details of any issues found in the message.</xs:documentation>
            </xs:annotation>
@@ -136,17 +136,17 @@
   </xs:complexType>
   <xs:complexType name="MessageHeader.Source">
     <xs:annotation>
-      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The resource(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
+      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BackboneElement">
         <xs:sequence>
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="string">
             <xs:annotation>
-              <xs:documentation>Human-readable name for the target system.</xs:documentation>
+              <xs:documentation>Human-readable name for the source system.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="software" minOccurs="1" maxOccurs="1" type="string">
+          <xs:element name="software" minOccurs="0" maxOccurs="1" type="string">
             <xs:annotation>
               <xs:documentation>May include configuration or other information useful in debugging.</xs:documentation>
            </xs:annotation>
@@ -156,7 +156,7 @@
               <xs:documentation>Can convey versions of multiple systems in situations where a message passes through multiple hands.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="contact" minOccurs="0" maxOccurs="1" type="Contact">
+          <xs:element name="contact" minOccurs="0" maxOccurs="1" type="ContactPoint">
             <xs:annotation>
               <xs:documentation>An e-mail, phone, website or other contact point to use to resolve issues with message communications.</xs:documentation>
            </xs:annotation>
@@ -172,17 +172,17 @@
   </xs:complexType>
   <xs:complexType name="MessageHeader.Destination">
     <xs:annotation>
-      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The resource(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
+      <xs:documentation>The header for a message exchange that is either requesting or responding to an action.  The Reference(s) that are the subject of the action as well as other Information related to the action are typically transmitted in a bundle in which the MessageHeader resource instance is the first resource in the bundle.</xs:documentation>
     </xs:annotation>
     <xs:complexContent>
       <xs:extension base="BackboneElement">
         <xs:sequence>
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="string">
             <xs:annotation>
-              <xs:documentation>Human-readable name for the source system.</xs:documentation>
+              <xs:documentation>Human-readable name for the target system.</xs:documentation>
            </xs:annotation>
           </xs:element>
-          <xs:element name="target" minOccurs="0" maxOccurs="1" type="ResourceReference">
+          <xs:element name="target" minOccurs="0" maxOccurs="1" type="Reference">
             <xs:annotation>
               <xs:documentation>Identifies the target end system in situations where the initial message transmission is to an intermediary system.</xs:documentation>
            </xs:annotation>

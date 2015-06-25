@@ -92,6 +92,7 @@ public class QueryBuilder {
 					//		+ this.toString(), e);
 		}
 
+		logger.trace("queryTypeStr:"+this.queryTypeStr);
 		if(this.queryTypeStr==null){this.queryTypeStr="";}
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":

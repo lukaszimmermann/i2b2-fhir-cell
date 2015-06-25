@@ -169,7 +169,7 @@ public class ResourceWebService {
 				  for(Resource r:resourcedb.getQueried(c,q)){
 					  if(c.isInstance(r)){
 						Entry entry = feed.addEntry();
-						entry.setId(r.getId());
+						entry.setId(r.getId().toString());
 						jaxbMarshaller.marshal(r, rwriter);
 						entry.setContent(rwriter.toString(),"application/xml");
 						rwriter.getBuffer().setLength(0);//reset String writer
