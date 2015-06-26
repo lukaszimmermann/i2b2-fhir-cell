@@ -352,8 +352,7 @@ public class MetaResourceDb {
 	}
 
 	public void addResourceList(List<Resource> s) {
-		this.resourceList.addAll(s);
-		
+		resourceList.addAll(s);
 	}
 
 }
