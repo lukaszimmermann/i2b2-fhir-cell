@@ -138,7 +138,7 @@ public class PdoEGtoFhirBundle {
 	public void TestPatient() throws XQueryUtilException{
 		
 		String patientBundle=getPatients();
-		//logger.trace("getPatients:"+patientBundle);
+		logger.trace("getPatients:"+patientBundle);
 		try {
 			Bundle b=JAXBUtil.fromXml(patientBundle, Bundle.class);
 			logger.trace(JAXBUtil.toXml(b.getEntry().get(0).getResource().getPatient()));
@@ -152,10 +152,10 @@ public class PdoEGtoFhirBundle {
 	public void Test23() throws XQueryUtilException{
 		
 		String medsBundle=getMeds();
-		logger.trace("getMEds:"+medsBundle);
+		//logger.trace("getMEds:"+medsBundle);
 		try {
 			Bundle b=JAXBUtil.fromXml(medsBundle, Bundle.class);
-			//logger.trace(JAXBUtil.toXml(b.getEntry().get(1).getResource().getMedication()));
+			logger.trace(JAXBUtil.toXml(b.getEntry().get(1).getResource().getMedicationStatement()));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

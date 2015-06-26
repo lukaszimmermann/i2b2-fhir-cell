@@ -68,10 +68,7 @@ declare function local:fnFhirDosage($d as node()?, $q as node()?) as node()?
 };
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){
-<Resource namespace="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:type="ns3:Medication" xmlns:ns2="http://www.w3.org/1999/xhtml"
-           
- >
+<Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="Medication/{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
@@ -87,7 +84,7 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
     </coding>
   </code>
 
-  </Resource>
+  </Medication>
   
 };
 
@@ -100,8 +97,8 @@ declare function local:fnMetaData($id as xs:string*, $last_updated as xs:string*
 
 declare function local:fnFhirMedicationStatement($count as xs:integer?, $route as xs:string?, $medicationNode as node()?,
         $sd as xs:string, $ed as xs:string, $pid as xs:string?) as node(){
- <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationStatement" >
- 
+ <MedicationStatement xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+
  <id value="MedicationStatement/{$pid}-{$count}"/>
   <text>
     <status value="generated"/>
@@ -122,7 +119,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $route a
   </medication>
     {local:fnRoute($route)}
 
-</Resource>
+</MedicationStatement>
 };
 
 
@@ -234,23 +231,23 @@ let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid)
 let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$route,$fhirMedication,$sd,$ed,$pid)
 
 return  <set>
-<Entry xmlns="http://hl7.org/fhir">
-<Resource>
+<entry xmlns="http://hl7.org/fhir">
+<resource>
 {$fhirMedication}
-</Resource>
-</Entry>
+</resource>
+</entry>
 
-<Entry xmlns="http://hl7.org/fhir">
-<Resource>
+<entry xmlns="http://hl7.org/fhir">
+<resource>
 {$fhirMedicationStatement}
-</Resource>
-</Entry>
+</resource>
+</entry>
 
 </set>
 
 
 return <Bundle xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir">
-    {$O/Entry}
+    {$O/entry}
     </Bundle>
 
 (:

@@ -416,13 +416,15 @@ public class FromI2b2WebService {
 						String.class);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
-		// logger.info(xQueryResultString);
+		logger.trace("xQueryResultString:"+xQueryResultString);
 
 		// md.addMetaResourceSet(getEGPatient());
 
 		try {
 			Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+			logger.trace("bundle:"+JAXBUtil.toXml(b));
 			List<Resource> s = FhirUtil.getResourceListFromBundle(b);
+			logger.trace("list size:"+s.size());
 			logger.info("adding to memory...");
 			md.addResourceList(s);
 		} catch (JAXBException e) {
