@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
@@ -22,6 +23,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
@@ -30,14 +33,16 @@ import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.Parser;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.MetaData;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.fhir.query.Query;
 
 
 public class PdoEGtoFhirBundle {
+	static Logger logger = LoggerFactory.getLogger(PdoEGtoFhirBundle.class);
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -130,18 +135,49 @@ public class PdoEGtoFhirBundle {
 
 	*/
 	@Test
+	public void TestPatient() throws XQueryUtilException{
+		
+		String patientBundle=getPatients();
+		//logger.trace("getPatients:"+patientBundle);
+		try {
+			Bundle b=JAXBUtil.fromXml(patientBundle, Bundle.class);
+			logger.trace(JAXBUtil.toXml(b.getEntry().get(0).getResource().getPatient()));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	@Test
 	public void Test23() throws XQueryUtilException{
 		
-		System.out.println(defaultread());
+		String medsBundle=getMeds();
+		logger.trace("getMEds:"+medsBundle);
+		try {
+			Bundle b=JAXBUtil.fromXml(medsBundle, Bundle.class);
+			//logger.trace(JAXBUtil.toXml(b.getEntry().get(1).getResource().getMedication()));
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		
 	}
-	static public String defaultread() throws XQueryUtilException {
+	
+	public String  getPatients() throws XQueryUtilException {
 		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		String input = Utils.getFile("example/i2b2/medicationsForAPatient2.xml");
+				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
+		String input = Utils.getFile("example/i2b2/AllPatients.xml");
 
 		return XQueryUtil.processXQuery( query,input).toString();
 	}
 	
+	
+	static public String getMeds() throws XQueryUtilException {
+		String query = Utils
+				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+		String input = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
+
+		return XQueryUtil.processXQuery( query,input).toString();
+	}
 	
 	
 

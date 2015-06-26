@@ -19,8 +19,6 @@ import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 /*
  * Creates QueryList from String and
@@ -114,11 +112,11 @@ public class QueryEngine {
 		}
 	}
 
-	public MetaResourceSet search(MetaResourceSet s) throws FhirCoreException,
+	public List<Resource> search(List<Resource> s) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
-		MetaResourceSet resultS = new MetaResourceSet();
+		List<Resource> resultS = new ArrayList<Resource>();
 		logger.trace("running query");
-		logger.debug("size before query:" + s.getMetaResource().size());
+		logger.debug("size before query:" + s.size());
 		String inputMRSXml;
 		/*try {
 			inputMRSXml = FhirUtil.toXml(s);
@@ -130,17 +128,11 @@ public class QueryEngine {
 			logger.trace("returning from sophisQuery as queryList is empty");
 			return s;
 		}
-		for (MetaResource mr : s.getMetaResource()) {
-			Resource r = mr.getResource();
+		for (Resource r : s){
 
-			try {
 				if (r == null)
-					throw new FhirCoreException("Resource is Null:"
-							+ JAXBUtil.toXml(mr));
-			} catch (JAXBException e) {
-				throw new FhirCoreException("JaxB Error:", e);
-			}
-
+					throw new FhirCoreException("Resource is Null:");
+			
 			if (r.getId() == null)
 				throw new FhirCoreException("Id is not mentioned in resource:"
 						+ JAXBUtil.toXml(r));
@@ -160,9 +152,9 @@ public class QueryEngine {
 			if(this.queryList.size()==0) matchF=false;
 			//if match is true on all queries include in result
 			logger.info("match res:"+matchF);
-			if (matchF == true){resultS.getMetaResource().add(mr);}
+			if (matchF == true){resultS.add(r);}
 		}
-		logger.debug("size after query:" + resultS.getMetaResource().size());
+		logger.debug("size after query:" + resultS.size());
 
 		return resultS;
 	}
@@ -174,13 +166,11 @@ public class QueryEngine {
 				+ rawQuery + "]\n";
 	}
 
-	public MetaResourceSet search(Resource r1) throws FhirCoreException,
+	public List<Resource> search(Resource r1) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
-			MetaResourceSet s1 = new MetaResourceSet();
-			MetaResource mr1;
-			mr1 = FhirUtil.getMetaResource(r1);
+		List<Resource> s1 = new ArrayList<Resource>();
 			logger.trace("running subquery");
-			s1.getMetaResource().add(mr1);
+			s1.add(r1);
 			return search(s1);
 	}
 

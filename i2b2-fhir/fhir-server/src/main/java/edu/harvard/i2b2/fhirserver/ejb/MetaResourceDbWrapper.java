@@ -24,8 +24,6 @@ import org.hl7.fhir.instance.model.ResourceReference;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 @Startup
 @Singleton
@@ -46,14 +44,14 @@ public class MetaResourceDbWrapper {
 
 	
 	@Lock(LockType.WRITE)
-	public void addMetaResourceSet(MetaResourceSet s) throws JAXBException {
-		mrdb.addMetaResourceSet(s);
+	public void addMetaResourceSet(List<Resource> s) throws JAXBException {
+		mrdb.addResourceList(s);
 	}
 
 	@Lock(LockType.READ)
-	public MetaResourceSet getIncludedMetaResources(
-			MetaResourceSet inputSet, Class c, List<String> includeResources) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		return mrdb.getIncludedMetaResources(c,inputSet, includeResources);
+	public List<Resource> getIncludedMetaResources(
+			List<Resource> inputSet, Class c, List<String> includeResources) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		return mrdb.getIncludedResources(c,inputSet, includeResources);
 	}
 
 	@Lock(LockType.READ)

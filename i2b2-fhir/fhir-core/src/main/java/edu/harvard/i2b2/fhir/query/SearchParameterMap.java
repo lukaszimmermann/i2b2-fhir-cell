@@ -25,7 +25,6 @@ import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class SearchParameterMap {
 	static Logger logger = LoggerFactory.getLogger(SearchParameterMap.class);

@@ -1,9 +1,12 @@
 package edu.harvard.i2b2.fhirserver.ws;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -35,9 +38,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleType;
+import org.hl7.fhir.BundleTypeList;
+import org.hl7.fhir.Instant;
+import org.hl7.fhir.Meta;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.UnsignedInt;
+import org.hl7.fhir.Uri;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +57,6 @@ import org.xml.sax.SAXException;
 
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
@@ -80,15 +91,16 @@ public class FromI2b2WebService {
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
 			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm) throws XQueryUtilException, IOException, JAXBException {
+			@FormParam("i2b2url") String i2b2urlForm)
+			throws XQueryUtilException, IOException, JAXBException {
 		// Exception e1=new RuntimeException("test error");
 		// logger.error("test error1:",e1);
 		// if(1==1) throw (RuntimeException)e1;
 		logger.info("Got Auth request");
 		HttpSession session = request.getSession(false);
 		if (session != null) {
-			//logger.info("invalidated session");
-			//session.invalidate();
+			// logger.info("invalidated session");
+			// session.invalidate();
 		}
 
 		String username = request.getHeader("username");
@@ -163,29 +175,28 @@ public class FromI2b2WebService {
 
 			Class c = FhirUtil.getResourceClass(resourceName);
 			MetaResourceDb md = null;
-			MetaResourceSet s = new MetaResourceSet();
+			List<Resource> s = new ArrayList<Resource>();
 			HttpSession session = request.getSession(false);
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
 			if (session == null) {
 				/*
-				return Response.status(Status.BAD_REQUEST)
-						.type(MediaType.APPLICATION_XML).entity("login first ")
-						.build();
-						*/
+				 * return Response.status(Status.BAD_REQUEST)
+				 * .type(MediaType.APPLICATION_XML).entity("login first ")
+				 * .build();
+				 */
 				String username = request.getHeader("username");
 				String password = request.getHeader("password");
 				String i2b2domain = request.getHeader("i2b2domain");
 				String i2b2url = request.getHeader("i2b2url");
-				doAuthentication(request,
-				 username==null?"demo":username, 
-						password==null?"demouser":password,
-						i2b2domain==null?"i2b2demo":i2b2domain,
-						i2b2url==null?"http://services.i2b2.org:9090/i2b2":i2b2url);
+				doAuthentication(request, username == null ? "demo" : username,
+						password == null ? "demouser" : password,
+						i2b2domain == null ? "i2b2demo" : i2b2domain,
+						i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
+								: i2b2url);
 				session = request.getSession(false);
 			}
-			
 
 			md = (MetaResourceDb) session.getAttribute("md");
 
@@ -195,44 +206,42 @@ public class FromI2b2WebService {
 			String patientId = extractPatientId(request.getQueryString());
 			logger.info("PatientId:" + patientId);
 			if (patientId != null) {
-				//filter.put("Patient", "Patient/" + patientId);
+				// filter.put("Patient", "Patient/" + patientId);
 				scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
-			
-			
+
 			Map<String, String> q = request.getParameterMap();
 			for (String k : q.keySet()) {
-				if (k.equals("_include") )//|| k.equals("patient"))
+				if (k.equals("_include"))// || k.equals("patient"))
 					continue;
-				
-				//filter.put(k, new String(request.getParameter(k)));
+
+				// filter.put(k, new String(request.getParameter(k)));
 			}
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
 			logger.info("running filter..." + filter.toString());
 			s = md.getAll(c);
 			/*
-			s = md.filterMetaResources(c, filter);
-			if (filter.size() == 0) {
-				s = md.getAll(c);
-			} else {
-				s = md.filterMetaResources(c, filter);
+			 * s = md.filterMetaResources(c, filter); if (filter.size() == 0) {
+			 * s = md.getAll(c); } else { s = md.filterMetaResources(c, filter);
+			 * 
+			 * }
+			 */
 
-			}*/
-		
-			
-			 logger.info("running sophisticated query for:"+request.getQueryString());
-			//q.remove("_id");q.remove("_date");
-			
-			 if(request.getQueryString()!=null){
-				 QueryEngine qe= new QueryEngine(c.getSimpleName()+"?"+request.getQueryString());
-				 logger.info("created QE:"+qe);
-				 s=qe.search(s);
-			 }
-			 
+			logger.info("running sophisticated query for:"
+					+ request.getQueryString());
+			// q.remove("_id");q.remove("_date");
+
+			if (request.getQueryString() != null) {
+				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
+						+ request.getQueryString());
+				logger.info("created QE:" + qe);
+				s = qe.search(s);
+			}
+
 			logger.info("including...._include:" + includeResources.toString());
-			if (s.getMetaResource().size() > 0) {
-				s = md.getIncludedMetaResources(c, s, includeResources);
+			if (s.size() > 0) {
+				s = md.getIncludedResources(c, s, includeResources);
 			}
 
 			logger.info("getting bundle string...");
@@ -243,7 +252,9 @@ public class FromI2b2WebService {
 			if (request.getQueryString() != null)
 				url += "?" + request.getQueryString();
 
-			String returnString = FhirUtil.getResourceBundle(s, basePath, url);
+			Bundle b = FhirUtil.getResourceBundle(s, basePath, url);
+			this.addBundleAttributes(b,basePath);
+			String returnString = JAXBUtil.toXml(b);
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
 
@@ -252,8 +263,8 @@ public class FromI2b2WebService {
 					.entity(removeSpace(returnString)).build();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return Response.status(Status.BAD_REQUEST).header("xreason", e.getMessage())
-					.build();
+			return Response.status(Status.BAD_REQUEST)
+					.header("xreason", e.getMessage()).build();
 		}
 
 	}
@@ -270,7 +281,8 @@ public class FromI2b2WebService {
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request)
 			throws DatatypeConfigurationException,
-			ParserConfigurationException, SAXException, IOException, JAXBException, JSONException {
+			ParserConfigurationException, SAXException, IOException,
+			JAXBException, JSONException {
 
 		HttpSession session = request.getSession();
 		if (session == null) {
@@ -308,10 +320,11 @@ public class FromI2b2WebService {
 		}
 	}
 
-	private MetaResourceSet initAllPatients(HttpSession session)
-			throws AuthenticationFailure, FhirServerException, XQueryUtilException, JAXBException {
+	private List<Resource> initAllPatients(HttpSession session)
+			throws AuthenticationFailure, FhirServerException,
+			XQueryUtilException, JAXBException {
 		if (session == null) {
-			return new MetaResourceSet();
+			return new ArrayList<Resource>();
 		}
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 		if (session == null)
@@ -352,19 +365,21 @@ public class FromI2b2WebService {
 		String xQueryResultString = processXquery(query, oStr);
 
 		logger.debug("Got xQueryResultString :" + xQueryResultString);
-		MetaResourceSet s = new MetaResourceSet();
+		List<Resource> s = new ArrayList<Resource>();
 		try {
-			s = MetaResourceSetTransform
-					.MetaResourceSetFromXml(xQueryResultString);
+			Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+			s = FhirUtil.getResourceListFromBundle(b);
+			
 		} catch (JAXBException e) {
 			throw new FhirServerException("JAXBException", e);
 		}
-		logger.info("Got MetaResourceSet of size:" + s.getMetaResource().size());
-		md.addMetaResourceSet(s);
+		logger.info("Got ResourceSet of size:" + s.size());
+		md.addResourceList(s);
 		return s;
 	}
 
-	private void getPdo(HttpSession session, String patientId) throws XQueryUtilException {
+	private void getPdo(HttpSession session, String patientId)
+			throws XQueryUtilException {
 		ArrayList<String> PDOcallHistory = (ArrayList<String>) session
 				.getAttribute("PDOcallHistory");
 		if (PDOcallHistory == null) {
@@ -381,15 +396,13 @@ public class FromI2b2WebService {
 
 		String requestStr = Utils
 				.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-		requestStr=insertSessionParametersInXml(requestStr,
-				session);
+		requestStr = insertSessionParametersInXml(requestStr, session);
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		
-		
+
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
 		Client client = ClientBuilder.newClient();
@@ -408,11 +421,10 @@ public class FromI2b2WebService {
 		// md.addMetaResourceSet(getEGPatient());
 
 		try {
-
-			MetaResourceSet s = MetaResourceSetTransform
-					.MetaResourceSetFromXml(xQueryResultString);
+			Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+			List<Resource> s = FhirUtil.getResourceListFromBundle(b);
 			logger.info("adding to memory...");
-			md.addMetaResourceSet(s);
+			md.addResourceList(s);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 
@@ -486,14 +498,41 @@ public class FromI2b2WebService {
 
 	private static String removeSpace(String input)
 			throws ParserConfigurationException, SAXException, IOException {
-		//return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
-		//		"(?m)^[ \t]*\r?\n", "")));
+		// return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
+		// "(?m)^[ \t]*\r?\n", "")));
 		return input.replaceAll("(?m)^[ \t]*\r?\n", "");
 		// return input;
 	}
 
-	private static String processXquery(String query, String input) throws XQueryUtilException {
-		logger.trace("will run query:"+query+"\n input"+input);
+	private static String processXquery(String query, String input)
+			throws XQueryUtilException {
+		logger.trace("will run query:" + query + "\n input" + input);
 		return XQueryUtil.processXQuery(query, input);
 	}
+
+	private Bundle addBundleAttributes(Bundle b, String basePath) throws DatatypeConfigurationException{
+		FhirUtil.setId(b, "Query result");
+		Meta meta=new Meta();
+		Instant instant=new Instant();
+		instant.setValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
+		meta.setLastUpdated(instant);
+				
+				b.setMeta(meta);
+				BundleType bundleType=new BundleType();
+				bundleType.setValue(BundleTypeList.SEARCHSET);
+				b.setType(bundleType);
+				
+				Uri uri=new Uri();
+				uri.setValue(basePath);
+				b.setBase(uri);
+				
+				UnsignedInt ui=new UnsignedInt();
+				int value=b.getEntry().size();
+				ui.setValue(BigInteger.valueOf(value));
+				b.setTotal(ui);
+				
+				
+		return b;			
+	}
+
 }

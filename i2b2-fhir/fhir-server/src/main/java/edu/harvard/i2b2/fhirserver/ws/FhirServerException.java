@@ -4,8 +4,12 @@ import javax.xml.bind.JAXBException;
 
 public class FhirServerException extends Exception {
 
-	public FhirServerException(String string, JAXBException e) {
+	public FhirServerException(String string, Exception e) {
 		super(string,e);
+	}
+	
+	public FhirServerException(String string) {
+		super(string);
 	}
 
 	

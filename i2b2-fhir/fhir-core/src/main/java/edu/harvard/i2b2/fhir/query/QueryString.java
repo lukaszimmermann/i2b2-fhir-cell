@@ -18,7 +18,6 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryString extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryString.class);
@@ -46,7 +45,7 @@ public class QueryString extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml,Resource r, MetaResourceSet s) throws XQueryUtilException  {
+	public boolean match(String resourceXml,Resource r, List<Resource> s) throws XQueryUtilException  {
 			logger.trace("resourceXml:"+resourceXml);
 		List<String> xmlList;
 		

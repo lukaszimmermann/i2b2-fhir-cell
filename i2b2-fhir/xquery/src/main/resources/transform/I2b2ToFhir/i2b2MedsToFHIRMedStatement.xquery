@@ -233,22 +233,33 @@ let $outputDosage:=local:fnFhirDosage($routeNode,$routeNode)
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid)
 let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$route,$fhirMedication,$sd,$ed,$pid)
 
-return <set>
-<MetaResource>
+return  <set>
+<Entry xmlns="http://hl7.org/fhir">
+<Resource>
 {$fhirMedication}
-{local:fnMetaData(xs:string($count),$updateDate)}
-</MetaResource>
+</Resource>
+</Entry>
 
-<MetaResource>
+<Entry xmlns="http://hl7.org/fhir">
+<Resource>
 {$fhirMedicationStatement}
-{local:fnMetaData(xs:string($count),$updateDate)}
-</MetaResource>
+</Resource>
+</Entry>
 
 </set>
 
 
-return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
-    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
-    {$O/MetaResource}
-    </ns4:metaResourceSet>
+return <Bundle xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir">
+    {$O/Entry}
+    </Bundle>
+
+(:
+<Bundle xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir">
+    {$O}
+    </Bundle>
+    
+   
+    
+    :)
+
 
