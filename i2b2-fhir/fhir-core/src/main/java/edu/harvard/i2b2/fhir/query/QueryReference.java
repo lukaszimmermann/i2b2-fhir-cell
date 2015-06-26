@@ -44,8 +44,9 @@ public class QueryReference extends Query {
 
 	@Override
 	public boolean match(String resourceXml,Resource r,List<Resource> s) throws XQueryUtilException {
+		//logger.trace("xml:"+resourceXml);
 		String rawId;
-			rawId = getXmlFromParameterPath(resourceXml,  getAugmentedParameterPath()+"/reference/@value/string()");
+			rawId = getXmlFromParameterPath(resourceXml,  getParameterPath()+"/reference/@value/string()");
 		
 		// id=this.getLastElementOfparamPath()+"/"+id;
 		Pattern p = Pattern.compile(".*/([^/]+)$");

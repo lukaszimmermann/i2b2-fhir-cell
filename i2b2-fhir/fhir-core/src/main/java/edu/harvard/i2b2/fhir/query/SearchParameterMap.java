@@ -45,7 +45,7 @@ public class SearchParameterMap {
 		Unmarshaller um = context.createUnmarshaller();
 		SearchParameter p = null;
 		String bundleString= Utils.getFile("profiles/search-parameters.xml");
-		logger.trace("bundleString:"+bundleString);
+		//logger.trace("bundleString:"+bundleString);
 		Bundle b= JAXBUtil.fromXml(bundleString, Bundle.class);
 		for (BundleEntry rc : b.getEntry()) {
 			p=rc.getResource().getSearchParameter();

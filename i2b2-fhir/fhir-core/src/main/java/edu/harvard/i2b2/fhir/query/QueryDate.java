@@ -54,7 +54,7 @@ public class QueryDate extends Query {
 	public boolean match(String resourceXml,Resource r, List<Resource>s) throws XQueryUtilException  {
 		ArrayList<String> list;
 			list = getValuesAtParameterPath(resourceXml,
-					this.getAugmentedParameterPath());
+					this.getParameterPath());
 		
 		for (String v : list) {
 			GregorianCalendar dateValueFound;

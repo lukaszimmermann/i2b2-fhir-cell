@@ -115,7 +115,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $route a
     <end value="{$ed}"/>
   </whenGiven>
   <medication>
-    <reference value="{$medicationNode/@id}"/> 
+    <reference value="{$medicationNode/id/@value}"/> 
   </medication>
     {local:fnRoute($route)}
 
