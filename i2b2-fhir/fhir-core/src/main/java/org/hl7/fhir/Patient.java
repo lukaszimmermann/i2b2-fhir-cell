@@ -82,7 +82,7 @@ import javax.xml.bind.annotation.XmlType;
     "link",
     "active"
 })
-@XmlRootElement
+@XmlRootElement(name="Patient")
 public class Patient
     extends DomainResource
 {

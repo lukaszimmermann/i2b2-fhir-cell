@@ -2,22 +2,27 @@ package edu.harvard.i2b2.fhir.query;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import org.hl7.fhir.ElementDefinition;
+import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleEntry;
+import org.hl7.fhir.SearchParameter;
 import org.hl7.fhir.Patient;
-import org.hl7.fhir.StructureDefinition;
-import org.hl7.fhir.StructureDefinition;
+import org.hl7.fhir.SearchParameter;
+import org.hl7.fhir.SearchParameter;
 import org.hl7.fhir.SearchParamType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -25,8 +30,8 @@ import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 public class SearchParameterMap {
 	static Logger logger = LoggerFactory.getLogger(SearchParameterMap.class);
 
-	static HashMap<Class, StructureDefinition> hm = new HashMap<Class, StructureDefinition>();
-
+	static List<SearchParameter> list= new ArrayList <SearchParameter>();
+	
 	public SearchParameterMap() throws FhirCoreException {
 		try {
 			init();
@@ -37,70 +42,41 @@ public class SearchParameterMap {
 	}
 
 	public void init() throws JAXBException {
-		JAXBContext context = JAXBContext.newInstance(StructureDefinition.class);
+		JAXBContext context = JAXBContext.newInstance(SearchParameter.class);
 		Unmarshaller um = context.createUnmarshaller();
-		StructureDefinition p = null;
-		for (Class c : FhirUtil.resourceClassList) {
-			//logger.trace(">" + c.getSimpleName());
-			String xml = Utils.getFile("profiles/"
-					+ c.getSimpleName().toLowerCase() + ".profile.xml");
-
-			p = (StructureDefinition) um.unmarshal(new ByteArrayInputStream(xml
-					.getBytes(StandardCharsets.UTF_8)));
-			hm.put(c, p);
-
+		SearchParameter p = null;
+		String bundleString= Utils.getFile("profiles/search-parameters.xml");
+		logger.trace("bundleString:"+bundleString);
+		Bundle b= JAXBUtil.fromXml(bundleString, Bundle.class);
+		for (BundleEntry rc : b.getEntry()) {
+			p=rc.getResource().getSearchParameter();
+			list.add(p);
 		}
-
-			}
+	}
 
 	public String getParameterPath(Class c, String parName)
 			throws FhirCoreException {
-		return getElementDefinition(c,parName).getPath().toString();
+		return getSearchParameter(c,parName).getXpath().getValue().toString().replace("f:", "");
 				}
 
 	public String getType(Class c, String parName)
 			throws FhirCoreException {
 		
-		return getElementDefinition(c,parName).getType().get(0).getCode().getValue().toString();
+		return getSearchParameter(c,parName).getType().getValue().toString();
 				
 	}
-/*
-	<element>
-    <path value="Patient.identifier"/>
-    <short value="An identifier for this patient"/>
-    <definition value="An identifier for this patient."/>
-    <requirements value="Patients are almost always assigned specific numerical identifiers."/>
-    <min value="0"/>
-    <max value="*"/>
-    <type>
-      <code value="Identifier"/>
-    </type>
-    <isSummary value="true"/>
-    <mapping>
-      <identity value="v2"/>
-      <map value="PID-3"/>
-    </mapping>
-    <mapping>
-      <identity value="rim"/>
-      <map value="id"/>
-    </mapping>
-  </element>
-*/	
-	public ElementDefinition getElementDefinition(Class c, String parName) throws FhirCoreException {
+
+	public SearchParameter getSearchParameter(Class c, String parName) throws FhirCoreException {
+	
+		for(SearchParameter sp:list){
+			String resourceClassString=sp.getBase().getValue();
+			Class foundClass=FhirUtil.getResourceClass(resourceClassString);
+			String foundName=sp.getName().getValue();
 			
-		StructureDefinition p = hm.get(c);
-		if (p==null) throw new FhirCoreException("No StructureDefinition found for class:"+c.getCanonicalName());
-		
-		for (ElementDefinition e : p.getSnapshot().getElement()) {
-			//if(e.getName().getValue().equals(parName)){
-			logger.trace("searching path:"+e.getPath().getValue()+" for:"+parName);
-			if(e.getPath().getValue().contains(parName)){
-				return  e;
+			if(c.equals(foundClass) && foundName.equals(parName)){
+				return sp;
 			}
-		
 		}
-		
-		
-		 throw new FhirCoreException("No StructureDefinitionSearchParam found for class:"+c.getCanonicalName()+" for param:"+parName) ;
+		throw new FhirCoreException("No SearchParameterSearchParam found for class:"+c.getCanonicalName()+" for param:"+parName) ;
 	}
 }

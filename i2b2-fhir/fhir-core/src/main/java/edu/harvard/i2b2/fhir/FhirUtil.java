@@ -1,10 +1,15 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,8 +37,12 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.abdera.Abdera;
+import org.apache.abdera.ext.opensearch.model.Url;
+import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
+import org.apache.abdera.parser.Parser;
 import org.apache.abdera.writer.Writer;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Patient;
@@ -256,7 +265,7 @@ public class FhirUtil {
 					.equals(resourceName.toLowerCase()))
 				return c;
 		}
-		logger.trace("Class Not Found for FHIR resource:" + resourceName);
+		//logger.trace("Class Not Found for FHIR resource:" + resourceName);
 		return null;
 
 	}
@@ -512,6 +521,46 @@ public class FhirUtil {
 		str1.setValue(r.getId().getValue());
 		pRef.setReference(str1);
 		return pRef;
+	}
+
+	//TODO
+	public static List<Resource> getResourceListFromFeed(String feedString ) throws ParseException, IOException{
+		List<Resource> resList= new ArrayList<Resource>();
+		Abdera abdera = new Abdera();
+		Parser parser = abdera.getParser();
+		File myFile=new File("/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/fhir-core/src/main/resources/profiles/search-parameters.xml");
+		URL url =myFile.toURI().toURL();// new URL("http://intertwingly.net/blog/index.atom");
+		Document<Feed> doc = parser.parse(url.openStream(),url.toString());
+		Feed feed = doc.getRoot();
+		System.out.println(feed.getTitle());
+		for (Entry entry : feed.getEntries()) {
+		  System.out.println("\t" + entry.getTitle());
+		}
+		System.out.println (feed.getAuthor());
+		// FileInputStream fis=new FileInputStream(new File("/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/fhir-core/src/main/resources/profiles/search-parameters.xml"));
+		//URL url=new URL("file:///Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/fhir-core/src/main/resources/profiles/search-parameters.xml");
+		//org.apache.abdera.model.Document<Entry> doc=abdera.getParser().parse(url.openStream(), url.toString());
+	    //Entry entry=doc.getRoot();
+		//logger.trace("feed:"+doc.getRoot());
+	//	Entry=doc.getRoot();
+		//logger.trace("feed:"+feed.getTitle());
+	    
+		/*Document<Feed> doc = parser.parse();
+		logger.trace("doc:"+doc.getRoot());
+		Feed feed = doc.getRoot();
+		System.out.println(feed.getTitle());
+		for (Entry entry : feed.getEntries()) {
+		  System.out.println("\t" + entry.getTitle());
+		}
+		System.out.println (feed.getAuthor());
+		*/
+		return resList;
+	}
+	
+	static public org.hl7.fhir.String getFhirString(String s1){
+		org.hl7.fhir.String s2=new org.hl7.fhir.String();
+		s2.setValue(s1);
+		return s2;
 	}
 
 }
