@@ -1,0 +1,9 @@
+<Bundle xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir">
+    <entry id="123">
+        <resource>
+            <SearchParameter>
+                <name value="name23"/>
+            </SearchParameter>
+        </resource>
+    </entry>
+</Bundle>

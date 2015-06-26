@@ -486,8 +486,9 @@ public class FromI2b2WebService {
 
 	private static String removeSpace(String input)
 			throws ParserConfigurationException, SAXException, IOException {
-		return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
-				"(?m)^[ \t]*\r?\n", "")));
+		//return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
+		//		"(?m)^[ \t]*\r?\n", "")));
+		return input.replaceAll("(?m)^[ \t]*\r?\n", "");
 		// return input;
 	}
 
