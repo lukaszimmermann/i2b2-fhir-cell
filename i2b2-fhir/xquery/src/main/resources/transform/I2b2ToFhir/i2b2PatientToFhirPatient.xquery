@@ -80,7 +80,7 @@ declare function local:fnPatient($zip as xs:string?,
                                  $marital_status_raw as xs:string?,
                                  $race_code as xs:string?
 ) as node()?{
-<Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:Patient" >
+<Patient  namespace="http://hl7.org/fhir"  >
   <id value="Patient/{$id}"/>
   <text>
     <status value="generated"/>
@@ -155,7 +155,7 @@ declare function local:fnPatient($zip as xs:string?,
    
   <active value="true"/>
 
-</Resource>
+</Patient>
 };
 
 let $O:=
@@ -170,15 +170,14 @@ let $race_code:=local:fnrace(fn:lower-case($p/param[(@column='race')]/text()))
 let $birthdate:=$p/param[(@column='birth_date')]/text()
 let $updateDate := local:fnI2b2TimeToFhirTime($p/@update_date)
 
-return <set>
-<MetaResource>
+return 
+<entry  xmlns="http://hl7.org/fhir">
+    <resource>
 {local:fnPatient($zip, $id,$gender,$gender_expanded,$birthdate,$marital_status,$marital_status_raw,$race_code )}
-{local:fnMetaData($updateDate)}
-</MetaResource>
-</set>
+    </resource>
+</entry>
 
-return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
-    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
-    {$O/MetaResource}
-    </ns4:metaResourceSet>
+return <Bundle xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir">
+    {$O}
+    </Bundle>
 

@@ -46,10 +46,7 @@ public class ObjectFactory {
      * Create an instance of {@link MetaResourceSet }
      * 
      */
-    public MetaResourceSet createMetaResourceSet() {
-        return new MetaResourceSet();
-    }
-
+   
     /**
      * Create an instance of {@link MetaData }
      * 
@@ -62,10 +59,7 @@ public class ObjectFactory {
      * Create an instance of {@link MetaResource }
      * 
      */
-    public MetaResource createMetaResource() {
-        return new MetaResource();
-    }
-
+    
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MetaData }{@code >}}
      * 
@@ -79,18 +73,11 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link MetaResourceSet }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://i2b2.harvard.edu/fhir/core", name = "MetaResourceSet")
-    public JAXBElement<MetaResourceSet> createMetaResourceSet(MetaResourceSet value) {
-        return new JAXBElement<MetaResourceSet>(_MetaResourceSet_QNAME, MetaResourceSet.class, null, value);
-    }
-
+    
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link MetaResource }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://i2b2.harvard.edu/fhir/core", name = "MetaResource")
-    public JAXBElement<MetaResource> createMetaResource(MetaResource value) {
-        return new JAXBElement<MetaResource>(_MetaResource_QNAME, MetaResource.class, null, value);
-    }
+    
 
 }

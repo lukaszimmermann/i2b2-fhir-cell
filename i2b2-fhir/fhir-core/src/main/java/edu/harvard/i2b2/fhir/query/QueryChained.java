@@ -22,8 +22,6 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryChained extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryChained.class);
@@ -75,7 +73,7 @@ public class QueryChained extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml, Resource r, MetaResourceSet s)
+	public boolean match(String resourceXml, Resource r, List<Resource> s)
 			throws XQueryUtilException, QueryException {
 		if (!this.baseResourceClass.isInstance(r))
 			return false;
@@ -101,7 +99,7 @@ public class QueryChained extends Query {
 			try {
 				logger.trace(">>>>>>>>>runing:"+r1.getId());
 				if (matchF == false
-						&& (subQe.search(r1).getMetaResource().size() > 0))
+						&& (subQe.search(r1).size() > 0))
 					matchF = true;
 			} catch (FhirCoreException | JAXBException e) {
 				throw new QueryException(e);

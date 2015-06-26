@@ -1,15 +1,18 @@
 package edu.harvard.i2b2.fhir;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
 import org.hl7.fhir.*;
+
 import edu.harvard.i2b2.fhir.core.*;
 
 public class SetupExamples {
-	public static MetaResourceSet getEGPatient()
+	/*
+	public static ArrayList<Resource> getEGPatient()
 			throws DatatypeConfigurationException {
 		Patient p = new Patient();
 		Id id=p.getId();
@@ -71,5 +74,5 @@ public class SetupExamples {
 		s1.getMetaResource().add(mr2);
 		return s1;
 	}
-
+*/
 }

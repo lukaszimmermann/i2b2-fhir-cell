@@ -18,8 +18,6 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 //parent to types of query, which implement the different search types
 public abstract class Query {
@@ -119,7 +117,7 @@ public abstract class Query {
 	/*
 	 * provide either resourceXml or resource and MetaResourceSet is optional
 	 */
-	abstract public boolean match(String resourceXml, Resource r, MetaResourceSet s) throws  XQueryUtilException, QueryException;
+	abstract public boolean match(String resourceXml, Resource r, List<Resource> s) throws  XQueryUtilException, QueryException;
 
 	abstract public void validateParameter() throws QueryParameterException;
 

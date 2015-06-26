@@ -2,6 +2,7 @@ package edu.harvard.i2b2.fhir.query;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryDate extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryDate.class);
@@ -51,7 +51,7 @@ public class QueryDate extends Query {
 	}
 
 	@Override	
-	public boolean match(String resourceXml,Resource r, MetaResourceSet s) throws XQueryUtilException  {
+	public boolean match(String resourceXml,Resource r, List<Resource>s) throws XQueryUtilException  {
 		ArrayList<String> list;
 			list = getValuesAtParameterPath(resourceXml,
 					this.getAugmentedParameterPath());
