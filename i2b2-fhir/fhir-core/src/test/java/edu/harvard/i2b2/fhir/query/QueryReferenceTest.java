@@ -4,6 +4,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +12,7 @@ import javax.xml.bind.JAXBException;
 
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
+import org.hl7.fhir.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +27,6 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryReferenceTest {
 	static Logger logger = LoggerFactory.getLogger(QueryReferenceTest.class);
@@ -33,24 +34,24 @@ public class QueryReferenceTest {
 	String xmlPatient;
 	String xmlMedicationStatement;
 	MedicationStatement ms;
+	List<Resource>s;
 	
 	QueryBuilder qb;
 	Query q;
 	MetaResourceDb db;
 	QueryEngine qe;
-	MetaResourceSet s;
 	@Before
 	public void setup() throws FhirCoreException, JAXBException, IOException {
-		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		xmlPatient = Utils.getFile("example/fhir/DSTU2/marriedPatient.xml");
 		p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
 		qb = new QueryBuilder();
-		xmlMedicationStatement = Utils.getFile("example/fhir/MedicationStatement.xml");
+		xmlMedicationStatement = Utils.getFile("example/fhir/DSTU2/MedicationStatement.xml");
 		ms = (MedicationStatement) JAXBUtil.fromXml(xmlMedicationStatement,MedicationStatement.class);
 		FhirUtil.setId(ms,"1-1");
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();
-		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
-		db.addMetaResource(FhirUtil.getMetaResource(ms), MedicationStatement.class);
+		db.addResource(p, Patient.class);
+		db.addResource(ms, MedicationStatement.class);
 		s=db.getAll(Patient.class);
 	}
 
@@ -70,12 +71,14 @@ public class QueryReferenceTest {
 		}
 		*/logger.info("Running tests for QueryString...");
 
-		q = qb.setResourceClass(MedicationStatement.class).setRawParameter("patient")
-				.setRawValue("example").build();
+		//q = qb.setResourceClass(MedicationStatement.class).setRawParameter("patient")
+			//	.setRawValue("example").build();
 		//logger.trace("RES:"+q.match(ms));
-		assertTrue(q.match(xmlMedicationStatement,null,null));
+		//assertTrue(q.match(xmlMedicationStatement,null,null));
 		
-		String url="Patient?gender=F&birthdate=>1966-08-29&@Patient.maritalStatus:exact=S";
+		logger.info(JAXBUtil.toXml(s.get(0)));	
+		
+		String url="Patient?gender=female&birthdate=>1966-08-29&@Patient.maritalStatus.coding.code:exact=M";
 		qe = new QueryEngine(url);
 		logger.info(""+qe.search(s));	
 		

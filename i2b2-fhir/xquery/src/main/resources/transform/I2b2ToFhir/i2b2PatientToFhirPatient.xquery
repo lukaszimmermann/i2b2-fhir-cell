@@ -115,14 +115,7 @@ declare function local:fnPatient($zip as xs:string?,
 <!--  {$local:getIdentifier()}-->
   
   <!--   use FHIR code system for male / female   -->
-  <gender>
-    <coding>
-      <system value="http://hl7.org/fhir/v3/AdministrativeGender"/>
-      <code value="{$gender}"/>
-      <display value="{$gender_expanded}"/>
-      <primary value="true"/>
-    </coding>
-  </gender>
+  <gender value="{$gender_expanded}"/>
   <birthDate value="{$birthdate}"/>
   <deceasedBoolean value="false"/>
   
@@ -163,7 +156,7 @@ for $p in //ns2:patient_set/patient
 let $id:=$p/patient_id/text()
 let $zip:=$p/param[(@column='zip_cd')]/text()
 let $gender:=$p/param[(@column='sex_cd')]/text()
-let $gender_expanded:=if ($gender='M') then 'Male' else 'Female'
+let $gender_expanded:=if ($gender='M') then 'male' else 'female'
 let $marital_status_raw:=$p/param[(@column='marital_status_cd')]/text()
 let $marital_status:=local:fnMaritalStatus(fn:lower-case($marital_status_raw))
 let $race_code:=local:fnrace(fn:lower-case($p/param[(@column='race')]/text()))

@@ -16,6 +16,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Medication;
+import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.junit.After;
@@ -155,7 +156,9 @@ public class PdoEGtoFhirBundle {
 		//logger.trace("getMEds:"+medsBundle);
 		try {
 			Bundle b=JAXBUtil.fromXml(medsBundle, Bundle.class);
-			logger.trace(JAXBUtil.toXml(b.getEntry().get(1).getResource().getMedicationStatement()));
+			MedicationStatement ms=b.getEntry().get(1).getResource().getMedicationStatement();
+			logger.trace(JAXBUtil.toXml(ms));
+			logger.trace(ms.getPatient().getReference().getValue().toString());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

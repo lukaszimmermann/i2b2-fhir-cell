@@ -185,7 +185,7 @@ public abstract class Query {
 	protected List<String> getXmlListFromParameterPath(String xml,
 			String parPath) throws XQueryUtilException {
 		String xqueryStr = FhirUtil.namespaceDeclaration
-				+ getAugmentedParameterPath();// "/Patient/gender;
+				+ getParameterPath();// "/Patient/gender;
 		logger.trace("xqueryStr:" + xqueryStr);
 
 		ArrayList<String> msg = XQueryUtil.getStringSequence(xqueryStr, xml);
@@ -209,10 +209,7 @@ public abstract class Query {
 	/*
 	 * allows xml queries even on i2b2.resource
 	 */
-	protected String getAugmentedParameterPath() {
-		String f = this.getFirstElementOfParameterPath();
-		return parameterPath.replace(f, "(" + f + "|i:Resource)");
-	}
+	
 
 	protected String getParameter() {
 		return parameter;
@@ -252,4 +249,29 @@ public abstract class Query {
 		return s;
 	}
 
+	// CodeableConcept.text, Coding.display, or Identifier.label
+	//should be moved to QueryString, and inherited in QuesryCustom.
+		protected boolean textSearch(String xml,String searchText) throws XQueryUtilException {
+
+			ArrayList<String> list = new ArrayList<String>();
+			list.addAll(getListFromParameterPath(xml, "//@value/string()"));
+
+			logger.trace("list:" + list.toString());
+			for (String v : list) {
+				if (this.getModifier().equals("exact")) {
+					if (v.equals(searchText)) {
+						logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
+						return true;
+					}
+				} else {
+					v = v.toLowerCase().replaceAll("\\s+", " ")
+							.replaceAll("^\\s", "").replaceAll("\\s$", "");
+					if (v.contains(searchText)) {
+						logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 }

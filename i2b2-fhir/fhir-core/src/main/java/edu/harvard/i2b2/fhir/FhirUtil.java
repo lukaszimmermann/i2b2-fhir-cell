@@ -75,9 +75,8 @@ public class FhirUtil {
 
 	private static Validator v;
 
-	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";"
-			+ "declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
-
+	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";";
+		
 	static {
 		initResourceClassList();
 	}
@@ -473,4 +472,5 @@ public class FhirUtil {
 		throw new RuntimeException("Not implemented all resource types");
 		}
 
+	
 }

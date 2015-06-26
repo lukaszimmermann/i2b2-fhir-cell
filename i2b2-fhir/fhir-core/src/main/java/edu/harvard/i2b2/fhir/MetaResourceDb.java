@@ -150,7 +150,6 @@ public class MetaResourceDb {
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
-		String returnStr = null;
 
 		String methodName = k.substring(0, 1).toUpperCase()
 				+ k.subSequence(1, k.length());
@@ -188,10 +187,7 @@ public class MetaResourceDb {
 	public Resource searchById(String idStr) {
 		// logger.trace("searching id:" + id);
 		for (Resource r : resourceList){
-			Id id=new Id();
-			id.setValue(idStr);
-			
-			if (r.getId().equals(id))
+			if (r.getId().getValue().equals(idStr))
 				return r;
 		}
 		logger.trace("id NOT found:" + idStr);
@@ -282,10 +278,12 @@ public class MetaResourceDb {
 			String methodName = ir.split("\\.")[1];
 			logger.trace("MethodName:" + methodName);
 			for (Resource  r: inputSet) {
-				String id = ((Reference) this.getFirstLevelChild(r, c,
-						methodName)).getReference().getValue();
+				//String id =  ((Reference)this.getFirstLevelChild(r, c,
+					//	methodName)).getId();
+				Reference ref=(Reference) this.getFirstLevelChild(r, c,methodName);
 
-				logger.trace("Found dep:" + id);
+				String id=ref.getReference().getValue().toString();
+						logger.trace("Found dep:<" + id+">");
 				Resource depMr = searchById(id);
 				if (depMr != null) {
 

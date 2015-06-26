@@ -55,47 +55,25 @@ public class QueryCustom extends Query {
 
 	@Override
 	public boolean match(String resourceXml,Resource r, List<Resource> s) throws XQueryUtilException  {
-			logger.trace("resourceXml:"+resourceXml);
+			//logger.trace("resourceXml:"+resourceXml);
 		List<String> xmlList;
 		
-			xmlList = getXmlListFromParameterPath(resourceXml, this.getAugmentedParameterPath());
-		
+			xmlList = getXmlListFromParameterPath(resourceXml, this.getParameterPath());
+		logger.trace("list:"+xmlList.toString());
+			
 		for (String xml : xmlList) {
 			logger.trace("xml:" + xml);
 			if (xml.equals(""))
 				continue;
 
-			if (textSearch(xml))
+			if (textSearch(xml,this.searchText))
 				return true;
 		}
 		return false;
 		
 	}
 
-	// CodeableConcept.text, Coding.display, or Identifier.label
-	private boolean textSearch(String xml) throws XQueryUtilException {
-
-		ArrayList<String> list = new ArrayList<String>();
-		list.addAll(getListFromParameterPath(xml, "//@value/string()"));
-
-		logger.trace("list:" + list.toString());
-		for (String v : list) {
-			if (this.getModifier().equals("exact")) {
-				if (v.equals(this.searchText)) {
-					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
-					return true;
-				}
-			} else {
-				v = v.toLowerCase().replaceAll("\\s+", " ")
-						.replaceAll("^\\s", "").replaceAll("\\s$", "");
-				if (v.contains(this.searchText)) {
-					logger.info("matched:"+ this.getRawParameter()+"="+this.getRawValue());
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+	
 
 	@Override
 	public void validateParameter() throws QueryParameterException {

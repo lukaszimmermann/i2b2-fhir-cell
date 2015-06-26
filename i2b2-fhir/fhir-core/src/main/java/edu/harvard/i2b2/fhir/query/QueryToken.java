@@ -59,6 +59,8 @@ public class QueryToken extends Query {
 	@Override
 	public boolean match(String resourceXml,Resource r, List<Resource> s) throws  XQueryUtilException {
 			ArrayList<String> typeList;
+			//logger.trace("xml:"+resourceXml);
+			
 		typeList = new ArrayList<String>(Arrays.asList("/coding",//codeable concept
 					""));//identifier
 		for (String type : typeList) {
