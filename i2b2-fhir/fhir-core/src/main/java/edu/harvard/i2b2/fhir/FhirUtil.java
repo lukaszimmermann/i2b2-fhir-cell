@@ -462,7 +462,7 @@ public class FhirUtil {
 		return list;
 	}
 
-	private static Resource getResourceFromContainer(ResourceContainer rc) {
+	public static Resource getResourceFromContainer(ResourceContainer rc) {
 		Resource r=null;
 		if(rc.getPatient()!=null) return rc.getPatient();
 		if(rc.getMedication()!=null) return rc.getMedication();

@@ -8,11 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
-import org.apache.abdera.model.Entry;
+import javax.xml.bind.JAXBException;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
@@ -24,13 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
-import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class MetaResourceDb {
 	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
-
 
 	List<Resource> resourceList;
 	static RxNormAdapter rxNormAdapter = null;
@@ -52,7 +46,8 @@ public class MetaResourceDb {
 		logger.trace("resources size:" + getSize());
 	}
 
-	public String addResource(Resource r, Class c) throws JAXBException {
+	public String addResource(Resource r) throws JAXBException {
+		Class c=FhirUtil.getResourceClass(r);
 		logger.trace("EJB Putting resource:" + c.getSimpleName());
 		try {
 			logger.trace("EJB Put Resource:"
@@ -66,7 +61,6 @@ public class MetaResourceDb {
 			Id id=new Id();
 			id.setValue(Integer.toString(getResourceTypeCount(c)));
 			r.setId(id);
-
 		}
 
 		Resource presentRes = getResource(r.getId().getValue(), c);
@@ -91,8 +85,8 @@ public class MetaResourceDb {
 	public void addBundle(Bundle b) throws JAXBException {
 		for (BundleEntry e : b.getEntry()) {
 			ResourceContainer rc=e.getResource();
-			//this.addResourceContainer(rc);
-			throw new RuntimeException("not implemented");
+			Resource r=FhirUtil.getResourceFromContainer(rc);
+			addResource(r);
 		}
 	}
 
@@ -349,8 +343,8 @@ public class MetaResourceDb {
 		return list;
 	}
 
-	public void addResourceList(List<Resource> s) {
-		resourceList.addAll(s);
+	public void addResourceList(List<Resource> s) throws JAXBException {
+		for(Resource r:s) addResource(r);
 	}
 
 }
