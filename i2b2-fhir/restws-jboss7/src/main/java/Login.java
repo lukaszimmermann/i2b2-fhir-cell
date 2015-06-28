@@ -10,7 +10,7 @@ public class Login {
    @GET
    //@Produces(MediaType.TEXT_HTML)
    public Response login()  {
-      return Response.ok( "logged in" ).build();
+      return Response.ok( "logged in.." ).build();
    }
 
 }
