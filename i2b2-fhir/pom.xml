@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.harvard.i2b2</groupId>
@@ -11,7 +12,8 @@
 		<module>xquery</module>
 		<module>preprocess-spec</module>
 		<module>rxnorm-adapter</module>
-	</modules>
+    <module>RESTfulExample</module>
+  </modules>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
