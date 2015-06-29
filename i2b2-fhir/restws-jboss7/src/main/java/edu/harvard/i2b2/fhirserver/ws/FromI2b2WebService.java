@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUtils;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -27,10 +26,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -336,20 +331,15 @@ public class FromI2b2WebService {
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
-		Client client = ClientBuilder.newBuilder().build();
-		WebTarget  webTarget = client.target(i2b2Url
-				+ "/services/QueryToolService/pdorequest");
+		
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
-
 		requestStr = insertSessionParametersInXml(requestStr, session);
 		logger.debug(requestStr);
 		// if(1==1) return new MetaResourceSet();
 
-		String oStr = webTarget
-				.request()
-				.accept("Context-Type", "application/xml")
-				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
-						String.class);
+		String oStr=WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestStr);
+		
 		// logger.debug("got::"
 		// + oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
 		logger.debug("got Response::" + oStr);
@@ -404,15 +394,9 @@ public class FromI2b2WebService {
 
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
-		Client client = ClientBuilder.newBuilder().build();
-		WebTarget  webTarget = client.target(i2b2Url
-				+ "/services/QueryToolService/pdorequest");
 		logger.info("fetching from i2b2host...");
-		String oStr = webTarget
-				.request()
-				.accept("Context-Type", "application/xml")
-				.post(Entity.entity(requestStr, MediaType.APPLICATION_XML),
-						String.class);
+		String oStr=WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestStr);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
 		logger.trace("xQueryResultString:"+xQueryResultString);
