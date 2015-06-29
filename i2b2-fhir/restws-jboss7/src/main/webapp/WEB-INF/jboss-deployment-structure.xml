@@ -1,0 +1,11 @@
+<jboss-deployment-structure>  
+   <!-- <ear-subdeployments-isolated>true</ear-subdeployments-isolated>  
+    <deployment>  
+        <dependencies>
+      <module name="org.jboss.resteasy.resteasy-jaxrs" />
+      
+     <module name="org.jboss.resteasy.resteasy-jaxrs" />
+          </dependencies>
+    </deployment>  
+	-->
+</jboss-deployment-structure> 
