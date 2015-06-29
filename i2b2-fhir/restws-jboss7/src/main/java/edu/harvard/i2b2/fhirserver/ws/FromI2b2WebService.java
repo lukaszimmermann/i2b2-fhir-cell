@@ -31,7 +31,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -210,7 +209,7 @@ public class FromI2b2WebService {
 				scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
 
-			Map<String, String> q = request.getParameterMap();
+			Map<String, String[]> q = request.getParameterMap();
 			for (String k : q.keySet()) {
 				if (k.equals("_include"))// || k.equals("patient"))
 					continue;
@@ -337,8 +336,8 @@ public class FromI2b2WebService {
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
-		Client client = ClientBuilder.newClient();
-		WebTarget webTarget = client.target(i2b2Url
+		Client client = ClientBuilder.newBuilder().build();
+		WebTarget  webTarget = client.target(i2b2Url
 				+ "/services/QueryToolService/pdorequest");
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
 
@@ -405,8 +404,8 @@ public class FromI2b2WebService {
 
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
-		Client client = ClientBuilder.newClient();
-		WebTarget webTarget = client.target(i2b2Url
+		Client client = ClientBuilder.newBuilder().build();
+		WebTarget  webTarget = client.target(i2b2Url
 				+ "/services/QueryToolService/pdorequest");
 		logger.info("fetching from i2b2host...");
 		String oStr = webTarget
