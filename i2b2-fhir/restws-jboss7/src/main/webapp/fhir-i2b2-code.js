@@ -20,12 +20,11 @@
    var DSArray=new Array();
    //var ds1=new DataStore("http://nowhere","msg1");
    
-   var fhirBase=fhirServerBase+"/dstu2/service/";
-   var ds1=new DataStore(fhirBase+"Patient","Get all patients");
-   var ds2=new DataStore(fhirBase+"Patient/1000000005","Get particular patient");
-   var ds3=new DataStore(fhirBase+"MedicationStatement?patient=1000000005","Get Medication Statements for a particular patient");
-   var ds4=new DataStore(fhirBase+"MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient","Get Medication Statements for a particular patient and include Medications and the Patient");
-   var ds5=new DataStore(fhirBase+"Patient?gender=male&birthdate=<1970-01-01","Get Male Patients born before 1970");
+   var ds1=new DataStore(fhirServerBase+"/Patient","Get all patients");
+   var ds2=new DataStore(fhirServerBase+"/Patient/1000000005","Get particular patient");
+   var ds3=new DataStore(fhirServerBase+"/MedicationStatement?patient=1000000005","Get Medication Statements for a particular patient");
+   var ds4=new DataStore(fhirServerBase+"/MedicationStatement?patient=1000000005&_include=MedicationStatement.Medication&_include=MedicationStatement.Patient","Get Medication Statements for a particular patient and include Medications and the Patient");
+   var ds5=new DataStore(fhirServerBase+"/Patient?gender=male&birthdate=<1970-01-01","Get Male Patients born before 1970");
    //var ds6=new DataStore(fhirBase+"Patient?gender=female&birthdate=<1970-01-01&@Patient.maritalStatus.coding.code:exact=M");
    
    DSArray.push(ds1);
