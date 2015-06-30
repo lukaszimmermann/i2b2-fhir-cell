@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <script src="https://rawgithub.com/smart-on-fhir/client-js/master/dist/fhir-client.js"></script>
+  </head>
+  <body>
+    <h1>Medications for <span id="name"></span></h1>
+<h1> 
+   Hello 
+  <span id="patient_name">...</span>!
+</h1>
+
+    <ul id="med_list"></ul>
+
+
+
+    <script type="text/javascript">
+
+function my_code(){
+
+var demo = {
+    serviceUrl: 'http://localhost:8080/dstu2/service',
+  patientId: '1000000005'
+};
+
+// Create a FHIR client (server URL, patient id in `demo`)
+var smart = FHIR.client(demo),
+    pt = smart.context.patient;
+
+// Create a patient banner by fetching + rendering demographics
+pt.read()
+    .then(function (p) {
+    //var bd = p.id;
+    //$("#patient_name").text("bd");
+    document.getElementById('name').innerHTML = "bd";
+});
+/*
+// A more advanced query: search for active Prescriptions, including med details
+pt.MedicationStatement.where.status("active")
+    ._include("MedicationStatement.medication")
+    .search()
+    .then(function (prescriptions) {
+    prescriptions.forEach(function (rx) {
+        var med = smart.cachedLink(rx, rx.medication);
+        var row = $("<li> " + med.name + "</li>");
+        $("#med_list").append(row);
+    });
+});
+*/
+
+
+document.getElementById('name').innerHTML = "hi";
+
+
+alert(" Alert inside my_code function");
+
+
+}
+
+window.onload=my_code();
+</script>
+
+  </body>
+</html>
