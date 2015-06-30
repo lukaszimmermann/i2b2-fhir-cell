@@ -30,7 +30,7 @@ public class WebServiceCall {
 	            //header(“X-FOO”, “BAR”).
 	    		.entity(requestXml, "application/xml")
 	            .post(String.class);
-	    System.out.println(response);
+	   // System.out.println(response);
 		return response;
 	}
 

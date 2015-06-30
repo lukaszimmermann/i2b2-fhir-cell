@@ -55,7 +55,7 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
 
-@Path("a")
+@Path("")
 public class FromI2b2WebService {
 	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
@@ -502,19 +502,19 @@ public class FromI2b2WebService {
 		instant.setValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar()));
 		meta.setLastUpdated(instant);
 				
-				b.setMeta(meta);
-				BundleType bundleType=new BundleType();
-				bundleType.setValue(BundleTypeList.SEARCHSET);
-				b.setType(bundleType);
+			b.setMeta(meta);
+			BundleType bundleType=new BundleType();
+			bundleType.setValue(BundleTypeList.SEARCHSET);
+			b.setType(bundleType);
 				
-				Uri uri=new Uri();
-				uri.setValue(basePath);
-				b.setBase(uri);
+			Uri uri=new Uri();
+			uri.setValue(basePath);
+			b.setBase(uri);
 				
-				UnsignedInt ui=new UnsignedInt();
-				int value=b.getEntry().size();
-				ui.setValue(BigInteger.valueOf(value));
-				b.setTotal(ui);
+			UnsignedInt ui=new UnsignedInt();
+			int value=b.getEntry().size();
+			ui.setValue(BigInteger.valueOf(value));
+			b.setTotal(ui);
 				
 				
 		return b;			
