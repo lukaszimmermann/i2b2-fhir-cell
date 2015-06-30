@@ -175,21 +175,8 @@ public class FromI2b2WebService {
 					.split(resourceName)[0];
 
 			if (session == null) {
-				/*
-				 * return Response.status(Status.BAD_REQUEST)
-				 * .type(MediaType.APPLICATION_XML).entity("login first ")
-				 * .build();
-				 */
-				String username = request.getHeader("username");
-				String password = request.getHeader("password");
-				String i2b2domain = request.getHeader("i2b2domain");
-				String i2b2url = request.getHeader("i2b2url");
-				doAuthentication(request, username == null ? "demo" : username,
-						password == null ? "demouser" : password,
-						i2b2domain == null ? "i2b2demo" : i2b2domain,
-						i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
-								: i2b2url);
-				session = request.getSession(false);
+				byPassAuthentication(request);
+				session=request.getSession(false);
 			}
 
 			md = (MetaResourceDb) session.getAttribute("md");
@@ -265,6 +252,24 @@ public class FromI2b2WebService {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
+	private void byPassAuthentication( HttpServletRequest request) throws XQueryUtilException, IOException, JAXBException {
+		/*
+		 * return Response.status(Status.BAD_REQUEST)
+		 * .type(MediaType.APPLICATION_XML).entity("login first ")
+		 * .build();
+		 */
+		String username = request.getHeader("username");
+		String password = request.getHeader("password");
+		String i2b2domain = request.getHeader("i2b2domain");
+		String i2b2url = request.getHeader("i2b2url");
+		doAuthentication(request, username == null ? "demo" : username,
+				password == null ? "demouser" : password,
+				i2b2domain == null ? "i2b2demo" : i2b2domain,
+				i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
+						: i2b2url);
+		
+	}
+
 	@GET
 	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
@@ -276,9 +281,13 @@ public class FromI2b2WebService {
 			@Context HttpServletRequest request)
 			throws DatatypeConfigurationException,
 			ParserConfigurationException, SAXException, IOException,
-			JAXBException, JSONException {
+			JAXBException, JSONException, XQueryUtilException {
 
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			byPassAuthentication(request);
+			session=request.getSession(false);
+		}
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST)
 					.type(MediaType.APPLICATION_XML).entity("login first")
@@ -286,7 +295,8 @@ public class FromI2b2WebService {
 		}
 
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-
+		
+		
 		String msg = null;
 		Resource r = null;
 		logger.info("searhcing particular resource2:<" + resourceName

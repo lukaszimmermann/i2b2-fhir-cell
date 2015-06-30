@@ -26,19 +26,14 @@ var demo = {
 };
 
 // Create a FHIR client (server URL, patient id in `demo`)
-var smart = FHIR.client(demo),
-    pt = smart.context.patient;
+var smart = FHIR.client(demo);
+var pt = smart.context.patient;
 
 // Create a patient banner by fetching + rendering demographics
-pt.read()
-    .then(function (p) {
-    //var bd = p.id;
-    //$("#patient_name").text("bd");
-    document.getElementById('name').innerHTML = "bd";
-});
-/*
-// A more advanced query: search for active Prescriptions, including med details
-pt.MedicationStatement.where.status("active")
+document.getElementById('name').innerHTML = "bd1";
+pt.read();
+  
+  pt.MedicationStatment.where.status("active")
     ._include("MedicationStatement.medication")
     .search()
     .then(function (prescriptions) {
@@ -48,14 +43,6 @@ pt.MedicationStatement.where.status("active")
         $("#med_list").append(row);
     });
 });
-*/
-
-
-document.getElementById('name').innerHTML = "hi";
-
-
-alert(" Alert inside my_code function");
-
 
 }
 
