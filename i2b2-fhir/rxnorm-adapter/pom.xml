@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>edu.harvard.i2b2</groupId>
 			<artifactId>fhir-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+		<version>${my-project-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
