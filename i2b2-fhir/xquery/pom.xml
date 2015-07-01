@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
 		<artifactId>fhir</artifactId>
-		<version>${my-project-version}</version>
+		<version>dstu1-0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
