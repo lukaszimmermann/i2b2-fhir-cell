@@ -3,13 +3,13 @@
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
 		<artifactId>fhir</artifactId>
-		<version>0.1</version>
+		<version>${my-project-version}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>preprocess-spec</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${my-project-version}</version>
 
 
 	<dependencies>

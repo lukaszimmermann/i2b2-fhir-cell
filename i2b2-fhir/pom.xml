@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.harvard.i2b2</groupId>
 	<artifactId>fhir</artifactId>
-	<version>0.1</version>
+	<version>${my-project-version}</version>
 	<packaging>pom</packaging>
 
 	<modules>
@@ -11,12 +12,13 @@
 		<module>xquery</module>
 		<module>preprocess-spec</module>
 		<module>rxnorm-adapter</module>
-	</modules>
+  </modules>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
+		<my-project-version>dstu1-0.1</my-project-version>
 	</properties>
 
 

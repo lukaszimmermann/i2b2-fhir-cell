@@ -45,7 +45,7 @@
 	var sessionId="123";
 	var cm;
 	var responseTime=0;
-	var fhirServerBase="http://"+location.host;
+	var fhirServerBase="http://"+location.host+"/dstu1/service"
 	 
 	function runMyFunction2() {
 		runMyFunction(document.getElementById("url_bar").value);
@@ -103,7 +103,7 @@
 	function getAuth() {
 	startTime= Date.now();
 	
-       $.post(fhirServerBase+"/fhir-server/a/a/auth",$( "#form1" ).serialize() 
+       $.post(fhirServerBase+"/auth",$( "#form1" ).serialize() 
        , function(data, textStatus, xhr){
  			//alert(data);
  			sessionId=xhr.getResponseHeader('session_id');
@@ -111,7 +111,7 @@
  			setXmlDisplay(data);
  			if(data!="Authentication Failure"){
  				//alert("gotdata no AF");
- 				runMyFunction(fhirServerBase+"/fhir-server/a/a/Patient");
+ 				runMyFunction(fhirServerBase+"/Patient");
  			}else{
  				alert("Authentication Failure");
  			}
