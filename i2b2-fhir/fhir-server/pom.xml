@@ -1,20 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>edu.harvard.i2b2</groupId>
+	<artifactId>fhir-server</artifactId>
+	<packaging>war</packaging>
+	<version>${my-project-version}</version>
+	
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
 		<artifactId>fhir</artifactId>
-		<version>0.1</version>
+		<version>dstu1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>fhir-server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
-
+	
 	<build>
-		<finalName>fhir-server</finalName>
+		<finalName>dstu1</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -27,60 +28,56 @@
 					</archive>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
+	
+
+	
 
 	<dependencies>
-		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>fhir-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>xquery</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
+	
+	<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>6.0</version>
 			<scope>provided</scope>
 
 		</dependency>
+
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>2.0</version>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
 		</dependency>
 
+		<!-- JAX-RS API -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-client</artifactId>
-			<version>3.0.11.Final</version>
+			<artifactId>jaxrs-api</artifactId>
+			<version>2.3.2.Final</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<!-- RESTEasy implementation of JAX-RS API -->
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.8</version>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-jaxrs</artifactId>
+			<version>2.3.2.Final</version>
+			<scope>provided</scope>
 		</dependency>
-
-
+		<!-- RESTEasy implementation of JAX-RS Client API -->
+<!-- <dependency>
+	<groupId>com.sun.jersey</groupId>
+	<artifactId>jersey-client</artifactId>
+	<version>1.8</version>
+</dependency>
+ -->
 
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20140107</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.hl7.fhir.tools</groupId>
-			<artifactId>validator</artifactId>
-			<version>1.0</version>
-			<!-- <scope>system</scope> <systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath> -->
+			<groupId>edu.harvard.i2b2</groupId>
+			<artifactId>fhir-core</artifactId>
+			<version>${my-project-version}</version>
 		</dependency>
 
 
@@ -88,7 +85,5 @@
 
 	</dependencies>
 
-	<!-- <repositories> <repository> <id>basex</id> <name>BaseX Maven Repository</name> 
-		<url>http://files.basex.org/maven</url> </repository> </repositories> -->
-
+	
 </project>
