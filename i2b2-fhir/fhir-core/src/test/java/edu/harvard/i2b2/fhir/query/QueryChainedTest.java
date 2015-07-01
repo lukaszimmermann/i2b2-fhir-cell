@@ -67,7 +67,6 @@ public class QueryChainedTest {
 	@Test
 	public void testChainedMulipleObjects() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException, FhirCoreException, QueryParameterException, QueryValueException, XQueryUtilException, QueryException 
 	{
-		logger.trace(""+JAXBUtil.toXml(p));
 		String xmlPatientMultiIdentifier = Utils.getFile("example/fhir/singlePatientMultiIdentifiers.xml");
 		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier,Patient.class);
 		logger.trace("id:"+FhirUtil.getChildrenThruChain(p,"identifier", s));

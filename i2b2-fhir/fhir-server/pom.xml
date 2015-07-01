@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
 		<artifactId>fhir</artifactId>
-		<version>dstu1</version>
+		<version>dstu1-0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	
