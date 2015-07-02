@@ -1,0 +1,52 @@
+-------------------------------------------------------------------------------
+Test set: edu.harvard.i2b2.map.MapSystemEngineTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.065 sec <<< FAILURE!
+test1(edu.harvard.i2b2.map.MapSystemEngineTest)  Time elapsed: 0.064 sec  <<< ERROR!
+edu.harvard.i2b2.fhir.XQueryUtilException: org.basex.query.QueryException: Unknown function 'dp:overwrite-path'.
+	at edu.harvard.i2b2.fhir.XQueryUtil.processXQuery(XQueryUtil.java:96)
+	at edu.harvard.i2b2.fhir.map.MapSystemEngine.getNested(MapSystemEngine.java:86)
+	at edu.harvard.i2b2.fhir.map.MapSystemEngine.appendPath(MapSystemEngine.java:77)
+	at edu.harvard.i2b2.map.MapSystemEngineTest.test1(MapSystemEngineTest.java:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:483)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:483)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75)
+Caused by: org.basex.query.QueryException: Unknown function 'dp:overwrite-path'.
+	at org.basex.query.QueryError.get(QueryError.java:1296)
+	at org.basex.query.func.StaticFuncs.check(StaticFuncs.java:164)
+	at org.basex.query.QueryContext.check(QueryContext.java:253)
+	at org.basex.query.QueryParser.finish(QueryParser.java:280)
+	at org.basex.query.QueryParser.parseMain(QueryParser.java:177)
+	at org.basex.query.QueryContext.parseMain(QueryContext.java:216)
+	at org.basex.query.QueryProcessor.parse(QueryProcessor.java:58)
+	at org.basex.query.QueryProcessor.execute(QueryProcessor.java:97)
+	at edu.harvard.i2b2.fhir.XQueryUtil.processXQuery(XQueryUtil.java:93)
+	... 33 more
+
