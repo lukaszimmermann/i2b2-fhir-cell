@@ -2,21 +2,21 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
-		<artifactId>fhir</artifactId>
-		<version>0.1</version>
+		<artifactId>fhir-dstu</artifactId>
+		<version>dstu2-0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>preprocess-spec</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${my-project-version}</version>
 
 
 	<dependencies>
 		<dependency>
 		<groupId>edu.harvard.i2b2</groupId>
 	<artifactId>fhir-core</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${my-project-version}</version>
 		</dependency>
 	</dependencies>
 

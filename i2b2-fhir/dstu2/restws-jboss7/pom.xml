@@ -2,20 +2,20 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
-		<artifactId>fhir</artifactId>
+		<artifactId>fhir-dstu</artifactId>
 		<version>dstu2-0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.harvard.i2b2</groupId>
-	<artifactId>dstu2</artifactId>
+	<artifactId>fhir-server</artifactId>
 	<version>${my-project-version}</version>
 	<packaging>war</packaging>
 	
 	<build>
-		<finalName>dstu2</finalName>
-		<plugins>
+	<!--	<finalName>dstu2</finalName>
+	-->	<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
