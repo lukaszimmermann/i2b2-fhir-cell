@@ -12,6 +12,7 @@
 		<module>xquery</module>
 		<module>preprocess-spec</module>
 		<module>rxnorm-adapter</module>
+		<module>restws-jboss7</module>
   </modules>
 
 	<properties>
