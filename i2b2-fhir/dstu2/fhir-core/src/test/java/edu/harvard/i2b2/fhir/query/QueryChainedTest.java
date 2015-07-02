@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2007 Massachusetts General Hospital 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the i2b2 Software License v1.0 
+ * which accompanies this distribution. 
+ * 
+ * Contributors:
+ * 		Kavishwar Wagholikar (kavi)
+ */
 package edu.harvard.i2b2.fhir.query;
 
 import static org.junit.Assert.assertFalse;
@@ -34,8 +43,6 @@ import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryChainedTest {
 	static Logger logger = LoggerFactory.getLogger(QueryChainedTest.class);
@@ -48,7 +55,7 @@ public class QueryChainedTest {
 	Query q;
 	MetaResourceDb db;
 	QueryEngine qe;
-	MetaResourceSet s;
+	List<Resource> s;
 	@Before
 	public void setup() throws FhirCoreException, JAXBException, IOException {
 		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
@@ -60,7 +67,7 @@ public class QueryChainedTest {
 		qb = new QueryBuilder();
 		db=new MetaResourceDb();
 		//db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
-		db.addMetaResource(FhirUtil.getMetaResource(ms), MedicationStatement.class);
+		db.addResource(ms);
 		s=db.getAll();
 	}
 
@@ -71,13 +78,13 @@ public class QueryChainedTest {
 		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier,Patient.class);
 		logger.trace("id:"+FhirUtil.getChildrenThruChain(p,"identifier", s));
 		
-		db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
+		db.addResource(p);
 		s=db.getAll();
 		String url="MedicationStatement?MedicationStatement.Patient.identifier=738472983-2";
 		//String url="Patient?identifier=738472983-2";
 		qe = new QueryEngine(url);
 		logger.trace("qe:"+qe);
-		MetaResourceSet resSet=qe.search(s);
+		List<Resource> resSet=qe.search(s);
 	}
 	
 	//@Test
@@ -87,9 +94,9 @@ public class QueryChainedTest {
 		String url="MedicationStatement?MedicationStatement.Patient.name:exact=Pieter";
 		qe = new QueryEngine(url);
 		logger.trace("qe:"+qe);
-		MetaResourceSet resSet=qe.search(s);
+		List<Resource> resSet=qe.search(s);
 		//logger.info("res:"+JAXBUtil.toXml(resSet));	
-		assertTrue(resSet.getMetaResource().size()>0);
+		assertTrue(resSet.size()>0);
 		
 		url="MedicationStatement?MedicationStatement.Patient.name:exact=Pi3eter";
 		//String url="Patient?name:exact=Pieter";
@@ -97,7 +104,7 @@ public class QueryChainedTest {
 		logger.trace("qe:"+qe);
 		resSet=qe.search(s);
 		//logger.info("res:"+JAXBUtil.toXml(resSet));	
-		assertTrue(resSet.getMetaResource().size()==0);
+		assertTrue(resSet.size()==0);
 		
 	
 		}
