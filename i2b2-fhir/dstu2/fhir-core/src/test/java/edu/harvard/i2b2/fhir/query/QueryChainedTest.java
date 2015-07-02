@@ -58,10 +58,10 @@ public class QueryChainedTest {
 	List<Resource> s;
 	@Before
 	public void setup() throws FhirCoreException, JAXBException, IOException {
-		xmlPatient = Utils.getFile("example/fhir/singlePatient.xml");
+		xmlPatient = Utils.getFile("example/fhir/DSTU2/singlePatient.xml");
 		p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
 		qb = new QueryBuilder();
-		xmlMedicationStatement = Utils.getFile("example/fhir/MedicationStatement.xml");
+		xmlMedicationStatement = Utils.getFile("example/fhir/DSTU2/MedicationStatement.xml");
 		ms = (MedicationStatement) JAXBUtil.fromXml(xmlMedicationStatement,MedicationStatement.class);
 		FhirUtil.setId(ms,"1-1");
 		qb = new QueryBuilder();
@@ -74,7 +74,7 @@ public class QueryChainedTest {
 	@Test
 	public void testChainedMulipleObjects() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException, FhirCoreException, QueryParameterException, QueryValueException, XQueryUtilException, QueryException 
 	{
-		String xmlPatientMultiIdentifier = Utils.getFile("example/fhir/singlePatientMultiIdentifiers.xml");
+		String xmlPatientMultiIdentifier = Utils.getFile("example/fhir/DSTU2/singlePatientMultiIdentifiers.xml");
 		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier,Patient.class);
 		logger.trace("id:"+FhirUtil.getChildrenThruChain(p,"identifier", s));
 		
