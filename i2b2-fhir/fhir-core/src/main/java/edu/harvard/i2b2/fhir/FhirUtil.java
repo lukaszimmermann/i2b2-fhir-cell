@@ -1,10 +1,15 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,22 +37,29 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.abdera.Abdera;
+import org.apache.abdera.ext.opensearch.model.Url;
+import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.abdera.parser.ParseException;
+import org.apache.abdera.parser.Parser;
 import org.apache.abdera.writer.Writer;
+import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
+import org.hl7.fhir.Medication;
+import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
+import org.hl7.fhir.ResourceContainer;
 import org.hl7.fhir.instance.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class FhirUtil {
 	// public static boolean validateFhirResourceBeforeAddingFlag=false;
@@ -63,75 +75,13 @@ public class FhirUtil {
 
 	private static Validator v;
 
-	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";"
-			+ "declare namespace i=\"http://i2b2.harvard.edu/fhir/core\";";
-
+	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";";
+		
 	static {
 		initResourceClassList();
 	}
 
-	public static String getResourceBundle(MetaResourceSet s,
-			String uriInfoString, String urlString) {
-		String fhirBase = uriInfoString;
-
-		Abdera abdera = new Abdera();
-		Writer writer1 = abdera.getWriterFactory().getWriter("prettyxml");
-		Feed feed = abdera.newFeed();
-
-		StringWriter swriter = new StringWriter();
-		try {
-
-			feed.setId(uriInfoString);
-			feed.setTitle("Query result");
-			feed.setUpdated(new Date());
-			feed.addExtension("http://www.w3.org/2005/Atom", "published", null)
-					.setText(new Date().toGMTString());
-			feed.addLink(urlString).setAttributeValue("rel", "query");
-			feed.addLink(uriInfoString).setAttributeValue("rel", "self");
-			feed.addLink(fhirBase).setAttributeValue("rel", "fhir-base");
-
-			feed.addExtension("http://a9.com/-/spec/opensearch/1.1/", "result",
-					"os").setText(Integer.toString(s.getMetaResource().size()));
-			StringWriter rwriter = new StringWriter();
-
-			for (MetaResource mr : s.getMetaResource()) {
-				Resource r = mr.getResource();
-				MetaData m = mr.getMetaData();
-				for (Class c : getResourceClassList()) {
-
-					if (c.isInstance(r)) {
-						JAXBContext jaxbContext = JAXBUtil.getJaxBContext(c);// JAXBContext.newInstance(c);
-						Marshaller jaxbMarshaller = jaxbContext
-								.createMarshaller();
-						jaxbMarshaller.setProperty(
-								Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-						Entry entry = feed.addEntry();
-						entry.setId(fhirBase + r.getId());
-						String lastUpdated = null;
-						try {
-							lastUpdated = m.getLastUpdated().toString();
-						} catch (Exception e) {
-						}
-						if (lastUpdated != null)
-							entry.setUpdated(lastUpdated);
-						// entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new
-						// Date().toGMTString());
-						entry.addLink(fhirBase + r.getId()).setAttributeValue(
-								"rel", "self");
-
-						jaxbMarshaller.marshal(r, rwriter);
-						entry.setContent(rwriter.toString(), "application/xml");
-						rwriter.getBuffer().setLength(0);// reset String writer
-					}
-				}
-			}
-			writer1.writeTo(feed, swriter);
-		} catch (IOException | JAXBException e) {
-			e.printStackTrace();
-		}
-		return swriter.toString();
-	}
+	
 
 	private static ArrayList<Class> getResourceClassList() {
 		initResourceClassList();
@@ -256,7 +206,7 @@ public class FhirUtil {
 					.equals(resourceName.toLowerCase()))
 				return c;
 		}
-		logger.trace("Class Not Found for FHIR resource:" + resourceName);
+		//logger.trace("Class Not Found for FHIR resource:" + resourceName);
 		return null;
 
 	}
@@ -273,19 +223,11 @@ public class FhirUtil {
 
 	}
 
-	static public List<Resource> getResourcesFromMetaResourceSet(
-			MetaResourceSet s) {
-		List<Resource> list = new ArrayList<Resource>();
-		for (MetaResource r : s.getMetaResource()) {
-			list.add(r.getResource());
-		}
-		return list;
+	
 
-	}
-
-	static public boolean isContained(MetaResourceSet s, String id) {
-		for (MetaResource mr : s.getMetaResource()) {
-			if (mr.getResource().getId().equals(id))
+	static public boolean isContained(List<Resource> outList, String idStr) {
+		for (Resource r : outList) {
+			if (r.getId().getValue().equals(idStr))
 				return true;
 		}
 		return false;
@@ -293,7 +235,7 @@ public class FhirUtil {
 	}
 	
 	public static List<Object> getChildrenThruChain(Resource r, String pathStr,
-			MetaResourceSet s)
+			List<Resource> s)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -354,7 +296,7 @@ public class FhirUtil {
 	}
 
 	public static Object getChildThruChain(Resource r, String pathStr,
-			MetaResourceSet s)
+			List<Resource> s)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
@@ -399,10 +341,9 @@ public class FhirUtil {
 		}
 	}
 
-	public static Resource findResourceById(String id, MetaResourceSet s) {
-		for (MetaResource mr : s.getMetaResource()) {
-			Resource r = mr.getResource();
-			if (r.getId().equals(id))
+	public static Resource findResourceById(String idString, List<Resource> s) {
+		for (Resource r : s) {
+			if (r.getId().getValue().equals(idString))
 				return r;
 		}
 		return null;
@@ -439,48 +380,14 @@ public class FhirUtil {
 
 	}
 
-	static public String getPatientId(MetaResource mr) {
-		String id = mr.getResource().getId().getValue();
-		Resource r = mr.getResource();
-		if (Patient.class.isInstance(r)) {
-			if (id.contains("/")) {
-				return id.split("/")[1];
-			} else
-				throw new RuntimeException("id is malformed:" + id);
-		} else {
-			if (id.contains("/") && id.contains("-")) {
-				return id.split("/")[1].split("-")[0];
-			} else
-				throw new RuntimeException("id is malformed:" + id);
+	
 
-		}
-	}
-
-
-
+	//TO rename it
 	public static List<String> getResourceList() {
 		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
 	}
 
-	public static MetaResource getMetaResource(Resource r)
-			throws FhirCoreException {
-
-		MetaData md = new MetaData();
-		GregorianCalendar gc = new GregorianCalendar();
-		try {
-			md.setLastUpdated(DatatypeFactory.newInstance()
-					.newXMLGregorianCalendar(gc));
-		} catch (DatatypeConfigurationException e) {
-			throw new FhirCoreException("error", e);
-		}
-
-		MetaResource mr = new MetaResource();
-		mr.setMetaData(md);
-		mr.setResource(r);
-
-		return mr;
-
-	}
+	
 
 	public static String getResourceXml(String id, String metaResourceSetXml)
 			throws FhirCoreException {
@@ -514,4 +421,56 @@ public class FhirUtil {
 		return pRef;
 	}
 
+	
+	
+	static public org.hl7.fhir.String getFhirString(String s1){
+		org.hl7.fhir.String s2=new org.hl7.fhir.String();
+		s2.setValue(s1);
+		return s2;
+	}
+
+	public static Bundle getResourceBundle(List<Resource> s, String basePath,
+			String url) {
+		Bundle b= new Bundle();
+		for(Resource r:s){
+			BundleEntry be=new BundleEntry();
+			ResourceContainer rc=FhirUtil.getResourceContainer(r);
+			
+			be.setResource(rc);
+			b.getEntry().add(be);
+		}
+		return b;
+	}
+
+	private static ResourceContainer getResourceContainer(Resource r) {
+		ResourceContainer rc=new ResourceContainer();
+		String rClass=FhirUtil.getResourceClass(r).getSimpleName();
+		switch(rClass){
+			case "Patient": rc.setPatient((Patient)r);break;
+			case "Medication": rc.setMedication((Medication)r);break;
+			case "MedicationStatement": rc.setMedicationStatement((MedicationStatement)r);break;
+		}
+		return rc;
+	}
+
+	public static List<Resource> getResourceListFromBundle(Bundle b) {
+		List<Resource> list=new ArrayList<Resource>();
+		for(BundleEntry e:b.getEntry()){
+			e.getResource();
+			list.add(FhirUtil.getResourceFromContainer(e.getResource()));
+		}
+		return list;
+	}
+
+	public static Resource getResourceFromContainer(ResourceContainer rc) {
+		Resource r=null;
+		if(rc.getPatient()!=null) return rc.getPatient();
+		if(rc.getMedication()!=null) return rc.getMedication();
+		if(rc.getMedicationStatement()!=null) return rc.getMedicationStatement();
+		if(rc.getSearchParameter()!=null) return rc.getSearchParameter();
+		
+		throw new RuntimeException("Not implemented all resource types");
+		}
+
+	
 }
