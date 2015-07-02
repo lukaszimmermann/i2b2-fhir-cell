@@ -1,0 +1,5 @@
+Login.class
+edu/harvard/i2b2/fhirserver/ws/AuthenticationFailure.class
+edu/harvard/i2b2/fhirserver/ws/FhirServerException.class
+edu/harvard/i2b2/fhirserver/ws/FromI2b2WebService.class
+MyApplication.class
