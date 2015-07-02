@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2007 Massachusetts General Hospital 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the i2b2 Software License v1.0 
+ * which accompanies this distribution. 
+ * 
+ * Contributors:
+ * 		Kavishwar Wagholikar (kavi)
+ */
 package edu.harvard.i2b2.fhir.query;
 
 import static org.junit.Assert.assertFalse;
@@ -30,14 +39,12 @@ import edu.harvard.i2b2.fhir.SetupExamples;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class QueryEngineTest {
 	static Logger logger = LoggerFactory.getLogger(QueryEngineTest.class);
 	Patient p;
 	Patient p2;
-	MetaResourceSet s;
+	List<Resource> s;
 	QueryEngine qe;
 
 	@Before
@@ -50,10 +57,9 @@ public class QueryEngineTest {
 		p2 = (Patient) JAXBUtil.fromXml(xml,Patient.class);
 		FhirUtil.setId(p2,"myid2");
 		
-		 s = new MetaResourceSet();
-		MetaResource mr = FhirUtil.getMetaResource(p);
-		s.getMetaResource().add(mr);
-	}
+		 s = new ArrayList<Resource>();
+		 s.add(p);
+		 }
 
 	 @Test
 	public void testQuery() throws QueryParameterException,
@@ -66,15 +72,15 @@ public class QueryEngineTest {
 		logger.trace(qe.toString());
 
 		
-		MetaResource mr2 = FhirUtil.getMetaResource(p2);
+		
 		// s.getMetaResource().add(mr2);
 		// s.getMetaResource().add(
 		// SetupExamples.getEGPatient().getMetaResource().get(0));
 		// logger.trace("Input:" + FhirUtil.toXml(p));
 
-		MetaResourceSet s2 = qe.search(s);
-		logger.info("Input:" + s.getMetaResource().size());
-		logger.info("Result:" + s2.getMetaResource().size());
+		List<Resource> s2 = qe.search(s);
+		logger.info("Input:" + s.size());
+		logger.info("Result:" + s2.size());
 
 	}
 

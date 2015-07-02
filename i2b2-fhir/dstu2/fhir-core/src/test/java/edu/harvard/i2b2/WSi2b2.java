@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2007 Massachusetts General Hospital 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the i2b2 Software License v1.0 
+ * which accompanies this distribution. 
+ * 
+ * Contributors:
+ * 		Kavishwar Wagholikar (kavi)
+ */
 package edu.harvard.i2b2;
 
 import static org.junit.Assert.*;
@@ -6,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -14,16 +24,16 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
+import org.hl7.fhir.Bundle;
+import org.hl7.fhir.Resource;
 import org.junit.Test;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
-import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
 public class WSi2b2 {
 
@@ -80,9 +90,10 @@ String query = Utils
 		//		.entity(oStr).build();
 		String xQueryResultString = XQueryUtil.processXQuery(query, oStr);
 		//System.out.println(xQueryResultString);
-		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xQueryResultString);
-		System.out.println(JAXBUtil.toXml(s.getMetaResource().get(0).getResource()));
-		md.addMetaResourceSet(s);
+		Bundle b = JAXBUtil.fromXml(xQueryResultString,Bundle.class);
+		List<Resource> s=FhirUtil.getResourceListFromBundle(b);
+		System.out.println(JAXBUtil.toXml(s.get(0)));
+		md.addResourceList(s);
 	}
 	
 	

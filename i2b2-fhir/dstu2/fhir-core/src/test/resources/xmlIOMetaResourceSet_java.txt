@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2007 Massachusetts General Hospital 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the i2b2 Software License v1.0 
+ * which accompanies this distribution. 
+ * 
+ * Contributors:
+ * 		Kavishwar Wagholikar (kavi)
+ */
 package edu.harvard.i2b2;
 
 import static org.junit.Assert.assertEquals;
@@ -31,29 +40,26 @@ import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
 import org.junit.Test;
 
-import edu.harvard.i2b2.fhir.core.MetaData;
-import edu.harvard.i2b2.fhir.core.MetaResource;
-import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
-import edu.harvard.i2b2.fhir.MetaResourceDb;
-import edu.harvard.i2b2.fhir.MetaResourceSetTransform;
+import edu.harvard.i2b2.fhir.ResourceDb;
+import edu.harvard.i2b2.fhir.List<Resource>Transform;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 
-public class xmlIOMetaResourceSet {
+public class xmlIOList<Resource> {
 
 	// @Test
 	public void test2() throws JAXBException, IOException,
 			DatatypeConfigurationException {
 		final String BOOKSTORE_XML = "./tmp.xml";
 
-		MetaResourceSet s1 = new MetaResourceSet();
-		ArrayList<MetaResource> list = new ArrayList<MetaResource>();
+		List<Resource> s1 = new List<Resource>();
+		ArrayList<Resource> list = new ArrayList<Resource>();
 
 		// create books
-		MetaResource r1 = new MetaResource();
+		Resource r1 = new Resource();
 		MetaData md1 = new MetaData();
 		//md1.setId("medication/1");
 		GregorianCalendar gc = new GregorianCalendar();
@@ -69,11 +75,11 @@ public class xmlIOMetaResourceSet {
 		r1.setMetaData(md1);
 		r1.setResource(m1);
 		list.add(r1);
-		s1.getMetaResource().add(r1);
-		s1.getMetaResource().add(r1);
+		s1.getResource().add(r1);
+		s1.getResource().add(r1);
 
 		// create JAXB context and instantiate marshaller
-		JAXBContext context = JAXBContext.newInstance(MetaResourceSet.class);
+		JAXBContext context = JAXBContext.newInstance(List<Resource>.class);
 		Marshaller m = context.createMarshaller();
 		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
@@ -88,26 +94,26 @@ public class xmlIOMetaResourceSet {
 		System.out.println("Output from our XML File: ");
 		Unmarshaller um = context.createUnmarshaller();
 		System.out.println("FhirResourceSet: ");
-		MetaResourceSet s2 = (MetaResourceSet) um.unmarshal(new FileReader(
+		List<Resource> s2 = (List<Resource>) um.unmarshal(new FileReader(
 				BOOKSTORE_XML));
 		System.out.println("FhirResourceSet: "
-				+ s2.getMetaResource().get(0).getResource().getId());
+				+ s2.getResource().get(0).getResource().getId());
 
 	}
 
 	//@Test
 	public void Test2() throws JAXBException, FileNotFoundException {
-		final String xmlFileName = "example/fhir/MetaResourceSet3.xml";
+		final String xmlFileName = "example/fhir/List<Resource>3.xml";
 		String xmlString = Utils.getFile(xmlFileName);
 		
-		MetaResourceSet s2 = MetaResourceSetTransform.MetaResourceSetFromXml(xmlString); 
+		List<Resource> s2 = List<Resource>Transform.List<Resource>FromXml(xmlString); 
 		// System.out.println("FhirResourceSet: "
-		// +s2.getMetaResource().get(0).getMetaData().getId());
+		// +s2.getResource().get(0).getMetaData().getId());
 		System.out.println("FhirResourceSet: "
-				+ ((Medication) s2.getMetaResource().get(0).getResource())
+				+ ((Medication) s2.getResource().get(0).getResource())
 						.getName().getValue());
 		assertEquals("NDC:00641276641","FhirResourceSet: "
-				+ ((Medication) s2.getMetaResource().get(0).getResource())
+				+ ((Medication) s2.getResource().get(0).getResource())
 						.getCode().getCoding().get(0).getCode().getValue());
 
 	}
@@ -122,16 +128,16 @@ public class xmlIOMetaResourceSet {
 	public void testI2b2toFhirMedPDOtransform() throws JAXBException, XQueryUtilException {
 		String xmlString = PdoEGtoFhirBundle.defaultread();
 		System.out.println(xmlString);
-		MetaResourceSet s = MetaResourceSetTransform.MetaResourceSetFromXml(xmlString); 
+		List<Resource> s = List<Resource>Transform.List<Resource>FromXml(xmlString); 
 		testResources(s);
 	}
 
-	private void testResources(MetaResourceSet s2) throws JAXBException{
+	private void testResources(List<Resource> s2) throws JAXBException{
 		// System.out.println(Utils.getFile(xmlFileName));
 				
 				// System.out.println("FhirResourceSet: "
-				// +s2.getMetaResource().get(0).getMetaData().getId());
-				Resource r1 = s2.getMetaResource().get(1).getResource();
+				// +s2.getResource().get(0).getMetaData().getId());
+				Resource r1 = s2.getResource().get(1).getResource();
 				if (Medication.class.isInstance(r1)) {
 
 					System.out.println("FhirResourceSet: "
@@ -147,7 +153,7 @@ public class xmlIOMetaResourceSet {
 									.getContent().get(0).toString());
 				}
 
-				for (MetaResource mr : s2.getMetaResource()) {
+				for (Resource mr : s2.getResource()) {
 					Resource r = mr.getResource();
 					if (FhirUtil.isValid(JAXBUtil.toXml(r))) {
 						System.out.println("#################Valid");
@@ -169,10 +175,10 @@ public class xmlIOMetaResourceSet {
 	
 	//@Test
 	public void Test5() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException, JAXBException{
-		MetaResourceDb mrDb= new MetaResourceDb();
+		ResourceDb mrDb= new ResourceDb();
 		Patient p= new Patient();
 		FhirUtil.setId(p,"Patient/123");
-		MetaResource mrP=new MetaResource();mrP.setResource(p);
+		Resource mrP=new Resource();mrP.setResource(p);
 		MetaData md1=new MetaData();mrP.setMetaData(md1);
 		
 		
@@ -181,11 +187,11 @@ public class xmlIOMetaResourceSet {
 		ms.setPatient(	FhirUtil.getReference(p));
 		
 		
-		MetaResource mrMS=new MetaResource();mrMS.setResource(ms);
+		Resource mrMS=new Resource();mrMS.setResource(ms);
 		MetaData md2=new MetaData();mrMS.setMetaData(md2);
 		
-		mrDb.addMetaResource(mrMS,MedicationStatement.class);
-		mrDb.addMetaResource(mrP,Patient.class);
+		mrDb.addResource(mrMS,MedicationStatement.class);
+		mrDb.addResource(mrP,Patient.class);
 		
 		System.out.println("child:"+mrDb.getChildOfResource(ms, "patient.id"));
 		
@@ -197,24 +203,24 @@ public class xmlIOMetaResourceSet {
 	 * as demonstrated here
 	 */
 	//@Test
-	public void Test6() throws DatatypeConfigurationException, JAXBException, IOException{ 
+//	public void Test6() throws DatatypeConfigurationException, JAXBException, IOException{ 
 		String inValidPatient=Utils.getFile("example/fhir/singlePatientInvalid.xml");
-		System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
+		//System.out.println(FhirUtil.getValidatorErrorMessage(inValidPatient));
 		Patient p=(Patient) JAXBUtil.fromXml(inValidPatient,Patient.class);
-		MetaResource mr= new MetaResource();
+		Resource mr= new Resource();
 		MetaData md= new MetaData();
 		GregorianCalendar gc = new GregorianCalendar();
-		md.setLastUpdated(DatatypeFactory.newInstance()
+	//	md.setLastUpdated(DatatypeFactory.newInstance()
 				.newXMLGregorianCalendar(gc));
 		mr.setMetaData(md);
 		mr.setResource(p);
 		
-		MetaResourceSet s= new MetaResourceSet();
-		List<MetaResource> list=s.getMetaResource();
+		List<Resource> s= new List<Resource>();
+		List<Resource> list=s.getResource();
 		list.add(mr);
-		MetaResourceDb db=new MetaResourceDb();
+		ResourceDb db=new ResourceDb();
 		
-		db.addMetaResourceSet(s);
+		db.addList<Resource>(s);
 		System.out.println("---------\nERROR:"+FhirUtil.getValidatorErrorMessage(JAXBUtil.toXml(p)));
 		
 	}
@@ -233,13 +239,14 @@ public class xmlIOMetaResourceSet {
 	}
 	
 	@Test
-	public void getPatientIdFromMetaResource() throws DatatypeConfigurationException{
-		MetaResourceSet s=ResourceSetup.getPatientAndMedicationStatementEg();
-		MetaResource medmr=s.getMetaResource().get(1);
+	public void getPatientIdFromResource() throws DatatypeConfigurationException{
+		List<Resource> s=ResourceSetup.getPatientAndMedicationStatementEg();
+		Resource medmr=s.getResource().get(1);
 		assertEquals( "1000000005",FhirUtil.getPatientId(medmr));
-		MetaResource ptmr=s.getMetaResource().get(0);
+		Resource ptmr=s.getResource().get(0);
 		assertEquals( "1000000005",FhirUtil.getPatientId(ptmr));
 	
 	}
 	
 }
+

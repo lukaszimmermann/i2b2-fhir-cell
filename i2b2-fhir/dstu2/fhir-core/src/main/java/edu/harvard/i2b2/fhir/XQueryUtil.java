@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2006-2007 Massachusetts General Hospital 
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the i2b2 Software License v1.0 
+ * which accompanies this distribution. 
+ * 
+ * Contributors:
+ * 		Kavishwar Wagholikar (kavi)
+ */
 package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
@@ -13,13 +22,6 @@ import org.basex.query.QueryProcessor;
 import org.basex.query.iter.Iter;
 import org.basex.query.value.item.Item;
 
-/**
- * This example demonstrates how databases can be created from remote XML
- * documents, and how XQuery can be used to locally update the document and
- * perform full-text requests.
- *
- * @author BaseX Team 2005-15, BSD License
- */
 public final class XQueryUtil {
 	/**
 	 * Runs the example code.
