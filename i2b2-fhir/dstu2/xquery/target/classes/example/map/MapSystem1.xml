@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MapSystemSet xmlns="http://i2b2.harvard.edu/map"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://i2b2.harvard.edu/map ../../transform/MapSystem.xsd">
+	<MapSystem>
+		<NameSpaceDeclaration name="ns2" uri="http://www.i2b2.org/xsd/hive/pdo/1.1/" />
+		
+		<NameSpaceDeclaration name="f" uri="http://hl7.org/fhir" />
+		<ToPath>
+			<Name>maritalStatusCode</Name>
+			<NameSystem>fhir</NameSystem>
+			<Path>f:Patient/maritalStatus/Coding/Code</Path>
+		</ToPath>
+		<FromPath>
+			<Name>gender</Name>
+			<NameSystem>i2b2</NameSystem>
+			<Path>/ns2:patient_set/patient/param[(@column='marital_status_cd')]/text()</Path>
+		</FromPath>
+		<Map defaultToValue="UNK">
+			<ValueMap to="S" from="single"/>
+			<ValueMap to="D" from="divorced"/>
+			<ValueMap to="M" from="married"/>
+			<ValueMap to="UNK" from="other"/>
+			<ValueMap to="T" from="partner"/>
+			<ValueMap to="L" from="seperated"/>
+			<ValueMap to="UNK" from="unknown"/>
+			<ValueMap to="UNK" from="widowed"/>
+		</Map>
+	</MapSystem>
+	
+</MapSystemSet>
