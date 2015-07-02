@@ -30,21 +30,15 @@ var smart = FHIR.client(demo);
 var pt = smart.context.patient;
 
 // Create a patient banner by fetching + rendering demographics
-document.getElementById('name').innerHTML = "bd1";
-pt.read();
-  
-  pt.MedicationStatment.where.status("active")
-    ._include("MedicationStatement.medication")
-    .search()
-    .then(function (prescriptions) {
-    prescriptions.forEach(function (rx) {
-        var med = smart.cachedLink(rx, rx.medication);
-        var row = $("<li> " + med.name + "</li>");
-        $("#med_list").append(row);
-    });
-});
 
-}
+pt.read();
+document.getElementById('name').innerHTML = "bd2";  
+var display=pt.birthDate;
+document.getElementById('name').innerHTML = "bd3";  
+
+document.getElementById('name').innerHTML = display;
+	
+};
 
 window.onload=my_code();
 </script>
