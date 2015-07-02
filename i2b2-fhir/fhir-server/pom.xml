@@ -4,13 +4,13 @@
 	<parent>
 		<groupId>edu.harvard.i2b2</groupId>
 		<artifactId>fhir</artifactId>
-		<version>0.1</version>
+		<version>dstu1-0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>fhir-server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${my-project-version}</version>
 	<packaging>war</packaging>
 
 	<build>
@@ -34,12 +34,12 @@
 		<dependency>
 			<groupId>edu.harvard.i2b2</groupId>
 			<artifactId>fhir-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${my-project-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.harvard.i2b2</groupId>
 			<artifactId>xquery</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>${my-project-version}</version>
 		</dependency>
 
 		<dependency>
