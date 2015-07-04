@@ -119,7 +119,7 @@ public abstract class Query {
 	/*
 	 * provide either resourceXml or resource and MetaResourceSet is optional
 	 */
-	abstract public boolean match(String resourceXml, Resource r, MetaResourceSet s) throws  XQueryUtilException, QueryException;
+	abstract public boolean match(String resourceXml, Resource r, MetaResourceSet s) throws  XQueryUtilException, QueryException, JAXBException;
 
 	abstract public void validateParameter() throws QueryParameterException;
 

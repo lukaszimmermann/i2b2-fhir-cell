@@ -76,7 +76,7 @@ public class QueryChained extends Query {
 
 	@Override
 	public boolean match(String resourceXml, Resource r, MetaResourceSet s)
-			throws XQueryUtilException, QueryException {
+			throws XQueryUtilException, QueryException, JAXBException {
 		if (!this.baseResourceClass.isInstance(r))
 			return false;
 

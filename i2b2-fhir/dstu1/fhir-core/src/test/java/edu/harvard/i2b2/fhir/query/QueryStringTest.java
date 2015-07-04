@@ -41,7 +41,7 @@ public class QueryStringTest {
 
 	@Test
 	public void testString() throws QueryParameterException,
-			QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
+			QueryValueException, FhirCoreException, XQueryUtilException, QueryException, JAXBException {
 		logger.info("Running tests for QueryString...");
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("name")

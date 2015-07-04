@@ -89,9 +89,11 @@ public class MetaResourceDb {
 	}
 
 	public void addMetaResourceSet(MetaResourceSet s) throws JAXBException {
+		logger.trace(""+JAXBUtil.toXml(s));
 		for (MetaResource mr : s.getMetaResource()) {
+			Resource r= mr.getResource();
 			this.addMetaResource(mr,
-					FhirUtil.getResourceClass(mr.getResource()));
+					FhirUtil.getResourceClass(r));
 		}
 	}
 

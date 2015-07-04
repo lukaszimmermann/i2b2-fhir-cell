@@ -25,7 +25,7 @@ else if($freq="tid") then "3"
 else if($freq="bds") then "2"
 else if($freq="qd") then "1"
 else if($freq="qhs") then "1" (: every night at bed time:)
-else "UNK"
+else ""
 
 let $c:= 
 <timingSchedule>
@@ -90,9 +90,9 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
   
 };
 
-declare function local:fnMetaData($type as xs:string,$id as xs:string*, $last_updated as xs:string* ) as node(){
+declare function local:fnMetaData($id as xs:string*, $last_updated as xs:string* ) as node(){
 <MetaData>
-    <id>{concat($type,"/",$id)}</id>
+    <id>{$id}</id>
     <lastUpdated>{$last_updated}</lastUpdated>
 </MetaData>
 };
@@ -100,7 +100,7 @@ declare function local:fnMetaData($type as xs:string,$id as xs:string*, $last_up
 declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timingScheduleFhir as node()?, $routeFhir as node()?,$doseQuantityFhir as node()?, $medication_id as xs:string?,
         $sd as xs:string, $ed as xs:string, $pid as xs:string?,$instr as xs:string?) as node(){
  
- <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationPrescritpion" >
+ <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationPrescription" >
   <id value="MedicationPrescription/{$pid}-{$count}"/>
    <text>
     <status value="generated"/>
@@ -255,12 +255,12 @@ let $fhirMedicationPrescription:=local:fnFhirMedicationPrescription($count,$timi
 return <set>
 <MetaResource>
 {$fhirMedication}
-{local:fnMetaData("Medication",xs:string($count),$updateDate)}
+{local:fnMetaData(concat("Medication/",$pid,"-",xs:string($count)),$updateDate)}
 </MetaResource>
 
 <MetaResource>
 {$fhirMedicationPrescription}
-{local:fnMetaData("MedicationPrescription",xs:string($count),$updateDate)}
+{local:fnMetaData(concat("MedicationPrescription/",$pid,"-",xs:string($count)),$updateDate)}
 </MetaResource>
 
 </set>
