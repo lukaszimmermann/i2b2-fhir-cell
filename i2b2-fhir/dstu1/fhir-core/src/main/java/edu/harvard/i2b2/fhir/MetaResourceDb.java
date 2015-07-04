@@ -53,6 +53,7 @@ public class MetaResourceDb {
 
 	public String addMetaResource(MetaResource p, Class c) throws JAXBException {
 		logger.trace("EJB Putting resource:" + c.getSimpleName());
+		Resource r=p.getResource();
 		try {
 			logger.trace("EJB Put MetaResource:"
 					+ c.cast(p.getResource()).getClass().getSimpleName());
@@ -60,31 +61,31 @@ public class MetaResourceDb {
 			e.printStackTrace();
 			return null;
 		}
-		Resource r = p.getResource();
-
-		if (r.getId() == null) {
-			r.setId(Integer.toString(getMetaResourceTypeCount(c)));
+		
+		MetaData m=p.getMetaData();
+		if (m.getId() == null) {
+			m.setId(Integer.toString(getMetaResourceTypeCount(c)));
 
 		}
 
-		MetaResource presentRes = getMetaResource(r.getId(), c);
+		MetaResource presentRes = getMetaResource(m.getId(), c);
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			logger.trace("replacing resource with id:" + r.getId());
+			logger.trace("replacing resource with id:" + m.getId());
 			metaResources.remove(presentRes);
 		}
 
 		if (Medication.class.isInstance(r)) {
-			Medication m = Medication.class.cast(r);
-			rxNormAdapter.addRxCui(m);
-			p.setResource(m);
+			Medication med = Medication.class.cast(r);
+			rxNormAdapter.addRxCui(med);
+			p.setResource(med);
 		}
 		metaResources.add(p);
 
 		logger.trace("EJB resources (after adding) size:"
 				+ metaResources.size());
-		return p.getResource().getId();
+		return m.getId();
 	}
 
 	public void addMetaResourceSet(MetaResourceSet s) throws JAXBException {
@@ -98,12 +99,13 @@ public class MetaResourceDb {
 		logger.trace("EJB searching for resource with id:" + id);
 		logger.trace("metaResources size:" + metaResources.size());
 		for (MetaResource p : metaResources) {
-			Resource r = p.getResource();
+			MetaData m=p.getMetaData();
+			Resource r=p.getResource();
 			if (!c.isInstance(r))
 				continue;
 			// logger.trace("examining resource with id:<" + r.getId()+
 			// "> for match to qid:<" + id + ">");
-			if (r.getId().equals(id)) {
+			if (m.getId().equals(id)) {
 				// logger.trace("matched resource with id:" + r.getId());
 				return p;
 			}
@@ -196,10 +198,12 @@ public class MetaResourceDb {
 
 	public Resource getParticularResource(Class c, String id) {
 		for (MetaResource mr : metaResources) {
-			Resource r = mr.getResource();
-			logger.trace(r.getId());
+			MetaData m = mr.getMetaData();
+			Resource r=mr.getResource();
+			String foundId=m.getId();
+			logger.trace("searching on:"+foundId);
 			if (c.isInstance(r)
-					&& r.getId().equals(c.getSimpleName() + "/" + id)) {
+					&& foundId.equals(c.getSimpleName() + "/" + id)) {
 				return r;
 			}
 		}
@@ -209,7 +213,9 @@ public class MetaResourceDb {
 	public MetaResource searchById(String id) {
 		// logger.trace("searching id:" + id);
 		for (MetaResource mr : metaResources) {
-			if (mr.getResource().getId().equals(id))
+			MetaData m = mr.getMetaData();
+			
+			if (m.getId().equals(id))
 				return mr;
 		}
 		logger.trace("id NOT found:" + id);
@@ -228,12 +234,12 @@ public class MetaResourceDb {
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
+			InvocationTargetException, JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
 		String returnStr = null;
 		String suffix = null;
 		String prefix = pathStr;
-		logger.trace("pathStr:" + pathStr + "	Resource:" + r.getId());
+		logger.trace("pathStr:" + pathStr + "	Resource:" + JAXBUtil.toXml(r));
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
@@ -326,7 +332,7 @@ public class MetaResourceDb {
 	public MetaResourceSet filterMetaResources(Class c,
 			HashMap<String, String> filter) throws NoSuchMethodException,
 			SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+			IllegalArgumentException, InvocationTargetException, JAXBException {
 		MetaResourceSet s = new MetaResourceSet();
 		List<MetaResource> list = s.getMetaResource();
 
