@@ -66,7 +66,7 @@ import javax.xml.bind.annotation.XmlType;
     "dispense",
     "substitution"
 })
-@XmlRootElement
+@XmlRootElement(name="MedicationPrescription")
 public class MedicationPrescription
     extends Resource
 {

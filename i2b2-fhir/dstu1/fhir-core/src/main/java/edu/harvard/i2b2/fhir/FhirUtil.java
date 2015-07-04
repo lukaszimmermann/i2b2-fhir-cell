@@ -56,7 +56,7 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|MedicationPresricption|Observation|Patient)";
+	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
@@ -236,7 +236,7 @@ public class FhirUtil {
 		}
 
 		Class c = null;
-		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement"
+		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement|org.hl7.fhir.MedicationPrescription"
 				.split("\\|")) {
 			c = Utils.getClassFromClassPath(x);
 			if (c != null)
@@ -259,14 +259,14 @@ public class FhirUtil {
 
 	}
 
-	public static Class getResourceClass(Resource resource) {
+	public static Class getResourceClass(Resource resource) throws JAXBException {
 		if (resourceClassList == null)
 			initResourceClassList();
 		for (Class c : resourceClassList) {
 			if (c.isInstance(resource))
 				return c;
 		}
-		logger.trace("Class Not Found for FHIR resource:" + resource.getId());
+		logger.trace("Class Not Found for FHIR resource:" + JAXBUtil.toXml(resource));
 		return null;
 
 	}
@@ -295,7 +295,7 @@ public class FhirUtil {
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
+			InvocationTargetException, JAXBException {
 		
 		List<Object> children= new ArrayList<Object>();
 		List<Object> resolvedChildren= new ArrayList<Object>();
@@ -356,7 +356,7 @@ public class FhirUtil {
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
+			InvocationTargetException, JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
 		
 		String suffix = null;
@@ -411,7 +411,7 @@ public class FhirUtil {
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
+			InvocationTargetException, JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
 		String returnStr = null;
 		String suffix = null;

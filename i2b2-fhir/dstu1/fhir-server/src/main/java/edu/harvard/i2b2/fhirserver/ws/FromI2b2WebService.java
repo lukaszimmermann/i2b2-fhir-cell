@@ -170,10 +170,10 @@ public class FromI2b2WebService {
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			if (session == null) {
-				byPassAuthentication(request);
-				session=request.getSession(false);
-			}
+			//if (session == null) {
+				//byPassAuthentication(request);
+				//session=request.getSession(false);
+			//}
 
 			md = (MetaResourceDb) session.getAttribute("md");
 
@@ -197,6 +197,7 @@ public class FromI2b2WebService {
 			// XXX filter has to be translated to correct "Patient" path based
 			// on class
 			logger.info("running filter..." + filter.toString());
+			md = (MetaResourceDb) session.getAttribute("md");
 			s = md.getAll(c);
 			/*
 			 * s = md.filterMetaResources(c, filter); if (filter.size() == 0) {

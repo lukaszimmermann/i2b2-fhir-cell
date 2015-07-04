@@ -35,7 +35,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
+	public void testDate() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException, JAXBException {
 		logger.info("Running tests for QueryDate...");
 		try{
 			q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("05-15-2015").build();
@@ -110,7 +110,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
+	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException, JAXBException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
 		assertTrue(q.match(xmlPatient,null,null));
@@ -124,7 +124,7 @@ public class QueryTest {
 	}
 	
 	@Test
-	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
+	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException, JAXBException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
 		assertTrue(q.match(xmlPatient,null,null));
