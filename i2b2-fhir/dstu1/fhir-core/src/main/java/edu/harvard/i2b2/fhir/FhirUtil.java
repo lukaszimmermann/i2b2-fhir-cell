@@ -283,7 +283,7 @@ public class FhirUtil {
 
 	static public boolean isContained(MetaResourceSet s, String id) {
 		for (MetaResource mr : s.getMetaResource()) {
-			if (mr.getResource().getId().equals(id))
+			if (mr.getMetaData().getId().equals(id))
 				return true;
 		}
 		return false;

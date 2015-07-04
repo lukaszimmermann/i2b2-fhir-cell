@@ -301,6 +301,9 @@ public class FromI2b2WebService {
 					+ resourceName);
 
 		r = md.getParticularResource(c, id);
+		if (r == null)
+			throw new RuntimeException("resource not found for class:"+c.getSimpleName()+" "
+					+ id);
 		msg = JAXBUtil.toXml(r);
 		if (acceptHeader.equals("application/json")) {
 			msg = Utils.xmlToJson(msg);

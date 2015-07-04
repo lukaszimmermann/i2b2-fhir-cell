@@ -30,10 +30,13 @@ import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.fhir.query.QueryReferenceTest;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
@@ -42,13 +45,12 @@ import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 
-public class xmlIOMetaResourceSet {
-
+public class xmlIOMetaResourceSetTest {
+	static Logger logger = LoggerFactory.getLogger(xmlIOMetaResourceSetTest.class);
 	// @Test
 	public void test2() throws JAXBException, IOException,
 			DatatypeConfigurationException {
-		final String BOOKSTORE_XML = "./tmp.xml";
-
+	
 		MetaResourceSet s1 = new MetaResourceSet();
 		ArrayList<MetaResource> list = new ArrayList<MetaResource>();
 
@@ -81,18 +83,12 @@ public class xmlIOMetaResourceSet {
 		m.marshal(s1, System.out);
 
 		// Write to File
-		m.marshal(s1, new File(BOOKSTORE_XML));
-
-		// get variables from our xml file, created before
+				// get variables from our xml file, created before
 		System.out.println();
 		System.out.println("Output from our XML File: ");
 		Unmarshaller um = context.createUnmarshaller();
 		System.out.println("FhirResourceSet: ");
-		MetaResourceSet s2 = (MetaResourceSet) um.unmarshal(new FileReader(
-				BOOKSTORE_XML));
-		System.out.println("FhirResourceSet: "
-				+ s2.getMetaResource().get(0).getResource().getId());
-
+		
 	}
 
 	//@Test
@@ -126,6 +122,17 @@ public class xmlIOMetaResourceSet {
 		testResources(s);
 	}
 
+	
+	@Test
+	public void testI2b2toFhirPatientTransform() throws JAXBException, XQueryUtilException {
+		String xmlString = Utils.getFile("example/i2b2/AllPatients.xml");
+		String query=Utils.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
+		String resultStr=XQueryUtil.processXQuery(query, xmlString);
+		MetaResourceSet s=JAXBUtil.fromXml(resultStr,MetaResourceSet.class);
+		
+		logger.trace(""+JAXBUtil.toXml(s));
+	}
+	
 	private void testResources(MetaResourceSet s2) throws JAXBException{
 		// System.out.println(Utils.getFile(xmlFileName));
 				

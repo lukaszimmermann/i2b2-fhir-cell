@@ -17,7 +17,7 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<my-project-version>dstu1-0.1</my-project-version>
+		<my-project-version>dstu1-0.2</my-project-version>
 	</properties>
 
 

@@ -19,6 +19,7 @@ import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
 
@@ -132,7 +133,7 @@ public class QueryEngine {
 		}
 		for (MetaResource mr : s.getMetaResource()) {
 			Resource r = mr.getResource();
-
+			MetaData md=mr.getMetaData();
 			try {
 				if (r == null)
 					throw new FhirCoreException("Resource is Null:"
@@ -141,9 +142,9 @@ public class QueryEngine {
 				throw new FhirCoreException("JaxB Error:", e);
 			}
 
-			if (r.getId() == null)
-				throw new FhirCoreException("Id is not mentioned in resource:"
-						+ JAXBUtil.toXml(r));
+			if (md.getId() == null)
+				throw new FhirCoreException("Id is not mentioned in resource metadata:"
+					 	+ JAXBUtil.toXml(r));
 
 			String resourceXml =
 					// FhirUtil.getResourceXml(r.getId(), inputMRSXml);

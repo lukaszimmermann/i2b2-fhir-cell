@@ -65,8 +65,9 @@ else if ($r="single") then "S"
 else "UNK"
 };
 
-declare function local:fnMetaData($last_updated as xs:string? ) as node(){
+declare function local:fnMetaData($class as xs:string,$id as xs:string?,$last_updated as xs:string? ) as node(){
 <MetaData>
+    <id>{concat($class,'/',$id)}</id>
     <lastUpdated>{$last_updated}</lastUpdated>
 </MetaData>
 };
@@ -173,7 +174,7 @@ let $updateDate := local:fnI2b2TimeToFhirTime($p/@update_date)
 return <set>
 <MetaResource>
 {local:fnPatient($zip, $id,$gender,$gender_expanded,$birthdate,$marital_status,$marital_status_raw,$race_code )}
-{local:fnMetaData($updateDate)}
+{local:fnMetaData('Patient',$id,$updateDate)}
 </MetaResource>
 </set>
 
