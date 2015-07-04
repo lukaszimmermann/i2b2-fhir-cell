@@ -124,14 +124,27 @@ public class xmlIOMetaResourceSetTest {
 
 	
 	@Test
+	public void testI2b2toFhirMedicationPrescriptionTransform() throws JAXBException, XQueryUtilException {
+		String xmlString = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
+		String query=Utils.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
+		String resultStr=XQueryUtil.processXQuery(query, xmlString);
+		//logger.trace(""+resultStr);
+		MetaResourceSet s=JAXBUtil.fromXml(resultStr,MetaResourceSet.class);
+		//s.getMetaResource().get(0).getMetaData();
+		logger.trace(""+JAXBUtil.toXml(s));
+	}
+	
+	
+	@Test
 	public void testI2b2toFhirPatientTransform() throws JAXBException, XQueryUtilException {
 		String xmlString = Utils.getFile("example/i2b2/AllPatients.xml");
 		String query=Utils.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		String resultStr=XQueryUtil.processXQuery(query, xmlString);
 		MetaResourceSet s=JAXBUtil.fromXml(resultStr,MetaResourceSet.class);
-		
+		s.getMetaResource().get(0).getMetaData();
 		logger.trace(""+JAXBUtil.toXml(s));
 	}
+	
 	
 	private void testResources(MetaResourceSet s2) throws JAXBException{
 		// System.out.println(Utils.getFile(xmlFileName));

@@ -396,7 +396,7 @@ public class FromI2b2WebService {
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
 		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
 
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
