@@ -170,10 +170,10 @@ public class FromI2b2WebService {
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			//if (session == null) {
-				//byPassAuthentication(request);
-				//session=request.getSession(false);
-			//}
+			if (session == null) {
+				byPassAuthentication(request);
+				session=request.getSession(false);
+			}
 
 			md = (MetaResourceDb) session.getAttribute("md");
 
@@ -283,13 +283,18 @@ public class FromI2b2WebService {
 			byPassAuthentication(request);
 			session=request.getSession(false);
 		}
+		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+		if (md.getSize()==0) {
+			byPassAuthentication(request);
+			session=request.getSession(false);
+		}
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST)
 					.type(MediaType.APPLICATION_XML).entity("login first")
 					.build();
 		}
 
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+		md = (MetaResourceDb) session.getAttribute("md");
 		
 		
 		String msg = null;
