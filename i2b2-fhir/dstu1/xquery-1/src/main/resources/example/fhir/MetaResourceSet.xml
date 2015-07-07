@@ -1,0 +1,14 @@
+<ns3:MetaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+    <ns3:MetaResource>
+        <ns3:Resource xsi:type="Patient" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <identifier>
+                <value value="123"/>
+            </identifier>
+        </ns3:Resource>
+        <ns3:MetaData>
+            <ns3:id>Patient/1000000001</ns3:id>
+            <ns3:lastUpdated>2010-11-04T10:43:00</ns3:lastUpdated>
+        </ns3:MetaData>
+    </ns3:MetaResource>
+</ns3:MetaResourceSet>
+

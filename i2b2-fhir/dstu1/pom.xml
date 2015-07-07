@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.harvard.i2b2</groupId>
-	<artifactId>fhir</artifactId>
-	<version>${my-project-version}</version>
-	<packaging>pom</packaging>
-
+		<groupId>edu.harvard.i2b2</groupId>
+		<artifactId>fhir</artifactId>
+		<version>dstu1-0.2</version>
+		<packaging>pom</packaging>
 	<modules>
-		<module>fhir-server</module>
-		<module>fhir-core</module>
-		<module>xquery</module>
-		<module>preprocess-spec</module>
+		<module>server-1</module>
+		<module>core-1</module>
+		<module>xquery-1</module>
+		<module>restws-1</module>
+		<module>preprocess-1</module>
   </modules>
 
 	<properties>
