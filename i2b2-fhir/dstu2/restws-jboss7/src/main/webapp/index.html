@@ -45,7 +45,8 @@
 	var sessionId="123";
 	var cm;
 	var responseTime=0;
-	var fhirServerBase="http://"+location.host+"/dstu2/service"
+	var path= window.location.pathname;
+	var fhirServerBase="http://"+location.host+path+"service"
 	 
 	function runMyFunction2() {
 		runMyFunction(document.getElementById("url_bar").value);
