@@ -6,4 +6,28 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+  <!--
+  <servlet>
+  <servlet-name>Jersey Web Application</servlet-name>
+  <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+  <init-param>
+    <param-name>javax.ws.rs.Application</param-name>
+    <param-value>MyApplication</param-value>
+  </init-param>
+  <context-param>
+    <param-name>resteasy.scan</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.scan.providers</param-name>
+    <param-value>false</param-value>
+  </context-param>
+  <context-param>
+    <param-name>resteasy.scan.resources</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <load-on-startup>1</load-on-startup>
+</servlet>
+  -->
 </web-app>

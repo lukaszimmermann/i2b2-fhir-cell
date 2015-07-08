@@ -1,7 +1,0 @@
-#~/local/opt/glassfish4/glassfish/bin/stopserv
-#~/local/opt/glassfish4/glassfish/bin/startserv&
-mvn clean package
-~/local/opt/glassfish4/glassfish/bin/asadmin undeploy fhir-server-api-mvn
-~/local/opt/glassfish4/glassfish/bin/asadmin deploy target/fhir-server-api-mvn.war
-
-
