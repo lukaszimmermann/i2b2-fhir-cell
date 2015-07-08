@@ -11,10 +11,10 @@
 	<groupId>edu.harvard.i2b2.fhir</groupId>
 	<version>${my-project-version}</version>
 	<packaging>war</packaging>
-	
+
 	<build>
-	<!--	<finalName>dstu2</finalName>
-	-->	<plugins>
+		<!-- <finalName>dstu2</finalName> -->
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -26,10 +26,10 @@
 					</archive>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
-	
+
 
 	<properties>
 		<!-- Explicitly declaring the source encoding eliminates the following 
@@ -78,12 +78,8 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- RESTEasy implementation of JAX-RS Client API -->
-<!-- <dependency>
-	<groupId>com.sun.jersey</groupId>
-	<artifactId>jersey-client</artifactId>
-	<version>1.8</version>
-</dependency>
- -->
+		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-client</artifactId> 
+			<version>1.8</version> </dependency> -->
 
 		<dependency>
 			<groupId>edu.harvard.i2b2.fhir</groupId>
@@ -91,11 +87,15 @@
 			<version>${my-project-version}</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.9</version>
+		</dependency>
 
 
 	</dependencies>
 
-	
+
 	<artifactId>srv</artifactId>
 </project>
