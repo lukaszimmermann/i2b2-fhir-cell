@@ -7,6 +7,9 @@
         <dependent-module archiveName="fhir-core-dstu1-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/fhir-core/fhir-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="xquery-dstu1-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/xquery--1/xquery--1">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/fhir-server/target/classes"/>
         <property name="context-root" value="old-fhir-server"/>
     </wb-module>
