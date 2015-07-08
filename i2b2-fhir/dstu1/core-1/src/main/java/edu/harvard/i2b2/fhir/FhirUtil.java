@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -80,7 +81,7 @@ public class FhirUtil {
 		StringWriter swriter = new StringWriter();
 		try {
 
-			feed.setId(uriInfoString);
+			feed.setId(uriInfoString+UUID.randomUUID().toString());
 			feed.setTitle("Query result");
 			feed.setUpdated(new Date());
 			feed.addExtension("http://www.w3.org/2005/Atom", "published", null)
@@ -106,7 +107,7 @@ public class FhirUtil {
 								Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
 						Entry entry = feed.addEntry();
-						entry.setId(fhirBase + r.getId());
+						entry.setId(fhirBase + m.getId());
 						String lastUpdated = null;
 						try {
 							lastUpdated = m.getLastUpdated().toString();
@@ -116,7 +117,7 @@ public class FhirUtil {
 							entry.setUpdated(lastUpdated);
 						// entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new
 						// Date().toGMTString());
-						entry.addLink(fhirBase + r.getId()).setAttributeValue(
+						entry.addLink(fhirBase + m.getId()).setAttributeValue(
 								"rel", "self");
 
 						jaxbMarshaller.marshal(r, rwriter);

@@ -161,8 +161,8 @@ declare function local:fnPatient($zip as xs:string?,
 </ns3:Resource>
 };
 
- let $I:= doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/AllPatients.xml')
- 
+ let $I:= root()(: doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/AllPatients.xml')
+ :)
 let $O:= 
 for $p in $I//ns2:patient_set/patient
 let $id:=$p/patient_id/text()

@@ -9,7 +9,7 @@ fn:replace($r,'.000Z$','')
  
 declare function local:fnDoseFhir($dose as xs:string?,$unit as xs:string?) as node()?
 { 
-<doseQuantity>
+<doseQuantity  xmlns="http://hl7.org/fhir">
       <value value="{$dose}"/>
       <units value="{$unit}"/>
       <system value="http://unitsofmeasure.org"/>
@@ -28,7 +28,7 @@ else if($freq="qhs") then "1" (: every night at bed time:)
 else ""
 
 let $c:= 
-<timingSchedule>
+<timingSchedule  xmlns="http://hl7.org/fhir">
      <repeat>
        <frequency value="{$o}" />
        <duration value="1" />
@@ -54,7 +54,7 @@ else "UNK"
 
 return
    
-<route>
+<route  xmlns="http://hl7.org/fhir">
    <coding>
       <system value="http://snomed.info/sct"/>
       <code value="{$c}"/>
@@ -66,11 +66,11 @@ return
 };
 
 
-declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){
-<Resource namespace="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:type="ns3:Medication" xmlns:ns2="http://www.w3.org/1999/xhtml"
-           
- >
+declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
+   <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Medication" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
+   xmlns:ns2="http://www.w3.org/1999/xhtml" >
+         
+ 
  <id value="Medication/{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
@@ -86,22 +86,26 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
     </coding>
   </code>
 
-  </Resource>
+  </ns3:Resource>
   
 };
 
-declare function local:fnMetaData($id as xs:string*, $last_updated as xs:string* ) as node(){
-<MetaData>
-    <id>{$id}</id>
-    <lastUpdated>{$last_updated}</lastUpdated>
-</MetaData>
+
+
+declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count as xs:string?,$last_updated as xs:string? ) as node(){
+<ns3:MetaData xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+    <ns3:id>{concat($class,'/',$pid,"-",$count)}</ns3:id>
+    <ns3:lastUpdated>{$last_updated}</ns3:lastUpdated>
+</ns3:MetaData>
 };
 
 declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timingScheduleFhir as node()?, $routeFhir as node()?,$doseQuantityFhir as node()?, $medication_id as xs:string?,
         $sd as xs:string, $ed as xs:string, $pid as xs:string?,$instr as xs:string?) as node(){
  
- <Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" namespace="http://hl7.org/fhir" xsi:type="ns3:MedicationPrescription" >
-  <id value="MedicationPrescription/{$pid}-{$count}"/>
+  <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="MedicationPrescription" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir">
+
+  <!--  
+<id value="MedicationPrescription/{$pid}-{$count}"/>-->
    <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -132,7 +136,7 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
     </dosageInstruction>
 
   
-</Resource>
+</ns3:Resource>
  
 };
 
@@ -204,9 +208,9 @@ let $distobs :=
     return  <set>{functx:distinct-nodes($distobs)}</set>
  };
  
- let $I:= root()
- (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery/src/main/resources/example/i2b2/MedicationsForAPatient3.xml')
- 
+ let $I:=root() (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/medicationsForAPatient.xml')
+
+  
 :)
 let $distObs:=local:distinctObservations($I)
  
@@ -252,22 +256,21 @@ let $doseQuantityFhir:=local:fnDoseFhir($dose,$doseUnit)
 let $fhirMedicationPrescription:=local:fnFhirMedicationPrescription($count,$timingScheduleFhir,$routeFhir,$doseQuantityFhir,$medication_id,$sd,$ed,$pid,$instr)
 
 
+
+
 return <set>
-<MetaResource>
+<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirMedication}
-{local:fnMetaData(concat("Medication/",$pid,"-",xs:string($count)),$updateDate)}
-</MetaResource>
-
-<MetaResource>
+{local:fnMetaData("Medication",$pid,xs:string($count),$updateDate)}
+</ns3:MetaResource>
+<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirMedicationPrescription}
-{local:fnMetaData(concat("MedicationPrescription/",$pid,"-",xs:string($count)),$updateDate)}
-</MetaResource>
-
+{local:fnMetaData("MedicationPrescription",$pid,xs:string($count),$updateDate)}
+</ns3:MetaResource>
 </set>
 
 
-return <ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
-    xmlns:ns4="http://i2b2.harvard.edu/fhir/core">
-    {$O/MetaResource}
-    </ns4:metaResourceSet>
+return <ns3:MetaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+    {$O/ns3:MetaResource}
+</ns3:MetaResourceSet>
 
