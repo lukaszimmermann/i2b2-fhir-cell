@@ -86,8 +86,8 @@
  -->
 
 		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>fhir-core</artifactId>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>core</artifactId>
 			<version>${my-project-version}</version>
 		</dependency>
 
