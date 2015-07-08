@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
-		<groupId>edu.harvard.i2b2</groupId>
-		<artifactId>fhir</artifactId>
+		<groupId>edu.harvard.i2b2.fhir</groupId>
+		<artifactId>dstu</artifactId>
 		<version>dstu1-0.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
