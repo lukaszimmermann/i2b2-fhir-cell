@@ -4,6 +4,15 @@
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+<<<<<<< HEAD
+=======
+        <dependent-module archiveName="fhir-core-dstu1-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/fhir-core/fhir-core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xquery-dstu1-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/xquery--1/xquery--1">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+>>>>>>> 6f551da26d6a5564db3e35bba6424aaa15d7a638
         <property name="java-output-path" value="/fhir-server/target/classes"/>
         <property name="context-root" value="old-fhir-server"/>
     </wb-module>
