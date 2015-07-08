@@ -47,7 +47,7 @@
 
 
 		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
 			<artifactId>xquery</artifactId>
 			<version>${my-project-version}</version>
 		</dependency>
