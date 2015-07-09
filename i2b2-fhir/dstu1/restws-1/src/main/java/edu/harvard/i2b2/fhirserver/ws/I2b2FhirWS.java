@@ -182,7 +182,7 @@ public class I2b2FhirWS {
 			@PathParam("resourceName") String resourceName,
 			@QueryParam("_include") List<String> includeResources,
 			@QueryParam("filterf") String filterf,
-			// @HeaderParam("accept") String acceptHeader,
+			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		try {
@@ -258,10 +258,18 @@ public class I2b2FhirWS {
 			String returnString = FhirUtil.getResourceBundle(s, basePath, url);
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
-
+			
+			if (acceptHeader.equals("application/json")) {
+				String msg = Utils.xmlToJson(returnString);
+				return Response.ok().type(MediaType.APPLICATION_JSON)
+						.header("session_id", session.getId())
+						.entity(msg).build();
+			
+			}else{
 			return Response.ok().type(MediaType.APPLICATION_XML)
 					.header("session_id", session.getId())
 					.entity(removeSpace(returnString)).build();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST)
@@ -334,7 +342,8 @@ public class I2b2FhirWS {
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
 			return Response.ok(removeSpace(msg))
-					.header("session_id", session.getId()).build();
+					.header("session_id", session.getId()).
+					build();
 		} else {
 			return Response
 					.noContent()
