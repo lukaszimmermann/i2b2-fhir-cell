@@ -83,6 +83,9 @@ declare function local:fnPatient($zip as xs:string?,
 ) as node()?{
         <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Patient" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir">
   <identifier>
+    <use value="usual"/>
+        <label value="SMART Hospital MRN"/>
+        <system value="urn:oid:0.1.2.3.4.5.6.7"/>
     <value value="Patient/{$id}"/>
   </identifier>
   <text>
@@ -182,6 +185,6 @@ return <set>
 </ns3:MetaResource>
 </set>
 
-return <ns3:MetaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
     {$O/ns3:MetaResource}
 </ns3:MetaResourceSet>

@@ -42,6 +42,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.namespace.QName;
 
+import net.sf.json.JSON;
+
 import org.apache.abdera.Abdera;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
@@ -51,6 +53,9 @@ import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
 import org.hl7.fhir.instance.validation.Validator;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -527,5 +532,12 @@ public class FhirUtil {
 		list.add(i);
 		return p;
 	}
-
+	
+	public static JSONObject resourceXmlToJson(Resource r) throws JSONException, JAXBException{
+		String resourceXml=JAXBUtil.toXml(r);
+		JSONObject wrapper=XML.toJSONObject(resourceXml);
+		JSONObject j=(JSONObject) wrapper.get(r.getClass().getSimpleName());
+		j.put("Resource", r.getClass().getSimpleName());
+		return wrapper;
+	}
 }
