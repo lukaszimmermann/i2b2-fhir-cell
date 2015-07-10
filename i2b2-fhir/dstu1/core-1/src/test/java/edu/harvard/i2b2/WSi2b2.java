@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.logging.Logger;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -108,6 +109,7 @@ String query = Utils
     }
 	@Test
 	public void Test4() throws XQueryUtilException{
+		
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
 		String query="replace node / with <a/>";
 		String xQueryResultString = XQueryUtil.processXQuery(query, requestStr);

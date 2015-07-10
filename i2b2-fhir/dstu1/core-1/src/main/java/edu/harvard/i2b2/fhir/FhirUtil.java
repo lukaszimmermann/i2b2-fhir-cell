@@ -10,7 +10,9 @@
  */
 package edu.harvard.i2b2.fhir;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
@@ -52,12 +54,21 @@ import org.hl7.fhir.Identifier;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
+import org.hl7.fhir.instance.formats.JsonComposer;
+import org.hl7.fhir.instance.formats.JsonComposerBase;
+import org.hl7.fhir.instance.model.ResourceFactory;
 import org.hl7.fhir.instance.validation.Validator;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.parser.IParser;
+
+import com.google.gson.stream.JsonWriter;
 
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
@@ -533,11 +544,59 @@ public class FhirUtil {
 		return p;
 	}
 	
-	public static JSONObject resourceXmlToJson(Resource r) throws JSONException, JAXBException{
+	/*public static JSONObject resourceToJson(Resource r) throws JSONException, JAXBException{
 		String resourceXml=JAXBUtil.toXml(r);
 		JSONObject wrapper=XML.toJSONObject(resourceXml);
 		JSONObject j=(JSONObject) wrapper.get(r.getClass().getSimpleName());
-		j.put("Resource", r.getClass().getSimpleName());
-		return wrapper;
+		j.put("resourceType", r.getClass().getSimpleName());
+		return j;
+	}
+	
+	public static JSONObject bundleXmlToJson(String bundleXml) throws JSONException, JAXBException{
+		JSONObject wrapper=XML.toJSONObject(bundleXml);
+		JSONObject j=(JSONObject) wrapper.get("feed");
+		j.put("resourceType", "Bundle");
+		return j;
+	}
+	*/
+	public static String resourceToJsonString( Resource r) throws JSONException, JAXBException{
+		/*org.hl7.fhir.instance.model.Resource rModel=ResourceFactory.createResource(FhirUtil.getResourceClass(r).getSimpleName());
+		rModel.
+		OutputStream os= new ByteArrayOutputStream();
+		JsonComposer c= new JsonComposer();
+		c.compose(os, r, true);
+		*/
+		//logger.trace(""+JAXBUtil.toXml(r));
+		
+		
+		FhirContext ctx = new FhirContext();
+		IParser jparser=ctx.newJsonParser();
+		IParser xparser=ctx.newXmlParser();
+		jparser.setPrettyPrint(true);
+		
+		logger.info("xml:"+JAXBUtil.toXml(r));
+		
+		IResource ir=xparser.parseResource(JAXBUtil.toXml(r));
+
+		logger.info("ir:"+ir.toString());
+		
+		return jparser.encodeResourceToString(ir);
+		
+	}
+	
+	
+	public static String bundleXmlToJsonString(String bundleXml) throws JSONException, JAXBException{
+		FhirContext ctx = new FhirContext();
+		IParser parser=ctx.newJsonParser();
+		parser.setPrettyPrint(true);
+		//parser.parseBundle(arg0)
+		//return ((FhirUtil) parser).bundleXmlToJson(bundleXml);
+		//IBundle ir=parser.parseResource(JAXBUtil.toXml(r));
+		//return parser.encodeResourceToString(ir);
+		
+		JSONObject wrapper=XML.toJSONObject(bundleXml);
+		JSONObject j=(JSONObject) wrapper.get("feed");
+		j.put("resourceType", "Bundle");
+		return "";
 	}
 }

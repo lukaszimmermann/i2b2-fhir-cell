@@ -1,5 +1,5 @@
 <jboss-deployment-structure>
-	<deployment>
+<!--	<deployment>
    <dependencies>  
         <module name="org.slf4j" />  
     </dependencies>	
@@ -11,5 +11,5 @@
          <module name="org.jboss.logmanager.log4j" />
         </exclusions>
    </deployment>
-
+-->
 </jboss-deployment-structure>
