@@ -82,6 +82,24 @@
 			<!-- <scope>system</scope> <systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath> -->
 		</dependency>
 
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>hapi-fhir-base</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+	<groupId>ca.uhn.hapi.fhir</groupId>
+	<artifactId>hapi-fhir-structures-dstu</artifactId>
+	<version>1.0</version>
+</dependency>
+
+
+		<dependency>
+			<groupId>me.fhir</groupId>
+			<artifactId>fhir-dstu1</artifactId>
+			<version>0.0.82.2943</version>
+		</dependency>
+
 
 	</dependencies>
 

@@ -61,6 +61,7 @@ import org.hl7.fhir.Instant;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Uri;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -260,7 +261,8 @@ public class I2b2FhirWS {
 			logger.info("returning response...");
 			
 			if (acceptHeader.equals("application/json")) {
-				String msg = Utils.xmlToJson(returnString);
+				String msg=null;//String msg = Utils.xmlToJson(returnString);
+				//String msg=FhirUtil.bundleXmlToJson(returnString).toString(2);
 				return Response.ok().type(MediaType.APPLICATION_JSON)
 						.header("session_id", session.getId())
 						.entity(msg).build();
@@ -324,7 +326,6 @@ public class I2b2FhirWS {
 
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 		
-		
 		String msg = null;
 		Resource r = null;
 		logger.info("searhcing particular resource2:<" + resourceName
@@ -336,12 +337,13 @@ public class I2b2FhirWS {
 
 		r = md.getParticularResource(c, id);
 		msg = JAXBUtil.toXml(r);
-		if (acceptHeader.equals("application/json")) {
-			msg = Utils.xmlToJson(msg);
-		}
+		//if (acceptHeader.equals("application/json")) {
+			//msg = Utils.xmlToJson(msg);
+			//msg =FhirUtil.resourceToJson(r).toString(2);
+		//}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
-			return Response.ok(removeSpace(msg))
+			return Response.ok(msg)
 					.header("session_id", session.getId()).
 					build();
 		} else {
@@ -535,6 +537,42 @@ public class I2b2FhirWS {
 		return XQueryUtil.processXQuery(query, input);
 	}
 
+	@GET
+	@Path("a/Patient/1137192")
+	@Produces({"application/json; charset=UTF-8" })
+	public Response getSMARTexamplePatients(@Context HttpServletRequest request){
+		logUrlAccess(request);
+		return Response.ok().type("application/json; charset=UTF-8")
+			.entity(Utils.getFile("example/smart/ParticularPatient.json")).build();
+	}
 	
-
+	@GET
+	@Path("a/Patient")
+	@Produces({"application/json; charset=UTF-8"})
+	public Response getSMARTexampleParticularPatient(@Context HttpServletRequest request){
+		logUrlAccess(request);
+		return Response.ok().type("application/json; charset=UTF-8")
+			.entity(Utils.getFile("example/smart/AllPatients.json")).build();
+	}
+	
+	@GET
+	@Path("a/MedicationPrescription/_search")
+	@Produces({"application/json; charset=UTF-8"})
+	public Response getSMARTexampleParticularPatientPrescription(@Context HttpServletRequest request){
+	
+		logUrlAccess(request);
+	return Response.ok().type("application/json; charset=UTF-8")
+		.entity(Utils.getFile("example/smart/ParticularPatientPrescription.json")).build();
+}
+	
+	private void logUrlAccess(HttpServletRequest request){
+		StringBuffer url = request.getRequestURL();
+		String queryString = request.getQueryString();
+		if (queryString != null) {
+		    url.append('?');
+		    url.append(queryString);
+		}
+		String requestURL = url.toString();
+		logger.trace(request.getRemoteAddr() +"<-"+requestURL);
+	}
 }
