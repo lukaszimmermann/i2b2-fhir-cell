@@ -1,37 +1,268 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns4:metaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:ns3="http://hl7.org/fhir"
-	xmlns:ns4="http://i2b2.harvar.edu/fhir/core">
-	<MetaResource>
-		<Resource xmlns="http://hl7.org/fhir" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			xsi:type="ns3:Medication">
-			<name value="med1"/>
-			
-			<text>
-				<status value="generated"/>
-				<ns2:div/>
-			</text>
-			
-			<code>
-				<coding>
-					<system value="http://../NDC"/>
-					<code value="NDC:00641276641"/>
-					<display value=""/>
-				</coding>
-			</code>
-			
-		</Resource>
-		<MetaData>
-			<id>medication/1</id>
-			<lastUpdated>2015-04-23T10:28:30.821-04:00</lastUpdated>
-		</MetaData>
-	</MetaResource>
-	<MetaResource>
-		<Resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Medication">
-			<ns3:name value="med1"/>
-		</Resource>
-		<MetaData>
-			<id>medication/1</id>
-			<lastUpdated>2015-04-23T10:28:30.821-04:00</lastUpdated>
-		</MetaData>
-	</MetaResource>
-</ns4:metaResourceSet>
+{"resourceType:":"Patient",
+  "identifier": [
+    {
+      "use": {
+        "value": "USUAL"
+      },
+      "label": {
+        "value": "SMART Hospital MRN"
+      },
+      "system": {
+        "value": "urn:oid:0.1.2.3.4.5.6.7"
+      },
+      "value": {
+        "value": "Patient/1000000005"
+      }
+    }
+  ],
+  "gender": {
+    "coding": [
+      {
+        "system": {
+          "value": "http://hl7.org/fhir/v3/AdministrativeGender"
+        },
+        "code": {
+          "value": "F"
+        },
+        "display": {
+          "value": "Female"
+        },
+        "primary": {
+          "value": true
+        }
+      }
+    ]
+  },
+  "birthDate": {
+    "value": "1973-06-25T00:00:00.000Z"
+  },
+  "deceasedBoolean": {
+    "value": false
+  },
+  "address": [
+    {
+      "use": {
+        "value": "HOME"
+      },
+      "zip": {
+        "value": "01889"
+      }
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "system": {
+          "value": "http://hl7.org/fhir/v3/MaritalStatus"
+        },
+        "code": {
+          "value": "S"
+        },
+        "display": {
+          "value": "single"
+        }
+      }
+    ]
+  },
+  "managingOrganization": {
+    "reference": {
+      "value": "Organization/1"
+    }
+  },
+  "active": {
+    "value": true
+  },
+  "text": {
+    "status": {
+      "value": "GENERATED"
+    },
+    "div": {
+      "content": [
+        "\n          ",
+        {
+          "tbody": [
+            {
+              "tr": [
+                {
+                  "thOrTd": [
+                    {
+                      "content": [
+                        "Zip"
+                      ]
+                    },
+                    {
+                      "content": [
+                        "01889"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "thOrTd": [
+                    {
+                      "content": [
+                        "Id"
+                      ]
+                    },
+                    {
+                      "content": [
+                        "1000000005"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "thOrTd": [
+                    {
+                      "content": [
+                        "Gender"
+                      ]
+                    },
+                    {
+                      "content": [
+                        "Female"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "thOrTd": [
+                    {
+                      "content": [
+                        "Birthdate"
+                      ]
+                    },
+                    {
+                      "content": [
+                        "1973-06-25T00:00:00.000Z"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "thOrTd": [
+                    {
+                      "content": [
+                        "Marital Status"
+                      ]
+                    },
+                    {
+                      "content": [
+                        "single"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "\n        "
+      ]
+    }
+  },
+  "extension": [
+    {
+      "valueCodeableConcept": {
+        "coding": [
+          {
+            "system": {
+              "value": "http://hl7.org/fhir/v3/Race"
+            },
+            "code": {
+              "value": "UNK"
+            },
+            "primary": {
+              "value": true
+            }
+          }
+        ]
+      },
+      "url": "http://hl7.org/fhir/StructureDefinition/us-core-race"
+    }
+  ]
+}{
+    "resourceType":"Patient",
+    "extension":[
+        {
+            "url":"http://hl7.org/fhir/StructureDefinition/us-core-race",
+            "valueCodeableConcept":{
+                "coding":[
+                    {
+                        "system":"http://hl7.org/fhir/v3/Race",
+                        "code":"UNK",
+                        "primary":true
+                    }
+                ]
+            }
+        }
+    ],
+    "text":{
+        "status":"generated",
+        "div":"<ns2:div>\n          \n            
+    <ns2:table>\n                
+        <ns2:tbody>\n                    
+            <ns2:tr>\n                        
+                <ns2:td>Zip</ns2:td>\n                        
+                <ns2:td>01889</ns2:td>\n                    
+            </ns2:tr>\n                    
+            <ns2:tr>\n                        
+                <ns2:td>Id</ns2:td>\n                        
+                <ns2:td>1000000005</ns2:td>\n                    
+            </ns2:tr>\n                    
+            <ns2:tr>\n                        
+                <ns2:td>Gender</ns2:td>\n                        
+                <ns2:td>Female</ns2:td>\n                    
+            </ns2:tr>\n                    
+            <ns2:tr>\n                        
+                <ns2:td>Birthdate</ns2:td>\n                        
+                <ns2:td>1973-06-25T00:00:00.000Z</ns2:td>\n                    
+            </ns2:tr>\n                    
+            <ns2:tr>\n                        
+                <ns2:td>Marital Status</ns2:td>\n                        
+                <ns2:td>single</ns2:td>\n                    
+            </ns2:tr>\n                
+        </ns2:tbody>\n            
+    </ns2:table>\n        
+</ns2:div>"
+    },
+    "identifier":[
+        {
+            "use":"usual",
+            "label":"SMART Hospital MRN",
+            "system":"urn:oid:0.1.2.3.4.5.6.7",
+            "value":"Patient/1000000005"
+        }
+    ],
+    "gender":{
+        "coding":[
+            {
+                "system":"http://hl7.org/fhir/v3/AdministrativeGender",
+                "code":"F",
+                "display":"Female",
+                "primary":true
+            }
+        ]
+    },
+    "birthDate":"1973-06-25T00:00:00.000Z",
+    "deceasedBoolean":false,
+    "address":[
+        {
+            "use":"home",
+            "zip":"01889"
+        }
+    ],
+    "maritalStatus":{
+        "coding":[
+            {
+                "system":"http://hl7.org/fhir/v3/MaritalStatus",
+                "code":"S",
+                "display":"single"
+            }
+        ]
+    },
+    "managingOrganization":{
+        "reference":"Organization/1"
+    },
+    "active":true
+}

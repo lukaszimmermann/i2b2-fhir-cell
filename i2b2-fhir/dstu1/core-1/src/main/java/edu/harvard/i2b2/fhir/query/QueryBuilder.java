@@ -78,7 +78,10 @@ public class QueryBuilder {
 			throw new FhirCoreException("resource class is null");
 
 		// logger.trace("rawParameter:"+this.rawParameter);
+		if (this.rawParameter.equals("patient:Patient")) {this.rawParameter="patient";}
 		String parameter = this.rawParameter;
+		
+	
 		if (parameter.contains(":"))
 			parameter = parameter.split(":")[0];
 
@@ -87,6 +90,8 @@ public class QueryBuilder {
 			parameter = parameter.substring(1);
 			this.queryTypeStr = "custom";
 		}
+		
+		
 		
 		Query q = null;
 

@@ -12,6 +12,7 @@ package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
@@ -22,6 +23,8 @@ import org.basex.query.QueryIOException;
 import org.basex.query.QueryProcessor;
 import org.basex.query.iter.Iter;
 import org.basex.query.value.item.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This example demonstrates how databases can be created from remote XML
@@ -30,7 +33,9 @@ import org.basex.query.value.item.Item;
  *
  * @author BaseX Team 2005-15, BSD License
  */
-public final class XQueryUtil {
+public final class  XQueryUtil{
+	static Logger logger = LoggerFactory.getLogger(XQueryUtil.class);
+	
 	/**
 	 * Runs the example code.
 	 * 
@@ -53,7 +58,8 @@ public final class XQueryUtil {
 		// Use internal parser to skip DTD parsing
 		try {
 			new Set("intparse", true).execute(context);
-			new org.basex.core.cmd.CreateDB("LocalXml", input).execute(context);
+			String dbName=UUID.randomUUID().toString();
+			new org.basex.core.cmd.CreateDB(dbName, input).execute(context);
 
 			try (QueryProcessor proc = new QueryProcessor(query, context)) {
 				// Store the pointer to the result in an iterator:
@@ -70,9 +76,10 @@ public final class XQueryUtil {
 			}
 
 			// System.out.println("\n* Drop the database.");
-			new DropDB("LocalXml").execute(context);
+			new DropDB(dbName).execute(context);
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
+			logger.error("",e1);
 			throw new XQueryUtilException(e1);
 		}
 		context.close();
@@ -90,10 +97,12 @@ public final class XQueryUtil {
 		// System.out.println("\n* Create a database from a file via http.");
 
 		// Use internal parser to skip DTD parsing
+		String dbName=UUID.randomUUID().toString();
 		try {
 			if (input != null) {
 				new Set("intparse", true).execute(context);
-				new org.basex.core.cmd.CreateDB("LocalXml", input)
+				
+				new org.basex.core.cmd.CreateDB(dbName, input)
 						.execute(context);
 			}
 			try (QueryProcessor proc = new QueryProcessor(query, context)) {
@@ -107,10 +116,11 @@ public final class XQueryUtil {
 
 			// System.out.println("\n* Drop the database.");
 			if (input != null) {
-				new DropDB("LocalXml").execute(context);
+				new DropDB(dbName).execute(context);
 			}
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
+			logger.error("",e1);
 			throw new XQueryUtilException(e1);
 
 		}

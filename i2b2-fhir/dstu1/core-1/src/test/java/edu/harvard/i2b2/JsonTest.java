@@ -1,5 +1,6 @@
 package edu.harvard.i2b2;
 
+import java.io.IOException;
 import java.util.GregorianCalendar;
 
 import javax.xml.bind.JAXBException;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ca.uhn.fhir.model.api.Bundle;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
@@ -36,9 +38,9 @@ public class JsonTest {
 		
 	}
 	
-	@Test
+	//@Test
 	public  void jsonSimplifiedPatientTest()
-			throws DatatypeConfigurationException, JSONException, JAXBException {
+			throws DatatypeConfigurationException, JSONException, JAXBException, IOException {
 		
 		
 		Patient p = JAXBUtil.fromXml(Utils.getFile("example/fhir/simplifiedGeneralPatient.xml"), Patient.class);//new Patient();
@@ -47,4 +49,16 @@ public class JsonTest {
 		logger.info("->"+s);
 		
 	}
+	
+	@Test
+		public  void jsonBundleTest()
+				throws DatatypeConfigurationException, JSONException, JAXBException, IOException {
+			
+		//Bundle b = JAXBUtil.fromXml(Utils.getFile("BundleExamplePatient.xml"), Bundle.class);//new Patient();
+			//logger.trace(""+JAXBUtil.toXml(p));
+	//	IBundle b=
+		//	String s=FhirUtil.bundleXmlToJsonString(Utils.getFile("BundleExample.xml"));
+			//logger.info("->"+s);
+			
+		}
 }

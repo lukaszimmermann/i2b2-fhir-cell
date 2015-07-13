@@ -82,7 +82,10 @@ public class QueryEngine {
 			if (m.matches()) {
 				String prefix = m.group(1);
 				suffix = m.group(2);
+				
+				
 				if(suffix.length()>0) suffix=suffix.substring(1);//to drop preceding&
+				
 				if (prefix.matches("^_.*")) {
 					logger.info("excluding paramerters begining with _:"
 							+ prefix);
