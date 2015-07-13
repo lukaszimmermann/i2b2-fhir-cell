@@ -31,7 +31,7 @@ pt.read()
     //var name = p.name[0];
     //var formatted = name.given.join(" ") + " " + name.family;
     //$("#patient_name").text(formatted);
-     document.getElementById("display").innerHTML = JSON.stringify(p,null,4);
+    document.getElementById("display").innerHTML = JSON.stringify(p,null,4);
 });
 
 // A more advanced query: search for active Prescriptions, including med details
@@ -46,13 +46,17 @@ function sleep(milliseconds) {
 }
 //sleep(10000);
 pt.MedicationPrescription.where//.status("active")
-    //._include("MedicationPrescription.medication")
-    .search()
-    .then(function (prescriptions) {
-    prescriptions.forEach(function (rx) {
-        var med = smart.cachedLink(rx, rx.medication);
-        var row = $("<li> " + med.name + "</li>");
-        $("#med_list").append(row);
-    });
+._include("MedicationPrescription.medication")
+.search()
+.then(function (prescriptions) {
+prescriptions.forEach(function (rx) {
+	   var med = smart.cachedLink(rx, rx.medication);
+	    var row = $("<li> " + med.code.coding[1].display
+	    	//JSON.stringify(med,null,4)
+	    	+ "</li>");
+	    $("#med_list").append(row);
+	     //document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
 });
+});
+
 
