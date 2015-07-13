@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.apache.commons.io.IOUtils;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Bundle;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.parser.IParser;
 
@@ -23,6 +24,13 @@ public class WrapperHapi {
 		return jsonString;
 	}
 
+	public static String bundleXmlToJson(String xmlString) throws IOException {
+		 Bundle b = xmlParser.parseBundle(xmlString);
+		jParser.setPrettyPrint(true);
+		String jsonString = jParser.encodeBundleToString(b);
+		// System.out.println(jsonString);
+		return jsonString;
+	}
 	public static void main(String[] args) throws IOException {
 		String xmlString = "<Patient xmlns=\"http://hl7.org/fhir\">"
 				+ "<text><status value=\"generated\" /><div xmlns=\"http://www.w3.org/1999/xhtml\">John Cardinal</div></text>"

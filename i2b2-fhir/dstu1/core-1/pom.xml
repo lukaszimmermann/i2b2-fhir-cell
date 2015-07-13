@@ -85,19 +85,15 @@
 
 
 		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-base</artifactId>
-			<version>0.9</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu</artifactId>
-			<version>0.9</version>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>wrapperHapi</artifactId>
+			<version>${my-project-version}</version>
 		</dependency>
 
 
-		
-	
+
+
+
 
 	</dependencies>
 
@@ -117,13 +113,13 @@
 			<name>BaseX Maven Repository</name>
 			<url>http://files.basex.org/maven</url>
 		</repository>
-   <repository>
-      <id>oss-snapshots</id>
-      <snapshots>
-         <enabled>true</enabled>
-      </snapshots>
-      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-   </repository>
+		<repository>
+			<id>oss-snapshots</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 
 
