@@ -64,6 +64,7 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wrapperHapi.WrapperHapi;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.parser.IParser;
@@ -559,7 +560,7 @@ public class FhirUtil {
 		return j;
 	}
 	*/
-	public static String resourceToJsonString( Resource r) throws JSONException, JAXBException{
+	public static String resourceToJsonString( Resource r) throws JSONException, JAXBException, IOException{
 		/*org.hl7.fhir.instance.model.Resource rModel=ResourceFactory.createResource(FhirUtil.getResourceClass(r).getSimpleName());
 		rModel.
 		OutputStream os= new ByteArrayOutputStream();
@@ -567,25 +568,12 @@ public class FhirUtil {
 		c.compose(os, r, true);
 		*/
 		//logger.trace(""+JAXBUtil.toXml(r));
-		
-		
-		FhirContext ctx = new FhirContext();
-		IParser jparser=ctx.newJsonParser();
-		IParser xparser=ctx.newXmlParser();
-		jparser.setPrettyPrint(true);
-		
-		logger.info("xml:"+JAXBUtil.toXml(r));
-		
-		IResource ir=xparser.parseResource(JAXBUtil.toXml(r));
-
-		logger.info("ir:"+ir.toString());
-		
-		return jparser.encodeResourceToString(ir);
+		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(r));
 		
 	}
 	
 	
-	public static String bundleXmlToJsonString(String bundleXml) throws JSONException, JAXBException{
+	public static String bundleXmlToJsonString(String bundleXml) throws JSONException, JAXBException, IOException{
 		FhirContext ctx = new FhirContext();
 		IParser parser=ctx.newJsonParser();
 		parser.setPrettyPrint(true);
@@ -594,9 +582,6 @@ public class FhirUtil {
 		//IBundle ir=parser.parseResource(JAXBUtil.toXml(r));
 		//return parser.encodeResourceToString(ir);
 		
-		JSONObject wrapper=XML.toJSONObject(bundleXml);
-		JSONObject j=(JSONObject) wrapper.get("feed");
-		j.put("resourceType", "Bundle");
-		return "";
+		return WrapperHapi.resourceXmlToJson(bundleXml);
 	}
 }

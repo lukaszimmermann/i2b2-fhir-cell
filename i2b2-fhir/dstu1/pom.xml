@@ -9,6 +9,7 @@
 		<module>core-1</module>
 		<module>xquery-1</module>
 		<module>restws-1</module>
+		<module>hapiWrapper-1</module>
   </modules>
 
 	<properties>
