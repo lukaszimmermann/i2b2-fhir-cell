@@ -178,6 +178,7 @@ public class I2b2FhirWS {
 	@GET
 	// @Path("MedicationStatement")
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
+	//@Path("MedicationPrescription(//_search)*")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getQueryResult(
 			@PathParam("resourceName") String resourceName,
@@ -187,6 +188,7 @@ public class I2b2FhirWS {
 			@Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		try {
+			//String resourceName="MedicationPrescription";
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
@@ -256,22 +258,22 @@ public class I2b2FhirWS {
 			if (request.getQueryString() != null)
 				url += "?" + request.getQueryString();
 
-			String returnString = FhirUtil.getResourceBundle(s, basePath, url);
+			//String returnString = FhirUtil.getResourceBundle(s, basePath, url);
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
 			
-			if (acceptHeader.equals("application/json")) {
-				String msg=null;//String msg = Utils.xmlToJson(returnString);
+			//if (acceptHeader.equals("application/json")) {
 				//String msg=FhirUtil.bundleXmlToJson(returnString).toString(2);
+				//String msg=FhirUtil.bundleXmlToJsonString(returnString);
+			String msg=FhirUtil.hapiBundleToJsonString(FhirUtil.getResourceHapiBundle(s, basePath, url));
 				return Response.ok().type(MediaType.APPLICATION_JSON)
 						.header("session_id", session.getId())
 						.entity(msg).build();
 			
-			}else{
-			return Response.ok().type(MediaType.APPLICATION_XML)
-					.header("session_id", session.getId())
-					.entity(removeSpace(returnString)).build();
-			}
+			//return Response.ok().type(MediaType.APPLICATION_XML)
+				//	.header("session_id", session.getId())
+					//.entity(msg).build();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST)
@@ -339,7 +341,7 @@ public class I2b2FhirWS {
 		msg = JAXBUtil.toXml(r);
 		//if (acceptHeader.equals("application/json")) {
 			//msg = Utils.xmlToJson(msg);
-			//msg =FhirUtil.resourceToJson(r).toString(2);
+			msg =FhirUtil.resourceToJsonString(r);
 		//}
 		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
 		r != null) {
@@ -395,7 +397,7 @@ public class I2b2FhirWS {
 		String xQueryResultString = processXquery(query, oStr);
 
 		logger.debug("Got xQueryResultString :" + xQueryResultString);
-		System.out.println("Got xQueryResultString :" + xQueryResultString);
+		//System.out.println("Got xQueryResultString :" + xQueryResultString);
 		
 		MetaResourceSet b=null;
 		try {
@@ -443,7 +445,7 @@ public class I2b2FhirWS {
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
 		logger.trace("xQueryResultString:"+xQueryResultString);
-		System.out.println("xQueryResultString:"+xQueryResultString);
+		//System.out.println("xQueryResultString:"+xQueryResultString);
 		// md.addMetaResourceSet(getEGPatient());
 
 		try {

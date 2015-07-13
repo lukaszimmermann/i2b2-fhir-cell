@@ -42,6 +42,7 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
 
 import net.sf.json.JSON;
@@ -64,11 +65,19 @@ import org.json.XML;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wrapperGson.GsonWrapper;
 import wrapperHapi.WrapperHapi;
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Bundle;
+import ca.uhn.fhir.model.api.BundleEntry;
 import ca.uhn.fhir.model.api.IResource;
+import ca.uhn.fhir.model.primitive.IdDt;
+import ca.uhn.fhir.model.primitive.InstantDt;
+import ca.uhn.fhir.model.primitive.StringDt;
 import ca.uhn.fhir.parser.IParser;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonWriter;
 
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
@@ -97,6 +106,65 @@ public class FhirUtil {
 		initResourceClassList();
 	}
 
+	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	public static String resourceToJsonStringGson(Resource r)
+			throws IOException, JAXBException {
+		String resourceType = FhirUtil.getResourceClass(r).getSimpleName();
+		String jsonStr = gson.toJson(r);
+		jsonStr = jsonStr.substring(1);
+		jsonStr = "{\"resourceType:\":\"" + resourceType + "\"," + jsonStr;
+		return jsonStr;
+	}
+
+	public static Bundle getResourceHapiBundle(MetaResourceSet s,
+			String fhirBase, String urlString) throws IOException,
+			JAXBException {
+		Bundle b = new Bundle();
+		IdDt idB = new IdDt();
+		idB.setValue(fhirBase + UUID.randomUUID().toString());
+		b.setId(idB);
+		for (MetaResource mr : s.getMetaResource()) {
+			Resource r = mr.getResource();
+			MetaData m = mr.getMetaData();
+			for (Class c : getResourceClassList()) {
+
+				if (c.isInstance(r)) {
+
+					BundleEntry entry = new BundleEntry();
+					IdDt id = new IdDt();
+					id.setValue(fhirBase + m.getId());
+					entry.setId(id);
+					XMLGregorianCalendar lastUpdated = null;
+					try {
+						lastUpdated = m.getLastUpdated();
+					} catch (Exception e) {
+					}
+					if (lastUpdated != null)
+
+					{
+						Date d = lastUpdated.toGregorianCalendar().getTime();
+						InstantDt dt = new InstantDt();
+						dt.setValue(d);
+						entry.setUpdated(dt);
+					}
+					// entry.addExtension("http://www.w3.org/2005/Atom","published",null).setText(new
+					// Date().toGMTString());
+					// theLinkSelf
+					StringDt theLinkSelf = new StringDt();
+					theLinkSelf.setValue(fhirBase + m.getId());
+					entry.setLinkSelf(theLinkSelf);
+					IResource theResource = WrapperHapi
+							.resourceXmlToIResource(JAXBUtil.toXml(r));
+					entry.setResource(theResource);
+					b.addEntry(entry);
+				}
+			}
+		}
+		return b;
+
+	}
+
 	public static String getResourceBundle(MetaResourceSet s,
 			String uriInfoString, String urlString) {
 		String fhirBase = uriInfoString;
@@ -108,7 +176,7 @@ public class FhirUtil {
 		StringWriter swriter = new StringWriter();
 		try {
 
-			feed.setId(uriInfoString+UUID.randomUUID().toString());
+			feed.setId(uriInfoString + UUID.randomUUID().toString());
 			feed.setTitle("Query result");
 			feed.setUpdated(new Date());
 			feed.addExtension("http://www.w3.org/2005/Atom", "published", null)
@@ -288,14 +356,16 @@ public class FhirUtil {
 
 	}
 
-	public static Class getResourceClass(Resource resource) throws JAXBException {
+	public static Class getResourceClass(Resource resource)
+			throws JAXBException {
 		if (resourceClassList == null)
 			initResourceClassList();
 		for (Class c : resourceClassList) {
 			if (c.isInstance(resource))
 				return c;
 		}
-		logger.trace("Class Not Found for FHIR resource:" + JAXBUtil.toXml(resource));
+		logger.trace("Class Not Found for FHIR resource:"
+				+ JAXBUtil.toXml(resource));
 		return null;
 
 	}
@@ -318,63 +388,64 @@ public class FhirUtil {
 		return false;
 
 	}
-	
+
 	public static List<Object> getChildrenThruChain(Resource r, String pathStr,
 			MetaResourceSet s)
 			// is dot separated path
 			throws NoSuchMethodException, SecurityException,
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, JAXBException {
-		
-		List<Object> children= new ArrayList<Object>();
-		List<Object> resolvedChildren= new ArrayList<Object>();
-		logger.trace("got obj:"+r);
+
+		List<Object> children = new ArrayList<Object>();
+		List<Object> resolvedChildren = new ArrayList<Object>();
+		logger.trace("got obj:" + r);
 		Class c = FhirUtil.getResourceClass(r);
-		
+
 		String suffix = null;
 		String prefix = pathStr;
 		logger.trace("pathStr:" + pathStr);
-		
+
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
-		
+
 		String methodName = prefix.substring(0, 1).toUpperCase()
 				+ prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		Object o = method.invoke(c.cast(r));
-		
-		if (List.class.isInstance(o)){
+
+		if (List.class.isInstance(o)) {
 			children.addAll((List<Object>) o);
-		}else {children.add(o);}
-		
+		} else {
+			children.add(o);
+		}
+
 		if (suffix == null) {
 			return children;
 
 		} else {
-			
-			
-			for(Object child:children){
-				if (ResourceReference.class.isInstance(child)) {
-				ResourceReference rr = ResourceReference.class.cast(child);
-				logger.trace("gotc:" + child.getClass());
-			
-				/*try {
-					logger.trace("seek:" + JAXBUtil.toXml(rr));
-					logger.trace("seek:" + rr.getReference().getValue());
-				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
 
-				Resource r1= FhirUtil.findResourceById(rr.getReference().getValue(),s);
-				resolvedChildren.add( getChildrenThruChain(r1, suffix, s));
-				
+			for (Object child : children) {
+				if (ResourceReference.class.isInstance(child)) {
+					ResourceReference rr = ResourceReference.class.cast(child);
+					logger.trace("gotc:" + child.getClass());
+
+					/*
+					 * try { logger.trace("seek:" + JAXBUtil.toXml(rr));
+					 * logger.trace("seek:" + rr.getReference().getValue()); }
+					 * catch (JAXBException e) { // TODO Auto-generated catch
+					 * block e.printStackTrace(); }
+					 */
+
+					Resource r1 = FhirUtil.findResourceById(rr.getReference()
+							.getValue(), s);
+					resolvedChildren.add(getChildrenThruChain(r1, suffix, s));
+
 				} else {
 					resolvedChildren.add(getChildrenThruChain(r, suffix, s));
 				}
-				
+
 			}
 		}
 		return resolvedChildren;
@@ -387,21 +458,21 @@ public class FhirUtil {
 			IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
-		
+
 		String suffix = null;
 		String prefix = pathStr;
 		logger.trace("pathStr:" + pathStr);
-		
+
 		if (pathStr.indexOf('.') > -1) {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
-		
+
 		String methodName = prefix.substring(0, 1).toUpperCase()
 				+ prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		Object o = method.invoke(c.cast(r));
-		
+
 		if (suffix == null) {
 			return o;
 
@@ -410,15 +481,15 @@ public class FhirUtil {
 				ResourceReference rr = ResourceReference.class.cast(o);
 				logger.trace("gotc:" + o.getClass());
 
-				/*try {
-					logger.trace("seek:" + JAXBUtil.toXml(rr));
-					logger.trace("seek:" + rr.getReference().getValue());
-				} catch (JAXBException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}*/
+				/*
+				 * try { logger.trace("seek:" + JAXBUtil.toXml(rr));
+				 * logger.trace("seek:" + rr.getReference().getValue()); } catch
+				 * (JAXBException e) { // TODO Auto-generated catch block
+				 * e.printStackTrace(); }
+				 */
 
-				Resource r1= FhirUtil.findResourceById(rr.getReference().getValue(),s);
+				Resource r1 = FhirUtil.findResourceById(rr.getReference()
+						.getValue(), s);
 				return getChildThruChain(r1, suffix, s);
 			} else {
 				return getChildThruChain(r, suffix, s);
@@ -534,54 +605,57 @@ public class FhirUtil {
 		return res;
 
 	}
-	
-	public static Patient setPatientIdentifier(Patient p,String identifier){
-		List<Identifier> list=p.getIdentifier();
-		Identifier i= new Identifier();
-		org.hl7.fhir.String str=new org.hl7.fhir.String();
+
+	public static Patient setPatientIdentifier(Patient p, String identifier) {
+		List<Identifier> list = p.getIdentifier();
+		Identifier i = new Identifier();
+		org.hl7.fhir.String str = new org.hl7.fhir.String();
 		str.setValue(identifier);
 		i.setValue(str);
 		list.add(i);
 		return p;
 	}
-	
-	/*public static JSONObject resourceToJson(Resource r) throws JSONException, JAXBException{
-		String resourceXml=JAXBUtil.toXml(r);
-		JSONObject wrapper=XML.toJSONObject(resourceXml);
-		JSONObject j=(JSONObject) wrapper.get(r.getClass().getSimpleName());
-		j.put("resourceType", r.getClass().getSimpleName());
-		return j;
-	}
-	
-	public static JSONObject bundleXmlToJson(String bundleXml) throws JSONException, JAXBException{
-		JSONObject wrapper=XML.toJSONObject(bundleXml);
-		JSONObject j=(JSONObject) wrapper.get("feed");
-		j.put("resourceType", "Bundle");
-		return j;
-	}
-	*/
-	public static String resourceToJsonString( Resource r) throws JSONException, JAXBException, IOException{
-		/*org.hl7.fhir.instance.model.Resource rModel=ResourceFactory.createResource(FhirUtil.getResourceClass(r).getSimpleName());
-		rModel.
-		OutputStream os= new ByteArrayOutputStream();
-		JsonComposer c= new JsonComposer();
-		c.compose(os, r, true);
-		*/
-		//logger.trace(""+JAXBUtil.toXml(r));
+
+	/*
+	 * public static JSONObject resourceToJson(Resource r) throws JSONException,
+	 * JAXBException{ String resourceXml=JAXBUtil.toXml(r); JSONObject
+	 * wrapper=XML.toJSONObject(resourceXml); JSONObject j=(JSONObject)
+	 * wrapper.get(r.getClass().getSimpleName()); j.put("resourceType",
+	 * r.getClass().getSimpleName()); return j; }
+	 * 
+	 * public static JSONObject bundleXmlToJson(String bundleXml) throws
+	 * JSONException, JAXBException{ JSONObject
+	 * wrapper=XML.toJSONObject(bundleXml); JSONObject j=(JSONObject)
+	 * wrapper.get("feed"); j.put("resourceType", "Bundle"); return j; }
+	 */
+	public static String resourceToJsonString(Resource r) throws JSONException,
+			JAXBException, IOException {
+		/*
+		 * org.hl7.fhir.instance.model.Resource
+		 * rModel=ResourceFactory.createResource
+		 * (FhirUtil.getResourceClass(r).getSimpleName()); rModel. OutputStream
+		 * os= new ByteArrayOutputStream(); JsonComposer c= new JsonComposer();
+		 * c.compose(os, r, true);
+		 */
+		// logger.trace(""+JAXBUtil.toXml(r));
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(r));
-		
+
 	}
-	
-	
-	public static String bundleXmlToJsonString(String bundleXml) throws JSONException, JAXBException, IOException{
+
+	/*public static String bundleXmlToJsonString(String bundleXml)
+			throws JSONException, JAXBException, IOException {
 		FhirContext ctx = new FhirContext();
-		IParser parser=ctx.newJsonParser();
+		IParser parser = ctx.newJsonParser();
 		parser.setPrettyPrint(true);
-		//parser.parseBundle(arg0)
-		//return ((FhirUtil) parser).bundleXmlToJson(bundleXml);
-		//IBundle ir=parser.parseResource(JAXBUtil.toXml(r));
-		//return parser.encodeResourceToString(ir);
-		
+		// parser.parseBundle(arg0)
+		// return ((FhirUtil) parser).bundleXmlToJson(bundleXml);
+		// IBundle ir=parser.parseResource(JAXBUtil.toXml(r));
+		// return parser.encodeResourceToString(ir);
+
 		return WrapperHapi.resourceXmlToJson(bundleXml);
+	}*/
+	
+	public static String hapiBundleToJsonString(Bundle b)throws Exception {
+		return WrapperHapi.bundleToJson(b);
 	}
 }

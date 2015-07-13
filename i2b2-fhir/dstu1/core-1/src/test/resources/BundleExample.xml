@@ -1,0 +1,8 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+   <title/>
+   <id>8779315a-25ae-4db9-bf8c-abe3cb8d136d</id>
+   <link rel="self" href="http://fhirtest.uhn.ca/baseDstu1/Patient?_id=A&amp;_format=xml"/>
+   <link rel="fhir-base" href="http://fhirtest.uhn.ca/baseDstu1"/>
+   <os:totalResults xmlns:os="http://a9.com/-/spec/opensearch/1.1/">0</os:totalResults>
+   <updated>2015-07-13T13:12:27.206-04:00</updated>
+</feed>
