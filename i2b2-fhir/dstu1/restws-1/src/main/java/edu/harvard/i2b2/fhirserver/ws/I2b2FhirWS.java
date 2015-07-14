@@ -89,7 +89,7 @@ public class I2b2FhirWS {
 	private void init() {
 
 		try {
-			
+
 			logger.info("Got init request");
 			logger.info(" Print Got init request");
 		} catch (Exception e) {
@@ -113,7 +113,7 @@ public class I2b2FhirWS {
 		props.load(getClass().getResourceAsStream("/log4j.properties"));
 		PropertyConfigurator.configure(props);
 		logger.info("Got Auth request");
-		
+
 		HttpSession session = request.getSession(false);
 		if (session != null) {
 			// logger.info("invalidated session");
@@ -128,8 +128,8 @@ public class I2b2FhirWS {
 				.getRequestURL()
 				.toString()
 				.replaceAll(
-						I2b2FhirWS.class.getAnnotation(Path.class)
-								.value().toString()
+						I2b2FhirWS.class.getAnnotation(Path.class).value()
+								.toString()
 								+ "$", "");
 
 		// after headers check for form
@@ -178,7 +178,7 @@ public class I2b2FhirWS {
 	@GET
 	// @Path("MedicationStatement")
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
-	//@Path("MedicationPrescription(//_search)*")
+	// @Path("MedicationPrescription(//_search)*")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getQueryResult(
 			@PathParam("resourceName") String resourceName,
@@ -188,7 +188,7 @@ public class I2b2FhirWS {
 			@Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		try {
-			//String resourceName="MedicationPrescription";
+			// String resourceName="MedicationPrescription";
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
@@ -201,7 +201,7 @@ public class I2b2FhirWS {
 
 			if (session == null) {
 				byPassAuthentication(request);
-				session=request.getSession(false);
+				session = request.getSession(false);
 			}
 
 			md = (MetaResourceDb) session.getAttribute("md");
@@ -258,22 +258,29 @@ public class I2b2FhirWS {
 			if (request.getQueryString() != null)
 				url += "?" + request.getQueryString();
 
-			//String returnString = FhirUtil.getResourceBundle(s, basePath, url);
+			// String returnString = FhirUtil.getResourceBundle(s, basePath,
+			// url);
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
-			
-			//if (acceptHeader.equals("application/json")) {
-				//String msg=FhirUtil.bundleXmlToJson(returnString).toString(2);
-				//String msg=FhirUtil.bundleXmlToJsonString(returnString);
-			String msg=FhirUtil.hapiBundleToJsonString(FhirUtil.getResourceHapiBundle(s, basePath, url));
-				return Response.ok().type(MediaType.APPLICATION_JSON)
-						.header("session_id", session.getId())
-						.entity(msg).build();
-			
-			//return Response.ok().type(MediaType.APPLICATION_XML)
-				//	.header("session_id", session.getId())
-					//.entity(msg).build();
-			
+			String msg = null;
+			String mediaType=null;
+			if (acceptHeader.contains("application/json")) {
+				msg = FhirUtil.hapiBundleToJsonString(FhirUtil
+						.getResourceHapiBundle(s, basePath, url));
+				mediaType=MediaType.APPLICATION_JSON;
+			} else {
+				msg = FhirUtil.getResourceBundle(s, basePath, url);
+				mediaType=MediaType.APPLICATION_XML;
+			}
+			msg=removeSpace(msg);
+			logger.info("acceptHeader:"+acceptHeader);
+			return Response.ok().type(mediaType)
+					.header("session_id", session.getId()).entity(msg).build();
+
+			// return Response.ok().type(MediaType.APPLICATION_XML)
+			// .header("session_id", session.getId())
+			// .entity(msg).build();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST)
@@ -284,11 +291,11 @@ public class I2b2FhirWS {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
-	private void byPassAuthentication( HttpServletRequest request) throws XQueryUtilException, IOException, JAXBException {
+	private void byPassAuthentication(HttpServletRequest request)
+			throws XQueryUtilException, IOException, JAXBException {
 		/*
 		 * return Response.status(Status.BAD_REQUEST)
-		 * .type(MediaType.APPLICATION_XML).entity("login first ")
-		 * .build();
+		 * .type(MediaType.APPLICATION_XML).entity("login first ") .build();
 		 */
 		String username = request.getHeader("username");
 		String password = request.getHeader("password");
@@ -299,7 +306,7 @@ public class I2b2FhirWS {
 				i2b2domain == null ? "i2b2demo" : i2b2domain,
 				i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
 						: i2b2url);
-		
+
 	}
 
 	@GET
@@ -318,7 +325,7 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession(false);
 		if (session == null) {
 			byPassAuthentication(request);
-			session=request.getSession(false);
+			session = request.getSession(false);
 		}
 		if (session == null) {
 			return Response.status(Status.BAD_REQUEST)
@@ -327,7 +334,7 @@ public class I2b2FhirWS {
 		}
 
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		
+
 		String msg = null;
 		Resource r = null;
 		logger.info("searhcing particular resource2:<" + resourceName
@@ -338,16 +345,20 @@ public class I2b2FhirWS {
 					+ resourceName);
 
 		r = md.getParticularResource(c, id);
-		msg = JAXBUtil.toXml(r);
-		//if (acceptHeader.equals("application/json")) {
-			//msg = Utils.xmlToJson(msg);
-			msg =FhirUtil.resourceToJsonString(r);
-		//}
-		if (// (acceptHeader.equals("application/xml")||acceptHeader.equals("application/json"))&&
-		r != null) {
-			return Response.ok(msg)
-					.header("session_id", session.getId()).
-					build();
+		String mediaType=null;
+		if (acceptHeader.contains("application/json")) {
+			msg = FhirUtil.resourceToJsonString(r);
+			mediaType=MediaType.APPLICATION_JSON;
+		} else {
+			msg = JAXBUtil.toXml(r);
+			mediaType=MediaType.APPLICATION_XML;
+		}
+
+		msg=removeSpace(msg);
+		if (r != null) {
+			
+			return Response.ok(msg).header("session_id", session.getId()).type(mediaType)
+					.build();
 		} else {
 			return Response
 					.noContent()
@@ -374,15 +385,15 @@ public class I2b2FhirWS {
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
-		
+
 		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
 		requestStr = insertSessionParametersInXml(requestStr, session);
 		logger.debug(requestStr);
 		// if(1==1) return new MetaResourceSet();
 
-		String oStr=WebServiceCall.run(i2b2Url
+		String oStr = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestStr);
-		
+
 		// logger.debug("got::"
 		// + oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
 		logger.debug("got Response::" + oStr);
@@ -397,12 +408,12 @@ public class I2b2FhirWS {
 		String xQueryResultString = processXquery(query, oStr);
 
 		logger.debug("Got xQueryResultString :" + xQueryResultString);
-		//System.out.println("Got xQueryResultString :" + xQueryResultString);
-		
-		MetaResourceSet b=null;
+		// System.out.println("Got xQueryResultString :" + xQueryResultString);
+
+		MetaResourceSet b = null;
 		try {
 			b = JAXBUtil.fromXml(xQueryResultString, MetaResourceSet.class);
-				
+
 		} catch (JAXBException e) {
 			e.printStackTrace();
 			throw new FhirServerException("JAXBException", e);
@@ -440,18 +451,19 @@ public class I2b2FhirWS {
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
 		logger.info("fetching from i2b2host...");
-		String oStr=WebServiceCall.run(i2b2Url
+		String oStr = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestStr);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
-		logger.trace("xQueryResultString:"+xQueryResultString);
-		//System.out.println("xQueryResultString:"+xQueryResultString);
+		logger.trace("xQueryResultString:" + xQueryResultString);
+		// System.out.println("xQueryResultString:"+xQueryResultString);
 		// md.addMetaResourceSet(getEGPatient());
 
 		try {
-			MetaResourceSet b = JAXBUtil.fromXml(xQueryResultString, MetaResourceSet.class);
-			logger.trace("bundle:"+JAXBUtil.toXml(b));
-			logger.trace("list size:"+b.getMetaResource().size());
+			MetaResourceSet b = JAXBUtil.fromXml(xQueryResultString,
+					MetaResourceSet.class);
+			logger.trace("bundle:" + JAXBUtil.toXml(b));
+			logger.trace("list size:" + b.getMetaResource().size());
 			logger.info("adding to memory...");
 			md.addMetaResourceSet(b);
 		} catch (JAXBException e) {
@@ -541,40 +553,48 @@ public class I2b2FhirWS {
 
 	@GET
 	@Path("a/Patient/1137192")
-	@Produces({"application/json; charset=UTF-8" })
-	public Response getSMARTexamplePatients(@Context HttpServletRequest request){
+	@Produces({ "application/json; charset=UTF-8" })
+	public Response getSMARTexamplePatients(@Context HttpServletRequest request) {
 		logUrlAccess(request);
 		return Response.ok().type("application/json; charset=UTF-8")
-			.entity(Utils.getFile("example/smart/ParticularPatient.json")).build();
+				.entity(Utils.getFile("example/smart/ParticularPatient.json"))
+				.build();
 	}
-	
+
 	@GET
 	@Path("a/Patient")
-	@Produces({"application/json; charset=UTF-8"})
-	public Response getSMARTexampleParticularPatient(@Context HttpServletRequest request){
+	@Produces({ "application/json; charset=UTF-8" })
+	public Response getSMARTexampleParticularPatient(
+			@Context HttpServletRequest request) {
 		logUrlAccess(request);
 		return Response.ok().type("application/json; charset=UTF-8")
-			.entity(Utils.getFile("example/smart/AllPatients.json")).build();
+				.entity(Utils.getFile("example/smart/AllPatients.json"))
+				.build();
 	}
-	
+
 	@GET
 	@Path("a/MedicationPrescription/_search")
-	@Produces({"application/json; charset=UTF-8"})
-	public Response getSMARTexampleParticularPatientPrescription(@Context HttpServletRequest request){
-	
+	@Produces({ "application/json; charset=UTF-8" })
+	public Response getSMARTexampleParticularPatientPrescription(
+			@Context HttpServletRequest request) {
+
 		logUrlAccess(request);
-	return Response.ok().type("application/json; charset=UTF-8")
-		.entity(Utils.getFile("example/smart/ParticularPatientPrescription.json")).build();
-}
-	
-	private void logUrlAccess(HttpServletRequest request){
+		return Response
+				.ok()
+				.type("application/json; charset=UTF-8")
+				.entity(Utils
+						.getFile("example/smart/ParticularPatientPrescription.json"))
+				.build();
+	}
+
+	private void logUrlAccess(HttpServletRequest request) {
 		StringBuffer url = request.getRequestURL();
 		String queryString = request.getQueryString();
 		if (queryString != null) {
-		    url.append('?');
-		    url.append(queryString);
+			url.append('?');
+			url.append(queryString);
 		}
 		String requestURL = url.toString();
-		logger.trace(request.getRemoteAddr() +"<-"+requestURL);
+		logger.trace(request.getRemoteAddr() + "<-" + requestURL);
 	}
 }

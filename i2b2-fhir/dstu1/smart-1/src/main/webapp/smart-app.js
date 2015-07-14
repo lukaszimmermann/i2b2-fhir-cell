@@ -10,10 +10,10 @@ function httpGet(theUrl)
 var demo = {
    //serviceUrl: "http://52.2.43.105:8080/srv-dstu1-0.2/api",
     //patientId: "1000000005"
-   serviceUrl: "http://localhost:8080/srv-dstu1-0.2/api",
+  serviceUrl: "http://localhost:8080/srv-dstu1-0.2/api",
     patientId: "1000000005"
     
-   // serviceUrl: "https://fhir-open-api.smarthealthit.org",
+    //serviceUrl: "https://fhir-open-api.smarthealthit.org",
    // patientId: "1137192"
    //serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
 	//patientId: "19324"
