@@ -143,9 +143,11 @@ public class RxNormAdapter {
 		cd.setValue(rxCui);
 		c.setCode(cd);
 		org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-		displayValue.setValue(getRxCuiName(rxCui));
+		String cuiName=getRxCuiName(rxCui);
+		displayValue.setValue(cuiName);
 		c.setDisplay(displayValue);
 		m.getCode().getCoding().add(c);
+		m.setName(displayValue);
 		// logger.trace(JAXBUtil.toXml(m));
 	}
 
