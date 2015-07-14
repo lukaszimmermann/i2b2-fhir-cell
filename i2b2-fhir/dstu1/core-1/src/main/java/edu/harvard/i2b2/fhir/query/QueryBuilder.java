@@ -30,6 +30,7 @@ public class QueryBuilder {
 	String rawParameter;
 	String rawValue;
 	String queryTypeStr;
+	String resourceClassRestriction;
 
 	public QueryBuilder() {
 	}

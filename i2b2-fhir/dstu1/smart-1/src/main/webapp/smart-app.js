@@ -51,7 +51,7 @@ pt.MedicationPrescription.where//.status("active")
 .then(function (prescriptions) {
 prescriptions.forEach(function (rx) {
 	   var med = smart.cachedLink(rx, rx.medication);
-	    var row = $("<li> " + med.code.coding[1].display
+	    var row = $("<li> " + med.name
 	    	//JSON.stringify(med,null,4)
 	    	+ "</li>");
 	    $("#med_list").append(row);
