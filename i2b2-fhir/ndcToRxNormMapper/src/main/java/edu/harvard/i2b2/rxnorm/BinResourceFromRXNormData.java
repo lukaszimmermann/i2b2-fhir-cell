@@ -28,16 +28,10 @@ import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBException;
 
-import org.hl7.fhir.Code;
-import org.hl7.fhir.Coding;
-import org.hl7.fhir.Medication;
-import org.hl7.fhir.Uri;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.JAXBUtil;
-import edu.harvard.i2b2.fhir.Utils;
-import edu.harvard.i2b2.fhir.query.QueryBuilder;
 
 public class BinResourceFromRXNormData {
 	static Logger logger = LoggerFactory
