@@ -32,13 +32,13 @@ import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.query.QueryBuilder;
 
-public class RxNormAdapter {
-	static Logger logger = LoggerFactory.getLogger(RxNormAdapter.class);
+public class RxNormFhirAdapter {
+	static Logger logger = LoggerFactory.getLogger(RxNormFhirAdapter.class);
 
 	HashMap<String, Integer> Ndc2CuiMap;
 	HashMap<Integer, String> rxCuiMap;
 
-	public RxNormAdapter() throws IOException {
+	public RxNormFhirAdapter() throws IOException {
 		init();
 	}
 
