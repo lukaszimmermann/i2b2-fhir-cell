@@ -104,15 +104,19 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
  
   <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="MedicationPrescription" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir">
 
-  <!--  
-<id value="MedicationPrescription/{$pid}-{$count}"/>-->
+  
+<!--<identifier value="MedicationPrescription/{$pid}-{$count}"/>-->
+   <dateWritten value="{$sd}"/>
+   
    <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
       <p>{$instr}  </p>
      </div>
   </text>
-  <status value="active"/>
+  
+  <!--<status value="active"/>-->
+  
   <patient>
      <reference value="Patient/{$pid}"/>
   </patient>

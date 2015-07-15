@@ -7,19 +7,22 @@ function httpGet(theUrl) {
 
 
 $('#patientId').on('keyup', function () {
-	//alert("key up"+$("#patientId").val());
+	// alert("key up"+$("#patientId").val());
   $("updatePatientInfo").html($("#patientId").val());
 });
 
 $("#target").submit(function(event) {
 	updatePatientDisplay();
-	//document.getElementById("display").innerHTML = $("#patientId").attr('value');//document.getElementById('patientId').value ;//JSON.stringify($("#patientId"), null, 4);
+	// document.getElementById("display").innerHTML =
+	// $("#patientId").attr('value');//document.getElementById('patientId').value
+	// ;//JSON.stringify($("#patientId"), null, 4);
 	event.preventDefault();
 });
 
 function updatePatientDisplay() {
-	//alert("getting Patient Info");
-	$("#med_list").empty();
+	// alert("getting Patient Info");
+	$("#demo_list").empty().attr("frame","none");
+	$("#med_list").empty().attr("frame","none");
 
 	var patientIdInput=$("#patientId").val();
 	var demo = null;
@@ -40,38 +43,53 @@ function updatePatientDisplay() {
 	var pt = null;
 	pt=smart.context.patient;
 
-	pt.read();
-	document.getElementById("display").innerHTML = JSON.stringify(pt, null, 4);
-	// Create a patient banner by fetching + rendering demographics
-	pt.read().then(
-			function(p) {
-				// var name = p.name[0];
-				// var formatted = name.given.join(" ") + " " + name.family;
-				// $("#patient_name").text(formatted);
-				document.getElementById("display").innerHTML = JSON.stringify(
-						p, null, 4);
-				
-				$("#gender").html(p.gender.coding[0].display);
-				$("#birthDate").html(p.birthDate.split("T")[0]);
-				$("#maritalStatus").html(p.maritalStatus.coding[0].display);
-			});
-
-	// A more advanced query: search for active Prescriptions, including med
-	// details
+	//pt.read();
 	
-
 	pt.MedicationPrescription.where// .status("active")
-	._include("MedicationPrescription.medication").search().then(
+	._include("MedicationPrescription.medication")
+	._include("MedicationPrescription.patient").search().then(
 			function(prescriptions) {
+				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions[0],null,4);
+				var rx=prescriptions[0];
+				var p= smart.cachedLink(rx, rx.patient);
+				var row = $("<tr>");
+				row.append( '<tr><td>Gender:</td><td>'+p.gender.coding[0].display+'</td></tr>');
+				row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
+				row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display+'</td></tr>');
+				$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+				$("#demo_list").append('<th>Demographics</th>');
+				$("#demo_list").append(row);
+				
+				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+					$("#med_list").append('<th >Medications</th>');
+					document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
+					
 				prescriptions.forEach(function(rx) {
 					var med = smart.cachedLink(rx, rx.medication);
-					var row = $("<li> " + med.name
-					// JSON.stringify(med,null,4)
-					+ "</li>");
-					
+					var row = $("<tr>");
+					row.append( $("<td>").text(rx.dateWritten.split("T")[0]));
+					row.append( $("<td>").text(med.name ));
+					var di=rx.dosageInstruction[0];
+					row.append( $("<td>").text(di.timingSchedule.repeat.frequency+"/"+di.timingSchedule.repeat.units));
+					//row.append( $("<td>").text(di.doseQuantity.value+" "+di.doseQuantity.units));
+					// $("#med_list").append('<tr><td>'+rx.dateWritten.split("T")[0]+'</td><td>'+med.name+'</td></tr>');
 					$("#med_list").append(row);
-					// document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
+					
+					
 				});
-			});
-
+				
+			
+		});
 }
+
+$('#med_list').find('*').each(function() {
+     var tmp = $(this).children().remove(); //removing and saving children to a tmp obj
+    var text = $(this).text(); //getting just current node text
+    text = text.replace(/undefined/g, "marshmellows"); //replacing every lollypops occurence with marshmellows
+    $(this).text(text); //setting text
+    $(this).append(tmp); //re-append 'foundlings'
+});
+
+$( document ).ready(function() {
+	updatePatientDisplay();
+});
