@@ -34,14 +34,14 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
-import edu.harvard.i2b2.rxnorm.RxNormAdapter;
+import edu.harvard.i2b2.rxnorm.RxNormFhirAdapter;
 
 public class MetaResourceDb {
 	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
 	MetaResourceSet set;
 	List<MetaResource> metaResources;
-	static RxNormAdapter rxNormAdapter = null;
+	static RxNormFhirAdapter rxNormAdapter = null;
 
 	public MetaResourceDb() throws IOException {
 		init();
@@ -53,7 +53,7 @@ public class MetaResourceDb {
 
 	public void init() throws IOException {
 		if (rxNormAdapter == null)
-			rxNormAdapter = new RxNormAdapter();
+			rxNormAdapter = new RxNormFhirAdapter();
 		set = new MetaResourceSet();
 		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
