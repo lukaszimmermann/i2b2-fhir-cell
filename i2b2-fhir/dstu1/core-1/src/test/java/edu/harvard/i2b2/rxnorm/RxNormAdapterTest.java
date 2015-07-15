@@ -28,11 +28,11 @@ import edu.harvard.i2b2.fhir.Utils;
 public class RxNormAdapterTest {
 	static Logger logger = LoggerFactory.getLogger(RxNormAdapterTest.class);
 
-	RxNormAdapter rA;
+	RxNormFhirAdapter rA;
 
 	@Before
 	public void setup() throws IOException {
-		rA = new RxNormAdapter();
+		rA = new RxNormFhirAdapter();
 	}
 
 	@Test
