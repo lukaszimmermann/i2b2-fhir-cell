@@ -538,5 +538,10 @@ public class FromI2b2WebService {
 				
 		return b;			
 	}
+	
+	@GET
+	@Path("test/Patient")
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getQueryResult(
 
 }
