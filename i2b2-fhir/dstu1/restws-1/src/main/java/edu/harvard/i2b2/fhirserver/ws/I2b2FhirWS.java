@@ -440,11 +440,13 @@ public class I2b2FhirWS {
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 
 		String requestStr = Utils
-				.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
+				//.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
+		.getFile("i2b2query/i2b2RequestMedsAndLabsForAPatient.xml");
 		requestStr = insertSessionParametersInXml(requestStr, session);
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
+		
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
 
@@ -453,6 +455,7 @@ public class I2b2FhirWS {
 		logger.info("fetching from i2b2host...");
 		String oStr = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestStr);
+		logger.trace("got i2b2 response:"+oStr);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
 		logger.trace("xQueryResultString:" + xQueryResultString);

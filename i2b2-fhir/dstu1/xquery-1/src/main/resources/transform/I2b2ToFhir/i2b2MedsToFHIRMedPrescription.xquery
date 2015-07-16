@@ -91,6 +91,31 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
 };
 
 
+declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
+   <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Observation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
+   xmlns:ns2="http://www.w3.org/1999/xhtml" >
+         
+ 
+ <id value="Observation/{$pid}-{$count}"/>
+    <text>
+        <status value="generated"/>
+        <ns2:div>{$cn}</ns2:div>
+    </text>
+  <name value="{$cn}"/>
+  <code>
+    <coding>
+      <system value="http://../LOINC"/>
+      <code value="{$cid}"/>
+      <display value="{$cn}"/>
+      <primary value="true"/>
+    </coding>
+  </code>
+
+  </ns3:Resource>
+  
+};
+
+
 
 declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count as xs:string?,$last_updated as xs:string? ) as node(){
 <ns3:MetaData xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
@@ -162,11 +187,10 @@ declare function functx:distinct-nodes
  } ;
  
  (:to link modifier_cds that are for same concept_cd instance:)
+
 declare function local:distinctObservations($I as node()?) as node ()?{
 
-
-
-let $distobs :=
+let $distobs := 
  (:for $t in $doc//observation:)
  for $t in $I//observation
  let $eid := $t/event_id/text()
@@ -212,14 +236,11 @@ let $distobs :=
     return  <set>{functx:distinct-nodes($distobs)}</set>
  };
  
- let $I:=root() (:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/medicationsForAPatient.xml')
-
-  
-:)
-let $distObs:=local:distinctObservations($I)
  
-
-let $A:=$distObs
+ 
+declare function local:processMedObs
+  ( $A as node()* )  as node()*
+{
 
 let $O:=
 for $id at $count in fn:distinct-values($A/observation/id)
@@ -260,8 +281,6 @@ let $doseQuantityFhir:=local:fnDoseFhir($dose,$doseUnit)
 let $fhirMedicationPrescription:=local:fnFhirMedicationPrescription($count,$timingScheduleFhir,$routeFhir,$doseQuantityFhir,$medication_id,$sd,$ed,$pid,$instr)
 
 
-
-
 return <set>
 <ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirMedication}
@@ -274,7 +293,64 @@ return <set>
 </set>
 
 
-return <ns3:MetaResourceSet xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
     {$O/ns3:MetaResource}
 </ns3:MetaResourceSet>
+};
 
+
+declare function local:processLabObs
+  ( $A as node()* )  as node()*
+{
+
+let $O:=
+for $id at $count in fn:distinct-values($A/observation/id)
+let $refObs :=  $A/observation[id =$id and modifier_cd = "MED:FREQ"]
+
+let $pid := $refObs/patient_id/text()
+let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
+let $cn := $refObs/concept_cd/@name/string()
+let $oid := $refObs/observer_cd
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
+let $sourceSystem := $refObs/@sourcesystem_cd/string()
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
+
+
+let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid)
+
+return <set>
+<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+{$fhirObservation}
+{local:fnMetaData("Observation",$pid,xs:string($count),$updateDate)}
+</ns3:MetaResource>
+</set>
+
+
+return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+    {$O/ns3:MetaResource}
+</ns3:MetaResourceSet>
+};
+
+
+
+
+
+let $I:=doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
+
+  
+let $distObs:=local:distinctObservations($I)
+ 
+let $labObs:= $distObs//observation[contains(concept_cd,"LOINC:")]
+let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
+
+
+return 
+<ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+   {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
+
+</ns3:MetaResourceSet>
+
+ (:  {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}:)
