@@ -76,19 +76,9 @@
 			<item_is_synonym>false</item_is_synonym>
 		</item>
 	</panel>
+	
 
-	<panel name="\\i2b2_MEDS\i2b2\Medications\">
-		<panel_number>0</panel_number>
-		<panel_accuracy_scale>0</panel_accuracy_scale>
-		<invert>0</invert>
-		<item>
-			<hlevel>1</hlevel>
-			<item_key>\\i2b2_MEDS\i2b2\Medications\</item_key>
-			<dim_tablename>concept_dimension</dim_tablename>
-			<dim_dimcode>\i2b2\Medications\</dim_dimcode>
-			<item_is_synonym>N</item_is_synonym>
-		</item>
-	</panel>
+
 </filter_list>
 <output_option>
 	<patient_set select="using_input_list" onlykeys="false"/>

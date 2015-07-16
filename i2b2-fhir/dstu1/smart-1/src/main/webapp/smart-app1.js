@@ -62,11 +62,8 @@ function updatePatientDisplay() {
 				
 				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 					$("#med_list").append('<th >Medications</th>');
-<<<<<<< HEAD
+
 					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
-=======
-					document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
->>>>>>> 7cdb443820037a18db7af55f5557914a66346b61
 					
 				prescriptions.forEach(function(rx) {
 					var med = smart.cachedLink(rx, rx.medication);
