@@ -56,6 +56,11 @@
         <artifactId>ndcToRxNormMapper</artifactId>
         <version>0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+        <artifactId>loincMapper</artifactId>
+        <version>0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.abdera</groupId>
