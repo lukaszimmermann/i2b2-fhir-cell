@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.apache.abdera.model.Entry;
+import org.hl7.fhir.Observation;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceReference;
 import org.hl7.fhir.Medication;
@@ -34,6 +35,8 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.loinc.LoincFhirAdapter;
+import edu.harvard.i2b2.loinc.LoincMapper;
 import edu.harvard.i2b2.rxnorm.RxNormFhirAdapter;
 
 public class MetaResourceDb {
@@ -42,6 +45,7 @@ public class MetaResourceDb {
 	MetaResourceSet set;
 	List<MetaResource> metaResources;
 	static RxNormFhirAdapter rxNormAdapter = null;
+	static LoincFhirAdapter loincAdapter = null;
 
 	public MetaResourceDb() throws IOException {
 		init();
@@ -54,6 +58,8 @@ public class MetaResourceDb {
 	public void init() throws IOException {
 		if (rxNormAdapter == null)
 			rxNormAdapter = new RxNormFhirAdapter();
+		if (loincAdapter == null)
+			loincAdapter = new LoincFhirAdapter();
 		set = new MetaResourceSet();
 		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
@@ -90,6 +96,11 @@ public class MetaResourceDb {
 			Medication med = Medication.class.cast(r);
 			rxNormAdapter.addRxCui(med);
 			p.setResource(med);
+		}
+		if (Observation.class.isInstance(r)) {
+			Observation ob = Observation.class.cast(r);
+			loincAdapter.addLoincName(ob); 
+			p.setResource(ob);
 		}
 		metaResources.add(p);
 
