@@ -101,15 +101,14 @@ declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, 
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
     </text>
-  <name value="{$cn}"/>
-  <code>
+  <name>
     <coding>
-      <system value="http://../LOINC"/>
+      <system value="http://loinc.org"/>
       <code value="{$cid}"/>
       <display value="{$cn}"/>
       <primary value="true"/>
     </coding>
-  </code>
+  </name>
 
   </ns3:Resource>
   
@@ -305,7 +304,7 @@ declare function local:processLabObs
 
 let $O:=
 for $id at $count in fn:distinct-values($A/observation/id)
-let $refObs :=  $A/observation[id =$id and modifier_cd = "MED:FREQ"]
+let $refObs :=  $A/observation[id =$id]
 
 let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
@@ -339,7 +338,7 @@ return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.h
 
 
 let $I:=doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
-
+(::)
   
 let $distObs:=local:distinctObservations($I)
  
@@ -350,7 +349,7 @@ let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
 return 
 <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
    {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
-
+ {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}
 </ns3:MetaResourceSet>
 
- (:  {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}:)
+  

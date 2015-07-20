@@ -48,8 +48,11 @@ public class LoincFhirAdapter {
 	public void addLoincName(Observation ob) throws JAXBException {
 		for (Coding coding : ob.getName().getCoding()) {
 			String systemVal = coding.getSystem().getValue().toString();
-			if (systemVal.equals("http://loinc.org")) {
+			if (systemVal.equals("http://loinc.org")
+					) {
+				
 				String loincNumber=coding.getCode().getValue().replace("LOINC:", "");
+				logger.trace("loincNum:"+loincNumber);
 				org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
 				displayValue.setValue(loincMapper.getLoincName(loincNumber));
 				coding.setDisplay(displayValue);
