@@ -2,6 +2,9 @@ package edu.harvard.i2b2.loinc;
 
 import static org.junit.Assert.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
@@ -23,4 +26,16 @@ public class ObservationFhirTest {
 		
 	}
 
+	@Test
+	public void testParameterPattern() throws JAXBException {
+		
+		String input="Patient:Patient";
+		input="subject:Patient";
+		Pattern p = Pattern.compile("(\\w+):(\\w+):*(\\w+)");
+		Matcher m=p.matcher(input);
+		
+		m.matches();
+		String typeResource=m.group(1);
+		logger.trace(""+m.matches()+"\ntypeResource:"+typeResource);
+	}
 }
