@@ -23,6 +23,7 @@ function updatePatientDisplay() {
 	// alert("getting Patient Info");
 	$("#demo_list").empty().attr("frame","none");
 	$("#med_list").empty().attr("frame","none");
+	$("#lab_list").empty().attr("frame","none");
 
 	var patientIdInput=$("#patientId").val();
 	var demo = null;
@@ -81,6 +82,17 @@ function updatePatientDisplay() {
 				
 			
 		});
+	
+	pt.Observation.where// .status("active")
+	//._include("Observation.subject")
+	.search().then(
+	
+			function(observations) {
+				document.getElementById("display").innerHTML=JSON.stringify(observations[0],null,4);
+					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
+			}
+	);
+	
 }
 
 $('#med_list').find('*').each(function() {
