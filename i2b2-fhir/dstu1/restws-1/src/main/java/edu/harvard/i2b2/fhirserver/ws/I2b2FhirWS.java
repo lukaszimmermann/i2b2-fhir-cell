@@ -458,7 +458,8 @@ public class I2b2FhirWS {
 		logger.trace("got i2b2 response:"+oStr);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
-		logger.trace("xQueryResultString:" + xQueryResultString);
+		logger.trace("xQueryResultString1:" + xQueryResultString);
+		
 		// System.out.println("xQueryResultString:"+xQueryResultString);
 		// md.addMetaResourceSet(getEGPatient());
 
@@ -469,9 +470,12 @@ public class I2b2FhirWS {
 			logger.trace("list size:" + b.getMetaResource().size());
 			logger.info("adding to memory...");
 			md.addMetaResourceSet(b);
-		} catch (JAXBException e) {
-			e.printStackTrace();
-
+		} catch (Exception e) {
+			logger.trace("xQueryResultString1:" + xQueryResultString);
+			
+			logger.error("ERROR MSG:"+e.getMessage(),e);
+			//e.printStackTrace();
+			
 		}
 	}
 

@@ -1,0 +1,101 @@
+<ns5:response xmlns:ns5="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/" xmlns:ns9="http://www.i2b2.org/xsd/cell/ont/1.1/" xmlns:ns6="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/" xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" xmlns:ns10="http://www.i2b2.org/xsd/hive/msg/result/1.1/" xmlns:ns8="http://www.i2b2.org/xsd/cell/pm/1.1/">
+    <message_header>
+        <i2b2_version_compatible>1.1</i2b2_version_compatible>
+        <hl7_version_compatible>2.4</hl7_version_compatible>
+        <sending_application>
+            <application_name>CRC Cell</application_name>
+            <application_version>1.7</application_version>
+        </sending_application>
+        <sending_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </sending_facility>
+        <receiving_application>
+            <application_name>i2b2_QueryTool</application_name>
+            <application_version>1.6</application_version>
+        </receiving_application>
+        <receiving_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </receiving_facility>
+        <message_control_id>
+            <instance_num>1</instance_num>
+        </message_control_id>
+        <project_id>Demo</project_id>
+    </message_header>
+    <response_header>
+        <info>Log information</info>
+        <result_status>
+            <status type="DONE">DONE</status>
+            <polling_url interval_ms="100" />
+        </result_status>
+    </response_header>
+    <message_body>
+        <ns3:response xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:patient_data_responseType">
+            <ns2:patient_data>
+                <ns2:patient_set>
+                    <patient>
+                        <patient_id>1000000005</patient_id>
+                        <param type="string" column_descriptor="Date Accuracy Code" column="vital_status_cd" />
+                        <param type="string" column_descriptor="Language" column="language_cd">english</param>
+                        <param type="dateTime" column="birth_date">1973-06-25T00:00:00.000Z</param>
+                        <param type="string" column_descriptor="Race" column="race_cd">hispanic</param>
+                        <param type="string" column_descriptor="Religion" column="religion_cd">roman catholic</param>
+                        <param type="string" column_descriptor="Income" column="income_cd">Medium</param>
+                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\North Reading\01889\</param>
+                        <param type="string" column_descriptor="Zip Code" column="zip_cd">01889</param>
+                        <param type="string" column_descriptor="Marital Status" column="marital_status_cd">single</param>
+                        <param type="int" column_descriptor="Age" column="age_in_years_num">37</param>
+                        <param type="string" column_descriptor="Gender" column="sex_cd">F</param>
+                    </patient>
+                </ns2:patient_set>
+                <ns2:observation_set>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-09-28T11:40:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-09-28T11:15:00.000Z">
+                        <event_id>471368</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>LOINC:15199-3</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>1997-07-22T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>+</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <units_cd>@</units_cd>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-09-28T11:40:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-09-28T11:15:00.000Z">
+                        <event_id>471368</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>LOINC:706-2</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>1997-07-22T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>0.4</nval_num>
+                        <valueflag_cd />
+                        <units_cd>%</units_cd>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-09-28T11:40:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-09-28T11:15:00.000Z">
+                        <event_id>471368</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>LOINC:731-0</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>1997-07-22T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>1.6</nval_num>
+                        <valueflag_cd />
+                        <units_cd>k/ul</units_cd>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    
+                </ns2:observation_set>
+            </ns2:patient_data>
+        </ns3:response>
+    </message_body>
+</ns5:response>

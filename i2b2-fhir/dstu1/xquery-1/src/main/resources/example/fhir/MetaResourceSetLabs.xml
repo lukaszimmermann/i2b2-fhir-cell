@@ -1,0 +1,32 @@
+<ns3:MetaResourceSet xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xmlns="http://hl7.org/fhir">
+  <ns3:MetaResource>
+    <ns3:Resource xmlns:ns2="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="Observation">
+      <id value="Observation/1000000005-1"/>
+      <text>
+        <status value="generated"/>
+        <ns2:div/>
+      </text>
+      <name>
+        <coding>
+          <system value="http://loinc.org"/>
+          <code value="LOINC:15199-3"/>
+          <display value=""/>
+          <primary value="true"/>
+        </coding>
+      </name>
+      <valueQuantity>
+        <value value="1"/>
+        <system value="http://unitsofmeasure.org"/>
+        <code value="[lb_av]"/>
+      </valueQuantity>
+      <!--   the mandatory quality flags:   -->
+      <status value="final"/>
+      <reliability value="ok"/>
+    </ns3:Resource>
+    <ns3:MetaData>
+      <ns3:id>Observation/1000000005-1</ns3:id>
+      <ns3:lastUpdated>2010-09-28T11:15:00</ns3:lastUpdated>
+    </ns3:MetaData>
+  </ns3:MetaResource>
+ 
+</ns3:MetaResourceSet>
