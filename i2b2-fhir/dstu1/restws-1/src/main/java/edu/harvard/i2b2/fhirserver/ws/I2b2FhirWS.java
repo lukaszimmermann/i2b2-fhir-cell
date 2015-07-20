@@ -296,20 +296,26 @@ public class I2b2FhirWS {
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
 	private void byPassAuthentication(HttpServletRequest request)
-			throws XQueryUtilException, IOException, JAXBException {
+			throws XQueryUtilException, IOException, JAXBException, InterruptedException {
 		/*
 		 * return Response.status(Status.BAD_REQUEST)
 		 * .type(MediaType.APPLICATION_XML).entity("login first ") .build();
 		 */
-		String username = request.getHeader("username");
-		String password = request.getHeader("password");
-		String i2b2domain = request.getHeader("i2b2domain");
-		String i2b2url = request.getHeader("i2b2url");
-		doAuthentication(request, username == null ? "demo" : username,
-				password == null ? "demouser" : password,
-				i2b2domain == null ? "i2b2demo" : i2b2domain,
-				i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
-						: i2b2url);
+		HttpSession session = request.getSession();
+		getSessionLock(session);
+
+		if (session == null || session.getAttribute("md") == null) {
+			String username = request.getHeader("username");
+			String password = request.getHeader("password");
+			String i2b2domain = request.getHeader("i2b2domain");
+			String i2b2url = request.getHeader("i2b2url");
+			doAuthentication(request, username == null ? "demo" : username,
+					password == null ? "demouser" : password,
+					i2b2domain == null ? "i2b2demo" : i2b2domain,
+					i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
+							: i2b2url);
+		}
+		releaseSessionLock(session);
 
 	}
 
@@ -561,9 +567,9 @@ public class I2b2FhirWS {
 
 	private static String removeSpace(String input)
 			throws ParserConfigurationException, SAXException, IOException {
-		return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
-				"(?m)^[ \t]*\r?\n", "")));
-		// return input.replaceAll("(?m)^[ \t]*\r?\n", "");
+		// return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
+		// "(?m)^[ \t]*\r?\n", "")));
+		return input.replaceAll("(?m)^[ \t]*\r?\n", "");
 		// return input;
 	}
 
@@ -629,14 +635,14 @@ public class I2b2FhirWS {
 			logger.trace("Session locked. Hence sleeping.. for session id:"
 					+ session.getId());
 		}
-		logger.trace("setting session Lock:"+session.getId());
+		logger.trace("setting session Lock:" + session.getId());
 		session.setAttribute("SESSION_LOCK", true);
 		return;
-		
+
 	}
 
 	private void releaseSessionLock(HttpSession session) {
-		logger.trace("releasing session Lock:"+session.getId());
+		logger.trace("releasing session Lock:" + session.getId());
 		session.setAttribute("SESSION_LOCK", false);
 	}
 }
