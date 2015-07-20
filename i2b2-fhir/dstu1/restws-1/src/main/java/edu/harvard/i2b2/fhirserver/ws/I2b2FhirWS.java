@@ -112,7 +112,7 @@ public class I2b2FhirWS {
 		Properties props = new Properties();
 		props.load(getClass().getResourceAsStream("/log4j.properties"));
 		PropertyConfigurator.configure(props);
-		logger.info("Got Auth request");
+		logger.info("Got Auth request:");
 
 		HttpSession session = request.getSession(false);
 		if (session != null) {
@@ -187,6 +187,7 @@ public class I2b2FhirWS {
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
+		HttpSession session = null;
 		try {
 			// String resourceName="MedicationPrescription";
 			logger.info("Query param:"
@@ -195,7 +196,7 @@ public class I2b2FhirWS {
 			Class c = FhirUtil.getResourceClass(resourceName);
 			MetaResourceDb md = null;
 			MetaResourceSet s = new MetaResourceSet();
-			HttpSession session = request.getSession(false);
+			session = request.getSession(false);
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
@@ -203,7 +204,8 @@ public class I2b2FhirWS {
 				byPassAuthentication(request);
 				session = request.getSession(false);
 			}
-
+			logger.debug("session id:" + session.getId());
+			getSessionLock(session);
 			md = (MetaResourceDb) session.getAttribute("md");
 
 			// filter if patientId is mentioned in query string
@@ -263,17 +265,18 @@ public class I2b2FhirWS {
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
 			String msg = null;
-			String mediaType=null;
+			String mediaType = null;
 			if (acceptHeader.contains("application/json")) {
 				msg = FhirUtil.hapiBundleToJsonString(FhirUtil
 						.getResourceHapiBundle(s, basePath, url));
-				mediaType=MediaType.APPLICATION_JSON;
+				mediaType = MediaType.APPLICATION_JSON;
 			} else {
 				msg = FhirUtil.getResourceBundle(s, basePath, url);
-				mediaType=MediaType.APPLICATION_XML;
+				mediaType = MediaType.APPLICATION_XML;
 			}
-			msg=removeSpace(msg);
-			logger.info("acceptHeader:"+acceptHeader);
+			msg = removeSpace(msg);
+			logger.info("acceptHeader:" + acceptHeader);
+			releaseSessionLock(session);
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 
@@ -282,6 +285,7 @@ public class I2b2FhirWS {
 			// .entity(msg).build();
 
 		} catch (Exception e) {
+			releaseSessionLock(session);
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST)
 					.header("xreason", e.getMessage()).build();
@@ -320,52 +324,64 @@ public class I2b2FhirWS {
 			@Context HttpServletRequest request)
 			throws DatatypeConfigurationException,
 			ParserConfigurationException, SAXException, IOException,
-			JAXBException, JSONException, XQueryUtilException {
+			JAXBException, JSONException, XQueryUtilException,
+			InterruptedException {
 
 		HttpSession session = request.getSession(false);
-		if (session == null) {
-			byPassAuthentication(request);
-			session = request.getSession(false);
-		}
-		if (session == null) {
-			return Response.status(Status.BAD_REQUEST)
-					.type(MediaType.APPLICATION_XML).entity("login first")
-					.build();
-		}
 
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+		try {
+			if (session == null) {
+				byPassAuthentication(request);
+				session = request.getSession(false);
+			}
+			if (session == null) {
+				return Response.status(Status.BAD_REQUEST)
+						.type(MediaType.APPLICATION_XML).entity("login first")
+						.build();
+			}
+			getSessionLock(session);
+			MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+			logger.debug("session id:" + session.getId());
 
-		String msg = null;
-		Resource r = null;
-		logger.info("searhcing particular resource2:<" + resourceName
-				+ "> with id:<" + id + ">");
-		Class c = FhirUtil.getResourceClass(resourceName);
-		if (c == null)
-			throw new RuntimeException("class not found for resource:"
-					+ resourceName);
+			String msg = null;
+			Resource r = null;
+			logger.info("searhcing particular resource2:<" + resourceName
+					+ "> with id:<" + id + ">");
+			Class c = FhirUtil.getResourceClass(resourceName);
+			if (c == null)
+				throw new RuntimeException("class not found for resource:"
+						+ resourceName);
 
-		r = md.getParticularResource(c, id);
-		String mediaType=null;
-		if (acceptHeader.contains("application/json")) {
-			msg = FhirUtil.resourceToJsonString(r);
-			mediaType=MediaType.APPLICATION_JSON;
-		} else {
-			msg = JAXBUtil.toXml(r);
-			mediaType=MediaType.APPLICATION_XML;
-		}
+			r = md.getParticularResource(c, id);
+			String mediaType = null;
+			if (acceptHeader.contains("application/json")) {
+				msg = FhirUtil.resourceToJsonString(r);
+				mediaType = MediaType.APPLICATION_JSON;
+			} else {
+				msg = JAXBUtil.toXml(r);
+				mediaType = MediaType.APPLICATION_XML;
+			}
 
-		msg=removeSpace(msg);
-		if (r != null) {
-			
-			return Response.ok(msg).header("session_id", session.getId()).type(mediaType)
-					.build();
-		} else {
-			return Response
-					.noContent()
-					.header("xreason",
-							resourceName + " with id:" + id + " NOT found")
+			msg = removeSpace(msg);
+			if (r != null) {
+				releaseSessionLock(session);
+				return Response.ok(msg).header("session_id", session.getId())
+						.type(mediaType).build();
+			} else {
+				releaseSessionLock(session);
+				return Response
+						.noContent()
+						.header("xreason",
+								resourceName + " with id:" + id + " NOT found")
+						.header("session_id", session.getId()).build();
+			}
+		} catch (Exception e) {
+			releaseSessionLock(session);
+			logger.error("", e);
+			return Response.noContent().header("xreason", e.getMessage())
 					.header("session_id", session.getId()).build();
 		}
+
 	}
 
 	private MetaResourceSet initAllPatients(HttpSession session)
@@ -440,13 +456,12 @@ public class I2b2FhirWS {
 		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 
 		String requestStr = Utils
-				//.getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-		.getFile("i2b2query/i2b2RequestMedsAndLabsForAPatient.xml");
+		// .getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
+				.getFile("i2b2query/i2b2RequestMedsAndLabsForAPatient.xml");
 		requestStr = insertSessionParametersInXml(requestStr, session);
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
-		
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
 
@@ -455,11 +470,11 @@ public class I2b2FhirWS {
 		logger.info("fetching from i2b2host...");
 		String oStr = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestStr);
-		logger.trace("got i2b2 response:"+oStr);
+		logger.trace("got i2b2 response:" + oStr);
 		logger.info("running transformation...");
 		String xQueryResultString = processXquery(query, oStr);
 		logger.trace("xQueryResultString1:" + xQueryResultString);
-		
+
 		// System.out.println("xQueryResultString:"+xQueryResultString);
 		// md.addMetaResourceSet(getEGPatient());
 
@@ -472,10 +487,10 @@ public class I2b2FhirWS {
 			md.addMetaResourceSet(b);
 		} catch (Exception e) {
 			logger.trace("xQueryResultString1:" + xQueryResultString);
-			
-			logger.error("ERROR MSG:"+e.getMessage(),e);
-			//e.printStackTrace();
-			
+
+			logger.error("ERROR MSG:" + e.getMessage(), e);
+			// e.printStackTrace();
+
 		}
 	}
 
@@ -546,8 +561,9 @@ public class I2b2FhirWS {
 
 	private static String removeSpace(String input)
 			throws ParserConfigurationException, SAXException, IOException {
-		 return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll( "(?m)^[ \t]*\r?\n", "")));
-		//return input.replaceAll("(?m)^[ \t]*\r?\n", "");
+		return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
+				"(?m)^[ \t]*\r?\n", "")));
+		// return input.replaceAll("(?m)^[ \t]*\r?\n", "");
 		// return input;
 	}
 
@@ -602,5 +618,25 @@ public class I2b2FhirWS {
 		}
 		String requestURL = url.toString();
 		logger.trace(request.getRemoteAddr() + "<-" + requestURL);
+	}
+
+	private void getSessionLock(HttpSession session)
+			throws InterruptedException {
+
+		while (session.getAttribute("SESSION_LOCK") != null
+				&& session.getAttribute("SESSION_LOCK").equals(true)) {
+			Thread.sleep(100);
+			logger.trace("Session locked. Hence sleeping.. for session id:"
+					+ session.getId());
+		}
+		logger.trace("setting session Lock:"+session.getId());
+		session.setAttribute("SESSION_LOCK", true);
+		return;
+		
+	}
+
+	private void releaseSessionLock(HttpSession session) {
+		logger.trace("releasing session Lock:"+session.getId());
+		session.setAttribute("SESSION_LOCK", false);
 	}
 }
