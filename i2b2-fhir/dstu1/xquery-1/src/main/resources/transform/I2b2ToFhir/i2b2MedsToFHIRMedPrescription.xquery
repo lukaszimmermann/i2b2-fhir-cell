@@ -91,7 +91,7 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
 };
 
 
-declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
+declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $val as xs:string, $unit as xs:string) as node(){           
    <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Observation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
    xmlns:ns2="http://www.w3.org/1999/xhtml" >
          
@@ -109,6 +109,15 @@ declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, 
       <primary value="true"/>
     </coding>
   </name>
+  <valueQuantity>
+    <value value="{$val}"/>
+    <units value="{$unit}"/>
+    <system value="http://unitsofmeasure.org"/>
+    <code value="[lb_av]"/>
+  </valueQuantity>
+  <!--   the mandatory quality flags:   -->
+  <status value="final"/>
+  <reliability value="ok"/>
 
   </ns3:Resource>
   
@@ -317,8 +326,10 @@ let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 
+let $val:="$refObs/nval_num/text()"
+let $unit:=$refObs/units_cd/text()
 
-let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid)
+let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid,$val,$unit)
 
 return <set>
 <ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
@@ -337,8 +348,8 @@ return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.h
 
 
 
-let $I:=doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
-(::)
+let $I:=root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
+:)
   
 let $distObs:=local:distinctObservations($I)
  
@@ -351,5 +362,4 @@ return
    {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
  {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}
 </ns3:MetaResourceSet>
-
   
