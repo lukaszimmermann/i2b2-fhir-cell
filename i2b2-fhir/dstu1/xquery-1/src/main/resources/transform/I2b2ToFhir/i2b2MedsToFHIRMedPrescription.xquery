@@ -91,16 +91,18 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
 };
 
 
-declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $val as xs:string, $unit as xs:string) as node(){           
+declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $valueFhir as node()?) as node(){     
    <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Observation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
    xmlns:ns2="http://www.w3.org/1999/xhtml" >
-         
- 
- <id value="Observation/{$pid}-{$count}"/>
+       
+
+  <id value="Observation/{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
     </text>
+  
+  
   <name>
     <coding>
       <system value="http://loinc.org"/>
@@ -109,21 +111,41 @@ declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, 
       <primary value="true"/>
     </coding>
   </name>
-  <valueQuantity>
-    <value value="12"/>(:{$val}":)
-    <units value="{$unit}"/>
-    <system value="http://unitsofmeasure.org"/>
-    <code value="[lb_av]"/>
-  </valueQuantity>
+  
+  
+    {$valueFhir}
   <!--   the mandatory quality flags:   -->
   <status value="final"/>
   <reliability value="ok"/>
+  
+   <subject>
+     <reference value="Patient/{$pid}"/>
+  </subject>
 
   </ns3:Resource>
   
 };
 
+declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
+let $unitStr:=
+       if($unit="") then ""
+        else   <units value="{$unit}"/> 
+ 
 
+let $codeStr:=
+       if($unit="") then ""
+        else    <code value="{$unit}"/>  
+ return    
+
+<valueQuantity>
+    <value value="{$val}"/>    
+   
+    <system value="http://unitsofmeasure.org"/>
+    
+    {$unitStr}
+    {$codeStr}
+  </valueQuantity>
+};
 
 declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count as xs:string?,$last_updated as xs:string? ) as node(){
 <ns3:MetaData xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
@@ -326,15 +348,41 @@ let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 
-let $val:="$refObs/nval_num/text()"
+
+let $valType:= $refObs/valuetype_cd/text()
+let $nval:=$refObs/nval_num/text()
+let $tval:= $refObs/tval_char/text()
+
+let $val:=
+ if($valType="N") then $nval
+ else $tval
+ 
+
 let $unit:=$refObs/units_cd/text()
 
-let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid,$val,$unit)
+let $unit:=
+if($unit="@") then ""
+else $unit
+
+(:
+return  <set>
+<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+<a>{$valType}-{$nval}-{$tval}</a>
+</ns3:MetaResource>
+</set>
+:)
+
+let $fhirValue:= 
+if ($valType="N") then local:fnFhirValueQuantity($nval,$unit)
+else ()
+
+let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid,$fhirValue)
 
 return <set>
 <ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirObservation}
 {local:fnMetaData("Observation",$pid,xs:string($count),$updateDate)}
+
 </ns3:MetaResource>
 </set>
 
@@ -342,14 +390,17 @@ return <set>
 return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
     {$O/ns3:MetaResource}
 </ns3:MetaResourceSet>
+
 };
 
 
 
 
 
-let $I:=root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
-:)
+
+let $I:=root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
+(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
+root():)
   
 let $distObs:=local:distinctObservations($I)
  
@@ -357,9 +408,16 @@ let $labObs:= $distObs//observation[contains(concept_cd,"LOINC:")]
 let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
 
 
-return 
-<ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-   {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
+return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+ 
  {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}
+ {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
+ 
 </ns3:MetaResourceSet>
-  
+
+(:
+
+valueQuantity
+
+/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml
+:)
