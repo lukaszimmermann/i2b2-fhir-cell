@@ -110,7 +110,7 @@ declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, 
     </coding>
   </name>
   <valueQuantity>
-    <value value="{$val}"/>
+    <value value="12"/>(:{$val}":)
     <units value="{$unit}"/>
     <system value="http://unitsofmeasure.org"/>
     <code value="[lb_av]"/>
