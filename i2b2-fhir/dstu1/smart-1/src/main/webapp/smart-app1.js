@@ -62,8 +62,10 @@ function updatePatientDisplay() {
 				$("#demo_list").append(row);
 				
 				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-					$("#med_list").append('<th >Medications</th>');
+				$("#med_list").append('<th >Medications</th>');
 
+				$('#lab_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+				$("#lab_list").append('<th >Labs</th>');
 					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
 					
 				prescriptions.forEach(function(rx) {
@@ -88,8 +90,22 @@ function updatePatientDisplay() {
 	.search().then(
 	
 			function(observations) {
-				document.getElementById("display").innerHTML=JSON.stringify(observations[0],null,4);
-					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
+				document.getElementById("display").innerHTML=JSON.stringify(observations[1],null,4);
+			
+				observations.forEach(function(lab) {
+				var row = $("<tr>");
+				row.append( $("<td>").text(lab.name.coding[0].display));
+				
+				var t="yes";
+				//if(lab.valueQuantity == 'undefined')){
+					t="yes";
+					//row.append( $("<td>").text(lab.valueQuantity.value));
+				//}else{ t="no";}
+				row.append( $("<td>").text(t));
+				
+				$("#lab_list").append(row);
+				
+				});
 			}
 	);
 	
