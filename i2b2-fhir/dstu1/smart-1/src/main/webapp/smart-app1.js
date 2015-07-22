@@ -21,6 +21,7 @@ $("#target").submit(function(event) {
 
 function updatePatientDisplay() {
 	// alert("getting Patient Info");
+	document.getElementById("display").innerHTML="loading...";
 	
 	$("#demo_list").empty().attr("frame","none");
 	$("#med_list").empty().attr("frame","none");
@@ -45,7 +46,17 @@ function updatePatientDisplay() {
 	var pt = null;
 	pt=smart.context.patient;
 
-	//pt.read();
+	pt.read().then(function(p) {
+	var row = $("<tr>");
+	row.append( '<tr><td>Gender:</td><td>'+p.gender.coding[0].display+'</td></tr>');
+	row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
+	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display+'</td></tr>');
+	$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+	$("#demo_list").append('<th align="left"">Demographics</th>');
+	$("#demo_list").append(row);
+	});
+	
+	
 	
 	pt.MedicationPrescription.where// .status("active")
 	._include("MedicationPrescription.medication")
@@ -54,13 +65,7 @@ function updatePatientDisplay() {
 				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions[0],null,4);
 				var rx=prescriptions[0];
 				var p= smart.cachedLink(rx, rx.patient);
-				var row = $("<tr>");
-				row.append( '<tr><td>Gender:</td><td>'+p.gender.coding[0].display+'</td></tr>');
-				row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
-				row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display+'</td></tr>');
-				$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-				$("#demo_list").append('<th align="left"">Demographics</th>');
-				$("#demo_list").append(row);
+				
 				
 				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 				$("#med_list").append('<th align="left">Medications</th>');
@@ -91,7 +96,7 @@ function updatePatientDisplay() {
 	.search().then(
 	
 			function(observations) {
-				//document.getElementById("display").innerHTML=JSON.stringify(observations[1],null,4);
+				document.getElementById("display1").innerHTML=JSON.stringify(observations[0],null,4);
 			
 				observations.forEach(function(lab) {
 				var row = $("<tr>");
@@ -109,8 +114,12 @@ function updatePatientDisplay() {
 					val=lab.valueQuantity.value;
 					units=lab.valueQuantity.units;
 				}
-				row.append( $("<td>").text(val));
-				row.append( $("<td>").text(units));
+				if(lab.hasOwnProperty("valueCodeableConcept")  ){
+					val=lab.valueCodeableConcept.coding[0].code;
+					//units=lab.valueQuantity.units;
+				}
+				row.append( $("<td>").text(val+"  "+units));
+				//row.append( $("<td>").text(units));
 				
 				$("#lab_list").append(row);
 				
