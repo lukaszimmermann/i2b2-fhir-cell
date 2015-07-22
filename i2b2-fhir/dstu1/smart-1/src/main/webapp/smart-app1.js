@@ -59,14 +59,14 @@ function updatePatientDisplay() {
 				row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
 				row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display+'</td></tr>');
 				$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-				$("#demo_list").append('<th>Demographics</th>');
+				$("#demo_list").append('<th align="left"">Demographics</th>');
 				$("#demo_list").append(row);
 				
 				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-				$("#med_list").append('<th >Medications</th>');
+				$("#med_list").append('<th align="left">Medications</th>');
 
 				$('#lab_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-				$("#lab_list").append('<th >Labs</th>');
+				$("#lab_list").append('<th align="left">Labs</th>');
 					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
 					
 				prescriptions.forEach(function(rx) {
@@ -115,7 +115,7 @@ function updatePatientDisplay() {
 				$("#lab_list").append(row);
 				
 				});
-			
+				document.getElementById("display").innerHTML="";
 			
 				}
 	);
