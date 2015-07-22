@@ -94,6 +94,7 @@ function updatePatientDisplay() {
 			
 				observations.forEach(function(lab) {
 				var row = $("<tr>");
+				row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
 				row.append( $("<td>").text(lab.name.coding[0].display));
 				var val="";	var units="";	
 				if(lab.hasOwnProperty("valueQuantity") && lab.valueQuantity.hasOwnProperty("value")){

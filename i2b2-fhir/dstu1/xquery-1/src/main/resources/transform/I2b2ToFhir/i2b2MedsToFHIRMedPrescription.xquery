@@ -91,7 +91,13 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
 };
 
 
-declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $valueFhir as node()?) as node(){     
+declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $valueFhir as node()?) as node(){     
+  let $endDateString:=
+    if($ed != "") then
+    <end value="{$ed}"/>
+  else ()
+
+return
    <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Observation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
    xmlns:ns2="http://www.w3.org/1999/xhtml" >
        
@@ -112,7 +118,10 @@ declare function local:fnFhirObservation($count as xs:integer,$cn as xs:string, 
     </coding>
   </name>
   
-  
+  <appliesPeriod>
+    <start value="{$sd}"/>
+    {$endDateString}
+  </appliesPeriod>
     {$valueFhir}
   <!--   the mandatory quality flags:   -->
   <status value="final"/>
@@ -376,7 +385,7 @@ let $fhirValue:=
 if ($valType="N") then local:fnFhirValueQuantity($nval,$unit)
 else ()
 
-let $fhirObservation:=local:fnFhirObservation($count,$cn, $cid,$pid,$fhirValue)
+let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhirValue)
 
 return <set>
 <ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
