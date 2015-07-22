@@ -95,13 +95,13 @@ function updatePatientDisplay() {
 				observations.forEach(function(lab) {
 				var row = $("<tr>");
 				row.append( $("<td>").text(lab.name.coding[0].display));
-				
-				var t="yes";
-				//if(lab.valueQuantity == 'undefined')){
-					t="yes";
-					//row.append( $("<td>").text(lab.valueQuantity.value));
-				//}else{ t="no";}
-				row.append( $("<td>").text(t));
+				var val="";	var units="";	
+				if(lab.hasOwnProperty("valueQuantity") && lab.valueQuantity.hasOwnProperty("value")){
+					val=lab.valueQuantity.value;
+					units=lab.valueQuantity.units;
+				}
+				row.append( $("<td>").text(val));
+				row.append( $("<td>").text(units));
 				
 				$("#lab_list").append(row);
 				
