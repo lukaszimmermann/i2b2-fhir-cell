@@ -21,6 +21,7 @@ $("#target").submit(function(event) {
 
 function updatePatientDisplay() {
 	// alert("getting Patient Info");
+	
 	$("#demo_list").empty().attr("frame","none");
 	$("#med_list").empty().attr("frame","none");
 	$("#lab_list").empty().attr("frame","none");
@@ -90,12 +91,19 @@ function updatePatientDisplay() {
 	.search().then(
 	
 			function(observations) {
-				document.getElementById("display").innerHTML=JSON.stringify(observations[1],null,4);
+				//document.getElementById("display").innerHTML=JSON.stringify(observations[1],null,4);
 			
 				observations.forEach(function(lab) {
 				var row = $("<tr>");
 				row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
-				row.append( $("<td>").text(lab.name.coding[0].display));
+				
+				var labName="--";
+				if(lab.hasOwnProperty("name")){	
+						labName=lab.name.coding[0].display;
+				}
+				if(labName==null) {labName="--";}
+				
+				row.append( $("<td>").text(labName));
 				var val="";	var units="";	
 				if(lab.hasOwnProperty("valueQuantity") && lab.valueQuantity.hasOwnProperty("value")){
 					val=lab.valueQuantity.value;
@@ -107,8 +115,12 @@ function updatePatientDisplay() {
 				$("#lab_list").append(row);
 				
 				});
-			}
+			
+			
+				}
 	);
+	
+	
 	
 }
 
@@ -121,5 +133,6 @@ $('#med_list').find('*').each(function() {
 });
 
 $( document ).ready(function() {
+	document.getElementById("display").innerHTML="loading...";
 	updatePatientDisplay();
 });
