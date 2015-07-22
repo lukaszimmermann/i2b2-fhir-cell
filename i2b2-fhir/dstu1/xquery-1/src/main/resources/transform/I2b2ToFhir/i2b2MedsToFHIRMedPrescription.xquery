@@ -156,6 +156,83 @@ let $codeStr:=
   </valueQuantity>
 };
 
+declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
+<valueCodeableConcept>
+    <coding>
+      <system value="http://i2b2.org"/>
+      <code value="{$val}"/>
+      <display value="{$val}"/>
+    </coding>
+  </valueCodeableConcept>
+};
+
+
+declare function local:fnFhirCondition($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
+   <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Condition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
+   xmlns:ns2="http://www.w3.org/1999/xhtml" >
+
+  <text>
+    <status value="generated"/>
+   
+  </text>
+  <subject>
+    <reference value="Patient/f201"/>
+    <display value="Roel"/>
+  </subject>
+  <dateAsserted value="2012-12-01"/><!--   The problem was asserted at December first   -->
+  <code>
+    <coding>
+      <system value="http://snomed.info/sct"/>
+      <code value="363346000"/>
+      <display value="Malignant neoplastic disease"/>
+    </coding>
+  </code>
+  <category>
+    <coding>
+      <system value="http://hl7.org/fhir/condition-category"/>
+      <code value="diagnose"/>
+    </coding>
+  </category>
+  <status value="confirmed"/>
+  <certainty>
+    <coding>
+      <system value="http://snomed.info/sct"/>
+      <code value="17162000"/>
+      <display value="Certain"/>
+    </coding>
+  </certainty>
+  <severity>
+    <coding>
+      <system value="http://snomed.info/sct"/>
+      <code value="24484000"/>
+      <display value="Severe"/>
+    </coding>
+  </severity>
+  <onsetAge>
+    <value value="52"/>
+    <units value="years"/>
+    <system value="http://snomed.info/sct"/>
+    <code value="258707000"/>
+  </onsetAge><!--   No remission means no &lt;rebatement&gt;   -->
+  <evidence><!--   Problem is confirmed in diagnostic report   -->
+    <detail>
+      <reference value="DiagnosticReport/f201"/>
+      <display value="Erasmus' diagnostic report of Roel's tumor"/>
+    </detail>
+  </evidence>
+  <location><!--   Head and neck malignancy   -->
+    <code>
+      <coding>
+        <system value="http://snomed.info/sct"/>
+        <code value="361355005"/>
+        <display value="Entire head and neck"/>
+      </coding>
+    </code>
+  </location>
+</ns3:Resource>
+};
+
+
 declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count as xs:string?,$last_updated as xs:string? ) as node(){
 <ns3:MetaData xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
     <ns3:id>{concat($class,'/',$pid,"-",$count)}</ns3:id>
@@ -373,17 +450,11 @@ let $unit:=
 if($unit="@") then ""
 else $unit
 
-(:
-return  <set>
-<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-<a>{$valType}-{$nval}-{$tval}</a>
-</ns3:MetaResource>
-</set>
-:)
+
 
 let $fhirValue:= 
 if ($valType="N") then local:fnFhirValueQuantity($nval,$unit)
-else ()
+else local:fnFhirValueCodeableConcept($val)
 
 let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhirValue)
 
@@ -401,6 +472,7 @@ return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.h
 </ns3:MetaResourceSet>
 
 };
+
 
 
 
