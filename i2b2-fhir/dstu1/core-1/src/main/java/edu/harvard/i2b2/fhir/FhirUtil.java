@@ -94,7 +94,7 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
+	final public static String RESOURCE_LIST_REGEX = "(Condition|Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
