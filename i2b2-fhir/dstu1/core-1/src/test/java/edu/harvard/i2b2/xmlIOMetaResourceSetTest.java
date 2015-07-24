@@ -304,4 +304,19 @@ public class xmlIOMetaResourceSetTest {
 		s.getMetaResource().get(0).setResource(p);*/
 		logger.trace("xml:"+JAXBUtil.toXml(s));
 	}
+	
+	@Test
+	public void getMetaResourceSetDiagConditionTest() throws JAXBException{
+		String xml=Utils.getFile("example/fhir/MetaResourceSetDiagCondition.xml");
+		logger.trace("xml:"+xml);
+		MetaResourceSet s=JAXBUtil.fromXml(xml, MetaResourceSet.class);
+		/*Patient p= new Patient();
+		p=FhirUtil.setPatientIdentifier(p,"123");
+		List<MetaResource> mrList=s.getMetaResource();
+		MetaResource mr=mrList.get(0);
+		mr.setResource(p);p.setActive(null);
+		
+		s.getMetaResource().get(0).setResource(p);*/
+		logger.trace("xml:"+JAXBUtil.toXml(s));
+	}
 }

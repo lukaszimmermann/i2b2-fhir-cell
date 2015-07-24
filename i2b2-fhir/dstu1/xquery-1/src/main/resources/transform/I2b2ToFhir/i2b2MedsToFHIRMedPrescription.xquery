@@ -167,7 +167,7 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 };
 
 
-declare function local:fnFhirCondition($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
+declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string) as node(){           
    <ns3:Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xsi:type="Condition" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://hl7.org/fhir"
    xmlns:ns2="http://www.w3.org/1999/xhtml" >
 
@@ -176,16 +176,15 @@ declare function local:fnFhirCondition($count as xs:integer,$cn as xs:string, $c
    
   </text>
   <subject>
-    <reference value="Patient/f201"/>
-    <display value="Roel"/>
+     <reference value="Patient/{$pid}"/>
   </subject>
-  <dateAsserted value="2012-12-01"/><!--   The problem was asserted at December first   -->
+  
+  <dateAsserted value="{$sd}"/>
   <code>
     <coding>
-      <system value="http://snomed.info/sct"/>
-      <code value="363346000"/>
-      <display value="Malignant neoplastic disease"/>
-    </coding>
+      <system value="http://hl7.org/fhir/sid/icd-9"/>
+      <code value="{$cid}"/>
+    </coding>/
   </code>
   <category>
     <coding>
@@ -201,35 +200,7 @@ declare function local:fnFhirCondition($count as xs:integer,$cn as xs:string, $c
       <display value="Certain"/>
     </coding>
   </certainty>
-  <severity>
-    <coding>
-      <system value="http://snomed.info/sct"/>
-      <code value="24484000"/>
-      <display value="Severe"/>
-    </coding>
-  </severity>
-  <onsetAge>
-    <value value="52"/>
-    <units value="years"/>
-    <system value="http://snomed.info/sct"/>
-    <code value="258707000"/>
-  </onsetAge><!--   No remission means no &lt;rebatement&gt;   -->
-  <evidence><!--   Problem is confirmed in diagnostic report   -->
-    <detail>
-      <reference value="DiagnosticReport/f201"/>
-      <display value="Erasmus' diagnostic report of Roel's tumor"/>
-    </detail>
-  </evidence>
-  <location><!--   Head and neck malignancy   -->
-    <code>
-      <coding>
-        <system value="http://snomed.info/sct"/>
-        <code value="361355005"/>
-        <display value="Entire head and neck"/>
-      </coding>
-    </code>
-  </location>
-</ns3:Resource>
+  </ns3:Resource>
 };
 
 
@@ -353,6 +324,9 @@ let $distobs :=
  };
  
  
+
+ 
+ 
  
 declare function local:processMedObs
   ( $A as node()* )  as node()*
@@ -474,12 +448,52 @@ return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.h
 };
 
 
+declare function local:processDiagObs
+  ( $A as node()* )  as node()*
+{
+
+let $O:=
+for $id at $count in fn:distinct-values($A/observation/id)
+let $refObs :=  $A/observation[id =$id][1] (:why does some diagnosis in i2b2 have more than one modified cd?:)
+
+let $pid := $refObs/patient_id/text()
+let $cid := fn:replace($refObs/concept_cd/text(),"ICD9:","")
+
+let $oid := $refObs/observer_cd
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
+let $sourceSystem := $refObs/@sourcesystem_cd/string()
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
+
+let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
+
+
+let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid, $pid )
+
+return 
+ <set>
+<ns3:MetaResource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+{$fhirDiagCondition}
+{local:fnMetaData("Condition",$pid,xs:string($count),$updateDate)}
+</ns3:MetaResource>
+</set>
+
+
+return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+    {$O/ns3:MetaResource}
+</ns3:MetaResourceSet>
+
+};
 
 
 
 
 
-let $I:=root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
+
+let $I:=doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/diagnosisForAPatient.xml')
+(:root()doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
 (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
 root():)
   
@@ -487,18 +501,22 @@ let $distObs:=local:distinctObservations($I)
  
 let $labObs:= $distObs//observation[contains(concept_cd,"LOINC:")]
 let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
+let $diagObs:= $distObs//observation[contains(concept_cd,"ICD9:")]
+
 
 
 return <ns3:MetaResourceSet xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
  
  {local:processLabObs(<A>{$labObs}</A>)/ns3:MetaResource}
  {local:processMedObs(<A>{$medObs}</A>)/ns3:MetaResource}
+  {local:processDiagObs(<A>{$diagObs}</A>)/ns3:MetaResource}
  
 </ns3:MetaResourceSet>
 
-(:
 
+(:
 valueQuantity
+(:{local:fnMetaData("Condition",$pid,xs:string($count),$updateDate)}:)
 
 /Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml
 :)
