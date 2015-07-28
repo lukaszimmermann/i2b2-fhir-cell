@@ -53,15 +53,19 @@
 		</dependency>
 		<dependency>
 			<groupId>edu.harvard.i2b2.fhir</groupId>
-        <artifactId>ndcToRxNormMapper</artifactId>
-        <version>0.1</version>
+			<artifactId>ndcToRxNormMapper</artifactId>
+			<version>0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.harvard.i2b2.fhir</groupId>
-        <artifactId>loincMapper</artifactId>
-        <version>0.1</version>
+			<artifactId>loincMapper</artifactId>
+			<version>0.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>icd9Mapper</artifactId>
+			<version>0.1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.abdera</groupId>
 			<artifactId>abdera-bundle</artifactId>

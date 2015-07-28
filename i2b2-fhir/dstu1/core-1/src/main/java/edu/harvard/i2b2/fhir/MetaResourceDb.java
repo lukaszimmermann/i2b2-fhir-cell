@@ -25,6 +25,7 @@ import javax.xml.bind.Marshaller;
 import org.apache.abdera.model.Entry;
 import org.hl7.fhir.Observation;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.Condition;
 import org.hl7.fhir.ResourceReference;
 import org.hl7.fhir.Medication;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.core.MetaResource;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
+import edu.harvard.i2b2.icd9.Icd9FhirAdapter;
 import edu.harvard.i2b2.loinc.LoincFhirAdapter;
 import edu.harvard.i2b2.loinc.LoincMapper;
 import edu.harvard.i2b2.rxnorm.RxNormFhirAdapter;
@@ -46,6 +48,7 @@ public class MetaResourceDb {
 	List<MetaResource> metaResources;
 	static RxNormFhirAdapter rxNormAdapter = null;
 	static LoincFhirAdapter loincAdapter = null;
+	static Icd9FhirAdapter icd9Adapter = null;
 
 	public MetaResourceDb() throws IOException {
 		init();
@@ -60,6 +63,8 @@ public class MetaResourceDb {
 			rxNormAdapter = new RxNormFhirAdapter();
 		if (loincAdapter == null)
 			loincAdapter = new LoincFhirAdapter();
+		if (icd9Adapter == null)
+			icd9Adapter = new Icd9FhirAdapter();
 		set = new MetaResourceSet();
 		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
@@ -101,6 +106,11 @@ public class MetaResourceDb {
 			Observation ob = Observation.class.cast(r);
 			loincAdapter.addLoincName(ob); 
 			p.setResource(ob);
+		}
+		if (Condition.class.isInstance(r)) {
+			Condition cond = Condition.class.cast(r);
+			icd9Adapter.addIcd9Name(cond); 
+			p.setResource(cond);
 		}
 		metaResources.add(p);
 

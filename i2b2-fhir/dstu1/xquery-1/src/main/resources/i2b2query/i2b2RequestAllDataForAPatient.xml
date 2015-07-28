@@ -92,6 +92,22 @@
 			<item_is_synonym>false</item_is_synonym>
 		</item>
 	</panel>
+	<panel>
+		<panel_number>1</panel_number>
+		<panel_accuracy_scale>100</panel_accuracy_scale>
+		<invert>0</invert>
+		<panel_timing>ANY</panel_timing>
+		<total_item_occurrences>1</total_item_occurrences>
+		<item>
+			<hlevel>1</hlevel>
+			<item_name>Laboratory Tests</item_name>
+			<item_key>\\i2b2_DIAG\i2b2\Diagnoses\</item_key>
+			<tooltip>Labtests</tooltip>
+			<class>ENC</class>
+			<item_icon>FA</item_icon>
+			<item_is_synonym>false</item_is_synonym>
+		</item>
+	</panel>
 
 
 </filter_list>
