@@ -8,6 +8,7 @@
 	<modules>
 		<module>ndcToRxNormMapper</module>
 		<module>loincMapper</module>
+		<module>icd9Mapper</module>
   </modules>
 
 	<properties>

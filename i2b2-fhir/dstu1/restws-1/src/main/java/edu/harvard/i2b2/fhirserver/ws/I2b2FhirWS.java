@@ -463,7 +463,7 @@ public class I2b2FhirWS {
 
 		String requestStr = Utils
 		// .getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-				.getFile("i2b2query/i2b2RequestMedsAndLabsForAPatient.xml");
+				.getFile("i2b2query/i2b2RequestAllDataForAPatient.xml");
 		requestStr = insertSessionParametersInXml(requestStr, session);
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);

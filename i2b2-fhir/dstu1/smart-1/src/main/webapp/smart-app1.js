@@ -26,6 +26,7 @@ function updatePatientDisplay() {
 	$("#demo_list").empty().attr("frame","none");
 	$("#med_list").empty().attr("frame","none");
 	$("#lab_list").empty().attr("frame","none");
+	$("#diag_list").empty().attr("frame","none");
 
 	var patientIdInput=$("#patientId").val();
 	var demo = null;
@@ -72,6 +73,9 @@ function updatePatientDisplay() {
 
 				$('#lab_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 				$("#lab_list").append('<th align="left">Labs</th>');
+				
+				$('#diag_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+				$("#diag_list").append('<th align="left">Diagnosis:</th>');
 					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
 					
 				prescriptions.forEach(function(rx) {
@@ -128,6 +132,34 @@ function updatePatientDisplay() {
 			
 				}
 	);
+	
+	pt.Condition.where// .status("active")
+	//._include("Observation.subject")
+	.search().then(
+	
+			function(conditions) {
+				//document.getElementById("display1").innerHTML=JSON.stringify(conditions[0],null,4);
+			
+				conditions.forEach(function(cond) {
+				var row = $("<tr>");
+				row.append( $("<td>").text(cond.dateAsserted.replace("T"," ")));
+				
+				var condName="--";
+				if(cond.hasOwnProperty("code")){	
+						condName=cond.code.coding[0].code;
+				}
+				if(condName==null) {condName="--";}
+				
+				row.append( $("<td>").text(condName));
+			
+				$("#diag_list").append(row);
+			
+				});
+				document.getElementById("display").innerHTML="";
+			
+				}
+	);
+	
 	
 	
 	
