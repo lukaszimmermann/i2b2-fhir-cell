@@ -296,7 +296,7 @@ public class FhirUtil {
 			try {
 				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
 
-					// logger.trace(c.getSimpleName());
+					logger.trace(c.getSimpleName());
 					resourceClassList.add(c);
 				}
 			} catch (IOException e) {
@@ -333,8 +333,14 @@ public class FhirUtil {
 		}
 
 		Class c = null;
-		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement|org.hl7.fhir.MedicationPrescription"
-				.split("\\|")) {
+		
+		
+		for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(","").replace(")","").split("\\|")))
+				//"org.hl7.fhir.Condition|org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement|org.hl7.fhir.MedicationPrescription"
+				//.split("\\|")) {
+		{
+			x="org.hl7.fhir."+x;
+			//logger.trace("X:"+x);
 			c = Utils.getClassFromClassPath(x);
 			if (c != null)
 				commands.add(c);
