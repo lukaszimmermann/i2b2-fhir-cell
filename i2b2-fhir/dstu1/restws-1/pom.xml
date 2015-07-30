@@ -75,9 +75,9 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
-				<version>3.0.11.Final</version>
+			<version>3.0.11.Final</version>
 			<!-- <version>2.3.2.Final</version> -->
-		
+
 			<scope>provided</scope>
 		</dependency>
 		<!-- RESTEasy implementation of JAX-RS Client API -->
@@ -94,6 +94,17 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.9.9</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 
