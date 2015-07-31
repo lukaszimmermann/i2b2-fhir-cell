@@ -4,10 +4,10 @@
      xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
      version="2.4">
   <welcome-file-list>
-    <welcome-file>d1/index.html</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   
- 
+ <!--
   		<servlet>
   <servlet-name>FS</servlet-name>
   <servlet-class>edu.harvard.i2b2.fhirserver.ws.FileServlet</servlet-class>
@@ -18,14 +18,11 @@
 </servlet-mapping>
 
  
-<!-- Specifically index.html at the root -->
-<servlet-mapping>   
+ Specifically index.html at the root 
     <servlet-name>default</servlet-name>
     <url-pattern>/demo/*</url-pattern>
  
 </servlet-mapping>
-
-  	<!--
   	<servlet>
   <servlet-name>FileServlet</servlet-name>
   <servlet-class>edu.harvard.i2b2.fhirserver.ws.FileServlet</servlet-class>
