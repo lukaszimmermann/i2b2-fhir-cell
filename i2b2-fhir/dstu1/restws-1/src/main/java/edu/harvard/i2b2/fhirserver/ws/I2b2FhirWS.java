@@ -21,6 +21,8 @@ package edu.harvard.i2b2.fhirserver.ws;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +68,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaResourceSet;
@@ -95,6 +100,15 @@ public class I2b2FhirWS {
 		}
 	}
 
+	@GET
+	@Path("")
+	public Response getIndex() throws URISyntaxException{
+		return Response.seeOther(new URI("./demo/"))//.ok()//.entity("OK!!")
+				//.type(MediaType.TEXT_PLAIN)
+				//.seeOther("demo/index.html")
+				.build();
+	}
+	
 	@POST
 	@Path("auth")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })

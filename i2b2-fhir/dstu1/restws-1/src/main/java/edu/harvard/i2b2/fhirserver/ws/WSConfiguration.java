@@ -1,3 +1,4 @@
+package edu.harvard.i2b2.fhirserver.ws;
 /*
  * Copyright (c) 2006-2007 Massachusetts General Hospital 
  * All rights reserved. This program and the accompanying materials 
@@ -17,19 +18,11 @@
  * Contributors:
  * 		Kavishwar Wagholikar (kavi)
  */
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
 
-@Path( "/test" )
-public class Login {
+@ApplicationPath("")
+public class WSConfiguration extends Application {
 
-   @GET
-   //@Produces(MediaType.TEXT_HTML)
-   public Response login()  {
-      return Response.ok( "logged in.." ).build();
-   }
-
+	
 }

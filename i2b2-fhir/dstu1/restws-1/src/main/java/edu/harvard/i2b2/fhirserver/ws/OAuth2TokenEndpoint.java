@@ -1,3 +1,4 @@
+package edu.harvard.i2b2.fhirserver.ws;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
