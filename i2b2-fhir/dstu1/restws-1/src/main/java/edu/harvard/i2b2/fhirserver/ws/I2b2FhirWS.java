@@ -101,7 +101,7 @@ public class I2b2FhirWS {
 	}
 
 	@GET
-	@Path("")
+	@Path("sdsd")
 	public Response getIndex() throws URISyntaxException{
 		return Response.seeOther(new URI("./demo/"))//.ok()//.entity("OK!!")
 				//.type(MediaType.TEXT_PLAIN)
