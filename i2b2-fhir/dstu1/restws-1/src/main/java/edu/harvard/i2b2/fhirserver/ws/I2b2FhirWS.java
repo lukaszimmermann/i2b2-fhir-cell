@@ -89,9 +89,7 @@ public class I2b2FhirWS {
 	private void init() {
 
 		try {
-
 			logger.info("Got init request");
-			logger.info(" Print Got init request");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -155,7 +153,7 @@ public class I2b2FhirWS {
 				MetaResourceDb md = new MetaResourceDb();
 				session.setAttribute("md", md);
 
-				initAllPatients(session);
+				I2b2Helper.initAllPatients(session);
 				return Response.ok().entity("Auth successful.")
 						.type(MediaType.TEXT_PLAIN)
 						.header("session_id", session.getId()).build();
@@ -205,17 +203,17 @@ public class I2b2FhirWS {
 				session = request.getSession(false);
 			}
 			logger.debug("session id:" + session.getId());
-			getSessionLock(session);
+			I2b2Helper.getSessionLock(session);
 			md = (MetaResourceDb) session.getAttribute("md");
 
 			// filter if patientId is mentioned in query string
 			HashMap<String, String> filter = new HashMap<String, String>();
 
-			String patientId = extractPatientId(request.getQueryString());
+			String patientId = I2b2Helper.extractPatientId(request.getQueryString());
 			logger.info("PatientId:" + patientId);
 			if (patientId != null) {
 				// filter.put("Patient", "Patient/" + patientId);
-				scanQueryParametersToGetPdo(session, request.getQueryString());
+				I2b2Helper.scanQueryParametersToGetPdo(session, request.getQueryString());
 			}
 
 			Map<String, String[]> q = request.getParameterMap();
@@ -274,9 +272,9 @@ public class I2b2FhirWS {
 				msg = FhirUtil.getResourceBundle(s, basePath, url);
 				mediaType = MediaType.APPLICATION_XML;
 			}
-			msg = removeSpace(msg);
+			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
-			releaseSessionLock(session);
+			I2b2Helper.releaseSessionLock(session);
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 
@@ -285,7 +283,7 @@ public class I2b2FhirWS {
 			// .entity(msg).build();
 
 		} catch (Exception e) {
-			releaseSessionLock(session);
+			I2b2Helper.releaseSessionLock(session);
 			e.printStackTrace();
 			return Response.status(Status.BAD_REQUEST)
 					.header("xreason", e.getMessage()).build();
@@ -302,7 +300,7 @@ public class I2b2FhirWS {
 		 * .type(MediaType.APPLICATION_XML).entity("login first ") .build();
 		 */
 		HttpSession session = request.getSession();
-		getSessionLock(session);
+		I2b2Helper.getSessionLock(session);
 
 		if (session == null || session.getAttribute("md") == null) {
 			String username = request.getHeader("username");
@@ -315,7 +313,7 @@ public class I2b2FhirWS {
 					i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
 							: i2b2url);
 		}
-		releaseSessionLock(session);
+		I2b2Helper.releaseSessionLock(session);
 
 	}
 
@@ -345,7 +343,7 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			getSessionLock(session);
+			I2b2Helper.getSessionLock(session);
 			MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 			logger.debug("session id:" + session.getId());
 
@@ -368,13 +366,13 @@ public class I2b2FhirWS {
 				mediaType = MediaType.APPLICATION_XML;
 			}
 
-			msg = removeSpace(msg);
+			msg = I2b2Helper.removeSpace(msg);
 			if (r != null) {
-				releaseSessionLock(session);
+				I2b2Helper.releaseSessionLock(session);
 				return Response.ok(msg).header("session_id", session.getId())
 						.type(mediaType).build();
 			} else {
-				releaseSessionLock(session);
+				I2b2Helper.releaseSessionLock(session);
 				return Response
 						.noContent()
 						.header("xreason",
@@ -382,267 +380,12 @@ public class I2b2FhirWS {
 						.header("session_id", session.getId()).build();
 			}
 		} catch (Exception e) {
-			releaseSessionLock(session);
+			I2b2Helper.releaseSessionLock(session);
 			logger.error("", e);
 			return Response.noContent().header("xreason", e.getMessage())
 					.header("session_id", session.getId()).build();
 		}
 
 	}
-
-	private MetaResourceSet initAllPatients(HttpSession session)
-			throws AuthenticationFailure, FhirServerException,
-			XQueryUtilException, JAXBException {
-		if (session == null) {
-			return new MetaResourceSet();
-		}
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		if (session == null)
-			throw new RuntimeException("session is null");
-
-		String sa = (String) session.getAttribute("testAttr1");
-		logger.info("gettestAttr1:" + sa);
-		if (md == null)
-			throw new RuntimeException("md is null");
-		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
-
-		String requestStr = Utils.getFile("i2b2query/getAllPatients.xml");
-		requestStr = insertSessionParametersInXml(requestStr, session);
-		logger.debug(requestStr);
-		// if(1==1) return new MetaResourceSet();
-
-		String oStr = WebServiceCall.run(i2b2Url
-				+ "/services/QueryToolService/pdorequest", requestStr);
-
-		// logger.debug("got::"
-		// + oStr.substring(0, (oStr.length() > 200) ? 200 : 0));
-		logger.debug("got Response::" + oStr);
-
-		String loginStatusquery = "//response_header/result_status/status/@type/string()";
-		String loginError = processXquery(loginStatusquery, oStr);
-		logger.trace("ERROR:<" + loginError + ">");
-
-		if (loginError.equals("ERROR"))
-			throw new AuthenticationFailure();
-
-		String xQueryResultString = processXquery(query, oStr);
-
-		logger.debug("Got xQueryResultString :" + xQueryResultString);
-		// System.out.println("Got xQueryResultString :" + xQueryResultString);
-
-		MetaResourceSet b = null;
-		try {
-			b = JAXBUtil.fromXml(xQueryResultString, MetaResourceSet.class);
-
-		} catch (JAXBException e) {
-			e.printStackTrace();
-			throw new FhirServerException("JAXBException", e);
-		}
-		logger.info("Got ResourceSet of size::" + b.getMetaResource().size());
-		md.addMetaResourceSet(b);
-		return b;
-	}
-
-	private void getPdo(HttpSession session, String patientId)
-			throws XQueryUtilException {
-		ArrayList<String> PDOcallHistory = (ArrayList<String>) session
-				.getAttribute("PDOcallHistory");
-		if (PDOcallHistory == null) {
-			PDOcallHistory = new ArrayList<String>();
-			session.setAttribute("PDOcallHistory", PDOcallHistory);
-		}
-		if (PDOcallHistory.contains(patientId)) {
-			logger.info("patient already present:" + patientId);
-			return;// avoid recall on historical patient
-		}
-		PDOcallHistory.add(patientId);
-
-		MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-
-		String requestStr = Utils
-		// .getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-				.getFile("i2b2query/i2b2RequestAllDataForAPatient.xml");
-		requestStr = insertSessionParametersInXml(requestStr, session);
-		if (patientId != null)
-			requestStr = requestStr.replaceAll("PATIENTID", patientId);
-
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
-
-		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
-
-		logger.info("fetching from i2b2host...");
-		String oStr = WebServiceCall.run(i2b2Url
-				+ "/services/QueryToolService/pdorequest", requestStr);
-		logger.trace("got i2b2 response:" + oStr);
-		logger.info("running transformation...");
-		String xQueryResultString = processXquery(query, oStr);
-		logger.trace("xQueryResultString1:" + xQueryResultString);
-
-		// System.out.println("xQueryResultString:"+xQueryResultString);
-		// md.addMetaResourceSet(getEGPatient());
-
-		try {
-			MetaResourceSet b = JAXBUtil.fromXml(xQueryResultString,
-					MetaResourceSet.class);
-			logger.trace("bundle:" + JAXBUtil.toXml(b));
-			logger.trace("list size:" + b.getMetaResource().size());
-			logger.info("adding to memory...");
-			md.addMetaResourceSet(b);
-		} catch (Exception e) {
-			logger.trace("xQueryResultString1:" + xQueryResultString);
-
-			logger.error("ERROR MSG:" + e.getMessage(), e);
-			// e.printStackTrace();
-
-		}
-	}
-
-	private void scanQueryParametersToGetPdo(HttpSession session,
-			String queryString) throws XQueryUtilException {
-		if (queryString != null) {
-			String pid = extractPatientId(queryString);
-			if (pid != null) {
-				logger.info("will fetch Patient with id:" + pid);
-				getPdo(session, pid);
-			} else {
-				logger.info("will not fetch Patient as there is no Patient id in query");
-			}
-
-		}
-	}
-
-	private static String insertSessionParametersInXml(String xml,
-			HttpSession session) throws XQueryUtilException {
-		String username = (String) session.getAttribute("username");
-		String password = (String) session.getAttribute("password");
-		String i2b2domain = (String) session.getAttribute("i2b2domain");
-		String i2b2domainUrl = (String) session.getAttribute("i2b2domainUrl");
-
-		xml = replaceXMLString(xml, "//security/username", username);
-		xml = replaceXMLString(xml, "//security/password", password);
-		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
-		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
-				+ "/services/QueryToolService/pdorequest");
-		// logger.info("returning xml:"+xml);
-		return xml;
-	}
-
-	private static String replaceXMLString(String xmlInput, String path,
-			String value) throws XQueryUtilException {
-		String query = "copy $c := root()\n"
-				+ "modify ( replace value of node $c" + path + " with \""
-				+ value + "\")\n" + " return $c";
-		logger.trace("query:" + query);
-		return processXquery(query, xmlInput);
-	}
-
-	private static String extractPatientIdFromQuery(HashMap<String, String> hm) {
-		String id = null;
-		for (String k : hm.keySet()) {
-			String v = hm.get(k);
-			String kv = k + "=" + v;
-			id = extractPatientId(kv);
-			if (id != null)
-				return id;
-		}
-		return id;
-	}
-
-	private static String extractPatientId(String input) {
-		if (input == null)
-			return null;
-		String id = null;
-		Pattern p = Pattern.compile("[P|p]atient=([a-zA-Z0-9]+)");
-		Matcher m = p.matcher(input);
-
-		if (m.find()) {
-			id = m.group(1);
-			logger.trace(id);
-		}
-		return id;
-	}
-
-	private static String removeSpace(String input)
-			throws ParserConfigurationException, SAXException, IOException {
-		// return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
-		// "(?m)^[ \t]*\r?\n", "")));
-		return input.replaceAll("(?m)^[ \t]*\r?\n", "");
-		// return input;
-	}
-
-	private static String processXquery(String query, String input)
-			throws XQueryUtilException {
-		logger.trace("will run query:" + query + "\n input" + input);
-		return XQueryUtil.processXQuery(query, input);
-	}
-
-	@GET
-	@Path("a/Patient/1137192")
-	@Produces({ "application/json; charset=UTF-8" })
-	public Response getSMARTexamplePatients(@Context HttpServletRequest request) {
-		logUrlAccess(request);
-		return Response.ok().type("application/json; charset=UTF-8")
-				.entity(Utils.getFile("example/smart/ParticularPatient.json"))
-				.build();
-	}
-
-	@GET
-	@Path("a/Patient")
-	@Produces({ "application/json; charset=UTF-8" })
-	public Response getSMARTexampleParticularPatient(
-			@Context HttpServletRequest request) {
-		logUrlAccess(request);
-		return Response.ok().type("application/json; charset=UTF-8")
-				.entity(Utils.getFile("example/smart/AllPatients.json"))
-				.build();
-	}
-
-	@GET
-	@Path("a/MedicationPrescription/_search")
-	@Produces({ "application/json; charset=UTF-8" })
-	public Response getSMARTexampleParticularPatientPrescription(
-			@Context HttpServletRequest request) {
-
-		logUrlAccess(request);
-		return Response
-				.ok()
-				.type("application/json; charset=UTF-8")
-				.entity(Utils
-						.getFile("example/smart/ParticularPatientPrescription.json"))
-				.build();
-	}
-
-	private void logUrlAccess(HttpServletRequest request) {
-		StringBuffer url = request.getRequestURL();
-		String queryString = request.getQueryString();
-		if (queryString != null) {
-			url.append('?');
-			url.append(queryString);
-		}
-		String requestURL = url.toString();
-		logger.trace(request.getRemoteAddr() + "<-" + requestURL);
-	}
-
-	private void getSessionLock(HttpSession session)
-			throws InterruptedException {
-
-		while (session.getAttribute("SESSION_LOCK") != null
-				&& session.getAttribute("SESSION_LOCK").equals(true)) {
-			Thread.sleep(100);
-			logger.trace("Session locked. Hence sleeping.. for session id:"
-					+ session.getId());
-		}
-		logger.trace("setting session Lock:" + session.getId());
-		session.setAttribute("SESSION_LOCK", true);
-		return;
-
-	}
-
-	private void releaseSessionLock(HttpSession session) {
-		logger.trace("releasing session Lock:" + session.getId());
-		session.setAttribute("SESSION_LOCK", false);
-	}
+	
 }
