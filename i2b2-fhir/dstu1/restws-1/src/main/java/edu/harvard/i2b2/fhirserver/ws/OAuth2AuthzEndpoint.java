@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /*
  * http://blogs.steeplesoft.com/posts/2013/a-simple-oauth2-client-and-server-example-part-i.html
  */
-@Path("/authz")
+@Path("authz")
 public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
 	
@@ -45,6 +45,7 @@ public class OAuth2AuthzEndpoint {
     public Response authorize(@Context HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException {
         try {
+        	logger.trace("got request to authorize for OAuth2");
             OAuthAuthzRequest oauthRequest =
                 new OAuthAuthzRequest(request);
             OAuthIssuerImpl oauthIssuerImpl =
@@ -77,6 +78,7 @@ public class OAuth2AuthzEndpoint {
                 .location(url)
                 .build();
         } catch (OAuthProblemException e) {
+        	logger.error(e.getMessage());
         	return Response.status(Status.BAD_REQUEST)
 					.header("xreason", e.getMessage()).build();
         }

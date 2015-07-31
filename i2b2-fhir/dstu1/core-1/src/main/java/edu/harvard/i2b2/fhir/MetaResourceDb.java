@@ -64,7 +64,7 @@ public class MetaResourceDb {
 		if (loincAdapter == null)
 			loincAdapter = new LoincFhirAdapter();
 		if (icd9Adapter == null)
-			icd9Adapter = new Icd9FhirAdapter();
+			//icd9Adapter = new Icd9FhirAdapter();
 		set = new MetaResourceSet();
 		metaResources = set.getMetaResource();
 		// metaResources = new MetaResourcePrimaryDb();
@@ -109,7 +109,7 @@ public class MetaResourceDb {
 		}
 		if (Condition.class.isInstance(r)) {
 			Condition cond = Condition.class.cast(r);
-			icd9Adapter.addIcd9Name(cond); 
+			//icd9Adapter.addIcd9Name(cond); 
 			p.setResource(cond);
 		}
 		metaResources.add(p);

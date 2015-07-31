@@ -1,0 +1,1385 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:os="http://a9.com/-/spec/opensearch/1.1/">
+  <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/3a5aa7dd-e5ba-4c0d-82de-b9f98cee2b8c</id>
+  <title type="text">Query result</title>
+  <updated>2015-07-29T19:12:53.822Z</updated>
+  <published>29 Jul 2015 19:12:53 GMT</published>
+  <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription?patient=1000000001&amp;_include=MedicationPrescription.Medication&amp;_include=MedicationPrescription.Patient" rel="query"/>
+  <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/" rel="self"/>
+  <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/" rel="fhir-base"/>
+  <os:result>37</os:result>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-1</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-1" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-03-29T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-1"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value/>
+            <units value=""/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value=""/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-2</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-2" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-05-01T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-2"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="500"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-3</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-3" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-06-28T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-3"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="5"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-4</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-4" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-06-28T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-4"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="110"/>
+            <units value="mcg/inh"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mcg/inh"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-5</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-5" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-09-20T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-5"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="4"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-6</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-6" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-09-20T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-6"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="40"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-7</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-7" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-09-20T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-7"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="120"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-8</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-8" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2007-11-23T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-8"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="500"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-9</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-9" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2008-02-28T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-9"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="40"/>
+            <units value="mg/ml"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg/ml"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-10</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-10" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-10"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="4"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-11</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-11" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-11"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="150"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-12</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-12" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-12"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="0.2"/>
+            <units value="mg/inh"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg/inh"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-13</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-13" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-13"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="200"/>
+            <units value="mg/5ml"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg/5ml"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-14</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-14" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-14"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value/>
+            <units value=""/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value=""/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-15</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-15" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-03-09T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-15"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="40"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-16</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-16" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-04-20T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-16"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="250"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-17</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-17" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-09-10T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-17"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="200"/>
+            <units value="mg"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-18</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/MedicationPrescription/1000000001-18" rel="self"/>
+    <content type="application/xml">
+      <MedicationPrescription xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:p/>
+        </ns2:div>
+    </text>
+        <dateWritten value="2009-09-10T00:00:00"/>
+        <patient>
+          <reference value="Patient/1000000001"/>
+    </patient>
+        <medication>
+          <reference value="Medication/1000000001-18"/>
+    </medication>
+        <dosageInstruction>
+          <timingSchedule>
+            <repeat>
+              <frequency value="1"/>
+              <duration value="1"/>
+              <units value="d"/>
+            </repeat>
+        </timingSchedule>
+          <route>
+            <coding>
+              <system value="http://snomed.info/sct"/>
+              <code value="UNK"/>
+              <display value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </route>
+          <doseQuantity>
+            <value value="20"/>
+            <units value="mg/ml"/>
+            <system value="http://unitsofmeasure.org"/>
+            <code value="mg/ml"/>
+        </doseQuantity>
+    </dosageInstruction>
+</MedicationPrescription>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-1</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-1" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="SULFAMETHOXAZOLE/TRIMETHOPRIM@80 mg-16 mg/mL@INTRAVEN@VIAL (ML)"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00641276641"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="313137"/>
+            <display value="SULFAMETHOXAZOLE/TRIMETHOPRIM@80 mg-16 mg/mL@INTRAVEN@VIAL (ML)"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-2</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-2" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="PENICILLIN V POTASSIUM 500 mg ORAL TABLET, FILM COATED"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="51079061620"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="834102"/>
+            <display value="PENICILLIN V POTASSIUM 500 mg ORAL TABLET, FILM COATED"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-3</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-3" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Singulair 5 MG Chewable Tablet"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00006027531"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="153893"/>
+            <display value="Singulair 5 MG Chewable Tablet"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-4</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-4" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Flovent 110mcg/actuation Inhalation Aerosol"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00173049800"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="769060"/>
+            <display value="Flovent 110mcg/actuation Inhalation Aerosol"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-5</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-5" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="albuterol sulfate 4 mg ORAL TABLET"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00005306343"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="197318"/>
+            <display value="albuterol sulfate 4 mg ORAL TABLET"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-6</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-6" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Protonix 40 MG Delayed Release Oral Tablet"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00008084181"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="284400"/>
+            <display value="Protonix 40 MG Delayed Release Oral Tablet"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-7</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-7" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="APAP 120 MG Rectal Suppository [Uniserts]"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00245012112"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="209359"/>
+            <display value="APAP 120 MG Rectal Suppository [Uniserts]"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-8</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-8" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="NAPROXEN 500 mg ORAL TABLET, DELAYED RELEASE"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="58177030304"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="311915"/>
+            <display value="NAPROXEN 500 mg ORAL TABLET, DELAYED RELEASE"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-9</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-9" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Kenalog 40 MG/ML Injectable Suspension"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00003029320"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="1085756"/>
+            <display value="Kenalog 40 MG/ML Injectable Suspension"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-10</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-10" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="albuterol sulfate 4 mg ORAL TABLET"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00005306343"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="197318"/>
+            <display value="albuterol sulfate 4 mg ORAL TABLET"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-11</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-11" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Diflucan 150 MG Oral Tablet"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00049350079"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="207108"/>
+            <display value="Diflucan 150 MG Oral Tablet"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-12</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-12" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="MAXAIR 200 MCG/INHAL Metered Dose Inhaler, 400 Actuations"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00089081710"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="966812"/>
+            <display value="MAXAIR 200 MCG/INHAL Metered Dose Inhaler, 400 Actuations"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-13</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-13" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="ACYCLOVIR 200 mg in 5 mL ORAL SUSPENSION"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="50962045360"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="307730"/>
+            <display value="ACYCLOVIR 200 mg in 5 mL ORAL SUSPENSION"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-14</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-14" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Desogestrel/Ethinyl Estradiol;Placebo 0.15 MG-0.03 MG Oral Tablet [APRI]"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="51285057628"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="753482"/>
+            <display value="Desogestrel/Ethinyl Estradiol;Placebo 0.15 MG-0.03 MG Oral Tablet [APRI]"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-15</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-15" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="PriLOSEC 40 MG Delayed Release Oral Capsule"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="61113074331"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="213295"/>
+            <display value="PriLOSEC 40 MG Delayed Release Oral Capsule"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-16</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-16" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="tetracycline hydrochloride 250 MG Oral Capsule"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00555001105"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="198250"/>
+            <display value="tetracycline hydrochloride 250 MG Oral Capsule"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-17</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-17" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="IBUPROFEN 200 mg ORAL TABLET, FILM COATED [members mark ibuprofen]"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="00182103901"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="310965"/>
+            <display value="IBUPROFEN 200 mg ORAL TABLET, FILM COATED [members mark ibuprofen]"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-18</id>
+    <updated>2010-10-28T11:00:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Medication/1000000001-18" rel="self"/>
+    <content type="application/xml">
+      <Medication xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <text>
+          <status value="generated"/>
+          <ns2:div/>
+    </text>
+        <name value="Oxycodone Hydrochloride 20 MG/ML Oral Solution [OXYFAST]"/>
+        <code>
+          <coding>
+            <system value="http://../NDC"/>
+            <code value="59011022520"/>
+            <display value=""/>
+            <primary value="true"/>
+        </coding>
+          <coding>
+            <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+            <code value="1050409"/>
+            <display value="Oxycodone Hydrochloride 20 MG/ML Oral Solution [OXYFAST]"/>
+        </coding>
+    </code>
+</Medication>
+    </content>
+  </entry>
+  <entry>
+    <id>http://fhir.i2b2.org/srv-dstu1-0.2/api/Patient/1000000001</id>
+    <updated>2010-11-04T10:43:00.000Z</updated>
+    <link href="http://fhir.i2b2.org/srv-dstu1-0.2/api/Patient/1000000001" rel="self"/>
+    <content type="application/xml">
+      <Patient xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+        <extension url="http://hl7.org/fhir/StructureDefinition/us-core-race">
+          <valueCodeableConcept>
+            <coding>
+              <system value="http://hl7.org/fhir/v3/Race"/>
+              <code value="UNK"/>
+              <primary value="true"/>
+            </coding>
+        </valueCodeableConcept>
+    </extension>
+        <text>
+          <status value="generated"/>
+          <ns2:div>
+            <ns2:table>
+              <ns2:tbody>
+                <ns2:tr>
+                  <ns2:td>Zip</ns2:td>
+                  <ns2:td>02140</ns2:td>
+                    </ns2:tr>
+                <ns2:tr>
+                  <ns2:td>Id</ns2:td>
+                  <ns2:td>1000000001</ns2:td>
+                    </ns2:tr>
+                <ns2:tr>
+                  <ns2:td>Gender</ns2:td>
+                  <ns2:td>Female</ns2:td>
+                    </ns2:tr>
+                <ns2:tr>
+                  <ns2:td>Birthdate</ns2:td>
+                  <ns2:td>1985-11-17T00:00:00.000Z</ns2:td>
+                    </ns2:tr>
+                <ns2:tr>
+                  <ns2:td>Marital Status</ns2:td>
+                  <ns2:td>married</ns2:td>
+                    </ns2:tr>
+                </ns2:tbody>
+            </ns2:table>
+        </ns2:div>
+    </text>
+        <identifier>
+          <use value="usual"/>
+          <label value="SMART Hospital MRN"/>
+          <system value="urn:oid:0.1.2.3.4.5.6.7"/>
+          <value value="Patient/1000000001"/>
+    </identifier>
+        <gender>
+          <coding>
+            <system value="http://hl7.org/fhir/v3/AdministrativeGender"/>
+            <code value="F"/>
+            <display value="Female"/>
+            <primary value="true"/>
+        </coding>
+    </gender>
+        <birthDate value="1985-11-17T00:00:00.000Z"/>
+        <deceasedBoolean value="false"/>
+        <address>
+          <use value="home"/>
+          <zip value="02140"/>
+    </address>
+        <maritalStatus>
+          <coding>
+            <system value="http://hl7.org/fhir/v3/MaritalStatus"/>
+            <code value="M"/>
+            <display value="married"/>
+        </coding>
+    </maritalStatus>
+        <managingOrganization>
+          <reference value="Organization/1"/>
+    </managingOrganization>
+        <active value="true"/>
+</Patient>
+    </content>
+  </entry>
+</feed>

@@ -102,7 +102,7 @@
 			<hlevel>1</hlevel>
 			<item_name>Laboratory Tests</item_name>
 			<item_key>\\i2b2_DIAG\i2b2\Diagnoses\</item_key>
-			<tooltip>Labtests</tooltip>
+			<tooltip>Diagnosis</tooltip>
 			<class>ENC</class>
 			<item_icon>FA</item_icon>
 			<item_is_synonym>false</item_is_synonym>

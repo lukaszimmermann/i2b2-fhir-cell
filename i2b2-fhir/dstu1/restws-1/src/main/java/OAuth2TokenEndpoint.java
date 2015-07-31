@@ -18,7 +18,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 
-@Path("/token")
+@Path("token")
 public class OAuth2TokenEndpoint {
     
     @POST

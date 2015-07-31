@@ -41,15 +41,23 @@ return $c
 declare function local:fnRoute($r as xs:string?) as node()?
 { 
 let $r:= fn:lower-case($r)
-
+(:http://hl7.org/fhir/2015May/valueset-route-codes.html:)
 let $c:=
-if($r="PO") then ""
-else if($r="tid") then "394899003"
+if($r="PO") then "26643006"
+else if($r="ID") then "372464004"
+else if($r="IM") then "78421000"
+else if($r="IO") then "417255000"
+else if($r="IP") then "38239002" 
+else if($r="IV") then "47625008"
 else "UNK"
 
 let $d:=
-if($r="PO") then ""
-else if($r="tid") then "oral administration of treatment"
+if($r="PO") then "Oral route"
+else if($r="ID") then "Intradermal route"
+else if($r="IM") then "Intramuscular"
+else if($r="IO") then "Intraosseous"
+else if($r="IP") then "Intraperitoneal" 
+else if($r="IV") then "Intravenous"
 else "UNK"
 
 return
