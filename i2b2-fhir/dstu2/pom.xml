@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.harvard.i2b2</groupId>
-	<artifactId>fhir-dstu</artifactId>
-	<version>${my-project-version}</version>
-	<packaging>pom</packaging>
-
+		<groupId>edu.harvard.i2b2.fhir</groupId>
+		<artifactId>dstu</artifactId>
+		<version>dstu2-0.2</version>
+		<packaging>pom</packaging>
 	<modules>
-		<module>fhir-server</module>
-		<module>fhir-core</module>
-		<module>xquery</module>
-		<module>preprocess-spec</module>
-		<module>restws-jboss7</module>
-        </modules>
+		<module>core-2</module>
+		<module>xquery-2</module>
+		<module>client-2</module>
+  </modules>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<my-project-version>dstu2-0.1</my-project-version>
+		<my-project-version>dstu2-0.2</my-project-version>
 	</properties>
 
 
@@ -27,17 +24,17 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.12</version>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.12</version>
+			<version>1.6.1</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
+			<version>1.2.16</version>
 			<!-- <scope>runtime</scope> -->
 		</dependency>
 		<dependency>
