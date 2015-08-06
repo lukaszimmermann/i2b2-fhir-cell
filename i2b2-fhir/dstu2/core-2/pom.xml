@@ -1,23 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>edu.harvard.i2b2</groupId>
-		<artifactId>fhir-dstu</artifactId>
-		<version>dstu2-0.1</version>
+		<groupId>edu.harvard.i2b2.fhir</groupId>
+		<artifactId>dstu</artifactId>
+		<version>dstu2-0.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<groupId>edu.harvard.i2b2</groupId>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>fhir-core</artifactId>
+	<artifactId>core</artifactId>
 	<version>${my-project-version}</version>
 
 
 	<dependencies>
 		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>xquery</artifactId>
-			<version>${my-project-version}</version>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>2.17</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- <dependency> <groupId>org.glassfish.extras</groupId> <artifactId>glassfish-embedded-all</artifactId> 
 			<version>3.1.1</version> <scope>test</scope> </dependency> -->
@@ -46,13 +46,44 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>xquery</artifactId>
+			<version>${my-project-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>ndcToRxNormMapper</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>loincMapper</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>icd9Mapper</artifactId>
+			<version>0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.abdera</groupId>
+			<artifactId>abdera-bundle</artifactId>
+			<version>1.1.2</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.abdera</groupId>
+			<artifactId>abdera-parser</artifactId>
+			<version>1.1.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.abdera</groupId>
 			<artifactId>abdera-bundle</artifactId>
 			<version>1.1.2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
@@ -67,7 +98,15 @@
 		</dependency>
 
 
+
+
+
+
+
+
 	</dependencies>
+
+
 
 
 
@@ -83,7 +122,13 @@
 			<name>BaseX Maven Repository</name>
 			<url>http://files.basex.org/maven</url>
 		</repository>
-
+		<repository>
+			<id>oss-snapshots</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+		</repository>
 	</repositories>
 
 
