@@ -60,6 +60,7 @@ import org.hl7.fhir.Id;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationPrescription;
 import org.hl7.fhir.MedicationStatement;
+import org.hl7.fhir.Observation;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Condition;
 import org.hl7.fhir.Reference;
@@ -88,8 +89,9 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Medication|MedicationStatement|Observation|Patient)";
-	public static ArrayList<Class> resourceClassList = null;
+	 final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
+     public static ArrayList<Class> resourceClassList = null;
+
 
 	private static Validator v;
 
@@ -178,41 +180,47 @@ public class FhirUtil {
 
 	}
 
-	public static List<Class> getAllFhirResourceClasses(String packageName)
-			throws IOException {
 
-		// logger.trace("Running getAllFhirResourceClasses for:" +
-		// packageName);
-		List<Class> commands = new ArrayList<Class>();
+    public static List<Class> getAllFhirResourceClasses(String packageName)
+                    throws IOException {
 
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
-				null, null, null);
+            // logger.trace("Running getAllFhirResourceClasses for:" +
+            // packageName);
+            List<Class> commands = new ArrayList<Class>();
 
-		Location location = StandardLocation.CLASS_PATH;
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+                            null, null, null);
 
-		Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
-		kinds.add(JavaFileObject.Kind.CLASS);
-		boolean recurse = false;
+            Location location = StandardLocation.CLASS_PATH;
 
-		Iterable<JavaFileObject> list = fileManager.list(location, packageName,
-				kinds, recurse);
+            Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
+            kinds.add(JavaFileObject.Kind.CLASS);
+            boolean recurse = false;
 
-		for (JavaFileObject javaFileObject : list) {
+            Iterable<JavaFileObject> list = fileManager.list(location, packageName,
+                            kinds, recurse);
 
-			// commands.add(javaFileObject.getClass());
-		}
+            for (JavaFileObject javaFileObject : list) {
 
-		Class c = null;
-		for (String x : "org.hl7.fhir.Patient|org.hl7.fhir.Medication|org.hl7.fhir.Observation|org.hl7.fhir.MedicationStatement"
-				.split("\\|")) {
-			c = Utils.getClassFromClassPath(x);
-			if (c != null)
-				commands.add(c);
-		}
-		// logger.trace(commands.toString());
-		return commands;
-	}
+                    // commands.add(javaFileObject.getClass());
+            }
+
+            Class c = null;
+            
+            
+            for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(","").replace(")","").split("\\|")))
+                          
+            {
+                    x="org.hl7.fhir."+x;
+                    //logger.trace("X:"+x);
+                    c = Utils.getClassFromClassPath(x);
+                    if (c != null)
+                            commands.add(c);
+            }
+            // logger.trace(commands.toString());
+            return commands;
+    }
 
 	public static Class getResourceClass(String resourceName) {
 		if (resourceClassList == null)
@@ -471,6 +479,14 @@ public class FhirUtil {
 		case "Condition":
 			rc.setCondition((Condition) r);
 			break;
+		case "Observation":
+			rc.setObservation((Observation) r);
+			break;
+		case "Bundle":
+			rc.setBundle((Bundle) r);
+			break;
+		default:
+			throw new RuntimeException("ResourceType not found:"+rClass);
 		}
 		return rc;
 	}
@@ -492,10 +508,24 @@ public class FhirUtil {
 			return rc.getMedication();
 		if (rc.getMedicationStatement() != null)
 			return rc.getMedicationStatement();
+		if (rc.getMedicationPrescription() != null)
+			return rc.getMedicationPrescription();
+		if (rc.getCondition() != null)
+			return rc.getCondition();
+		if (rc.getObservation() != null)
+			return rc.getObservation();
+		if (rc.getBundle() != null)
+			return rc.getBundle();
 		if (rc.getSearchParameter() != null)
 			return rc.getSearchParameter();
 
-		throw new RuntimeException("Not implemented all resource types");
+		String xml=null;
+		try {
+			xml = JAXBUtil.toXml(rc);
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		throw new RuntimeException("Not implemented all resource types:"+xml);
 	}
 
 	public static String resourceToJsonString(Resource r) throws JSONException,

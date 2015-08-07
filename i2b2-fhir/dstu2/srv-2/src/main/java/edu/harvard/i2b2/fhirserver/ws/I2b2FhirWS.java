@@ -256,7 +256,10 @@ public class I2b2FhirWS {
 				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
 						+ request.getQueryString());
 				logger.info("created QE:" + qe);
-				s = FhirUtil.getResourceBundle(qe.search(FhirUtil.getResourceListFromBundle(s)), basePath, "url");
+				logger.trace("will search on bundle:"+JAXBUtil.toXml(s));
+				List<Resource> list=FhirUtil.getResourceListFromBundle(s);
+				logger.trace("list size:"+list.size());
+				s = FhirUtil.getResourceBundle(qe.search(list), basePath, "url");
 			}
 
 			logger.info("including...._include:" + includeResources.toString());
