@@ -175,9 +175,9 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
    <status value="generated"/>
   <text>   
   </text>
-  <subject>
+  <patient>
      <reference value="Patient/{$pid}"/>
-  </subject>
+  </patient>
   
   <dateAsserted value="{$sd}"/>
   <code>
@@ -375,17 +375,21 @@ let $fhirMedicationPrescription:=local:fnFhirMedicationPrescription($count,$timi
 
 return
  <set>
-<Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+ <entry xmlns="http://hl7.org/fhir">
+<resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirMedication}
-</Resource>
-<Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+</resource>
+</entry>
+<entry xmlns="http://hl7.org/fhir">
+<resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirMedicationPrescription}
-</Resource>
+</resource>
+</entry>
 </set>
 
 
 return <Bundle xmlns="http://hl7.org/fhir" >
-    {$O/Resource}
+    {$O/entry}
 </Bundle>
 
 };
@@ -437,14 +441,16 @@ let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhi
 
 return 
  <set>
-<Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+ <entry xmlns="http://hl7.org/fhir">
+<resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirObservation}
-</Resource>
+</resource>
+</entry>
 </set>
 
 
 return <Bundle xmlns="http://hl7.org/fhir" >
-    {$O/Resource}
+    {$O/entry}
 </Bundle>
 
 
@@ -477,14 +483,16 @@ let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid, $pid
 
 return 
  <set>
-<Resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+ <entry xmlns="http://hl7.org/fhir">
+<resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 {$fhirDiagCondition}
-</Resource>
+</resource>
+</entry>
 </set>
 
 
 return <Bundle xmlns="http://hl7.org/fhir" >
-    {$O/Resource}
+    {$O/entry}
 </Bundle>
 
 };
@@ -509,9 +517,9 @@ let $diagObs:= $distObs//observation[contains(concept_cd,"ICD9:")]
 
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-{local:processMedObs(<A>{$medObs}</A>)/Resource}
- {local:processLabObs(<A>{$labObs}</A>)/Resource}
-  {local:processDiagObs(<A>{$diagObs}</A>)/Resource}
+{local:processMedObs(<A>{$medObs}</A>)/entry}
+ {local:processLabObs(<A>{$labObs}</A>)/entry}
+  {local:processDiagObs(<A>{$diagObs}</A>)/entry}
  
 </Bundle>
 

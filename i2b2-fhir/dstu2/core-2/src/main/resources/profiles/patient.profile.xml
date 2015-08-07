@@ -968,7 +968,7 @@ Systems providing decision support or enforcing business rules should ideally do
       </mapping>
     </element>
     <element>
-      <path value="Patient.	"/>
+      <path value="Patient.birthDate"/>
       <short value="The date of birth for the individual"/>
       <definition value="The date of birth for the individual."/>
       <comments value="At least an estimated year should be provided as a guess if the real dob is unknown."/>

@@ -182,7 +182,6 @@ public class PdoEGtoFhirBundle {
 		return XQueryUtil.processXQuery( query,input).toString();
 	}
 	
-	
 	static public String getMeds() throws XQueryUtilException {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
@@ -191,6 +190,12 @@ public class PdoEGtoFhirBundle {
 		return XQueryUtil.processXQuery( query,input).toString();
 	}
 	
+	@Test
+	 public void readMedBundle() throws JAXBException{
+		String xmlString=Utils.getFile("example/fhir/DSTU2/PatientBundle.xml");
+		Bundle b=JAXBUtil.fromXml(xmlString,Bundle.class);
+		logger.info("b:"+JAXBUtil.toXml(b));
+	}
 	
 
 }

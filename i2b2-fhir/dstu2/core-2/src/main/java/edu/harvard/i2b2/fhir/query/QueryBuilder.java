@@ -77,15 +77,20 @@ public class QueryBuilder {
 			throw new FhirCoreException("resource class is null");
 
 		// logger.trace("rawParameter:"+this.rawParameter);
-		String parameter = this.rawParameter;
-		if (parameter.contains(":"))
-			parameter = parameter.split(":")[0];
-
-		//pick out custom query type
-		if (parameter.matches("^@.+")){
-			parameter = parameter.substring(1);
-			this.queryTypeStr = "custom";
-		}
+        if (this.rawParameter.equals("patient:Patient")) {this.rawParameter="patient";}
+        if (this.rawParameter.equals("subject:Patient")) {this.rawParameter="subject";}
+        String parameter = this.rawParameter;
+        
+        
+        
+        if (parameter.contains(":"))
+                parameter = parameter.split(":")[0];
+        
+        //pick out custom query type
+        if (parameter.matches("^@.+")){
+                parameter = parameter.substring(1);
+                this.queryTypeStr = "custom";
+        }
 		
 		Query q = null;
 
