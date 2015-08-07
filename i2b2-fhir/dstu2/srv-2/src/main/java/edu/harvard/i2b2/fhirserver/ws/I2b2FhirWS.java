@@ -256,7 +256,7 @@ public class I2b2FhirWS {
 				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
 						+ request.getQueryString());
 				logger.info("created QE:" + qe);
-				s = FhirUtil.getResourceBundle(qe.search(s), basePath, "url");
+				s = FhirUtil.getResourceBundle(qe.search(FhirUtil.getResourceListFromBundle(s)), basePath, "url");
 			}
 
 			logger.info("including...._include:" + includeResources.toString());
@@ -298,6 +298,7 @@ public class I2b2FhirWS {
 		} catch (Exception e) {
 			I2b2Helper.releaseSessionLock(session);
 			e.printStackTrace();
+			logger.error("",e);
 			return Response.status(Status.BAD_REQUEST)
 					.header("xreason", e.getMessage()).build();
 		}
