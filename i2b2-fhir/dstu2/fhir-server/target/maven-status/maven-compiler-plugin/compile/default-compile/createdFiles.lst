@@ -1,0 +1,11 @@
+edu/harvard/i2b2/fhirserver/entity/Address.class
+edu/harvard/i2b2/fhirserver/entity/Patients.class
+edu/harvard/i2b2/fhirserver/entity/MyResource.class
+edu/harvard/i2b2/fhirserver/ws/ResourceWebService.class
+edu/harvard/i2b2/fhirserver/ejb/ResourceDb.class
+edu/harvard/i2b2/fhirserver/ws/FromI2b2WebService.class
+edu/harvard/i2b2/fhirserver/entity/Customer.class
+edu/harvard/i2b2/fhirserver/ws/RestConfiguration.class
+edu/harvard/i2b2/fhirserver/ejb/MetaResourceDbWrapper.class
+edu/harvard/i2b2/fhirserver/ws/AuthenticationFailure.class
+edu/harvard/i2b2/fhirserver/ws/FhirServerException.class
