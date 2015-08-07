@@ -19,7 +19,7 @@ public class OAuthClientTest {
 
 		OAuthClientRequest request = OAuthClientRequest
 				.authorizationLocation(
-						"https://graph.facebook.com/oauth/authorize")
+						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthUri")
 				.setClientId("my-client-id")
 				.setRedirectURI(
 						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthCode")

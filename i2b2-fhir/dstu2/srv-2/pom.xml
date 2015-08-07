@@ -1,21 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
-		<groupId>edu.harvard.i2b2</groupId>
-		<artifactId>fhir-dstu</artifactId>
-		<version>dstu2-0.1</version>
+		<groupId>edu.harvard.i2b2.fhir</groupId>
+		<artifactId>dstu</artifactId>
+		<version>dstu2-0.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>edu.harvard.i2b2</groupId>
-	<artifactId>fhir-server</artifactId>
+	<groupId>edu.harvard.i2b2.fhir</groupId>
 	<version>${my-project-version}</version>
 	<packaging>war</packaging>
-	
+
 	<build>
-	<!--	<finalName>dstu2</finalName>
-	-->	<plugins>
+		<!-- <finalName>dstu2</finalName> -->
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -27,10 +26,10 @@
 					</archive>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
-	
+
 
 	<properties>
 		<!-- Explicitly declaring the source encoding eliminates the following 
@@ -68,34 +67,49 @@
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>jaxrs-api</artifactId>
-			<version>2.3.2.Final</version>
+			<version>3.0.11.Final</version>
+			<!-- <version>2.3.2.Final</version> -->
 			<scope>provided</scope>
 		</dependency>
 		<!-- RESTEasy implementation of JAX-RS API -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jaxrs</artifactId>
-			<version>2.3.2.Final</version>
+			<version>3.0.11.Final</version>
+			<!-- <version>2.3.2.Final</version> -->
+
 			<scope>provided</scope>
 		</dependency>
 		<!-- RESTEasy implementation of JAX-RS Client API -->
-<!-- <dependency>
-	<groupId>com.sun.jersey</groupId>
-	<artifactId>jersey-client</artifactId>
-	<version>1.8</version>
-</dependency>
- -->
+		<!-- <dependency> <groupId>com.sun.jersey</groupId> <artifactId>jersey-client</artifactId> 
+			<version>1.8</version> </dependency> -->
 
 		<dependency>
-			<groupId>edu.harvard.i2b2</groupId>
-			<artifactId>fhir-core</artifactId>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>core</artifactId>
 			<version>${my-project-version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.9</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.oltu.oauth2</groupId>
+			<artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 
 	</dependencies>
 
-	
+
+	<artifactId>srv</artifactId>
 </project>

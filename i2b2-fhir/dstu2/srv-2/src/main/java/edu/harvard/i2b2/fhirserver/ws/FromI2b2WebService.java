@@ -64,7 +64,7 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
 
-@Path("")
+@Path("old")
 public class FromI2b2WebService {
 	static Logger logger = LoggerFactory.getLogger(FromI2b2WebService.class);
 	String i2b2SessionId;
@@ -539,9 +539,5 @@ public class FromI2b2WebService {
 		return b;			
 	}
 	
-	@GET
-	@Path("test/Patient")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getQueryResult(
-
+	
 }

@@ -9,6 +9,8 @@
 		<module>core-2</module>
 		<module>xquery-2</module>
 		<module>client-2</module>
+		<module>srv-2</module>
+		<module>hapiWrapper-2</module>
   </modules>
 
 	<properties>
