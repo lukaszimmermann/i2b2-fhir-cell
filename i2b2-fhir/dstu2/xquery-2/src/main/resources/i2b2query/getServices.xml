@@ -21,14 +21,14 @@
         <receiving_facility>
             <facility_name>i2b2 Hive</facility_name>
         </receiving_facility>
-        <datetime_of_message>2015-04-03T11:24:11-04:00</datetime_of_message>
+        <datetime_of_message>2015-07-30T23:33:06+20:00</datetime_of_message>
 		<security>
-			<domain>XX</domain>
-			<username>XX</username>
-			<password is_token="false">XX</password>
+			<domain>i2b2demo</domain>
+			<username>demo</username>
+			<password is_token="false">XXX</password>
 		</security>
         <message_control_id>
-            <message_num>b4dY5z7Lb9ETW7v5rekT2</message_num>
+            <message_num>bh1PL40kSzu4SJzRSwlFh</message_num>
             <instance_num>0</instance_num>
         </message_control_id>
         <processing_id>

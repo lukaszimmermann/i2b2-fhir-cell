@@ -132,7 +132,8 @@ public class I2b2Helper {
 
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
-
+				//.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
+		
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
 		logger.info("fetching from i2b2host...");
