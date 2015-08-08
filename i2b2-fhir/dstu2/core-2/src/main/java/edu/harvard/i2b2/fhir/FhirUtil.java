@@ -67,6 +67,7 @@ import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.ResourceContainer;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.validation.Validator;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -543,13 +544,13 @@ public class FhirUtil {
 			throws Exception {
 		ca.uhn.fhir.model.api.Bundle hb = new ca.uhn.fhir.model.api.Bundle();
 
-		IdDt idb = new IdDt();
-		idb.setValue(b.getId().getValue());
+		//IdDt idb = new IdDt();
+		//idb.setValue(b.getId().getValue());
 		// id.setValue(fhirBase + UUID.randomUUID().toString());
 
-		hb.setId(idb);
+		//hb.setId(idb);
 
-		String fhirBase = b.getBase().toString();
+		String fhirBase = "b.getBase().toString()";
 
 		for (BundleEntry be : b.getEntry()) {
 			ResourceContainer rc = be.getResource();
