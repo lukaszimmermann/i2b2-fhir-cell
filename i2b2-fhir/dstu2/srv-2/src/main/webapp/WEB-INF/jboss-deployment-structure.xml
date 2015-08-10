@@ -1,8 +1,9 @@
 <jboss-deployment-structure>
-   <deployment>
-      <exclusions>
-  <!--       <module name="org.apache.httpcomponents" />
-         <module name="javax.ws.rs.api" />
-      --></exclusions>
-   </deployment>
+	<deployment>
+		
+		<exclusions>
+			<!-- <module name="org.apache.httpcomponents" /> <module name="javax.ws.rs.api" />
+				-->
+		</exclusions>
+	</deployment>
 </jboss-deployment-structure>
