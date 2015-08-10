@@ -12,7 +12,13 @@ package edu.harvard.i2b2.fhirserver.ws;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
+import javax.ejb.EJB;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +40,10 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+//import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
+
+
 
 /*
  * http://blogs.steeplesoft.com/posts/2013/a-simple-oauth2-client-and-server-example-part-i.html
@@ -58,7 +68,10 @@ import org.slf4j.LoggerFactory;
 @Path("authz")
 public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
-	
+	private static final String PERSISTENCE_UNIT_NAME = "Auth";
+    private static EntityManagerFactory factory;
+    //AuthTokenManager am;
+   
     @GET
     public Response authorize(@Context HttpServletRequest request)
             throws URISyntaxException, OAuthSystemException {
@@ -109,4 +122,13 @@ public class OAuth2AuthzEndpoint {
     	session.setAttribute("AuthorizationCode", authorizationCode);
     	return session;
     }
+    
+    @GET
+    @Path("all")
+    public Response all(@Context HttpServletRequest request){
+    	String str=null;
+    	//str=am.getAuthTokens().get(0).toString();
+    	return Response.ok().entity(str).build();
+	}
+    
 }

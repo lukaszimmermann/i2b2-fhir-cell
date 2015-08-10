@@ -9,6 +9,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.harvard.i2b2.fhir</groupId>
+	<artifactId>srv</artifactId>
 	<version>${my-project-version}</version>
 	<packaging>war</packaging>
 
@@ -55,12 +56,11 @@
 	</properties>
 
 	<dependencies>
-
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.8.2</version>
-			<scope>test</scope>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- JAX-RS API -->
@@ -107,9 +107,22 @@
 			<version>1.0.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.187</version>
+		</dependency>
+
 
 	</dependencies>
 
 
-	<artifactId>srv</artifactId>
+
+
+	<repositories>
+		<repository>
+			<id>Java.Net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+	</repositories>
 </project>
