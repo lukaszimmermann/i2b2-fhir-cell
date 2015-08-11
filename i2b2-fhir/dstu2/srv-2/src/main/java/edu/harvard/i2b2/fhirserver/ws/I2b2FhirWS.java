@@ -37,6 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -77,6 +78,7 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
+import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 
 @Path("")
 public class I2b2FhirWS {
@@ -84,9 +86,10 @@ public class I2b2FhirWS {
 	String i2b2SessionId;
 	// contains ids of patients already called.
 
-	// @EJB
-	// MetaResourceDbWrapper metaResourceDb;
+	@EJB
+	SessionBundleBean sbb;
 
+	
 	@javax.ws.rs.core.Context
 	ServletContext context;
 
@@ -164,10 +167,10 @@ public class I2b2FhirWS {
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
 				// session.setAttribute("PDOcallHistory", PDOcallHistory);
-				MetaResourceDb md = new MetaResourceDb();
-				session.setAttribute("md", md);
+				//MetaResourceDb md = new MetaResourceDb();
+				//session.setAttribute("md", md);
 
-				I2b2Helper.initAllPatients(session);
+				I2b2Helper.initAllPatients(session,sbb);
 				return Response.ok().entity("Auth successful.")
 						.type(MediaType.TEXT_PLAIN)
 						.header("session_id", session.getId()).build();
@@ -206,7 +209,6 @@ public class I2b2FhirWS {
 					+ request.getParameterMap().keySet().toString());
 
 			Class c = FhirUtil.getResourceClass(resourceName);
-			MetaResourceDb md = null;
 			Bundle s = new Bundle();
 			session = request.getSession(false);
 			String basePath = request.getRequestURL().toString()
@@ -217,9 +219,10 @@ public class I2b2FhirWS {
 				session = request.getSession(false);
 			}
 			logger.debug("session id:" + session.getId());
-			I2b2Helper.getSessionLock(session);
-			md = (MetaResourceDb) session.getAttribute("md");
-
+			//I2b2Helper.getSessionLock(session);
+			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session,sbb);
+			
+			
 			// filter if patientId is mentioned in query string
 			HashMap<String, String> filter = new HashMap<String, String>();
 
@@ -227,7 +230,7 @@ public class I2b2FhirWS {
 			logger.info("PatientId:" + patientId);
 			if (patientId != null) {
 				// filter.put("Patient", "Patient/" + patientId);
-				I2b2Helper.scanQueryParametersToGetPdo(session, request.getQueryString());
+				I2b2Helper.scanQueryParametersToGetPdo(session, request.getQueryString(),sbb);
 			}
 
 			Map<String, String[]> q = request.getParameterMap();
@@ -241,13 +244,7 @@ public class I2b2FhirWS {
 			// on class
 			logger.info("running filter..." + filter.toString());
 			s=FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
-			/*
-			 * s = md.filterMetaResources(c, filter); if (filter.size() == 0) {
-			 * s = md.getAll(c); } else { s = md.filterMetaResources(c, filter);
-			 * 
-			 * }
-			 */
-
+			
 			logger.info("running sophisticated query for:"
 					+ request.getQueryString());
 			// q.remove("_id");q.remove("_date");
@@ -290,7 +287,8 @@ public class I2b2FhirWS {
 			}
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
-			I2b2Helper.releaseSessionLock(session);
+			//I2b2Helper.releaseSessionLock(session);
+			I2b2Helper.saveMetaResourceDb(session,md,sbb);
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 
@@ -299,7 +297,7 @@ public class I2b2FhirWS {
 			// .entity(msg).build();
 
 		} catch (Exception e) {
-			I2b2Helper.releaseSessionLock(session);
+			//I2b2Helper.releaseSessionLock(session);
 			e.printStackTrace();
 			logger.error("",e);
 			return Response.status(Status.BAD_REQUEST)
@@ -360,8 +358,9 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			I2b2Helper.getSessionLock(session);
-			MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+			//I2b2Helper.getSessionLock(session);
+			//MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session,sbb);
 			logger.debug("session id:" + session.getId());
 
 			String msg = null;
@@ -404,6 +403,8 @@ public class I2b2FhirWS {
 		}
 
 	}
+	
+	
 	
 	
 }
