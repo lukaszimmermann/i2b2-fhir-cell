@@ -32,12 +32,7 @@ import edu.harvard.i2b2.fhirserver.entity.Person;
 public class ConfigBean {
 	static Logger logger = LoggerFactory.getLogger(ConfigBean.class);
 
-	//@EJB
-	//private AuthTokenBean request;
-	/*
-	 * @PostConstruct public void createData() {
-	 * request.createAuthToken("clientId1"); }
-	 */
+	
 	@PostConstruct
 	public void init() {
 		try {

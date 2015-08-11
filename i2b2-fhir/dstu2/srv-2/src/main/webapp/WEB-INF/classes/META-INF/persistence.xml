@@ -7,6 +7,7 @@
 	<persistence-unit name="testPer" transaction-type="RESOURCE_LOCAL">
 		<class>edu.harvard.i2b2.fhirserver.entity.Person</class>
 		<class>edu.harvard.i2b2.fhirserver.entity.AuthToken</class>
+		<class>edu.harvard.i2b2.fhirserver.entity.SessionBundle</class>
 		
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
