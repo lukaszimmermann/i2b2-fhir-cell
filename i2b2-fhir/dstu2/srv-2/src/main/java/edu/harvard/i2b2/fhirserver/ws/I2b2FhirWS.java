@@ -232,6 +232,7 @@ public class I2b2FhirWS {
 				// filter.put("Patient", "Patient/" + patientId);
 				I2b2Helper.scanQueryParametersToGetPdo(session, request.getQueryString(),sbb);
 			}
+			md = I2b2Helper.getMetaResourceDb(session,sbb);
 
 			Map<String, String[]> q = request.getParameterMap();
 			for (String k : q.keySet()) {
@@ -288,7 +289,6 @@ public class I2b2FhirWS {
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
 			//I2b2Helper.releaseSessionLock(session);
-			I2b2Helper.saveMetaResourceDb(session,md,sbb);
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 

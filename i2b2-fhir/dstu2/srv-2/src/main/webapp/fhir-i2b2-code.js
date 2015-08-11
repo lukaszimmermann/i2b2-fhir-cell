@@ -26,7 +26,7 @@
    var ds4=new DataStore(fhirServerBase+"/Observation?subject=1000000005","Get Labs for a particular patient");
    var ds5=new DataStore(fhirServerBase+"/MedicationPrescription?patient=1000000005&_include=MedicationPrescription.Medication&_include=MedicationPrescription.Patient","Get Medication Prescriptions for a particular patient and include Medications and the Patient");
    var ds6=new DataStore(fhirServerBase+"/Condition?subject=1000000005","Get Conditions for particular Patients");
-   var ds7=new DataStore(fhirServerBase+"/Patient?gender=M&birthdate=<1970-01-01","Get Male Patients born before 1970");
+   var ds7=new DataStore(fhirServerBase+"/Patient?gender=male&birthdate=<1970-01-01","Get Male Patients born before 1970");
    
    //var ds6=new DataStore(fhirBase+"Patient?gender=female&birthdate=<1970-01-01&@Patient.maritalStatus.coding.code:exact=M");
    
