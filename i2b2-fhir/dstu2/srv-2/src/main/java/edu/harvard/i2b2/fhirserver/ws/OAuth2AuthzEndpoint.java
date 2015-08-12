@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
@@ -90,7 +91,9 @@ public class OAuth2AuthzEndpoint {
                     OAuthASResponse.authorizationResponse(request,
                         HttpServletResponse.SC_FOUND);
 
-            request.getAttribute("client_id");
+            String clientId= (String) oauthRequest.getClientId();
+           Set<String> scopes=  oauthRequest.getScopes();
+           logger.info("for client:"+clientId+"->scope:"+scopes.toString());
             
             // 1
             if (responseType.equals(ResponseType.CODE.toString())) {
@@ -123,12 +126,6 @@ public class OAuth2AuthzEndpoint {
     	return session;
     }
     
-    @GET
-    @Path("all")
-    public Response all(@Context HttpServletRequest request){
-    	String str=null;
-    	//str=am.getAuthTokens().get(0).toString();
-    	return Response.ok().entity(str).build();
-	}
+ 
     
 }
