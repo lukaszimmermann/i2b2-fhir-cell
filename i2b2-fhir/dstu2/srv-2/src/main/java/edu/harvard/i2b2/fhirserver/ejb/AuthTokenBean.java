@@ -100,7 +100,7 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
 			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
-			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
+			em.createNativeQuery("shutdown;").executeUpdate();
 		} catch (Exception ex) {
 			logger.error("", ex);
 		}
