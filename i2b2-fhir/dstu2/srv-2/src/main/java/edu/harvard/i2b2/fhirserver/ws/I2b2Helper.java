@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
@@ -36,7 +37,7 @@ public class I2b2Helper {
 			throws XQueryUtilException {
 		logger.trace("validating username and password");
 		String requestStr = Utils.getFile("i2b2query/getServices.xml");
-		requestStr = insertSessionParametersInXml(requestStr, userName,
+		requestStr = I2b2Util.insertI2b2ParametersInXml(requestStr, userName,
 				password, domain, i2b2Url);
 		logger.debug("Webservice Request:" + requestStr);
 
@@ -220,31 +221,13 @@ public class I2b2Helper {
 		String i2b2domain = (String) session.getAttribute("i2b2domain");
 		String i2b2domainUrl = (String) session.getAttribute("i2b2domainUrl");
 
-		return insertSessionParametersInXml(xml, username, password,
+		return I2b2Util.insertI2b2ParametersInXml(xml, username, password,
 				i2b2domain, i2b2domainUrl);
 	}
 
-	static String insertSessionParametersInXml(String xml, String username,
-			String password, String i2b2domain, String i2b2domainUrl)
-			throws XQueryUtilException {
+	
 
-		xml = replaceXMLString(xml, "//security/username", username);
-		xml = replaceXMLString(xml, "//security/password", password);
-		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
-		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
-				+ "/services/QueryToolService/pdorequest");
-		// logger.info("returning xml:"+xml);
-		return xml;
-	}
-
-	private static String replaceXMLString(String xmlInput, String path,
-			String value) throws XQueryUtilException {
-		String query = "copy $c := root()\n"
-				+ "modify ( replace value of node $c" + path + " with \""
-				+ value + "\")\n" + " return $c";
-		logger.trace("query:" + query);
-		return processXquery(query, xmlInput);
-	}
+	
 
 	static String processXquery(String query, String input)
 			throws XQueryUtilException {

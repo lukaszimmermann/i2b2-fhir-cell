@@ -15,7 +15,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ AllTests.class, MetaResourceDbTest.class,
-		PdoEGtoFhirBundle.class, SearchParameterMapTest.class, WSi2b2.class })
+		PdoEGtoFhirBundle.class, SearchParameterMapTest.class, WSi2b2Test.class })
 
 public class AllTests {
 

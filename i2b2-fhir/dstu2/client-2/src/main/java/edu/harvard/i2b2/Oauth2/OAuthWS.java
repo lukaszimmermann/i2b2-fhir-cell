@@ -58,26 +58,26 @@ public class OAuthWS {
 	public Response getAuthorizationUri() throws OAuthSystemException, URISyntaxException {
 		OAuthClientRequest request = OAuthClientRequest
 				.authorizationLocation(
-						"http://localhost:8080/client-dstu2-0.2/oauth2/login")
-				.setClientId("my-client-id")
+						"http://localhost:8080/srv-dstu2-0.2/api/authz")
+				.setClientId("my-client-id1")
 				.setRedirectURI(
 						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthCode")
 				.buildQueryMessage();
-		logger.trace(request.getLocationUri());
+		logger.info(request.getLocationUri());
 		URI url = new URI(request.getLocationUri());
 		return Response.status(Status.MOVED_PERMANENTLY).location(url)
 				 .build();
 		
 	}
 	
-	@GET
+	/*@GET
     @Path("login")
 	public Response getloginPage() {
 		
 		return Response.ok().entity("login")
 				 .build();
 		
-	}
+	}*/
 	
 	
 	private Response errorResponse(Exception e) {

@@ -17,10 +17,13 @@ public class OAuthClientTest {
 	@Test
 	public void BuildEndUserAuthorizationRequest() throws OAuthSystemException {
 
+		
 		OAuthClientRequest request = OAuthClientRequest
 				.authorizationLocation(
-						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthUri")
+						"http://localhost:8080/srv-dstu2-0.2/api/authz")
 				.setClientId("my-client-id")
+				.setResponseType("code")
+				.setScope("launch:1000000005+Patient/*")
 				.setRedirectURI(
 						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthCode")
 				.buildQueryMessage();
