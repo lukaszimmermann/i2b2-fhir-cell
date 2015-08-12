@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -18,6 +19,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
@@ -41,11 +43,22 @@ public class SessionBundleBean {
 			EntityManagerFactory factory = Persistence
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
+
 			// Random r = new Random();
 			// createAuthToken("clientId232" + r.nextInt());
+			totalSessionBundle();
+			deleteOldData();
 		} catch (Exception ex) {
 			logger.error("", ex);
 		}
+	}
+
+	@Transactional
+	public void deleteOldData() {
+		em.joinTransaction();
+		em.createNativeQuery("delete from SessionBundle where id!='dummy';")
+				.executeUpdate();
+		logger.debug("deleted old rows from session bundle");
 	}
 
 	public SessionBundle createSessionBundle(String sessionId, Bundle s) {
@@ -53,9 +66,9 @@ public class SessionBundleBean {
 			SessionBundle sb = new SessionBundle(sessionId, s);
 			logger.info("Created sb.." + sb.toString());
 			em.persist(sb);
-			//em.merge(sb);
-			
-			//em.flush(); 
+			// em.merge(sb);
+
+			// em.flush();
 			logger.info("Persisted sb" + sb.toString());
 			return sb;
 		} catch (Exception ex) {
@@ -63,14 +76,15 @@ public class SessionBundleBean {
 			throw new EJBException(ex.getMessage());
 		}
 	}
-	
-	public SessionBundle updateSessionBundle(String sessionId,Bundle b) {
+
+	public SessionBundle updateSessionBundle(String sessionId, Bundle b) {
 		try {
-			SessionBundle sb=sessionBundleBySessionId(sessionId);
-			if(b==null) b=new Bundle();
+			SessionBundle sb = sessionBundleBySessionId(sessionId);
+			if (b == null)
+				b = new Bundle();
 			sb.setBundleXml(JAXBUtil.toXml(b));
 			em.merge(sb);
-			//em.flush(); 
+			// em.flush();
 			logger.info("Merged sb" + sb.toString());
 			return sb;
 		} catch (Exception ex) {
@@ -87,6 +101,18 @@ public class SessionBundleBean {
 		}
 	}
 
+	public void removeSessionBundle(String sessionId) {
+		try {
+
+			SessionBundle sb = this.sessionBundleBySessionId(sessionId);
+			em.remove(sb);
+			logger.info("removed SessionBundle:" + sessionId);
+
+		} catch (Exception e) {
+			throw new EJBException(e.getMessage());
+		}
+	}
+
 	// initializes if not present
 	public SessionBundle sessionBundleBySessionId(String sessionId) {
 		try {
@@ -96,12 +122,28 @@ public class SessionBundleBean {
 			// query.setParameter("id", sessionId);
 			// List sessionBundles = query.getResultList();
 			b = em.find(SessionBundle.class, sessionId);
-			if (b==null) {
+			if (b == null) {
 				b = createSessionBundle(sessionId, new Bundle());
 			}
-			logger.trace("returning sb:"+b.toString());
+			logger.trace("returning sb:" + b.toString());
 			return b;
 		} catch (Exception e) {
+			logger.error("", e);
+			throw new EJBException(e);
+		}
+
+	}
+
+	@Transactional
+	public int totalSessionBundle() {
+		try {
+			em.joinTransaction();
+			int count = em.createQuery("select count(*) from SessionBundle")
+					.executeUpdate();
+			logger.trace("total sessionBundles in db:" + count);
+			return count;
+		} catch (Exception e) {
+			logger.error("", e);
 			throw new EJBException(e);
 		}
 
@@ -116,6 +158,7 @@ public class SessionBundleBean {
 			else
 				return sessionBundle.getBundle();
 		} catch (Exception e) {
+			logger.error("", e);
 			throw new EJBException(e);
 		}
 

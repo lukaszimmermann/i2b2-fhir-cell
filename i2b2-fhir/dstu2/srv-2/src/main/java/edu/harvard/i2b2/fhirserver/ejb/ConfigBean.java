@@ -47,7 +47,7 @@ public class ConfigBean {
 			Statement stmt = conn.createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stmt.executeQuery("SELECT * FROM authtoken");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM SessionBundle");
 			//logger.info("r:" + rs.toString());
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnsNumber = rsmd.getColumnCount();

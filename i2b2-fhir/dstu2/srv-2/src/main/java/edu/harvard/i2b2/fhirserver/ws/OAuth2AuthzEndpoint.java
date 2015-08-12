@@ -22,15 +22,19 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.http.HttpRequest;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
@@ -42,6 +46,9 @@ import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.harvard.i2b2.fhir.I2b2Util;
+import edu.harvard.i2b2.fhir.XQueryUtilException;
 
 //import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
 
@@ -74,6 +81,7 @@ public class OAuth2AuthzEndpoint {
 	// AuthTokenManager am;
 
 	@GET
+	@Path("token")
 	public Response authorize(@Context HttpServletRequest request)
 			throws URISyntaxException, OAuthSystemException {
 		String authorizationCode=null;
@@ -106,9 +114,8 @@ public class OAuth2AuthzEndpoint {
 				logger.info(" generated authorizationCode:" + authorizationCode);
 				builder.setCode(authorizationCode);
 			}
-			
 			if(authenticateResourceOwner(authorizationCode)==false) {
-				return directToLoginPage();
+				return srvResourceOwnerLoginPage();
 			}
 
 			String redirectURI = oauthRequest
@@ -135,12 +142,13 @@ public class OAuth2AuthzEndpoint {
 	// Authenticate resource owner
 	//is there an i2b2 AuthorizationCode associated with this AuthorizationCode
 	boolean authenticateResourceOwner(String authorizationCode) {
-		
 		return false;
 	}
 
-	public Response directToLoginPage() throws URISyntaxException {
-		String loginPage="<form action=\"i2b2Login.html\">"
+	@Path("i2b2login")
+	@GET
+	public Response srvResourceOwnerLoginPage() throws URISyntaxException {
+		String loginPage="<form action=\"processi2b2login\" method=\"post\">"
 						+" UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
 						+"<br> Password:<br><input type=\"text\" name=\"password\" value=\"demouser\">"
 						+"<br><br><input type=\"submit\" value=\"Submit\">"
@@ -148,6 +156,60 @@ public class OAuth2AuthzEndpoint {
 		return Response.ok().entity(loginPage).build();
 	}
 
+	//TODO domain and URL
+	@Path("processi2b2login")
+	@POST
+	public Response processResourceOwnerLogin(@FormParam("username") String username,@FormParam("password") String password,@Context HttpServletRequest request) throws XQueryUtilException, URISyntaxException{
+		logger.trace("processing login: for username:"+username+"password:"+password);
+		String pmResponseXml=I2b2Util.getPmResponseXml(username, password, "i2b2demo", "http://services.i2b2.org:9090/i2b2");
+		logger.trace("got pmResponseXml:"+pmResponseXml);
+		if(I2b2Util.authenticateUser(pmResponseXml)){
+			logger.trace("got pmResponseXml:"+pmResponseXml);
+			String uri=getBasePath(request).toString()+"scope";
+			logger.trace("redirecting to:"+uri);
+			return Response.status(Status.MOVED_PERMANENTLY).location(new URI(uri))
+					.build();
+					
+		}else{
+			String uri=getBasePath(request).toString()+"i2b2login";
+			logger.trace("redirecting to:"+uri);
+			return Response.status(Status.MOVED_PERMANENTLY).location(new URI(uri))
+					.build();
+		}
+	}
+	
+	@Path("scope")
+	@GET
+	public Response srvResourceOwnerScopeChoice(String pmResponseXml) throws XQueryUtilException{
+		String page="<form action=\"processScope\" method=\"post\">";
+		List<String> projects=I2b2Util.getUserProjects(pmResponseXml);
+		for(String p:projects){
+			page+="<input type=\"radio\" name=\"project\" value=\""+p+"\" checked>"+p+"<br>";
+		}
+			page+="<br><input type=\"submit\" value=\"Submit\"></form>";
+			return Response.ok().entity(page).build();
+	}
+	
+	//if submit yes then redirect to client url, along with AuthToken 
+	@Path("processScope")
+	@POST
+	public Response processResourceOwnerScopeChoice(){
+		logger.trace("processing scope");
+		return Response.ok().entity("processing scope").build();
+	}
+	
 	// obtains an authorization decision (by asking the resource owner or by
 	// establishing approval via other means).
+	static public URI getBasePath(HttpServletRequest request)
+			throws URISyntaxException {
+		String uri= request.getScheme() + "://" +
+            request.getServerName() + 
+            ("http".equals(request.getScheme()) && request.getServerPort() == 80 || "https".equals(request.getScheme()) && request.getServerPort() == 443 ? "" : ":" + request.getServerPort() ) +
+            request.getRequestURI() +
+           (request.getQueryString() != null ? "?" + request.getQueryString() : "");
+		logger.trace("full uri:"+uri);
+		uri = uri.substring(0,uri.lastIndexOf('/') )+"/";
+		logger.trace("base uri:"+uri);
+		return new URI(uri);
+	}
 }

@@ -4,14 +4,15 @@
 	xmlns="http://java.sun.com/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="testPer" transaction-type="RESOURCE_LOCAL">
+	
+	<persistence-unit name="testPer" transaction-type="JTA">
 		<class>edu.harvard.i2b2.fhirserver.entity.Person</class>
 		<class>edu.harvard.i2b2.fhirserver.entity.AuthToken</class>
 		<class>edu.harvard.i2b2.fhirserver.entity.SessionBundle</class>
 		
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-			<property name="javax.persistence.jdbc.url"    value="jdbc:h2:~/test" />
+			<property name="javax.persistence.jdbc.url"    value="jdbc:h2:~/test;DB_CLOSE_ON_EXIT=FALSE" />
 			<property name="javax.persistence.jdbc.user" value="sa" />
 			<property name="javax.persistence.jdbc.password" value="sa" />
 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
@@ -20,4 +21,15 @@
 			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
 		</properties>
 	</persistence-unit>
+	<!-- 
+   <persistence-unit name="testPer">
+      <provider>org.hibernate.ejb.HibernatePersistence</provider>
+      <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+     <properties>
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+			<property name="show_sql" value="true"/>
+			<property name="hibernate.temp.use_jdbc_metadata_defaults" value="false"/>
+		</properties>
+   </persistence-unit>
+     -->
 </persistence>
