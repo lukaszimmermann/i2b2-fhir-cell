@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,7 @@ public class AuthTokenBean {
 		}
 	}
 
+	
 	public AuthToken authTokenByTokenString(String tokString) {
 		try {
 			List tokens = em.createNamedQuery("findAuthTokenByTokenString")
@@ -94,10 +96,12 @@ public class AuthTokenBean {
 	}
 	
 	@PreDestroy
+	@Transactional
 	public void dropTable() {
 		try {
 			EntityManagerFactory factory = Persistence
 					.createEntityManagerFactory("testPer");
+			em.joinTransaction();
 			em = factory.createEntityManager();
 			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
 			em.createNativeQuery("shutdown;").executeUpdate();

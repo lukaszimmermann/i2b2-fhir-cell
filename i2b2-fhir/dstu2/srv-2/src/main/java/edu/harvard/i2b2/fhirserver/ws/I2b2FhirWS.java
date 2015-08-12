@@ -166,10 +166,7 @@ public class I2b2FhirWS {
 				session.setAttribute("i2b2domainUrl", i2b2url);
 				session.setAttribute("username", username);
 				session.setAttribute("password", password);
-				// session.setAttribute("PDOcallHistory", PDOcallHistory);
-				//MetaResourceDb md = new MetaResourceDb();
-				//session.setAttribute("md", md);
-
+				
 				I2b2Helper.initAllPatients(session,sbb);
 				return Response.ok().entity("Auth successful.")
 						.type(MediaType.TEXT_PLAIN)
