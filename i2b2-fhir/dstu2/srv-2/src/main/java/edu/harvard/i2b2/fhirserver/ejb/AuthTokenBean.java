@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -90,5 +91,18 @@ public class AuthTokenBean {
 			throw new EJBException(e);
 		}
 
+	}
+	
+	@PreDestroy
+	public void dropTable() {
+		try {
+			EntityManagerFactory factory = Persistence
+					.createEntityManagerFactory("testPer");
+			em = factory.createEntityManager();
+			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
+			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
+		} catch (Exception ex) {
+			logger.error("", ex);
+		}
 	}
 }
