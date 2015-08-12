@@ -77,14 +77,14 @@ public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
 	private static final String PERSISTENCE_UNIT_NAME = "Auth";
 	private static EntityManagerFactory factory;
-	
+
 	// AuthTokenManager am;
 
 	@GET
 	@Path("token")
 	public Response authorize(@Context HttpServletRequest request)
 			throws URISyntaxException, OAuthSystemException {
-		String authorizationCode=null;
+		String authorizationCode = null;
 		try {
 			logger.trace("got request to authorize for OAuth2");
 			OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
@@ -104,17 +104,14 @@ public class OAuth2AuthzEndpoint {
 			logger.info("for client:" + clientId + "->scope:"
 					+ scopes.toString());
 
-			
-			
 			// 1
 			if (responseType.equals(ResponseType.CODE.toString())) {
-				authorizationCode = oauthIssuerImpl
-						.authorizationCode();
+				authorizationCode = oauthIssuerImpl.authorizationCode();
 				// database.addAuthCode(authorizationCode);
 				logger.info(" generated authorizationCode:" + authorizationCode);
 				builder.setCode(authorizationCode);
 			}
-			if(authenticateResourceOwner(authorizationCode)==false) {
+			if (authenticateResourceOwner(authorizationCode) == false) {
 				return srvResourceOwnerLoginPage();
 			}
 
@@ -140,7 +137,7 @@ public class OAuth2AuthzEndpoint {
 	}
 
 	// Authenticate resource owner
-	//is there an i2b2 AuthorizationCode associated with this AuthorizationCode
+	// is there an i2b2 AuthorizationCode associated with this AuthorizationCode
 	boolean authenticateResourceOwner(String authorizationCode) {
 		return false;
 	}
@@ -148,68 +145,92 @@ public class OAuth2AuthzEndpoint {
 	@Path("i2b2login")
 	@GET
 	public Response srvResourceOwnerLoginPage() throws URISyntaxException {
-		String loginPage="<form action=\"processi2b2login\" method=\"post\">"
-						+" UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
-						+"<br> Password:<br><input type=\"text\" name=\"password\" value=\"demouser\">"
-						+"<br><br><input type=\"submit\" value=\"Submit\">"
-						+"</form>";
+		String loginPage = "<form action=\"processi2b2login\" method=\"post\">"
+				+ " UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
+				+ "<br> Password:<br><input type=\"text\" name=\"password\" value=\"demouser\">"
+				+ "<br><br><input type=\"submit\" value=\"Submit\">"
+				+ "</form>";
 		return Response.ok().entity(loginPage).build();
 	}
 
-	//TODO domain and URL
+	// TODO domain and URL
 	@Path("processi2b2login")
 	@POST
-	public Response processResourceOwnerLogin(@FormParam("username") String username,@FormParam("password") String password,@Context HttpServletRequest request) throws XQueryUtilException, URISyntaxException{
-		logger.trace("processing login: for username:"+username+"password:"+password);
-		String pmResponseXml=I2b2Util.getPmResponseXml(username, password, "i2b2demo", "http://services.i2b2.org:9090/i2b2");
-		logger.trace("got pmResponseXml:"+pmResponseXml);
-		if(I2b2Util.authenticateUser(pmResponseXml)){
-			logger.trace("got pmResponseXml:"+pmResponseXml);
-			String uri=getBasePath(request).toString()+"scope";
-			logger.trace("redirecting to:"+uri);
-			return Response.status(Status.MOVED_PERMANENTLY).location(new URI(uri))
-					.build();
-					
-		}else{
-			String uri=getBasePath(request).toString()+"i2b2login";
-			logger.trace("redirecting to:"+uri);
-			return Response.status(Status.MOVED_PERMANENTLY).location(new URI(uri))
-					.build();
+	public Response processResourceOwnerLogin(
+			@FormParam("username") String username,
+			@FormParam("password") String password,
+			@Context HttpServletRequest request) throws XQueryUtilException,
+			URISyntaxException {
+		logger.trace("processing login: for username:" + username + "password:"
+				+ password);
+		logger.trace("sessionid:"+request.getSession().getId());
+		
+		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
+				"i2b2demo", "http://services.i2b2.org:9090/i2b2");
+		logger.trace("got pmResponseXml:" + pmResponseXml);
+		if (I2b2Util.authenticateUser(pmResponseXml)) {
+			//logger.trace("got pmResponseXml:" + pmResponseXml);
+			//String uri = getBasePath(request).toString() + "scope";
+			//logger.trace("redirecting to:" + uri);
+			//return Response.status(Status.MOVED_PERMANENTLY)
+				//	.location(new URI(uri)).build();
+			
+			//save resourceUserId and AuthToken to "session" with generatedAuthorizationToken
+			
+			return Response.ok().entity(srvResourceOwnerScopeChoice(pmResponseXml)).build();
+			
+		} else {
+			String uri = getBasePath(request).toString() + "i2b2login";
+			logger.trace("redirecting to:" + uri);
+			return Response.status(Status.MOVED_PERMANENTLY)
+					.location(new URI(uri)).build();
 		}
 	}
-	
-	@Path("scope")
-	@GET
-	public Response srvResourceOwnerScopeChoice(String pmResponseXml) throws XQueryUtilException{
-		String page="<form action=\"processScope\" method=\"post\">";
-		List<String> projects=I2b2Util.getUserProjects(pmResponseXml);
-		for(String p:projects){
-			page+="<input type=\"radio\" name=\"project\" value=\""+p+"\" checked>"+p+"<br>";
+
+	//@Path("scope")
+	//@GET
+	public String srvResourceOwnerScopeChoice(String pmResponseXml)
+			throws XQueryUtilException {
+		String page = "<form action=\"processScope\" method=\"post\">";
+		List<String> projects = I2b2Util.getUserProjects(pmResponseXml);
+		logger.trace("projects:" + projects.toString());
+		for (String p : projects) {
+			page += "<input type=\"radio\" name=\"project\" value=\"" + p
+					+ "\" checked>" + p + "<br>";
 		}
-			page+="<br><input type=\"submit\" value=\"Submit\"></form>";
-			return Response.ok().entity(page).build();
+		page += "<br><input type=\"submit\" value=\"Submit\"></form>";
+		return page;
 	}
-	
-	//if submit yes then redirect to client url, along with AuthToken 
+
+	// if submit yes then redirect to client url, along with AuthToken
 	@Path("processScope")
 	@POST
-	public Response processResourceOwnerScopeChoice(){
-		logger.trace("processing scope");
-		return Response.ok().entity("processing scope").build();
+	public Response processResourceOwnerScopeChoice(@FormParam("project") String project,@Context HttpServletRequest request) {
+		logger.trace("processing scope:"+project+" sessionid:"+request.getSession().getId());
+		//save scope to session and 
+		//redirect to client uri
+		
+		return Response.ok().entity("REDIRECT to CLIENT URI.selected:"+project).build();
 	}
-	
+
 	// obtains an authorization decision (by asking the resource owner or by
 	// establishing approval via other means).
 	static public URI getBasePath(HttpServletRequest request)
 			throws URISyntaxException {
-		String uri= request.getScheme() + "://" +
-            request.getServerName() + 
-            ("http".equals(request.getScheme()) && request.getServerPort() == 80 || "https".equals(request.getScheme()) && request.getServerPort() == 443 ? "" : ":" + request.getServerPort() ) +
-            request.getRequestURI() +
-           (request.getQueryString() != null ? "?" + request.getQueryString() : "");
-		logger.trace("full uri:"+uri);
-		uri = uri.substring(0,uri.lastIndexOf('/') )+"/";
-		logger.trace("base uri:"+uri);
+		String uri = request.getScheme()
+				+ "://"
+				+ request.getServerName()
+				+ ("http".equals(request.getScheme())
+						&& request.getServerPort() == 80
+						|| "https".equals(request.getScheme())
+						&& request.getServerPort() == 443 ? "" : ":"
+						+ request.getServerPort())
+				+ request.getRequestURI()
+				+ (request.getQueryString() != null ? "?"
+						+ request.getQueryString() : "");
+		logger.trace("full uri:" + uri);
+		uri = uri.substring(0, uri.lastIndexOf('/')) + "/";
+		logger.trace("base uri:" + uri);
 		return new URI(uri);
 	}
 }

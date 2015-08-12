@@ -1,10 +1,10 @@
 package edu.harvard.i2b2.fhir;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
@@ -21,17 +21,17 @@ public class I2b2Util {
 		// logger.info("returning xml:"+xml);
 		return xml;
 	}
-	
-	public static String insertI2b2ParametersAuthTokenInXml(String xml, String username,
-			String authToken, String i2b2domain, String i2b2domainUrl)
-			throws XQueryUtilException {
+
+	public static String insertI2b2ParametersAuthTokenInXml(String xml,
+			String username, String authToken, String i2b2domain,
+			String i2b2domainUrl) throws XQueryUtilException {
 		xml = replaceXMLString(xml, "//security/username", username);
 		xml = replaceXMLString(xml, "//security/password", authToken);
 		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
 		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
 				+ "/services/QueryToolService/pdorequest");
 		// logger.info("returning xml:"+xml);
-		xml=xml.replace("<password>", "<password is_token=\"true\">");
+		xml = xml.replace("<password>", "<password is_token=\"true\">");
 		return xml;
 	}
 
@@ -44,9 +44,6 @@ public class I2b2Util {
 		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 
-	
-	
-	    
 	public static String getAuthorizationToken(String pmResponseXml)
 			throws XQueryUtilException {
 		return XQueryUtil
@@ -59,24 +56,26 @@ public class I2b2Util {
 		String requestStr = Utils.getFile("i2b2query/getServices.xml");
 		requestStr = insertI2b2ParametersInXml(requestStr, username, password,
 				i2b2domain, i2b2domainUrl);
-		logger.trace("requestStr:"+requestStr);
+		logger.trace("requestStr:" + requestStr);
 		String oStr = WebServiceCall.run(i2b2domainUrl
 				+ "/services/PMService/getServices", requestStr);
 		return oStr;
 	}
 
-	public static String getPmResponseXmlWithAuthToken(String username,String authToken,
-			String i2b2domain, String i2b2domainUrl) throws XQueryUtilException {
+	public static String getPmResponseXmlWithAuthToken(String username,
+			String authToken, String i2b2domain, String i2b2domainUrl)
+			throws XQueryUtilException {
 		String requestStr = Utils.getFile("i2b2query/getServices.xml");
-		requestStr = insertI2b2ParametersAuthTokenInXml(requestStr,username, authToken,
-				i2b2domain, i2b2domainUrl);
-		logger.trace("requestStr:"+requestStr);
+		requestStr = insertI2b2ParametersAuthTokenInXml(requestStr, username,
+				authToken, i2b2domain, i2b2domainUrl);
+		logger.trace("requestStr:" + requestStr);
 		String oStr = WebServiceCall.run(i2b2domainUrl
 				+ "/services/PMService/getServices", requestStr);
 		return oStr;
 	}
 
-	public static boolean authenticateUser(String pmResponseXml) throws XQueryUtilException {
+	public static boolean authenticateUser(String pmResponseXml)
+			throws XQueryUtilException {
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
 		String loginError = XQueryUtil.processXQuery(loginStatusquery,
 				pmResponseXml);
@@ -88,8 +87,11 @@ public class I2b2Util {
 
 	public static List<String> getUserProjects(String pmResponseXml)
 			throws XQueryUtilException {
-		return XQueryUtil.getStringSequence("//user/project/@id/string()",
-				pmResponseXml);
-
+		logger.trace("got xml"+pmResponseXml);
+		List<String> projects= XQueryUtil.getStringSequence("//user/project/name/text()", pmResponseXml);
+		
+		logger.trace("returning projects:"+projects.toString());
+		return projects;
+		
 	}
 }
