@@ -18,16 +18,24 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("token")
 public class OAuth2TokenEndpoint {
-    
+	Logger logger = LoggerFactory.getLogger(OAuth2TokenEndpoint.class);
+
+	
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public Response authorize(@Context HttpServletRequest request)
         throws OAuthSystemException {
+    
         try {
+        	logger.info("got url:"+request.getRequestURL());
+        	
+        	
             OAuthTokenRequest oauthRequest =
                 new OAuthTokenRequest(request);
             OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
@@ -89,7 +97,7 @@ public class OAuth2TokenEndpoint {
 
 	private boolean checkUserPass(String username, String password) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	private Response buildBadAuthCodeResponse() {
@@ -99,7 +107,7 @@ public class OAuth2TokenEndpoint {
 
 	private boolean checkAuthCode(String param) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	private Response buildInvalidClientSecretResponse() {
