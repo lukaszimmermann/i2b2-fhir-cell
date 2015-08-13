@@ -39,6 +39,9 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
 			Random r = new Random();
+			createAuthToken("!null"+r, "!null"+r,
+					"authorizationCode"+r, "redirectURI"+r, "clientId"+r,"null"+r,"!null"+r);
+			logger.info("total:"+totalCount());
 			// createAuthToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
 			logger.error("", ex);
@@ -46,16 +49,19 @@ public class AuthTokenBean {
 	}
 
 	public void createAuthToken(String resourceUserId, String i2b2Token,
-			String authorizationCode, String clientRedirectUri, String clientId,String state,String scope) {
+			String authorizationCode, String clientRedirectUri,
+			String clientId, String state, String scope) {
 		try {
 			AuthToken tok = new AuthToken(resourceUserId, i2b2Token,
-					authorizationCode, clientRedirectUri, clientId,state,scope);
+					authorizationCode, clientRedirectUri, clientId, state,
+					scope);
 			logger.info("Created authToken.." + tok.toString());
+			//em.getTransaction();
 			em.persist(tok);
-			logger.info("Persisted authToken" + tok.toString());
-
+			//em.flush();
+			logger.info("Persisted authToken" + tok.toString() );
 		} catch (Exception ex) {
-			logger.error("", ex);
+			logger.error(ex.getMessage(), ex);
 			throw new EJBException(ex.getMessage());
 		}
 	}
@@ -89,11 +95,14 @@ public class AuthTokenBean {
 		try {
 			List tokens = em
 					.createQuery(
-							"select a from AuthToken where AuthorizationCode = :ac ")
+							"select a from AuthToken a where AuthorizationCode = :ac ")
 					.setParameter("ac", authCode).getResultList();
 			if (tokens.size() > 0) {
-				return (AuthToken) tokens.get(0);
+				AuthToken atok = (AuthToken) tokens.get(0);
+				logger.trace("returning:" + atok);
+				return atok;
 			} else {
+				logger.trace("returning:null");
 				return null;
 			}
 		} catch (Exception e) {
@@ -102,8 +111,40 @@ public class AuthTokenBean {
 
 	}
 
-	@PreDestroy
-	@Transactional
+	public int totalCount() {
+		try {
+			List tokens = em.createQuery("select a from AuthToken a ")
+					.getResultList();
+			return tokens.size();
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			throw new EJBException(e);
+		}
+	}
+
+	public AuthToken authTokenByClientId(String clientId) {
+		try {
+			logger.info("search by clientid:"+clientId);
+			List tokens = em
+					.createQuery(
+							"select a from AuthToken a where clientId = :ac ")
+					.setParameter("ac", clientId).getResultList();
+			if (tokens.size() > 0) {
+				AuthToken atok = (AuthToken) tokens.get(0);
+				logger.trace("returning:" + atok);
+				return atok;
+			} else {
+				logger.trace("returning:null");
+				return null;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			throw new EJBException(e);
+		}
+	}
+
+	//@PreDestroy
+	//@Transactional
 	public void dropTable() {
 		try {
 			EntityManagerFactory factory = Persistence
@@ -113,7 +154,9 @@ public class AuthTokenBean {
 			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
 			em.createNativeQuery("shutdown;").executeUpdate();
 		} catch (Exception ex) {
+			logger.error(ex.getMessage(),ex);
 			logger.error("", ex);
 		}
 	}
+
 }

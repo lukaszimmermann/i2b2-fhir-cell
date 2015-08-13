@@ -85,6 +85,7 @@ public class SessionBundleBean {
 			em.merge(sb);
 			// em.flush();
 			logger.info("Merged sb" + sb.toString());
+			//"\ntotal"+totalSessionBundle());
 			return sb;
 		} catch (Exception ex) {
 			logger.error("", ex);
@@ -133,14 +134,13 @@ public class SessionBundleBean {
 
 	}
 
-	@Transactional
+	
 	public int totalSessionBundle() {
 		try {
 			em.joinTransaction();
-			int count = em.createQuery("select count(*) from SessionBundle")
-					.executeUpdate();
-			logger.trace("total sessionBundles in db:" + count);
-			return count;
+			List<SessionBundle> b= em.createQuery("select a from SessionBundle a").getResultList();
+			logger.trace("total sessionBundles in db:" + b.size());
+			return b.size();
 		} catch (Exception e) {
 			logger.error("", e);
 			throw new EJBException(e);
