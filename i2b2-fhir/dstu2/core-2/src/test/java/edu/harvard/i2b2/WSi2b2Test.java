@@ -132,6 +132,6 @@ public class WSi2b2Test {
 		//String pmResponseXml=I2b2Util.getPmResponseXml("demo","demouser","i2b2demo","http://services.i2b2.org:9090/i2b2");
 		String pmResponseXml=I2b2Util.getPmResponseXml("demo","SessionKey:s65KNwdab6FSWJv3cCEL","i2b2demo","http://services.i2b2.org:9090/i2b2");
 		logger.info("pmResponseXml:"+pmResponseXml);
-		logger.info("AuthToken:"+I2b2Util.getAuthorizationToken(pmResponseXml));
+		logger.info("AuthToken:"+I2b2Util.getToken(pmResponseXml));
 	}
 }

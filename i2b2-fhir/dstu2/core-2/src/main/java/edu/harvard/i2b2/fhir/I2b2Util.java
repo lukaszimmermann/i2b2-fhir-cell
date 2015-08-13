@@ -44,7 +44,7 @@ public class I2b2Util {
 		return XQueryUtil.processXQuery(query, xmlInput);
 	}
 
-	public static String getAuthorizationToken(String pmResponseXml)
+	public static String getToken(String pmResponseXml)
 			throws XQueryUtilException {
 		return XQueryUtil
 				.processXQuery("//user/password/text()", pmResponseXml);
