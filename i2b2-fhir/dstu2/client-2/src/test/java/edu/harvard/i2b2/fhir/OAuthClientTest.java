@@ -4,6 +4,7 @@ import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.GitHubTokenResponse;
+import org.apache.oltu.oauth2.client.response.OAuthJSONAccessTokenResponse;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
@@ -30,33 +31,40 @@ public class OAuthClientTest {
 		logger.trace(request.getLocationUri());
 	}
 
-	public void exchangeOAuthCodeForAccessToken(String code) {
+	@Test
+	public void exchangeOAuthCodeForAccessToken() {
+		String code="123";
 		try {
 			OAuthClientRequest request = OAuthClientRequest
 					.tokenLocation(
-							"https://graph.facebook.com/oauth/access_token")
+							"http://localhost:8080/srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId("your-facebook-application-client-id")
-					.setClientSecret("your-facebook-application-client-secret")
-					.setRedirectURI("http://www.example.com/redirect")
-					.setCode(code).buildQueryMessage();
-
+					.setClientId("client-id")
+					.setClientSecret("client-secret")
+					.setCode(code)
+					.setRedirectURI("uri")
+					.setParameter("access_token", "accessToken")
+					.buildQueryMessage();
+			
 			// create OAuth client that uses custom http client under the hood
 			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
-			GitHubTokenResponse oAuthResponse;
-
-			oAuthResponse = oAuthClient.accessToken(request,
-					GitHubTokenResponse.class);
+			OAuthJSONAccessTokenResponse oAuthResponse;
+			logger.trace("To get exchange authToken for access code at:"+request.getLocationUri());
+			
+			oAuthResponse = oAuthClient.accessToken(request, "POST");
 			String accessToken = oAuthResponse.getAccessToken();
 			Long expiresIn = oAuthResponse.getExpiresIn();
 			logger.info("got Token:"+accessToken +" expires in "+expiresIn);
 			
+		
 		} catch (OAuthSystemException | OAuthProblemException e) {
 
 			e.printStackTrace();
 			logger.error("", e);
 		}
+		
 
 	}
+	
 }

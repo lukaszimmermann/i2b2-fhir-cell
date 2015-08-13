@@ -1,10 +1,19 @@
 package edu.harvard.i2b2.fhirserver.ws;
 
-public class AuthenticationService {
+import javax.ejb.EJB;
 
+import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
+import edu.harvard.i2b2.fhirserver.entity.AuthToken;
+
+public class AuthenticationService {
+	
+	@EJB
+	AuthTokenBean authTokenBean;
+	
 	public boolean authenticate(String authCredentials) {
-		// TODO Auto-generated method stub
 		return true;
+		//AuthToken tok=authTokenBean.authTokenByTokenString(authCredentials);
+		//return (tok!=null)?true:false;
 	}
 
 }

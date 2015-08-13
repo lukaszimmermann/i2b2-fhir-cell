@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ejb.EJB;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +43,7 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
 
 @Provider
 @PreMatching
@@ -50,13 +52,15 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	// public class RestAuthenticationFilter implements javax.servlet.Filter {
 	public static final String AUTHENTICATION_HEADER = "Authorization";
 
+	
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
 		// public void doFilter(ServletRequest request, ServletResponse
 		// response,
 		// FilterChain filter) throws IOException, ServletException {
 		String authCredentials = context.getHeaderString(AUTHENTICATION_HEADER);
-		logger.trace("Authorization header:"+authCredentials);
+		logger.trace("Authorization header:"+authCredentials+"\n for"+context.getUriInfo());
+		
 		
 		// better injected
 		AuthenticationService authenticationService = new AuthenticationService();
@@ -65,8 +69,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 				.authenticate(authCredentials);
 		
 		if (authenticationStatus) {
-			// proceedcontext.
+			logger.trace("authenticaltion Successful");
 		} else {
+			// proceedcontext.:redirect to auth info page
 			Response r = Response.ok().entity("Authentication Failure")
 			// .cookie(authIdCookie)
 					.type(MediaType.TEXT_PLAIN)

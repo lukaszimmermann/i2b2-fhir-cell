@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
 
 //import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
 
@@ -78,12 +79,13 @@ import edu.harvard.i2b2.fhir.XQueryUtilException;
 @Path("authz")
 public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
-	private static final String PERSISTENCE_UNIT_NAME = "Auth";
-	private static EntityManagerFactory factory;
-
-	//http://localhost:8080/srv-dstu2-0.2/api/authz/token?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=my-client-id
+	
+	@EJB
+	AuthTokenBean authTokenBean;
+	
+	//http://localhost:8080/srv-dstu2-0.2/api/authz/authorize?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=my-client-id
 	@GET
-	@Path("token")
+	@Path("authorize")
 	public Response authorize(@Context HttpServletRequest request,
 			@Context HttpRequest httprequest) throws URISyntaxException,
 			OAuthSystemException {
@@ -105,7 +107,7 @@ public class OAuth2AuthzEndpoint {
 			HttpSession session = request.getSession();
 			Response response=(Response) session.getAttribute("FinalResponse");
 			
-			if (authenticateResourceOwner(session)==false ) {
+			if (checkAuthorization(session)==false ) {
 				String clientId = (String) oauthRequest.getClientId();
 				Set<String> requestedScopes = oauthRequest.getScopes();
 				logger.info("for client:" + clientId + "->scope:"
@@ -143,12 +145,13 @@ public class OAuth2AuthzEndpoint {
 
 	// Authenticate resource owner
 	// is there an i2b2 AuthorizationCode associated with this AuthorizationCode
-	boolean authenticateResourceOwner(HttpSession session) {
+	boolean checkAuthorization(HttpSession session) {
 		String[] s={"i2b2Token","resourceUserId","AuthorizationCode","clientRedirectUri","clientId"};
 		List<String> list=Arrays.asList(s);
 		for(String p:list){
 			if (session.getAttribute(p)==null) return false;
 		}
+		authTokenBean.createAuthToken((String)session.getAttribute("clientId")); 
 		return true;
 	}
 
@@ -229,7 +232,7 @@ public class OAuth2AuthzEndpoint {
 		// save scope to session and
 		// redirect to client uri
 		HttpSession session = request.getSession();
-		session.setAttribute("permittedScopes", "patient/*");
+		session.setAttribute("permittedScopes", "user/*.*");
 		
 		URI finalUri=(URI) session.getAttribute("FinalRedirectUrl");
 		
