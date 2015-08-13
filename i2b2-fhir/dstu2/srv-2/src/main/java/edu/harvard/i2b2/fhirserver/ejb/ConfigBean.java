@@ -24,7 +24,7 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhirserver.entity.AuthToken;
+import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 import edu.harvard.i2b2.fhirserver.entity.Person;
 
 @Singleton
@@ -90,7 +90,7 @@ public class ConfigBean {
 		 EntityManagerFactory factory = Persistence.createEntityManagerFactory("testPer");
 	       EntityManager theManager = factory.createEntityManager();
 	        theManager.getTransaction().begin();
-	        AuthToken a = new AuthToken("clientid22");
+	        AccessToken a = new AccessToken("resourceUserId1","i2b2Token1","authorizationCode1","clientRedirectUri1","clientId");
 	        theManager.persist(a);
 	        theManager.getTransaction().commit();
 	        logger.info("COMPLETEDa");

@@ -9,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.Table;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,15 +17,15 @@ import org.slf4j.LoggerFactory;
 //@NamedQuery(name = "findAllAuthTokens", query = "SELECT a FROM AuthToken a "
 //	+ "ORDER BY id")
 @Entity
-public class AuthToken {
-	static Logger logger = LoggerFactory.getLogger(AuthToken.class);
+public class AccessToken {
+	static Logger logger = LoggerFactory.getLogger(AccessToken.class);
 
 	// private static final long serialVersionUID = 6582105865012174694L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	private String state;
+	private String accessToken;
 
 	private String authorizationCode;// authorizationTokenString;
 
@@ -42,19 +40,17 @@ public class AuthToken {
 	private Date createdDate;
 	private Date expiryDate;
 
-	public AuthToken() {
+	public AccessToken() {
 		init();
 	}
 
-	public AuthToken(String resourceUserId, String i2b2Token,
-			String authorizationCode, String clientRedirectUri, String clientId,String state,String scope) {
+	public AccessToken(String resourceUserId, String i2b2Token,
+			String authorizationCode, String clientRedirectUri, String clientId) {
 		this.resourceUserId = resourceUserId;
 		this.i2b2Token = i2b2Token;
 		this.authorizationCode = authorizationCode;
 		this.clientRedirectUri = clientRedirectUri;
 		this.clientId = clientId;
-		this.state=state;
-		this.scope=scope;
 		init();
 	}
 
@@ -104,6 +100,14 @@ public class AuthToken {
 		this.clientId = clientId;
 	}
 
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public void setAccessToken(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
 	public String getAuthorizationCode() {
 		return authorizationCode;
 	}
@@ -135,15 +139,8 @@ public class AuthToken {
 	public void setI2b2Token(String i2b2Token) {
 		this.i2b2Token = i2b2Token;
 	}
-	public String getState() {
-		return state;
-	}
 
-	public void setState(String state) {
-		this.state = state;
-	}
 
-	
 	public String getScope() {
 		return scope;
 	}
@@ -154,9 +151,9 @@ public class AuthToken {
 
 	@Override
 	public String toString() {
-		return "AccessToken [id=" + id + ", authorizationCode="
-				+ authorizationCode + ", clientId=" + clientId
-				+ ", clientRedirectUri=" + clientRedirectUri
+		return "AccessToken [id=" + id + ", accessToken=" + accessToken
+				+ ", authorizationCode=" + authorizationCode + ", clientId="
+				+ clientId + ", clientRedirectUri=" + clientRedirectUri
 				+ ", resourceUserId=" + resourceUserId + ", i2b2Token="
 				+ i2b2Token + ", createdDate=" + createdDate + ", expiryDate="
 				+ expiryDate + "]";

@@ -52,7 +52,10 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
+import edu.harvard.i2b2.fhirserver.entity.AuthToken;
+
 
 //import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
 
@@ -116,7 +119,7 @@ public class OAuth2AuthzEndpoint {
 
 				if (responseType.equals(ResponseType.CODE.toString())) {
 					authorizationCode = oauthIssuerImpl.authorizationCode();
-					logger.info(" generated authorizationCode:" + authorizationCode);
+					logger.info("generated authorizationCode:" + authorizationCode);
 					builder.setCode(authorizationCode);
 				}
 				final OAuthResponse Oresponse = builder.location(redirectURI)
@@ -125,13 +128,16 @@ public class OAuth2AuthzEndpoint {
 				response=Response.status(Oresponse.getResponseStatus()).location(url)
 						.build();
 				if(url==null) throw new OAuthSystemException("redirectURI is missing");
-
+				
 				session.setAttribute("AuthorizationCode", authorizationCode);
 				session.setAttribute("clientRedirectUri", redirectURI);
 				session.setAttribute("clientId", clientId);
 				session.setAttribute("requestedScopes", requestedScopes);
 				session.setAttribute("FinalRedirectUrl", url);
 				session.setAttribute("FinalResponse", response);
+				
+				//new AuthToken(resourceUserId, i2b2Token,
+					//	authorizationCode, clientRedirectUri, clientId,state,scope);
 				return srvResourceOwnerLoginPage();
 			}
 			return response;
@@ -151,7 +157,6 @@ public class OAuth2AuthzEndpoint {
 		for(String p:list){
 			if (session.getAttribute(p)==null) return false;
 		}
-		authTokenBean.createAuthToken((String)session.getAttribute("clientId")); 
 		return true;
 	}
 

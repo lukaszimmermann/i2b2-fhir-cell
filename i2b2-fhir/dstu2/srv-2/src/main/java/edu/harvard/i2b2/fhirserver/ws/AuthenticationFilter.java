@@ -43,7 +43,7 @@ import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
-import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
+import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 
 @Provider
 @PreMatching

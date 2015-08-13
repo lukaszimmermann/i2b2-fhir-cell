@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.JAXBUtil;
-import edu.harvard.i2b2.fhirserver.entity.AuthToken;
 import edu.harvard.i2b2.fhirserver.entity.SessionBundle;
 
 //@Stateful
