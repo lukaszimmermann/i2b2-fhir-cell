@@ -22,13 +22,13 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhirserver.entity.AuthToken;
+import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 
 //@Stateful
 @Singleton
 @Startup
-public class AuthTokenBean {
-	static Logger logger = LoggerFactory.getLogger(AuthTokenBean.class);
+public class AccessTokenBean {
+	static Logger logger = LoggerFactory.getLogger(AccessTokenBean.class);
 	// @PersistenceContext
 	private EntityManager em;
 
@@ -39,17 +39,17 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
 			Random r = new Random();
-			// createAuthToken("clientId232" + r.nextInt());
+			// createAccessToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
 			logger.error("", ex);
 		}
 	}
 
-	public void createAuthToken(String resourceUserId, String i2b2Token,
-			String authorizationCode, String clientRedirectUri, String clientId,String state,String scope) {
+	public void createAccessToken(String resourceUserId, String i2b2Token,
+			String authorizationCode, String clientRedirectUri, String clientId) {
 		try {
-			AuthToken tok = new AuthToken(resourceUserId, i2b2Token,
-					authorizationCode, clientRedirectUri, clientId,state,scope);
+			AccessToken tok = new AccessToken(resourceUserId, i2b2Token,
+					authorizationCode, clientRedirectUri, clientId);
 			logger.info("Created authToken.." + tok.toString());
 			em.persist(tok);
 			logger.info("Persisted authToken" + tok.toString());
@@ -60,16 +60,16 @@ public class AuthTokenBean {
 		}
 	}
 
-	public List<AuthToken> getAuthTokens() {
-		List<AuthToken> tokens = (List<AuthToken>) em.createNamedQuery(
-				"findAllAuthTokens").getResultList();
+	public List<AccessToken> getAccessTokens() {
+		List<AccessToken> tokens = (List<AccessToken>) em.createNamedQuery(
+				"findAllAccessTokens").getResultList();
 		return tokens;
 	}
 
 	public int countAllItems() {
 		int count = 0;
 		try {
-			count = em.createNamedQuery("findAllAuthTokens").getResultList()
+			count = em.createNamedQuery("findAllAccessTokens").getResultList()
 					.size();
 		} catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -77,7 +77,7 @@ public class AuthTokenBean {
 		return count;
 	}
 
-	public void removeAuthToken(AuthToken authToken) {
+	public void removeAccessToken(AccessToken authToken) {
 		try {
 			em.remove(authToken);
 		} catch (Exception e) {
@@ -85,14 +85,14 @@ public class AuthTokenBean {
 		}
 	}
 
-	public AuthToken authTokenByAuthorizationCode(String authCode) {
+	public AccessToken authTokenByAuthorizationCode(String authCode) {
 		try {
 			List tokens = em
 					.createQuery(
-							"select a from AuthToken where AuthorizationCode = :ac ")
+							"select a from AccessToken where AuthorizationCode = :ac ")
 					.setParameter("ac", authCode).getResultList();
 			if (tokens.size() > 0) {
-				return (AuthToken) tokens.get(0);
+				return (AccessToken) tokens.get(0);
 			} else {
 				return null;
 			}
@@ -110,7 +110,7 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em.joinTransaction();
 			em = factory.createEntityManager();
-			em.createNativeQuery("Drop table AuthToken;").executeUpdate();
+			em.createNativeQuery("Drop table AccessToken;").executeUpdate();
 			em.createNativeQuery("shutdown;").executeUpdate();
 		} catch (Exception ex) {
 			logger.error("", ex);
