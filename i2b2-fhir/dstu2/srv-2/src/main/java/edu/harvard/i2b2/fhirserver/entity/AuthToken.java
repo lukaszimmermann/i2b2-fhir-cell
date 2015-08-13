@@ -154,12 +154,14 @@ public class AuthToken {
 
 	@Override
 	public String toString() {
-		return "AccessToken [id=" + id + ", authorizationCode="
-				+ authorizationCode + ", clientId=" + clientId
-				+ ", clientRedirectUri=" + clientRedirectUri
+		return "AuthToken [id=" + id + ", state=" + state
+				+ ", authorizationCode=" + authorizationCode + ", clientId="
+				+ clientId + ", clientRedirectUri=" + clientRedirectUri
 				+ ", resourceUserId=" + resourceUserId + ", i2b2Token="
-				+ i2b2Token + ", createdDate=" + createdDate + ", expiryDate="
-				+ expiryDate + "]";
+				+ i2b2Token + ", scope=" + scope + ", createdDate="
+				+ createdDate + ", expiryDate=" + expiryDate + "]";
 	}
+
+	
 
 }

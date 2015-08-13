@@ -32,7 +32,6 @@ import edu.harvard.i2b2.fhirserver.entity.Person;
 public class ConfigBean {
 	static Logger logger = LoggerFactory.getLogger(ConfigBean.class);
 
-	
 	@PostConstruct
 	public void init() {
 		try {
@@ -42,13 +41,13 @@ public class ConfigBean {
 			// conn.createStatement().execute("CREATE TABLE TEST(ID INT PRIMARY KEY, NAME VARCHAR);"
 			// +"INSERT INTO TEST VALUES(1, 'Hello World');"
 			// +"CALL FT_CREATE_INDEX('PUBLIC', 'TEST', NULL);");
-			//conn.createStatement().execute(
-				//	"INSERT INTO TEST VALUES(2, 'Hello2 World');");
+			// conn.createStatement().execute(
+			// "INSERT INTO TEST VALUES(2, 'Hello2 World');");
 			Statement stmt = conn.createStatement(
 					ResultSet.TYPE_SCROLL_INSENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			ResultSet rs = stmt.executeQuery("SELECT * FROM SessionBundle");
-			//logger.info("r:" + rs.toString());
+			ResultSet rs = stmt.executeQuery("SELECT * FROM AuthToken");
+			// logger.info("r:" + rs.toString());
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int columnsNumber = rsmd.getColumnCount();
 			while (rs.next()) {
@@ -59,42 +58,46 @@ public class ConfigBean {
 					logger.info(rs.getString(i));
 					logger.info(columnValue + " " + rsmd.getColumnName(i));
 				}
-				//logger.info("");
+				// logger.info("");
 			}
 
 			conn.close();
 
 			cp.dispose();
-			//test2();
-			//createData();
+			 test2();
+			 createData();
 		} catch (Exception e) {
-			logger.info("erro",e);
+			logger.info("erro", e);
 			e.printStackTrace();
 		}
-		
-	}
-	
-	 private void test2(){
 
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("testPer");
-       EntityManager theManager = factory.createEntityManager();
-        theManager.getTransaction().begin();
-        Person person = new Person();
-        person.setFirstName("ana3");
-        theManager.persist(person);
-        theManager.getTransaction().commit();
-        logger.info("COMPLETED");
-        }
+	}
+
+	private void test2() {
+
+		EntityManagerFactory factory = Persistence
+				.createEntityManagerFactory("testPer");
+		EntityManager theManager = factory.createEntityManager();
+		theManager.getTransaction().begin();
+		Person person = new Person();
+		person.setFirstName("ana3");
+		theManager.persist(person);
+		theManager.getTransaction().commit();
+		logger.info("COMPLETED");
+	}
 
 	private void createData() {
-		 EntityManagerFactory factory = Persistence.createEntityManagerFactory("testPer");
-	       EntityManager theManager = factory.createEntityManager();
-	        theManager.getTransaction().begin();
-	        AccessToken a = new AccessToken("resourceUserId1","i2b2Token1","authorizationCode1","clientRedirectUri1","clientId");
-	        theManager.persist(a);
-	        theManager.getTransaction().commit();
-	        logger.info("COMPLETEDa");
+		EntityManagerFactory factory = Persistence
+				.createEntityManagerFactory("testPer");
+		EntityManager theManager = factory.createEntityManager();
+		theManager.getTransaction().begin();
+		AccessToken a = new AccessToken("resourceUserId1", "i2b2Token1",
+				"authorizationCode1", "clientRedirectUri1", "clientId");
+		theManager.persist(a);
+		theManager.getTransaction().commit();
+		logger.info("COMPLETEDa");
 	}
+
 	@PreDestroy
 	public void deleteData() {
 

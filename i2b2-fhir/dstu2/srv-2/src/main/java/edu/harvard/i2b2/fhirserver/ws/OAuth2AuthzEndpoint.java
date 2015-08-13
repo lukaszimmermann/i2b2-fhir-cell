@@ -110,8 +110,9 @@ public class OAuth2AuthzEndpoint {
 			HttpSession session = request.getSession();
 			Response response=(Response) session.getAttribute("FinalResponse");
 			
-			if (checkAuthorization(session)==false ) {
-				String clientId = (String) oauthRequest.getClientId();
+			String clientId = (String) oauthRequest.getClientId();
+			if (checkAuthorization(clientId)==false ) {
+				
 				Set<String> requestedScopes = oauthRequest.getScopes();
 				logger.info("for client:" + clientId + "->scope:"
 						+ requestedScopes.toString());
@@ -129,21 +130,23 @@ public class OAuth2AuthzEndpoint {
 						.build();
 				if(url==null) throw new OAuthSystemException("redirectURI is missing");
 				
+				/*
 				session.setAttribute("AuthorizationCode", authorizationCode);
 				session.setAttribute("clientRedirectUri", redirectURI);
 				session.setAttribute("clientId", clientId);
 				session.setAttribute("requestedScopes", requestedScopes);
 				session.setAttribute("FinalRedirectUrl", url);
 				session.setAttribute("FinalResponse", response);
-				
-				//new AuthToken(resourceUserId, i2b2Token,
-					//	authorizationCode, clientRedirectUri, clientId,state,scope);
-				return srvResourceOwnerLoginPage();
+				*/
+				authTokenBean.createAuthToken("!null", "!null",
+						authorizationCode, redirectURI, clientId,"!null","!null");
+				logger.info("total:"+authTokenBean.totalCount());
+				return srvResourceOwnerLoginPage(clientId);
 			}
 			return response;
 			
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			return Response.status(Status.BAD_REQUEST).entity(e.getMessage())
 					.header("xreason", e.getMessage()).build();
 		}
@@ -151,21 +154,33 @@ public class OAuth2AuthzEndpoint {
 
 	// Authenticate resource owner
 	// is there an i2b2 AuthorizationCode associated with this AuthorizationCode
-	boolean checkAuthorization(HttpSession session) {
+	boolean checkAuthorization(String clientId) {
+		AuthToken authTok=authTokenBean.authTokenByClientId(clientId);
+		
+		if(authTok==null
+				||authTok.getAuthorizationCode()==null
+	||authTok.getClientId()==null
+	||authTok.getClientRedirectUri()==null
+	||authTok.getI2b2Token()==null
+	||authTok.getResourceUserId()==null
+	) return false;
+		/*
 		String[] s={"i2b2Token","resourceUserId","AuthorizationCode","clientRedirectUri","clientId"};
 		List<String> list=Arrays.asList(s);
 		for(String p:list){
 			if (session.getAttribute(p)==null) return false;
 		}
+		*/
 		return true;
 	}
 
 	@Path("i2b2login")
 	@GET
-	public Response srvResourceOwnerLoginPage() throws URISyntaxException {
+	public Response srvResourceOwnerLoginPage(String clientId) throws URISyntaxException {
 		String loginPage = "<form action=\"processi2b2login\" method=\"post\">"
 				+ " UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
 				+ "<br> Password:<br><input type=\"text\" name=\"password\" value=\"demouser\">"
+				+ "<input type=\"text\" name=\"clientId\" value=\""+clientId+"\" hidden=\"true\">"
 				+ "<br><br><input type=\"submit\" value=\"Submit\">"
 				+ "</form>";
 		return Response.ok().entity(loginPage).build();
@@ -177,10 +192,11 @@ public class OAuth2AuthzEndpoint {
 	public Response processResourceOwnerLogin(
 			@FormParam("username") String username,
 			@FormParam("password") String password,
+			@FormParam("clientId") String clientId,
 			@Context HttpServletRequest request) throws XQueryUtilException,
 			URISyntaxException {
-		logger.trace("processing login: for username:" + username + "password:"
-				+ password);
+		logger.trace("processing login: for username:" + username + "\npassword:"
+				+ password+ "\nclientId:"+clientId);
 		logger.trace("sessionid:" + request.getSession().getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
@@ -196,10 +212,14 @@ public class OAuth2AuthzEndpoint {
 			// save resourceUserId and AuthToken to "session" with
 			// generatedAuthorizationToken
 
-			HttpSession session = request.getSession();
-			session.setAttribute("resourceUserId", username);
-			session.setAttribute("i2b2Token", I2b2Util.getToken(pmResponseXml));
+			//HttpSession session = request.getSession();
+			//session.setAttribute("resourceUserId", username);
+			//session.setAttribute("i2b2Token", I2b2Util.getToken(pmResponseXml));
 
+			AuthToken authTok=authTokenBean.authTokenByClientId(clientId);
+			authTok.setResourceUserId(username);
+			authTok.setI2b2Token(I2b2Util.getToken(pmResponseXml));
+			
 			return Response.ok()
 					.entity(srvResourceOwnerScopeChoice(pmResponseXml)).build();
 
