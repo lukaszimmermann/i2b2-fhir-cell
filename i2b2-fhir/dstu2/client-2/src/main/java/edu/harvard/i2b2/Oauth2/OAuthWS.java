@@ -65,7 +65,7 @@ public class OAuthWS {
 					.tokenLocation(
 							"http://localhost:8080/srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId("client-id")
+					.setClientId("fcclient1")
 					.setClientSecret("client-secret")
 					.setCode(code)
 					.setRedirectURI("uri")

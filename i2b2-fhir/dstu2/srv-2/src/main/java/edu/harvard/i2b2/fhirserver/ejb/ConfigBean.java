@@ -65,7 +65,7 @@ public class ConfigBean {
 
 			cp.dispose();
 			 test2();
-			 createData();
+			 //createData();
 		} catch (Exception e) {
 			logger.info("erro", e);
 			e.printStackTrace();
@@ -86,7 +86,7 @@ public class ConfigBean {
 		logger.info("COMPLETED");
 	}
 
-	private void createData() {
+	/*private void createData() {
 		EntityManagerFactory factory = Persistence
 				.createEntityManagerFactory("testPer");
 		EntityManager theManager = factory.createEntityManager();
@@ -100,7 +100,7 @@ public class ConfigBean {
 		//theManager.getTransaction().commit();
 		logger.info("COMPLETEDa");
 	}
-
+*/
 	@PreDestroy
 	public void deleteData() {
 
