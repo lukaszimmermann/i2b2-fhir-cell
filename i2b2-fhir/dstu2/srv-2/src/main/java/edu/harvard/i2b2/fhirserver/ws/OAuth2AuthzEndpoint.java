@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.jcr.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -107,43 +108,27 @@ public class OAuth2AuthzEndpoint {
 					.authorizationResponse(request,
 							HttpServletResponse.SC_FOUND);
 
-			//HttpSession session = request.getSession();
+			String redirectURI = oauthRequest.getRedirectURI();
+			final OAuthResponse Oresponse = builder.location(redirectURI)
+					.buildQueryMessage();
+			URI url = new URI(Oresponse.getLocationUri());
+			Response response = Response.status(Oresponse.getResponseStatus())
+					.location(url).build();
+			if (url == null)
+				throw new OAuthSystemException("redirectURI is missing");
 
-			Response response = Response.status(Status.UNAUTHORIZED).entity("clientId IsNotValid").build();
-					
-					
+			HttpSession session = request.getSession();
+			
+			String finalUri=successfulResponse(request);
+			logger.info("generated finalUri:"+finalUri);
+			session.setAttribute("finalUri", finalUri);
+
 			String clientId = (String) oauthRequest.getClientId();
-
-			if (checkAuthorization(clientId) == false) {
-
-				Set<String> requestedScopes = oauthRequest.getScopes();
-				logger.info("for client:" + clientId + "->scope:"
-						+ requestedScopes.toString());
-				String redirectURI = oauthRequest.getRedirectURI();
-				String state = oauthRequest.getState();
-				String requestedScope = oauthRequest.getState();
-
-				if (responseType.equals(ResponseType.CODE.toString())) {
-					authorizationCode = oauthIssuerImpl.authorizationCode();
-					logger.info("generated authorizationCode:"
-							+ authorizationCode);
-					builder.setCode(authorizationCode);
-				}
-				
-				final OAuthResponse Oresponse = builder.location(redirectURI)
-						.buildQueryMessage();
-				URI url = new URI(Oresponse.getLocationUri());
-				response = Response.status(Oresponse.getResponseStatus())
-						.location(url).build();
-				if (url == null)
-					throw new OAuthSystemException("redirectURI is missing");
-
-				authTokenBean.createAuthToken(null, null, authorizationCode,
-						redirectURI, clientId, state, requestedScope);
-				logger.info("total:" + authTokenBean.totalCount());
-				return srvResourceOwnerLoginPage(clientId);
-			}
-			return response;
+			if (checkAuthorization(clientId) == true) {
+				return srvResourceOwnerLoginPage(clientId,session.getId());
+			} else
+				return Response.status(Status.UNAUTHORIZED)
+						.entity("clientId IsNotValid").build();
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -156,29 +141,26 @@ public class OAuth2AuthzEndpoint {
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
 	boolean checkAuthorization(String clientId) {
-		if(clientId.equals("fcclient1")) return true;
-		/*AuthToken authTok = authTokenBean.findByClientId(clientId);
-
-		if (authTok == null || authTok.getAuthorizationCode() == null
-				|| authTok.getClientId() == null
-				|| authTok.getClientRedirectUri() == null
-				|| authTok.getI2b2Token() == null
-				|| authTok.getResourceUserId() == null
-				|| authTok.getExpiryDate() == null)
-			return false;
-		Date currentDate = new Date();
-		if (currentDate.after(authTok.getExpiryDate()))
-			return false;
-		if (authTok.getClientId().equals(clientId))
+		if (clientId.equals("fcclient1"))
 			return true;
-		else
-			return false;*/
+		/*
+		 * AuthToken authTok = authTokenBean.findByClientId(clientId);
+		 * 
+		 * if (authTok == null || authTok.getAuthorizationCode() == null ||
+		 * authTok.getClientId() == null || authTok.getClientRedirectUri() ==
+		 * null || authTok.getI2b2Token() == null || authTok.getResourceUserId()
+		 * == null || authTok.getExpiryDate() == null) return false; Date
+		 * currentDate = new Date(); if
+		 * (currentDate.after(authTok.getExpiryDate())) return false; if
+		 * (authTok.getClientId().equals(clientId)) return true; else return
+		 * false;
+		 */
 		return false;
 	}
 
 	@Path("i2b2login")
 	@GET
-	public Response srvResourceOwnerLoginPage(String clientId)
+	public Response srvResourceOwnerLoginPage(String clientId,String sessionId)
 			throws URISyntaxException {
 		String loginPage = "<form action=\"processi2b2login\" method=\"post\">"
 				+ " UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
@@ -187,7 +169,7 @@ public class OAuth2AuthzEndpoint {
 				+ "\" hidden=\"true\">"
 				+ "<br><br><input type=\"submit\" value=\"Submit\">"
 				+ "</form>";
-		return Response.ok().entity(loginPage).build();
+		return Response.ok().entity(loginPage).header("session_id", sessionId).build();
 	}
 
 	// TODO domain and URL
@@ -201,6 +183,7 @@ public class OAuth2AuthzEndpoint {
 			URISyntaxException {
 		logger.trace("processing login: for username:" + username
 				+ "\npassword:" + password + "\nclientId:" + clientId);
+		
 		logger.trace("sessionid:" + request.getSession().getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
@@ -212,18 +195,7 @@ public class OAuth2AuthzEndpoint {
 			// logger.trace("redirecting to:" + uri);
 			// return Response.status(Status.MOVED_PERMANENTLY)
 			// .location(new URI(uri)).build();
-
-			// save resourceUserId and AuthToken to "session" with
-			// generatedAuthorizationToken
-
-			// HttpSession session = request.getSession();
-			// session.setAttribute("resourceUserId", username);
-			// session.setAttribute("i2b2Token",
-			// I2b2Util.getToken(pmResponseXml));
-
-			AuthToken authTok = authTokenBean.findByClientId(clientId);
-			authTok.setResourceUserId(username);
-			authTok.setI2b2Token(I2b2Util.getToken(pmResponseXml));
+			
 
 			return Response.ok()
 					.entity(srvResourceOwnerScopeChoice(pmResponseXml)).build();
@@ -232,7 +204,7 @@ public class OAuth2AuthzEndpoint {
 			String uri = getBasePath(request).toString() + "i2b2login";
 			logger.trace("redirecting to:" + uri);
 			return Response.status(Status.MOVED_PERMANENTLY)
-					.location(new URI(uri)).build();
+					.location(new URI(uri)).header("session_id", request.getSession().getId()).build();
 		}
 	}
 
@@ -273,9 +245,15 @@ public class OAuth2AuthzEndpoint {
 			msg = msg + p + "=" + session.getAttribute(p).toString() + "\n";
 		}
 		logger.trace("sessionAttributes:" + msg);
-		Response response = (Response) session.getAttribute("FinalResponse");
-		return response;
-	}
+		//create AuthToken in Database;
+		
+		//HttpServletRequest clientRequest=(HttpServletRequest) session.getAttribute("authorizationRequest");
+		
+			return Response.status(Status.MOVED_PERMANENTLY)
+			.location(finalUri).header("session_id", request.getSession().getId()).build();
+		}
+
+	
 
 	// obtains an authorization decision (by asking the resource owner or by
 	// establishing approval via other means).
@@ -296,5 +274,36 @@ public class OAuth2AuthzEndpoint {
 		uri = uri.substring(0, uri.lastIndexOf('/')) + "/";
 		logger.trace("base uri:" + uri);
 		return new URI(uri);
+	}
+	
+	String successfulResponse(HttpServletRequest request) throws OAuthSystemException, URISyntaxException, OAuthProblemException{
+		OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
+		OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(
+				new MD5Generator());
+
+		String responseType = oauthRequest
+				.getParam(OAuth.OAUTH_RESPONSE_TYPE);
+
+		OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
+				.authorizationResponse(request,
+						HttpServletResponse.SC_FOUND);
+
+		HttpSession session = request.getSession();
+		Response response=(Response) session.getAttribute("FinalResponse");
+		
+			
+			Set<String> requestedScopes = oauthRequest.getScopes();
+			String redirectURI = oauthRequest.getRedirectURI();
+
+			if (responseType.equals(ResponseType.CODE.toString())) {
+				String authorizationCode = oauthIssuerImpl.authorizationCode();
+				logger.info("generated authorizationCode:" + authorizationCode);
+				builder.setCode(authorizationCode);
+			}
+			final OAuthResponse Oresponse = builder.location(redirectURI)
+					.buildQueryMessage();
+			URI url = new URI(Oresponse.getLocationUri());
+			
+		return url.toString();
 	}
 }
