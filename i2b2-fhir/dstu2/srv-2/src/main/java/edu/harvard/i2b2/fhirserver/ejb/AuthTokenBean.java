@@ -145,7 +145,7 @@ public class AuthTokenBean {
 
 	//@PreDestroy
 	//@Transactional
-	public void dropTable() {
+	/*public void dropTable() {
 		try {
 			EntityManagerFactory factory = Persistence
 					.createEntityManagerFactory("testPer");
@@ -158,5 +158,5 @@ public class AuthTokenBean {
 			logger.error("", ex);
 		}
 	}
-
+*/
 }

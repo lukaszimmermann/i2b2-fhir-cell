@@ -41,6 +41,7 @@ public class AccessTokenBean {
 			Random r = new Random();
 			// createAccessToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
+			
 			logger.error("", ex);
 		}
 	}
@@ -55,6 +56,7 @@ public class AccessTokenBean {
 			logger.info("Persisted authToken" + tok.toString());
 
 		} catch (Exception ex) {
+			em.getTransaction().rollback();
 			logger.error("", ex);
 			throw new EJBException(ex.getMessage());
 		}
@@ -102,7 +104,7 @@ public class AccessTokenBean {
 
 	}
 	
-
+/*
 	@PreDestroy
 	@Transactional
 	public void dropTable() {
@@ -114,7 +116,9 @@ public class AccessTokenBean {
 			em.createNativeQuery("Drop table AccessToken;").executeUpdate();
 			em.createNativeQuery("shutdown;").executeUpdate();
 		} catch (Exception ex) {
+			em.getTransaction().rollback();
 			logger.error("", ex);
 		}
 	}
+	*/
 }

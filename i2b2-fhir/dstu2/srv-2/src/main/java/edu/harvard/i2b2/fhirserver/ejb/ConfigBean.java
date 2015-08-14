@@ -32,7 +32,7 @@ import edu.harvard.i2b2.fhirserver.entity.Person;
 public class ConfigBean {
 	static Logger logger = LoggerFactory.getLogger(ConfigBean.class);
 
-	@PostConstruct
+	//@PostConstruct
 	public void init() {
 		try {
 			JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/test",
