@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 //Hibernate JPA With H2 Example
+//http://www.javatips.net/blog/2012/12/java-persistence-jpa-2-0-tutorial-with-hibernate
 
 public class JPAExample {
 

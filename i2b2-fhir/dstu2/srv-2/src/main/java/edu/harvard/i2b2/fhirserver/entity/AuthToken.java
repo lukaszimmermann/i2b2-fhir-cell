@@ -24,76 +24,38 @@ public class AuthToken {
 
 	// private static final long serialVersionUID = 6582105865012174694L;
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private String authorizationCode;// authorizationTokenString;
 
 	private String state;
 
-	private String authorizationCode;// authorizationTokenString;
-
 	private String clientId;
+
 	private String clientRedirectUri;
 
 	private String resourceUserId;// resourceOwnerUsername;
+
 	private String i2b2Token;// resourceOwnerAuthKey
 
 	private String scope;
 	
 	private Date createdDate;
+	
 	private Date expiryDate;
 
-	public AuthToken() {
-		init();
+	public String getAuthorizationCode() {
+		return authorizationCode;
 	}
 
-	public AuthToken(String resourceUserId, String i2b2Token,
-			String authorizationCode, String clientRedirectUri, String clientId,String state,String scope) {
-		this.resourceUserId = resourceUserId;
-		this.i2b2Token = i2b2Token;
+	public void setAuthorizationCode(String authorizationCode) {
 		this.authorizationCode = authorizationCode;
-		this.clientRedirectUri = clientRedirectUri;
-		this.clientId = clientId;
-		this.state=state;
-		this.scope=scope;
-		init();
 	}
 
-	private void init() {
-		Date dt = new Date();
-		Calendar c = Calendar.getInstance();
-		c.setTime(dt);
-		this.createdDate = c.getTime();
-		c.add(Calendar.HOUR, 1);
-		this.expiryDate = c.getTime();
-		String tokenString = UUID.randomUUID().toString();
-		Random r = new Random();
-		// this.id = r.nextInt();
+	public String getState() {
+		return state;
 	}
 
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	// @Temporal(TIMESTAMP)
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	// @Temporal(TIMESTAMP)
-	public Date getExpiryDate() {
-		return expiryDate;
-	}
-
-	public void setExpiryDate(Date expiryDate) {
-		this.expiryDate = expiryDate;
+	public void setState(String state) {
+		this.state = state;
 	}
 
 	public String getClientId() {
@@ -102,14 +64,6 @@ public class AuthToken {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
-	}
-
-	public String getAuthorizationCode() {
-		return authorizationCode;
-	}
-
-	public void setAuthorizationCode(String authorizationCode) {
-		this.authorizationCode = authorizationCode;
 	}
 
 	public String getClientRedirectUri() {
@@ -135,15 +89,7 @@ public class AuthToken {
 	public void setI2b2Token(String i2b2Token) {
 		this.i2b2Token = i2b2Token;
 	}
-	public String getState() {
-		return state;
-	}
 
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	
 	public String getScope() {
 		return scope;
 	}
@@ -152,16 +98,31 @@ public class AuthToken {
 		this.scope = scope;
 	}
 
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public Date getExpiryDate() {
+		return expiryDate;
+	}
+
+	public void setExpiryDate(Date expiryDate) {
+		this.expiryDate = expiryDate;
+	}
+
 	@Override
 	public String toString() {
-		return "AuthToken [id=" + id + ", state=" + state
-				+ ", authorizationCode=" + authorizationCode + ", clientId="
-				+ clientId + ", clientRedirectUri=" + clientRedirectUri
-				+ ", resourceUserId=" + resourceUserId + ", i2b2Token="
-				+ i2b2Token + ", scope=" + scope + ", createdDate="
-				+ createdDate + ", expiryDate=" + expiryDate + "]";
+		return "AuthToken [authorizationCode=" + authorizationCode + ", state="
+				+ state + ", clientId=" + clientId + ", clientRedirectUri="
+				+ clientRedirectUri + ", resourceUserId=" + resourceUserId
+				+ ", i2b2Token=" + i2b2Token + ", scope=" + scope
+				+ ", createdDate=" + createdDate + ", expiryDate=" + expiryDate
+				+ "]";
 	}
 
 	
-
 }
