@@ -9,6 +9,7 @@ import java.util.Random;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -20,6 +21,7 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
+import javax.transaction.UserTransaction;
 
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
@@ -33,9 +35,10 @@ import edu.harvard.i2b2.fhirserver.entity.SessionBundle;
 @Startup
 public class SessionBundleBean {
 	static Logger logger = LoggerFactory.getLogger(SessionBundleBean.class);
-	// @PersistenceContext
+	
+	@PersistenceContext
 	private EntityManager em;
-
+	
 	@PostConstruct
 	public void init() {
 		try {
@@ -46,7 +49,7 @@ public class SessionBundleBean {
 			// Random r = new Random();
 			// createAuthToken("clientId232" + r.nextInt());
 			totalSessionBundle();
-			deleteOldData();
+			//deleteOldData();
 		} catch (Exception ex) {
 			logger.error("", ex);
 		}
@@ -64,7 +67,9 @@ public class SessionBundleBean {
 		try {
 			SessionBundle sb = new SessionBundle(sessionId, s);
 			logger.info("Created sb.." + sb.toString());
+			//em.getTransaction().begin();
 			em.persist(sb);
+			//em.getTransaction().commit();
 			// em.merge(sb);
 
 			// em.flush();

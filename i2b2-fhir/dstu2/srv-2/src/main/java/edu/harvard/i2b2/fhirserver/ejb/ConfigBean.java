@@ -78,11 +78,11 @@ public class ConfigBean {
 		EntityManagerFactory factory = Persistence
 				.createEntityManagerFactory("testPer");
 		EntityManager theManager = factory.createEntityManager();
-		theManager.getTransaction().begin();
+		//theManager.getTransaction().begin();
 		Person person = new Person();
 		person.setFirstName("ana3");
 		theManager.persist(person);
-		theManager.getTransaction().commit();
+		//theManager.getTransaction().commit();
 		logger.info("COMPLETED");
 	}
 
@@ -90,11 +90,14 @@ public class ConfigBean {
 		EntityManagerFactory factory = Persistence
 				.createEntityManagerFactory("testPer");
 		EntityManager theManager = factory.createEntityManager();
-		theManager.getTransaction().begin();
+		//theManager.getTransaction().begin();
 		AccessToken a = new AccessToken("resourceUserId1", "i2b2Token1",
 				"authorizationCode1", "clientRedirectUri1", "clientId");
 		theManager.persist(a);
-		theManager.getTransaction().commit();
+		a = new AccessToken("resourceUserId2", "i2b2Token2",
+				"authorizationCode2", "clientRedirectUri2", "clientId2");
+		theManager.persist(a);
+		//theManager.getTransaction().commit();
 		logger.info("COMPLETEDa");
 	}
 
