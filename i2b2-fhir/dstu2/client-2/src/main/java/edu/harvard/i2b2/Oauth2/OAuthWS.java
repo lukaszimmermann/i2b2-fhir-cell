@@ -45,11 +45,12 @@ public class OAuthWS {
 			oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 			String code = oar.getCode();
 			logger.info("gotAuthCode:" + code);
+			return Response.ok().entity("AuthCode:" + code).build();
+					//	.type(MediaType.TEXT_PLAIN).build();
+			//String accessToken = exchangeOAuthCodeForAccessToken(code);
 
-			String accessToken = exchangeOAuthCodeForAccessToken(code);
-
-			return Response.ok().entity("Access Token:" + accessToken)
-					.type(MediaType.TEXT_PLAIN).build();
+			//return Response.ok().entity("Access Token:" + accessToken)
+				//	.type(MediaType.TEXT_PLAIN).build();
 		} catch (OAuthProblemException e) {
 			e.printStackTrace();
 			logger.error("", e);
@@ -92,13 +93,13 @@ public class OAuthWS {
 	}
 
 	@GET
-	@Path("launch2")
+	@Path("launch")
 	public Response getAuthorizationUri() throws OAuthSystemException,
 			URISyntaxException {
 		OAuthClientRequest request = OAuthClientRequest
 				.authorizationLocation(
 						"http://localhost:8080/srv-dstu2-0.2/api/authz/authorize")
-				.setClientId("my-client-id1")
+				.setClientId("fcclient1")
 				.setResponseType("code")
 				.setScope("user/*.*")
 				.setRedirectURI(
