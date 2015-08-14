@@ -8,8 +8,8 @@ public class Test {
 			JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/test",
 					"sa", "sa");
 				Connection conn = cp.getConnection();
-		//		conn.createStatement().execute("CREATE TABLE TEST(ID INT PRIMARY KEY, NAME VARCHAR);"
-//+"INSERT INTO TEST VALUES(1, 'Hello World');"
+	//			conn.createStatement().execute("CREATE TABLE TEST(ID INT PRIMARY KEY, NAME VARCHAR);"
+//+"INSERT INTO TEST VALUES(1, 'Hello World');");
 //+"CALL FT_CREATE_INDEX('PUBLIC', 'TEST', NULL);");
 				conn.createStatement().execute("INSERT INTO TEST VALUES(2, 'Hello2 World');");
 				Statement stmt = conn.createStatement(

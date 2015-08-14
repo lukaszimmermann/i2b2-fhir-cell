@@ -272,10 +272,17 @@ public class I2b2Helper {
 		return md;
 	}
 
-	static void saveMetaResourceDb(HttpSession session, MetaResourceDb md,SessionBundleBean sb) {
+	static void saveMetaResourceDb(HttpSession session, MetaResourceDb md,SessionBundleBean sbb) throws JAXBException {
 
 		Bundle b = FhirUtil.getResourceBundle(md.getAll(), "basePath", "url");
-		sb.updateSessionBundle(session.getId(), b);
+		SessionBundle sb=sbb.sessionBundleBySessionId(session.getId());
+		if(sb==null) {
+			sb=sbb.createSessionBundle(session.getId(), b);
+		}else{
+			sb.setBundleXml(JAXBUtil.toXml(b));
+			sbb.update1SessionBundle(sb);
+		}
+	
 		
 	}
 

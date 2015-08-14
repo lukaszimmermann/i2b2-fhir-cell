@@ -30,6 +30,6 @@ public class SessionListener implements HttpSessionListener {
   public void sessionDestroyed(HttpSessionEvent arg0) {
 	totalActiveSessions--;
 	logger.info("sessionDestroyed - deduct one session from counter:"+arg0.getSession().getId());
-	sbb.removeSessionBundle(arg0.getSession().getId());
+	//sbb.removeSessionBundle(arg0.getSession().getId());
   }	
 }
