@@ -109,6 +109,7 @@ public class OAuth2AuthzEndpoint {
 							HttpServletResponse.SC_FOUND);
 
 			String redirectURI = oauthRequest.getRedirectURI();
+			String state=oauthRequest.getState();
 			final OAuthResponse Oresponse = builder.location(redirectURI)
 					.buildQueryMessage();
 			URI url = new URI(Oresponse.getLocationUri());
@@ -120,11 +121,13 @@ public class OAuth2AuthzEndpoint {
 			HttpSession session = request.getSession();
 			
 			String finalUri=successfulResponse(request);
+			//finalUri+="&state="+state;
 			logger.info("generated finalUri:"+finalUri);
 			session.setAttribute("finalUri", finalUri);
+			
 
 			String clientId = (String) oauthRequest.getClientId();
-			if (checkAuthorization(clientId) == true) {
+			if (isClientIdValid(clientId) == true) {
 				return srvResourceOwnerLoginPage(clientId,session.getId());
 			} else
 				return Response.status(Status.UNAUTHORIZED)
@@ -140,7 +143,7 @@ public class OAuth2AuthzEndpoint {
 	// Authenticate resource owner
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
-	boolean checkAuthorization(String clientId) {
+	boolean isClientIdValid(String clientId) {
 		if (clientId.equals("fcclient1"))
 			return true;
 		/*
@@ -228,7 +231,7 @@ public class OAuth2AuthzEndpoint {
 	@POST
 	public Response processResourceOwnerScopeChoice(
 			@FormParam("project") String project,
-			@Context HttpServletRequest request) {
+			@Context HttpServletRequest request) throws URISyntaxException {
 		logger.trace("processing scope:" + project + " sessionid:"
 				+ request.getSession().getId());
 		// save scope to session and
@@ -236,7 +239,7 @@ public class OAuth2AuthzEndpoint {
 		HttpSession session = request.getSession();
 		session.setAttribute("permittedScopes", "user/*.*");
 
-		URI finalUri = (URI) session.getAttribute("FinalRedirectUrl");
+		String finalUri = (String) session.getAttribute("finalUri");
 
 		String msg = "";
 		Enumeration x = session.getAttributeNames();
@@ -250,7 +253,7 @@ public class OAuth2AuthzEndpoint {
 		//HttpServletRequest clientRequest=(HttpServletRequest) session.getAttribute("authorizationRequest");
 		
 			return Response.status(Status.MOVED_PERMANENTLY)
-			.location(finalUri).header("session_id", request.getSession().getId()).build();
+			.location(new URI(finalUri)).header("session_id", request.getSession().getId()).build();
 		}
 
 	
@@ -288,17 +291,13 @@ public class OAuth2AuthzEndpoint {
 				.authorizationResponse(request,
 						HttpServletResponse.SC_FOUND);
 
-		HttpSession session = request.getSession();
-		Response response=(Response) session.getAttribute("FinalResponse");
-		
-			
-			Set<String> requestedScopes = oauthRequest.getScopes();
 			String redirectURI = oauthRequest.getRedirectURI();
-
+			
 			if (responseType.equals(ResponseType.CODE.toString())) {
 				String authorizationCode = oauthIssuerImpl.authorizationCode();
 				logger.info("generated authorizationCode:" + authorizationCode);
 				builder.setCode(authorizationCode);
+				builder.setParam("state",oauthRequest.getState());
 			}
 			final OAuthResponse Oresponse = builder.location(redirectURI)
 					.buildQueryMessage();

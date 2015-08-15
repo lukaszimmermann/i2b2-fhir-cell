@@ -78,7 +78,7 @@ public class OAuth2TokenEndpoint {
 			final String accessToken = oauthIssuerImpl.accessToken();
 			// database.addToken(accessToken);
 			HttpSession session = request.getSession();
-			accessTokenBean.createAccessToken(
+			accessTokenBean.createAccessToken(accessToken,
 					(String)session.getAttribute("resourceUserId"),
 					(String)session.getAttribute("i2b2Token"),
 					(String)session.getAttribute("authorizationCode"),
@@ -96,7 +96,7 @@ public class OAuth2TokenEndpoint {
 					.entity(response.getBody()).build();
 
 		} catch (OAuthProblemException e) {
-			logger.error("", e);
+			logger.error(e.getMessage(), e);
 			OAuthResponse res = OAuthASResponse
 					.errorResponse(HttpServletResponse.SC_BAD_REQUEST).error(e)
 					.buildJSONMessage();
