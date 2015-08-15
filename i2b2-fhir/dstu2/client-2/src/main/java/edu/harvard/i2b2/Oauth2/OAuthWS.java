@@ -44,32 +44,31 @@ public class OAuthWS {
 		try {
 			oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 			String code = oar.getCode();
+			String redirectUrl=oar.getParam("redirect_uri");
 			logger.info("gotAuthCode:" + code);
-			return Response.ok().entity("AuthCode:" + code).build();
-					//	.type(MediaType.TEXT_PLAIN).build();
-			//String accessToken = exchangeOAuthCodeForAccessToken(code);
+			//return Response.ok().entity("AuthCode:" + code).build();
+				String accessToken = exchangeOAuthCodeForAccessToken(code,"fcclient1","csecret1",redirectUrl);
 
-			//return Response.ok().entity("Access Token:" + accessToken)
-				//	.type(MediaType.TEXT_PLAIN).build();
+			return Response.ok().entity("Access Token:" + accessToken)
+					.type(MediaType.TEXT_PLAIN).build();
 		} catch (OAuthProblemException e) {
-			e.printStackTrace();
-			logger.error("", e);
+			logger.error(e.getMessage(), e);
 			return errorResponse(e);
 
 		}
 
 	}
 
-	public String exchangeOAuthCodeForAccessToken(String code) {
+	public String exchangeOAuthCodeForAccessToken(String code,String clientId,String clientSecret,String redirectUrl) {
 		try {
 			OAuthClientRequest request = OAuthClientRequest
 					.tokenLocation(
 							"http://localhost:8080/srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId("fcclient1")
-					.setClientSecret("client-secret")
+					.setClientId(clientId)
+					.setClientSecret(clientSecret)
 					.setCode(code)
-					.setRedirectURI("uri")
+					.setRedirectURI(redirectUrl)
 					.buildQueryMessage();
 
 			// create OAuth client that uses custom http client under the hood

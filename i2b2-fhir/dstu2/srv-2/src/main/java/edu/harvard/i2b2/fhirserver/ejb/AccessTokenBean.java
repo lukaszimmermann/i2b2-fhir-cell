@@ -49,10 +49,11 @@ public class AccessTokenBean {
 		}
 	}
 
-	public void createAccessToken(String resourceUserId, String i2b2Token,
+	public void createAccessToken(String authCode,String resourceUserId, String i2b2Token,
 			String i2b2Project, String clientId,String scope) {
 		try {
 			AccessToken tok = new AccessToken();
+			tok.setTokenString(authCode);
 			tok.setResourceUserId(resourceUserId);
 			tok.setI2b2Token(i2b2Token);
 			tok.setI2b2Project(i2b2Project);
