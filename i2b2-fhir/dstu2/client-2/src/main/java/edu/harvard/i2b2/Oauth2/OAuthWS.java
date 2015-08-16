@@ -58,38 +58,98 @@ public class OAuthWS {
 		}
 
 	}
-
+	
 	public String exchangeOAuthCodeForAccessToken(String code,String clientId,String clientSecret,String redirectUrl) {
 		try {
-			OAuthClientRequest request = OAuthClientRequest
+			logger.info(code+" "+clientId+" "+clientSecret+" "+redirectUrl);
+			OAuthClientRequest request = 
+					OAuthClientRequest
 					.tokenLocation(
 							"http://localhost:8080/srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId(clientId)
-					.setClientSecret(clientSecret)
-					.setCode(code)
-					.setRedirectURI(redirectUrl)
+					.setClientId("clientId")
+					.setClientSecret("clientSecret")
+					.setCode("code")
+					.setRedirectURI("redirectUrl")
+					.setParameter("access_token", "accessToken")
 					.buildQueryMessage();
-
+			/*OAuthClientRequest
+					.tokenLocation(
+							"http://localhost:8080/srv-dstu2-0.2/api/token")
+					.setGrantType(GrantType.AUTHORIZATION_CODE)
+					.setClientId("client-id")
+					.setClientSecret("client-secret")
+					.setCode("code123")
+					.setRedirectURI("uri")
+					.setParameter("access_token", "accessToken")
+					.buildQueryMessage();*/
+			
 			// create OAuth client that uses custom http client under the hood
 			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
-			logger.trace("get exchange authToken for access code at:"+request.getLocationUri());
+			OAuthJSONAccessTokenResponse oAuthResponse;
+			logger.trace("To get exchange authToken for access code at:"+request.getLocationUri());
 			
-			OAuthJSONAccessTokenResponse oAuthResponse = oAuthClient.accessToken(request);
+			oAuthResponse = oAuthClient.accessToken(request, "POST");
 			String accessToken = oAuthResponse.getAccessToken();
 			Long expiresIn = oAuthResponse.getExpiresIn();
 			logger.info("got Token:"+accessToken +" expires in "+expiresIn);
-			
 			return accessToken;
+		
 		} catch (OAuthSystemException | OAuthProblemException e) {
 
 			e.printStackTrace();
 			logger.error("", e);
 		}
-		return "error";
+		return "ERROR";
 
 	}
+
+	public String OldexchangeOAuthCodeForAccessToken(String code,String clientId,String clientSecret,String redirectUrl) {
+	
+			OAuthClientRequest request=null;
+			try {
+				request = OAuthClientRequest
+						.tokenLocation(
+								"http://localhost:8080/srv-dstu2-0.2/api/token")
+						.setGrantType(GrantType.AUTHORIZATION_CODE)
+						.setClientId(clientId)
+						.setClientSecret(clientSecret)
+						.setCode(code)
+						.setRedirectURI(redirectUrl)
+						.buildQueryMessage();
+			} catch (OAuthSystemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error(e.getMessage(), e);
+			}
+			
+			
+			
+			logger.info("get exchange authToken for access code at:"+request.getLocationUri());
+			
+			// create OAuth client that uses custom http client under the hood
+			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
+
+			
+			OAuthJSONAccessTokenResponse oAuthResponse=null;
+			try {
+				oAuthResponse = oAuthClient.accessToken(request);
+			} catch (OAuthSystemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error(e.getMessage(), e);
+			} catch (OAuthProblemException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error(e.getMessage(), e);
+			}
+			String accessToken = oAuthResponse.getAccessToken();
+			Long expiresIn = oAuthResponse.getExpiresIn();
+			logger.info("got Token:"+accessToken +" expires in "+expiresIn);
+			
+			return accessToken;
+		}
 
 	@GET
 	@Path("launch")
@@ -110,6 +170,15 @@ public class OAuthWS {
 
 	}
 
+	@GET
+	@Path("test")
+	public Response tesss()  {
+	
+		logger.info("resr log" );
+		
+		return Response.ok().entity("ok").build();
+
+	}
 	/*
 	 * @GET
 	 * 
