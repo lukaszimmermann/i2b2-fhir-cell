@@ -21,6 +21,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
 public class OAuthClientTest {
+	
 	Logger logger = LoggerFactory.getLogger(OAuthClientTest.class);
 
 	@Test
