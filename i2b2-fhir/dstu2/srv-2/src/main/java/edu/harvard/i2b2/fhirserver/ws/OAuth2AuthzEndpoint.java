@@ -296,10 +296,8 @@ public class OAuth2AuthzEndpoint {
 			String state = (String) session.getAttribute("state");
 			String scope = "user/*.*";// HashSet<String>
 										// session.getAttribute("scope");
-			AuthToken authToken = authTokenBean.createAuthToken(resourceUserId,
-					i2b2Token, authorizationCode, clientRedirectUri, clientId,
-					state, scope,i2b2Project);
-
+			AuthToken authToken = authTokenBean.createAuthToken(authorizationCode, resourceUserId, i2b2Token, clientRedirectUri, clientId, state, scope, i2b2Project);
+					 
 			session.setAttribute("msg", "");
 			return Response.status(Status.MOVED_PERMANENTLY)
 					.location(new URI(finalUri))

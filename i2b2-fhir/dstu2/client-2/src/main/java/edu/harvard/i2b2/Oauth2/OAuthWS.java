@@ -106,6 +106,7 @@ public class OAuthWS {
 		} catch (OAuthSystemException | OAuthProblemException e) {
 
 			e.printStackTrace();
+			System.out.println(e.getMessage());
 			logger.error("", e);
 		}
 		return "ERROR";

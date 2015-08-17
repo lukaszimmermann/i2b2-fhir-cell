@@ -44,6 +44,7 @@ import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
+import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 
 @Provider
 @PreMatching
@@ -51,36 +52,50 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	static Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 	// public class RestAuthenticationFilter implements javax.servlet.Filter {
 	public static final String AUTHENTICATION_HEADER = "Authorization";
-
+	
+	@EJB
+	AuthenticationService authService;
+	
 	
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
 		// public void doFilter(ServletRequest request, ServletResponse
 		// response,
 		// FilterChain filter) throws IOException, ServletException {
+		String accessToken = "-";
 		String authCredentials = context.getHeaderString(AUTHENTICATION_HEADER);
-		logger.trace("Authorization header:"+authCredentials+"\n for"+context.getUriInfo());
-		
-		
-		// better injected
-		AuthenticationService authenticationService = new AuthenticationService();
+		logger.trace("Authorization header:" + authCredentials + "\n for"
+				+ context.getUriInfo().getPath().toString());
+		// skip urls for authentication
+		if (context.getUriInfo().getPath().toString().startsWith("/authz")
+				|| context.getUriInfo().getPath().toString().startsWith("/token"))
+			return;
 
-		boolean authenticationStatus = authenticationService
-				.authenticate(authCredentials);
-		
-		if (authenticationStatus) {
-			logger.trace("authenticaltion Successful");
-		} else {
-			// proceedcontext.:redirect to auth info page
-			Response r = Response.ok().entity("Authentication Failure")
-			// .cookie(authIdCookie)
-					.type(MediaType.TEXT_PLAIN)
-					// .header("session_id", session.getId())
-					.build();
-			context.abortWith(r);
+		if (authCredentials != null) {
+			accessToken = authCredentials.replaceAll("Bearer\\s*", "");
 
+			// better injected
+			//AuthenticationService authenticationService = new AuthenticationService();
+
+			logger.info("searching for AccessToken:"+accessToken);
+			boolean authenticationStatus = authService.authenticate(accessToken);
+
+			if (authenticationStatus) {
+				logger.trace("authentication Successful");
+				return;
+			} else {
+				context.abortWith(denyRequest());
+			}
 		}
-
+		context.abortWith(denyRequest());
 	}
 
+	Response denyRequest() {
+		Response r = Response.ok().entity("Authentication Failure")
+		// .cookie(authIdCookie)
+				.type(MediaType.TEXT_PLAIN)
+				// .header("session_id", session.getId())
+				.build();
+		return r;
+	}
 }
