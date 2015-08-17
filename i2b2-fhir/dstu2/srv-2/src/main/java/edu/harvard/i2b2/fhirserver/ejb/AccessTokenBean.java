@@ -49,7 +49,7 @@ public class AccessTokenBean {
 		}
 	}
 
-	public void createAccessToken(String authCode,String resourceUserId, String i2b2Token,
+	public AccessToken createAccessToken(String authCode,String resourceUserId, String i2b2Token,
 			String i2b2Project, String clientId,String scope) {
 		try {
 			AccessToken tok = new AccessToken();
@@ -62,12 +62,43 @@ public class AccessTokenBean {
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(),30));
 			
-			logger.info("Created authToken.." + tok.toString());
+			logger.info("Created .." + tok.toString());
 			em.getTransaction().begin();
 			em.persist(tok);
 			em.getTransaction().commit();
-			logger.info("Persisted authToken" + tok.toString());
-
+			logger.info("Persisted " + tok.toString());
+			return tok;
+		} catch (Exception ex) {
+			em.getTransaction().rollback();
+			logger.error("", ex);
+			throw new EJBException(ex.getMessage());
+		}
+	}
+	
+	/*
+	 * creates accessToken and deleted the corresponding authToken
+	 */
+	public AccessToken createAccessTokenAndDeleteAuthToken(String authCode,String accessCode,String resourceUserId, String i2b2Token,
+			String i2b2Project, String clientId,String scope) {
+		try {
+			AccessToken tok = new AccessToken();
+			tok.setTokenString(authCode);
+			tok.setResourceUserId(resourceUserId);
+			tok.setI2b2Token(i2b2Token);
+			tok.setI2b2Project(i2b2Project);
+			tok.setClientId(clientId);
+			tok.setScope(scope);
+			tok.setCreatedDate(new Date());
+			tok.setExpiryDate(DateUtils.addMinutes(new Date(),30));
+			
+			logger.info("Created .." + tok.toString());
+			em.getTransaction().begin();
+			em.persist(tok);
+			AuthToken authTok=em.find(AuthToken.class, authCode);
+			em.remove(authTok);
+			em.getTransaction().commit();
+			logger.info("Persisted " + tok.toString());
+			return tok;
 		} catch (Exception ex) {
 			em.getTransaction().rollback();
 			logger.error("", ex);

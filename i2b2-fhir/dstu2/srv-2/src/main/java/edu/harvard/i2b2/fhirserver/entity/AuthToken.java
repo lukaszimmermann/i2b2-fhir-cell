@@ -38,6 +38,8 @@ public class AuthToken {
 
 	private String scope;
 	
+	private String i2b2Project;
+	
 	private Date createdDate;
 	
 	private Date expiryDate;
@@ -114,15 +116,25 @@ public class AuthToken {
 		this.expiryDate = expiryDate;
 	}
 
+	public String getI2b2Project() {
+		return i2b2Project;
+	}
+
+	public void setI2b2Project(String i2b2Project) {
+		this.i2b2Project = i2b2Project;
+	}
+
 	@Override
 	public String toString() {
 		return "AuthToken [authorizationCode=" + authorizationCode + ", state="
 				+ state + ", clientId=" + clientId + ", clientRedirectUri="
 				+ clientRedirectUri + ", resourceUserId=" + resourceUserId
 				+ ", i2b2Token=" + i2b2Token + ", scope=" + scope
-				+ ", createdDate=" + createdDate + ", expiryDate=" + expiryDate
-				+ "]";
+				+ ", i2b2Project=" + i2b2Project + ", createdDate="
+				+ createdDate + ", expiryDate=" + expiryDate + "]";
 	}
+
+	
 
 	
 }
