@@ -33,7 +33,7 @@ function updatePatientDisplay() {
 	demo={
 		// serviceUrl: "http://52.2.43.105:8080/srv-dstu1-0.2/api",
 		// patientId: "1000000005"
-		serviceUrl : "http://localhost:8080/srv-dstu2-0.2/api",
+		serviceUrl : "http://fhir.i2b2.org/srv-dstu2-0.2/api",
 		patientId : patientIdInput
 
 	// serviceUrl: "https://fhir-open-api.smarthealthit.org",
