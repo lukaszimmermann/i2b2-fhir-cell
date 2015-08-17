@@ -29,9 +29,11 @@ import org.slf4j.LoggerFactory;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
+
 @Path("")
 public class OAuthWS {
 	Logger logger = LoggerFactory.getLogger(OAuthWS.class);
+	static String basePath;
 
 	/*
 	 * /authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz
@@ -47,6 +49,14 @@ public class OAuthWS {
 	@Path("getAuthCode")
 	public Response getAuthorizationCode(@Context HttpServletRequest request) {
 		OAuthAuthzResponse oar;
+		basePath = request
+				.getRequestURL()
+				.toString()
+				.replaceAll(
+						OAuthWS.class.getAnnotation(Path.class).value()
+								.toString()
+								+ "$", "").split("client")[0];
+
 		try {
 			oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 			String code = oar.getCode();
@@ -74,7 +84,7 @@ public class OAuthWS {
 					+ redirectUrl);
 			OAuthClientRequest request = OAuthClientRequest
 					.tokenLocation(
-							"http://localhost:8080/srv-dstu2-0.2/api/token")
+							basePath+"srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
 					.setClientId("clientId").setClientSecret("clientSecret")
 					.setCode(authCode).setRedirectURI("redirectUrl")
@@ -104,7 +114,7 @@ public class OAuthWS {
 	
 	public String accessResource(String accessToken) {
 		Client c = Client.create();
-		WebResource r = c.resource("http://localhost:8080/srv-dstu2-0.2/api/Patient")
+		WebResource r = c.resource(basePath+"srv-dstu2-0.2/api/Patient")
 				;
 	    String response = //r.accept("Context-Type", "application/xml")
 	            r.header("Authorization", "Bearer " +accessToken)
