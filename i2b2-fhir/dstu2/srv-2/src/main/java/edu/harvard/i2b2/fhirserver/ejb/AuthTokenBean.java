@@ -42,8 +42,8 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
 			Random r = new Random();
-			createAuthToken("!null" + r, "!null" + r, "authorizationCode" + r,
-					"redirectURI" + r, "clientId" + r, "null" + r, "!null" + r,"!null"+r);
+			String rs=Integer.toString(r.nextInt());
+			createAuthToken(rs,rs,rs,rs,rs,rs,rs,rs);
 			logger.info("total:" + totalCount());
 			// createAuthToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
@@ -51,14 +51,14 @@ public class AuthTokenBean {
 		}
 	}
 
-	public AuthToken createAuthToken(String resourceUserId, String i2b2Token,
-			String authorizationCode, String clientRedirectUri,
+	public AuthToken createAuthToken(String authCode,String resourceUserId, String i2b2Token,
+			 String clientRedirectUri,
 			String clientId, String state, String scope,String i2b2Project) {
 		try {
 			AuthToken tok = new AuthToken();
+			tok.setAuthorizationCode(authCode);
 			tok.setResourceUserId(resourceUserId);
 			tok.setI2b2Token(i2b2Token);
-			tok.setAuthorizationCode(authorizationCode);
 			tok.setClientRedirectUri(clientRedirectUri);
 			tok.setClientId(clientId);
 			tok.setState(state);

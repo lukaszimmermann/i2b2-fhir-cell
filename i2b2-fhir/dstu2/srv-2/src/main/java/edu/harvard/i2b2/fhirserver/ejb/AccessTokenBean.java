@@ -82,7 +82,7 @@ public class AccessTokenBean {
 			String i2b2Project, String clientId,String scope) {
 		try {
 			AccessToken tok = new AccessToken();
-			tok.setTokenString(authCode);
+			tok.setTokenString(accessCode);
 			tok.setResourceUserId(resourceUserId);
 			tok.setI2b2Token(i2b2Token);
 			tok.setI2b2Project(i2b2Project);
@@ -94,6 +94,7 @@ public class AccessTokenBean {
 			logger.info("Created .." + tok.toString());
 			em.getTransaction().begin();
 			em.persist(tok);
+			
 			AuthToken authTok=em.find(AuthToken.class, authCode);
 			logger.info("Removing " + authTok.toString());
 			em.remove(authTok);
@@ -138,9 +139,7 @@ public class AccessTokenBean {
 		try {
 			em.getTransaction().begin();
 			AccessToken tok = em.find(AccessToken.class, accessCode);
-					//.createQuery(
-						//	"select a from AuthToken a where AuthorizationCode = :ac ")
-					//.setParameter("ac", authCode).getResultList();
+			if(tok!=null){logger.info("returning :"+tok);}else{logger.info("NOT found");}
 			em.getTransaction().commit();
 			return tok;
 		} catch (Exception e) {
