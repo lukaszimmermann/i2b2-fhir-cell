@@ -84,6 +84,8 @@ import edu.harvard.i2b2.fhirserver.entity.AuthToken;
 public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
 
+	static final String i2b2Url="http://services.i2b2.org:9090/i2b2";
+	
 	@EJB
 	AuthTokenBean authTokenBean;
 
@@ -109,7 +111,7 @@ public class OAuth2AuthzEndpoint {
 							HttpServletResponse.SC_FOUND);
 
 			String redirectURI = oauthRequest.getRedirectURI();
-			String state=oauthRequest.getState();
+			String state = oauthRequest.getState();
 			final OAuthResponse Oresponse = builder.location(redirectURI)
 					.buildQueryMessage();
 			URI url = new URI(Oresponse.getLocationUri());
@@ -119,16 +121,26 @@ public class OAuth2AuthzEndpoint {
 				throw new OAuthSystemException("redirectURI is missing");
 
 			HttpSession session = request.getSession();
-			
-			String finalUri=successfulResponse(request);
-			//finalUri+="&state="+state;
-			logger.info("generated finalUri:"+finalUri);
+
+			String finalUri = successfulResponse(request);
+			// finalUri+="&state="+state;
+			logger.info("generated finalUri:" + finalUri);
+			session.setAttribute("redirectUri", oauthRequest.getRedirectURI());
+			session.setAttribute("clientId", oauthRequest.getClientId());
+			session.setAttribute("state", oauthRequest.getState());
+			session.setAttribute("scope", oauthRequest.getScopes());
+
 			session.setAttribute("finalUri", finalUri);
-			
 
 			String clientId = (String) oauthRequest.getClientId();
 			if (isClientIdValid(clientId) == true) {
-				return srvResourceOwnerLoginPage(clientId,session.getId());
+				
+				String uri = getBasePath(request).toString() + "i2b2login";
+				logger.trace("redirecting to:" + uri);
+				return Response.status(Status.MOVED_PERMANENTLY)
+						.location(new URI(uri))
+						.header("session_id", request.getSession().getId()).build();
+				
 			} else
 				return Response.status(Status.UNAUTHORIZED)
 						.entity("clientId IsNotValid").build();
@@ -163,16 +175,22 @@ public class OAuth2AuthzEndpoint {
 
 	@Path("i2b2login")
 	@GET
-	public Response srvResourceOwnerLoginPage(String clientId,String sessionId)
+	public Response srvResourceOwnerLoginPage(@Context HttpServletRequest request)
 			throws URISyntaxException {
-		String loginPage = "<form action=\"processi2b2login\" method=\"post\">"
+		HttpSession session=request.getSession();
+		
+		String loginPage = "<div align=\"center\">"
+				+ "The application located at the following URL is requesting read access to i2b2 data accessible to your account:<br><bold>"
+				+session.getAttribute("redirectUri")
+				+"</bold></div><br><br>"
+				+"<form align=\"center\" action=\"processi2b2login\" method=\"post\">"
 				+ " UserName:<br> <input type=\"text\" name=\"username\" value=\"demo\">"
 				+ "<br> Password:<br><input type=\"text\" name=\"password\" value=\"demouser\">"
-				+ "<input type=\"text\" name=\"clientId\" value=\"" + clientId
-				+ "\" hidden=\"true\">"
+				
 				+ "<br><br><input type=\"submit\" value=\"Submit\">"
 				+ "</form>";
-		return Response.ok().entity(loginPage).header("session_id", sessionId).build();
+		return Response.ok().entity(loginPage).header("session_id", session.getId())
+				.build();
 	}
 
 	// TODO domain and URL
@@ -181,16 +199,15 @@ public class OAuth2AuthzEndpoint {
 	public Response processResourceOwnerLogin(
 			@FormParam("username") String username,
 			@FormParam("password") String password,
-			@FormParam("clientId") String clientId,
 			@Context HttpServletRequest request) throws XQueryUtilException,
 			URISyntaxException {
 		logger.trace("processing login: for username:" + username
-				+ "\npassword:" + password + "\nclientId:" + clientId);
-		
+				+ "\npassword:" + password + "\nclientId:" + request.getSession().getAttribute("clientId"));
+
 		logger.trace("sessionid:" + request.getSession().getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
-				"i2b2demo", "http://services.i2b2.org:9090/i2b2");
+				"i2b2demo", i2b2Url);
 		logger.trace("got pmResponseXml:" + pmResponseXml);
 		if (I2b2Util.authenticateUser(pmResponseXml)) {
 			// logger.trace("got pmResponseXml:" + pmResponseXml);
@@ -198,16 +215,21 @@ public class OAuth2AuthzEndpoint {
 			// logger.trace("redirecting to:" + uri);
 			// return Response.status(Status.MOVED_PERMANENTLY)
 			// .location(new URI(uri)).build();
-			
+			HttpSession session = request.getSession();
+			session.setAttribute("resourceUserId", username);
+			session.setAttribute("pmResponseXml", pmResponseXml);
+			session.setAttribute("i2b2Token", I2b2Util.getToken(pmResponseXml));
 
 			return Response.ok()
-					.entity(srvResourceOwnerScopeChoice(pmResponseXml)).build();
+					.entity(srvResourceOwnerScopeChoice(pmResponseXml))
+					.header("session_id", request.getSession().getId()).build();
 
 		} else {
 			String uri = getBasePath(request).toString() + "i2b2login";
 			logger.trace("redirecting to:" + uri);
 			return Response.status(Status.MOVED_PERMANENTLY)
-					.location(new URI(uri)).header("session_id", request.getSession().getId()).build();
+					.location(new URI(uri))
+					.header("session_id", request.getSession().getId()).build();
 		}
 	}
 
@@ -215,7 +237,7 @@ public class OAuth2AuthzEndpoint {
 	// @GET
 	public String srvResourceOwnerScopeChoice(String pmResponseXml)
 			throws XQueryUtilException {
-		String page = "<form action=\"processScope\" method=\"post\">";
+		String page = "<form align=\"center\" action=\"processScope\" method=\"post\">";
 		List<String> projects = I2b2Util.getUserProjects(pmResponseXml);
 		logger.trace("projects:" + projects.toString());
 		for (String p : projects) {
@@ -223,6 +245,7 @@ public class OAuth2AuthzEndpoint {
 					+ "\" checked>" + p + "<br>";
 		}
 		page += "<br><input type=\"submit\" value=\"Submit\"></form>";
+
 		return page;
 	}
 
@@ -230,33 +253,57 @@ public class OAuth2AuthzEndpoint {
 	@Path("processScope")
 	@POST
 	public Response processResourceOwnerScopeChoice(
-			@FormParam("project") String project,
-			@Context HttpServletRequest request) throws URISyntaxException {
-		logger.trace("processing scope:" + project + " sessionid:"
-				+ request.getSession().getId());
-		// save scope to session and
-		// redirect to client uri
-		HttpSession session = request.getSession();
-		session.setAttribute("permittedScopes", "user/*.*");
+			@FormParam("project") String i2b2Project,
+			@Context HttpServletRequest request) {
+		try {
+			logger.trace("processing scope:" + i2b2Project + " sessionid:"
+					+ request.getSession().getId());
+			// save scope to session and
+			// redirect to client uri
+			HttpSession session = request.getSession();
+			session.setAttribute("permittedScopes", "user/*.*");
 
-		String finalUri = (String) session.getAttribute("finalUri");
+			String finalUri = (String) session.getAttribute("finalUri");
 
-		String msg = "";
-		Enumeration x = session.getAttributeNames();
-		while (x.hasMoreElements()) {
-			String p = (String) x.nextElement();
-			msg = msg + p + "=" + session.getAttribute(p).toString() + "\n";
-		}
-		logger.trace("sessionAttributes:" + msg);
-		//create AuthToken in Database;
-		
-		//HttpServletRequest clientRequest=(HttpServletRequest) session.getAttribute("authorizationRequest");
-		
+			String msg = "";
+			Enumeration x = session.getAttributeNames();
+			while (x.hasMoreElements()) {
+				String p = (String) x.nextElement();
+				msg = msg + p + "=" + session.getAttribute(p).toString() + "\n";
+			}
+			logger.trace("sessionAttributes:" + msg);
+			// create AuthToken in Database;
+
+			String pmResponseXml = (String) session
+					.getAttribute("pmResponseXml");
+			if (pmResponseXml == null)
+				throw new RuntimeException("PMRESPONSE NOT FOUND");
+
+			String resourceUserId = (String) session
+					.getAttribute("resourceUserId");
+			String i2b2Token = (String) I2b2Util.getToken(pmResponseXml);
+			String authorizationCode = (String) session
+					.getAttribute("authorizationCode");
+			String clientRedirectUri = (String) session
+					.getAttribute("redirectUri");
+			String clientId = (String) session.getAttribute("clientId");
+			String state = (String) session.getAttribute("state");
+			String scope = "user/*.*";// HashSet<String>
+										// session.getAttribute("scope");
+			AuthToken authToken = authTokenBean.createAuthToken(resourceUserId,
+					i2b2Token, authorizationCode, clientRedirectUri, clientId,
+					state, scope,i2b2Project);
+
 			return Response.status(Status.MOVED_PERMANENTLY)
-			.location(new URI(finalUri)).header("session_id", request.getSession().getId()).build();
+					.location(new URI(finalUri))
+					.header("session_id", session.getId()).build();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			e.printStackTrace();
+			return Response.status(Status.INTERNAL_SERVER_ERROR)
+					.entity(e.getMessage()).build();
 		}
-
-	
+	}
 
 	// obtains an authorization decision (by asking the resource owner or by
 	// establishing approval via other means).
@@ -278,31 +325,41 @@ public class OAuth2AuthzEndpoint {
 		logger.trace("base uri:" + uri);
 		return new URI(uri);
 	}
-	
-	String successfulResponse(HttpServletRequest request) throws OAuthSystemException, URISyntaxException, OAuthProblemException{
+
+	String successfulResponse(HttpServletRequest request)
+			throws OAuthSystemException, URISyntaxException,
+			OAuthProblemException {
 		OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
 		OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(
 				new MD5Generator());
 
-		String responseType = oauthRequest
-				.getParam(OAuth.OAUTH_RESPONSE_TYPE);
+		String responseType = oauthRequest.getParam(OAuth.OAUTH_RESPONSE_TYPE);
 
 		OAuthASResponse.OAuthAuthorizationResponseBuilder builder = OAuthASResponse
-				.authorizationResponse(request,
-						HttpServletResponse.SC_FOUND);
+				.authorizationResponse(request, HttpServletResponse.SC_FOUND);
 
-			String redirectURI = oauthRequest.getRedirectURI();
-			
-			if (responseType.equals(ResponseType.CODE.toString())) {
-				String authorizationCode = oauthIssuerImpl.authorizationCode();
-				logger.info("generated authorizationCode:" + authorizationCode);
-				builder.setCode(authorizationCode);
-				builder.setParam("state",oauthRequest.getState());
-			}
-			final OAuthResponse Oresponse = builder.location(redirectURI)
-					.buildQueryMessage();
-			URI url = new URI(Oresponse.getLocationUri());
-			
+		String redirectURI = oauthRequest.getRedirectURI();
+
+		if (responseType.equals(ResponseType.CODE.toString())) {
+			String authorizationCode = oauthIssuerImpl.authorizationCode();
+
+			logger.info("generated authorizationCode:" + authorizationCode);
+			builder.setCode(authorizationCode);
+			builder.setParam("state", oauthRequest.getState());
+
+			HttpSession session = request.getSession();
+			session.setAttribute("authorizationCode", authorizationCode);
+			logger.info("put generated authcode "
+					+ session.getAttribute("authorizationCode")
+					+ " in session " + session.getId());
+
+		}
+		final OAuthResponse Oresponse = builder.location(redirectURI)
+				.buildQueryMessage();
+		URI url = new URI(Oresponse.getLocationUri());
+
 		return url.toString();
 	}
+	
+	
 }

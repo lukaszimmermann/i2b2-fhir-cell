@@ -43,7 +43,7 @@ public class AuthTokenBean {
 			em = factory.createEntityManager();
 			Random r = new Random();
 			createAuthToken("!null" + r, "!null" + r, "authorizationCode" + r,
-					"redirectURI" + r, "clientId" + r, "null" + r, "!null" + r);
+					"redirectURI" + r, "clientId" + r, "null" + r, "!null" + r,"!null"+r);
 			logger.info("total:" + totalCount());
 			// createAuthToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
@@ -51,9 +51,9 @@ public class AuthTokenBean {
 		}
 	}
 
-	public void createAuthToken(String resourceUserId, String i2b2Token,
+	public AuthToken createAuthToken(String resourceUserId, String i2b2Token,
 			String authorizationCode, String clientRedirectUri,
-			String clientId, String state, String scope) {
+			String clientId, String state, String scope,String i2b2Project) {
 		try {
 			AuthToken tok = new AuthToken();
 			tok.setResourceUserId(resourceUserId);
@@ -63,6 +63,7 @@ public class AuthTokenBean {
 			tok.setClientId(clientId);
 			tok.setState(state);
 			tok.setScope(scope);
+			tok.setI2b2Project(i2b2Project);
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(),30));
 			
@@ -71,6 +72,7 @@ public class AuthTokenBean {
 			em.persist(tok);
 			em.getTransaction().commit();
 			logger.info("Persisted authToken" + tok.toString());
+			return tok;
 		} catch (Exception ex) {
 			em.getTransaction().rollback();
 			logger.error(ex.getMessage(), ex);
@@ -94,7 +96,9 @@ public class AuthTokenBean {
 	public void removeAuthToken(AuthToken authToken) {
 		try {
 			em.getTransaction().begin();
+			logger.info("deleting from db:"+authToken);
 			em.remove(authToken);
+			
 			em.getTransaction().commit();
 		} catch (Exception e) {
 			em.getTransaction().rollback();
@@ -111,6 +115,7 @@ public class AuthTokenBean {
 						//	"select a from AuthToken a where AuthorizationCode = :ac ")
 					//.setParameter("ac", authCode).getResultList();
 			em.getTransaction().commit();
+			logger.info("found token:"+tok);
 			return tok;
 		} catch (Exception e) {
 			em.getTransaction().rollback();

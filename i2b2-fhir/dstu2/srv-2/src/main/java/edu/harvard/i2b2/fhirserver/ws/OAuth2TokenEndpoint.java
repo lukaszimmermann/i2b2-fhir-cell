@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
@@ -26,14 +27,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
+import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
+import edu.harvard.i2b2.fhirserver.entity.AuthToken;
 
 @Path("token")
 public class OAuth2TokenEndpoint {
 	Logger logger = LoggerFactory.getLogger(OAuth2TokenEndpoint.class);
 
 	@EJB
+	AuthTokenBean authTokenBean;
+	@EJB
 	AccessTokenBean accessTokenBean;
 
+	/*
+	 * currently only checking for auth code and client id as stored in authcode
+	 * during authorization client secret is ignored
+	 */
 	@POST
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces("application/json")
@@ -46,6 +55,12 @@ public class OAuth2TokenEndpoint {
 			OAuthTokenRequest oauthRequest = new OAuthTokenRequest(request);
 			OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(
 					new MD5Generator());
+
+			// find if AuthToken was issued, from db
+			String authCode = oauthRequest.getCode();
+			AuthToken authToken = authTokenBean.find(authCode);
+			if (authToken == null)
+				return buildBadAuthCodeResponse();
 
 			// check if clientid is valid
 			if (!checkClientId(oauthRequest.getClientId())) {
@@ -60,13 +75,14 @@ public class OAuth2TokenEndpoint {
 			// do checking for different grant types
 			if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
 					GrantType.AUTHORIZATION_CODE.toString())) {
-				if (!checkAuthCode(oauthRequest.getParam(OAuth.OAUTH_CODE))) {
+				if (!checkAuthCode(authToken,
+						oauthRequest.getParam(OAuth.OAUTH_CODE))) {
 					return buildBadAuthCodeResponse();
 				}
 			} else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
 					GrantType.PASSWORD.toString())) {
 				if (!checkUserPass(oauthRequest.getUsername(),
-						oauthRequest.getPassword())) {
+						oauthRequest.getPassword(),authToken)) {
 					return buildInvalidUserPassResponse();
 				}
 			} else if (oauthRequest.getParam(OAuth.OAUTH_GRANT_TYPE).equals(
@@ -77,15 +93,15 @@ public class OAuth2TokenEndpoint {
 
 			final String accessToken = oauthIssuerImpl.accessToken();
 			// database.addToken(accessToken);
-			HttpSession session = request.getSession();
-			accessTokenBean.createAccessToken(accessToken,
-					(String)session.getAttribute("resourceUserId"),
-					(String)session.getAttribute("i2b2Token"),
-					(String)session.getAttribute("authorizationCode"),
-					(String)session.getAttribute("clientRedirectUri"),
-					(String)session.getAttribute("clientId")
-					);
-
+			String resourceUserId=authToken.getResourceUserId();
+			String i2b2Token=authToken.getI2b2Token();
+			String i2b2Project=authToken.getI2b2Project();
+			String clientId=authToken.getClientId();
+			String scope=authToken.getScope();
+			
+			accessTokenBean.createAccessTokenAndDeleteAuthToken(authCode,accessToken, resourceUserId, i2b2Token, i2b2Project, clientId, scope);
+			
+			
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
 					.setAccessToken(accessToken).setExpiresIn("3600")
@@ -107,22 +123,8 @@ public class OAuth2TokenEndpoint {
 
 	private Response buildInvalidUserPassResponse() {
 		// TODO Auto-generated method stub
-		return Response.ok().entity("not supported").build();
-	}
-
-	private boolean checkUserPass(String username, String password) {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	private Response buildBadAuthCodeResponse() {
-		// TODO Auto-generated method stub
-		return Response.ok().entity("bad auth code").build();
-	}
-
-	private boolean checkAuthCode(String param) {
-		// TODO Auto-generated method stub
-		return true;
+		return Response.status(Status.BAD_REQUEST)
+				.entity("Failure:Invalid User").build();
 	}
 
 	private Response buildInvalidClientSecretResponse() {
@@ -130,9 +132,10 @@ public class OAuth2TokenEndpoint {
 		return Response.ok().entity("invalid client").build();
 	}
 
-	private boolean checkClientSecret(String clientSecret) {
+	private Response buildBadAuthCodeResponse() {
 		// TODO Auto-generated method stub
-		return true;
+		return Response.status(Status.BAD_REQUEST).entity("bad auth code")
+				.build();
 	}
 
 	private Response buildInvalidClientIdResponse() {
@@ -140,8 +143,24 @@ public class OAuth2TokenEndpoint {
 		return Response.ok().entity("invalid client").build();
 	}
 
+	private boolean checkAuthCode(AuthToken t, String inputAuthCode) {
+		return t.getAuthorizationCode().equals(inputAuthCode) ? true : false;
+	}
+
+	private boolean checkUserPass(String username, String password,
+			AuthToken authTok) {
+		return (authTok.getResourceUserId().equals(username) && authTok
+				.getI2b2Token().equals(password)) ? true : false;
+
+	}
+
+	private boolean checkClientSecret(String clientSecret) {
+		// TODO XXX
+		return true;
+	}
+
 	private boolean checkClientId(String clientId) {
-		// TODO Auto-generated method stub
+		// TODO XXX
 		return true;
 	}
 
