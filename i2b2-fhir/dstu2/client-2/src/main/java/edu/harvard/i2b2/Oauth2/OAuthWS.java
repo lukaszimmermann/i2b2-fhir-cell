@@ -1,5 +1,6 @@
 package edu.harvard.i2b2.Oauth2;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -11,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
@@ -22,6 +25,9 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 
 @Path("")
 public class OAuthWS {
@@ -44,13 +50,15 @@ public class OAuthWS {
 		try {
 			oar = OAuthAuthzResponse.oauthCodeAuthzResponse(request);
 			String code = oar.getCode();
-			String redirectUrl=oar.getParam("redirect_uri");
+			String redirectUrl = oar.getParam("redirect_uri");
 			logger.info("gotAuthCode:" + code);
-			//return Response.ok().entity("AuthCode:" + code).build();
-				String accessToken = exchangeOAuthCodeForAccessToken(code,"fcclient1","csecret1",redirectUrl);
+			// return Response.ok().entity("AuthCode:" + code).build();
+			String accessToken = exchangeOAuthCodeForAccessToken(code,
+					"fcclient1", "csecret1", redirectUrl);
 
-			return Response.ok().entity("Access Token:" + accessToken)
-					.type(MediaType.TEXT_PLAIN).build();
+			String msg = accessResource(accessToken);
+			return Response.ok()// .entity("Access Token:" + accessToken)
+					.entity(msg).type(MediaType.TEXT_PLAIN).build();
 		} catch (OAuthProblemException e) {
 			logger.error(e.getMessage(), e);
 			return errorResponse(e);
@@ -58,44 +66,33 @@ public class OAuthWS {
 		}
 
 	}
-	
-	public String exchangeOAuthCodeForAccessToken(String code,String clientId,String clientSecret,String redirectUrl) {
+
+	public String exchangeOAuthCodeForAccessToken(String authCode,
+			String clientId, String clientSecret, String redirectUrl) {
 		try {
-			logger.info(code+" "+clientId+" "+clientSecret+" "+redirectUrl);
-			OAuthClientRequest request = 
-					OAuthClientRequest
+			logger.info(authCode + " " + clientId + " " + clientSecret + " "
+					+ redirectUrl);
+			OAuthClientRequest request = OAuthClientRequest
 					.tokenLocation(
 							"http://localhost:8080/srv-dstu2-0.2/api/token")
 					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId("clientId")
-					.setClientSecret("clientSecret")
-					.setCode("code")
-					.setRedirectURI("redirectUrl")
+					.setClientId("clientId").setClientSecret("clientSecret")
+					.setCode(authCode).setRedirectURI("redirectUrl")
 					.setParameter("access_token", "accessToken")
 					.buildQueryMessage();
-			/*OAuthClientRequest
-					.tokenLocation(
-							"http://localhost:8080/srv-dstu2-0.2/api/token")
-					.setGrantType(GrantType.AUTHORIZATION_CODE)
-					.setClientId("client-id")
-					.setClientSecret("client-secret")
-					.setCode("code123")
-					.setRedirectURI("uri")
-					.setParameter("access_token", "accessToken")
-					.buildQueryMessage();*/
-			
 			// create OAuth client that uses custom http client under the hood
 			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
 			OAuthJSONAccessTokenResponse oAuthResponse;
-			logger.trace("To get exchange authToken for access code at:"+request.getLocationUri());
-			
+			logger.trace("To get exchange authToken for access code at:"
+					+ request.getLocationUri());
+
 			oAuthResponse = oAuthClient.accessToken(request, "POST");
 			String accessToken = oAuthResponse.getAccessToken();
 			Long expiresIn = oAuthResponse.getExpiresIn();
-			logger.info("got Token:"+accessToken +" expires in "+expiresIn);
+			logger.info("got Token:" + accessToken + " expires in " + expiresIn);
 			return accessToken;
-		
+
 		} catch (OAuthSystemException | OAuthProblemException e) {
 
 			e.printStackTrace();
@@ -104,53 +101,19 @@ public class OAuthWS {
 		return "ERROR";
 
 	}
-
-	public String OldexchangeOAuthCodeForAccessToken(String code,String clientId,String clientSecret,String redirectUrl) {
 	
-			OAuthClientRequest request=null;
-			try {
-				request = OAuthClientRequest
-						.tokenLocation(
-								"http://localhost:8080/srv-dstu2-0.2/api/token")
-						.setGrantType(GrantType.AUTHORIZATION_CODE)
-						.setClientId(clientId)
-						.setClientSecret(clientSecret)
-						.setCode(code)
-						.setRedirectURI(redirectUrl)
-						.buildQueryMessage();
-			} catch (OAuthSystemException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.error(e.getMessage(), e);
-			}
-			
-			
-			
-			logger.info("get exchange authToken for access code at:"+request.getLocationUri());
-			
-			// create OAuth client that uses custom http client under the hood
-			OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
-
-			
-			OAuthJSONAccessTokenResponse oAuthResponse=null;
-			try {
-				oAuthResponse = oAuthClient.accessToken(request);
-			} catch (OAuthSystemException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.error(e.getMessage(), e);
-			} catch (OAuthProblemException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.error(e.getMessage(), e);
-			}
-			String accessToken = oAuthResponse.getAccessToken();
-			Long expiresIn = oAuthResponse.getExpiresIn();
-			logger.info("got Token:"+accessToken +" expires in "+expiresIn);
-			
-			return accessToken;
-		}
-
+	public String accessResource(String accessToken) {
+		Client c = Client.create();
+		WebResource r = c.resource("http://localhost:8080/srv-dstu2-0.2/api/Patient")
+				;
+	    String response = //r.accept("Context-Type", "application/xml")
+	            r.header("Authorization", "Bearer " +accessToken)
+	    		.get(String.class);
+	   // System.out.println(response);
+	    
+		logger.info("get response:" + response);
+		return response;
+	}
 	@GET
 	@Path("launch")
 	public Response getAuthorizationUri() throws OAuthSystemException,
@@ -172,13 +135,14 @@ public class OAuthWS {
 
 	@GET
 	@Path("test")
-	public Response tesss()  {
-	
-		logger.info("resr log" );
-		
+	public Response tesss() {
+
+		logger.info("resr log");
+
 		return Response.ok().entity("ok").build();
 
 	}
+
 	/*
 	 * @GET
 	 * 
