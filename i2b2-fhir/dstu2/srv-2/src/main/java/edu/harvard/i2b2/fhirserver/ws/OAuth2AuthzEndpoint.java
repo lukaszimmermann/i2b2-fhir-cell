@@ -178,8 +178,10 @@ public class OAuth2AuthzEndpoint {
 	public Response srvResourceOwnerLoginPage(@Context HttpServletRequest request)
 			throws URISyntaxException {
 		HttpSession session=request.getSession();
+		String msg=(String) session.getAttribute("msg"); if (msg==null) msg="";
 		
 		String loginPage = "<div align=\"center\">"
+				+"<br><p style=\"color:red\">"+msg+"</p><br>"
 				+ "The application located at the following URL is requesting read access to i2b2 data accessible to your account:<br><bold>"
 				+session.getAttribute("redirectUri")
 				+"</bold></div><br><br>"
@@ -203,8 +205,8 @@ public class OAuth2AuthzEndpoint {
 			URISyntaxException {
 		logger.trace("processing login: for username:" + username
 				+ "\npassword:" + password + "\nclientId:" + request.getSession().getAttribute("clientId"));
-
-		logger.trace("sessionid:" + request.getSession().getId());
+		HttpSession session = request.getSession();
+		logger.trace("sessionid:" + session.getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
 				"i2b2demo", i2b2Url);
@@ -215,7 +217,8 @@ public class OAuth2AuthzEndpoint {
 			// logger.trace("redirecting to:" + uri);
 			// return Response.status(Status.MOVED_PERMANENTLY)
 			// .location(new URI(uri)).build();
-			HttpSession session = request.getSession();
+			session.setAttribute("msg","Authentication Successful!");
+			
 			session.setAttribute("resourceUserId", username);
 			session.setAttribute("pmResponseXml", pmResponseXml);
 			session.setAttribute("i2b2Token", I2b2Util.getToken(pmResponseXml));
@@ -225,6 +228,7 @@ public class OAuth2AuthzEndpoint {
 					.header("session_id", request.getSession().getId()).build();
 
 		} else {
+			session.setAttribute("msg","username or password was invalid");
 			String uri = getBasePath(request).toString() + "i2b2login";
 			logger.trace("redirecting to:" + uri);
 			return Response.status(Status.MOVED_PERMANENTLY)
@@ -237,7 +241,9 @@ public class OAuth2AuthzEndpoint {
 	// @GET
 	public String srvResourceOwnerScopeChoice(String pmResponseXml)
 			throws XQueryUtilException {
-		String page = "<form align=\"center\" action=\"processScope\" method=\"post\">";
+		String page = 	"<div align=\"center\"><br><p style=\"color:green\"> Authentication Successful!</p><br>"
+				+"<br>Choose one of the following projects for the SMART session: <br></div><br>"
+				+"<form align=\"center\" action=\"processScope\" method=\"post\">";
 		List<String> projects = I2b2Util.getUserProjects(pmResponseXml);
 		logger.trace("projects:" + projects.toString());
 		for (String p : projects) {
@@ -294,6 +300,7 @@ public class OAuth2AuthzEndpoint {
 					i2b2Token, authorizationCode, clientRedirectUri, clientId,
 					state, scope,i2b2Project);
 
+			session.setAttribute("msg", "");
 			return Response.status(Status.MOVED_PERMANENTLY)
 					.location(new URI(finalUri))
 					.header("session_id", session.getId()).build();

@@ -66,9 +66,9 @@ public class OAuthWS {
 			String accessToken = exchangeOAuthCodeForAccessToken(code,
 					"fcclient1", "csecret1", redirectUrl);
 
-			String msg = accessResource(accessToken);
-			return Response.ok()// .entity("Access Token:" + accessToken)
-					.entity(msg).type(MediaType.TEXT_PLAIN).build();
+			return Response.ok().entity("Access Token:" + accessToken).type(MediaType.TEXT_PLAIN).build();
+			//String msg = accessResource(accessToken);
+			//return Response.ok().entity(msg).type(MediaType.TEXT_PLAIN).build();
 		} catch (OAuthProblemException e) {
 			logger.error(e.getMessage(), e);
 			return errorResponse(e);
@@ -134,6 +134,7 @@ public class OAuthWS {
 				.setClientId("fcclient1")
 				.setResponseType("code")
 				.setScope("user/*.*")
+				.setState("state234")
 				.setRedirectURI(
 						"http://localhost:8080/client-dstu2-0.2/oauth2/getAuthCode")
 				.buildQueryMessage();
