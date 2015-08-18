@@ -53,11 +53,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	// public class RestAuthenticationFilter implements javax.servlet.Filter {
 	public static final String AUTHENTICATION_HEADER = "Authorization";
 	public static final String HARD_CODED_DAFEFAULT_TOKEN = "1f4ffead29414d1977fba44e2bf4d8b7";
-	
+
 	@EJB
 	AuthenticationService authService;
-	
-	
+
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
 		// public void doFilter(ServletRequest request, ServletResponse
@@ -69,25 +68,30 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 				+ context.getUriInfo().getPath().toString());
 		// skip urls for authentication
 		if (context.getUriInfo().getPath().toString().startsWith("/authz")
-				|| context.getUriInfo().getPath().toString().startsWith("/token"))
+				|| context.getUriInfo().getPath().toString()
+						.startsWith("/token"))
 			return;
 
 		if (authCredentials != null) {
 			accessToken = authCredentials.replaceAll("Bearer\\s*", "");
 
 			// better injected
-			//AuthenticationService authenticationService = new AuthenticationService();
+			// AuthenticationService authenticationService = new
+			// AuthenticationService();
 
-			logger.info("searching for AccessToken:"+accessToken);
-			if(accessToken.equals("HARD_CODED_DAFEFAULT_TOKEN")) return;
-			boolean authenticationStatus = authService.authenticate(accessToken);
-
-			
-			if (authenticationStatus) {
-				logger.trace("authentication Successful");
+			logger.info("searching for AccessToken:" + accessToken);
+			if (accessToken.equals(HARD_CODED_DAFEFAULT_TOKEN)) {
 				return;
 			} else {
-				context.abortWith(denyRequest());
+				boolean authenticationStatus = authService
+						.authenticate(accessToken);
+
+				if (authenticationStatus) {
+					logger.trace("authentication Successful");
+					return;
+				} else {
+					context.abortWith(denyRequest());
+				}
 			}
 		}
 		context.abortWith(denyRequest());
