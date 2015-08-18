@@ -79,7 +79,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			//AuthenticationService authenticationService = new AuthenticationService();
 
 			logger.info("searching for AccessToken:"+accessToken);
-			if(accessToken.equals("HARD_CODED_DAFEFAULT_TOKEN")) return true;
+			if(accessToken.equals("HARD_CODED_DAFEFAULT_TOKEN")) return;
 			boolean authenticationStatus = authService.authenticate(accessToken);
 
 			
