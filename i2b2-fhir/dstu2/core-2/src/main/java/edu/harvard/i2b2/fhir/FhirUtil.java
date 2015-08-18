@@ -17,6 +17,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -67,6 +69,8 @@ import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.ResourceContainer;
+import org.hl7.fhir.UnsignedInt;
+import org.hl7.fhir.Uri;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.validation.Validator;
 import org.json.JSONException;
@@ -457,7 +461,15 @@ public class FhirUtil {
 
 			be.setResource(rc);
 			b.getEntry().add(be);
+			
 		}
+		UnsignedInt total= new UnsignedInt();
+		total.setValue(BigInteger.valueOf(s.size()));
+		b.setTotal(total);
+		
+		Uri u=new Uri();
+		u.setValue(basePath);
+		b.setBase(u);
 		return b;
 	}
 

@@ -31,14 +31,13 @@ function updatePatientDisplay() {
 	var patientIdInput=$("#patientId").val();
 	var demo = null;
 	demo={
-		// serviceUrl: "http://52.2.43.105:8080/srv-dstu1-0.2/api",
-		// patientId: "1000000005"
-		serviceUrl : "http://fhir.i2b2.org/srv-dstu2-0.2/api",
-		patientId : patientIdInput
+		 //serviceUrl: "http://localhost:8080/srv-dstu2-0.2/api/open",
+		 //patientId: "1000000005"
+		serviceUrl : "https://fhir-open-api-dstu2.smarthealthit.org",
+		 patientId: "1098667"
+		 //patientId : patientIdInput
 
-	// serviceUrl: "https://fhir-open-api.smarthealthit.org",
-	// patientId: "1137192"
-	// serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
+	//	// serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
 	// patientId: "19324"
 
 	};
@@ -49,22 +48,27 @@ function updatePatientDisplay() {
 
 	pt.read().then(function(p) {
 	var row = $("<tr>");
-	row.append( '<tr><td>Gender:</td><td>'+p.gender.coding[0].display+'</td></tr>');
+	document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
+	row.append( '<tr><td>Gender:</td><td>'+p.gender+'</td></tr>');
 	row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
-	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display+'</td></tr>');
+	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus+'</td></tr>');
 	$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 	$("#demo_list").append('<th align="left"">Demographics</th>');
 	$("#demo_list").append(row);
+	
 	});
 	
-/*	
-	
+
+	/*
 	pt.MedicationPrescription.where// .status("active")
-	._include("MedicationPrescription.medication")
-	._include("MedicationPrescription.patient").search().then(
+	//._include("MedicationStatement.medication")
+	//._include("MedicationStatement.patient")
+	.search().then(
 			function(prescriptions) {
-				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions[0],null,4);
-				var rx=prescriptions[0];
+				document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
+				
+			//	document.getElementById("display").innerHTML=JSON.stringify(prescriptions[0],null,4);
+					var rx=prescriptions[0];
 				var p= smart.cachedLink(rx, rx.patient);
 				
 				
@@ -91,10 +95,10 @@ function updatePatientDisplay() {
 					
 					
 				});
-				
+			
 			
 		});
-	
+	*/
 	pt.Observation.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(
@@ -132,7 +136,7 @@ function updatePatientDisplay() {
 			
 				}
 	);
-	
+	/*
 	pt.Condition.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(

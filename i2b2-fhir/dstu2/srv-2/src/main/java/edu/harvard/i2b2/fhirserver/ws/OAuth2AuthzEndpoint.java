@@ -156,7 +156,7 @@ public class OAuth2AuthzEndpoint {
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
 	boolean isClientIdValid(String clientId) {
-		if (clientId.equals("fcclient1"))
+		//if (clientId.equals("fcclient1"))
 			return true;
 		/*
 		 * AuthToken authTok = authTokenBean.findByClientId(clientId);
@@ -170,7 +170,7 @@ public class OAuth2AuthzEndpoint {
 		 * (authTok.getClientId().equals(clientId)) return true; else return
 		 * false;
 		 */
-		return false;
+		//return false;
 	}
 
 	@Path("i2b2login")
@@ -296,7 +296,8 @@ public class OAuth2AuthzEndpoint {
 			String state = (String) session.getAttribute("state");
 			String scope = "user/*.*";// HashSet<String>
 										// session.getAttribute("scope");
-			AuthToken authToken = authTokenBean.createAuthToken(authorizationCode, resourceUserId, i2b2Token, clientRedirectUri, clientId, state, scope, i2b2Project);
+			AuthToken authToken =authTokenBean.find(authorizationCode);
+			if(authToken==null) authToken=authTokenBean.createAuthToken(authorizationCode, resourceUserId, i2b2Token, clientRedirectUri, clientId, state, scope, i2b2Project);
 					 
 			session.setAttribute("msg", "");
 			return Response.status(Status.MOVED_PERMANENTLY)
