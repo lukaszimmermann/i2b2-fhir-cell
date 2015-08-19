@@ -17,11 +17,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.xml.bind.JAXBException;
+
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.Medication;
@@ -85,6 +86,8 @@ public class MetaResourceDb {
 			rxNormAdapter.addRxCui(m);
 		}
 		resourceList.add(r);
+		
+		
 
 		logger.trace("EJB resources (after adding) size:"
 				+ this.getSize());
@@ -97,6 +100,7 @@ public class MetaResourceDb {
 			Resource r=FhirUtil.getResourceFromContainer(rc);
 			addResource(r);
 		}
+		
 	}
 
 	public Resource getResource(String id, Class c) {
@@ -290,16 +294,21 @@ public class MetaResourceDb {
 				Resource depMr = searchById(id);
 				if (depMr != null) {
 
-					if (!FhirUtil.isContained(outList, id)) {
-						outList.add(depMr);
-					}
+					//if (!FhirUtil.isContained(outList, id)) {
+						//outList.add(depMr);
+						r=FhirUtil.containResource(r,depMr);
+						
+					//}
 					// logger.trace("added dep:"+depMr.getResource().getId());
 				}
+				outList.add(r);
 			}
 		}
-		outList.addAll(inputSet);
+		//outList.addAll(inputSet);
 		return outList;
 	}
+
+	
 
 	public List<Resource> filterResources(Class c,
 			HashMap<String, String> filter) throws NoSuchMethodException,

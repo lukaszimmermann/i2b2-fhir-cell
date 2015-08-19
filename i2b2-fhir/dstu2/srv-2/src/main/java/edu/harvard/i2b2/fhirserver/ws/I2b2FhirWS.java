@@ -282,10 +282,10 @@ public class I2b2FhirWS {
 			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.hapiBundleToJsonString(FhirUtil
 						.fhirBundleToHapiBundle(s));
-				mediaType = "application/json+fhir";
+				mediaType = "application/json";
 			} else {
 				msg = JAXBUtil.toXml(s);
-				mediaType = "application/xml+fhir";
+				mediaType = "application/xml";
 			}
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
@@ -379,10 +379,10 @@ public class I2b2FhirWS {
 			String mediaType = null;
 			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
-				mediaType = "application/json+fhir";
+				mediaType = "application/json";
 			} else {
 				msg = JAXBUtil.toXml(r);
-				mediaType = "application/xml+fhir";
+				mediaType = "application/xml";
 			}
 
 			msg = I2b2Helper.removeSpace(msg);

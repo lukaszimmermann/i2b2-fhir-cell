@@ -473,7 +473,7 @@ public class FhirUtil {
 		return b;
 	}
 
-	private static ResourceContainer getResourceContainer(Resource r) {
+	public static ResourceContainer getResourceContainer(Resource r) {
 		ResourceContainer rc = new ResourceContainer();
 		String rClass = FhirUtil.getResourceClass(r).getSimpleName();
 		switch (rClass) {
@@ -604,6 +604,27 @@ public class FhirUtil {
 		}
 		return hb;
 
+	}
+
+	public static Resource containResource(Resource p, Resource c) {
+		
+		ResourceContainer childRc=FhirUtil.getResourceContainer(c);
+		Class parentClass=FhirUtil.getResourceClass(p);
+		Method method;
+		Object o;
+		try {
+			method = parentClass.getMethod("getContained", null);
+			o = method.invoke(parentClass.cast(p));
+			List<ResourceContainer> listRC=(List<ResourceContainer>)o;
+			listRC.add(childRc);
+			logger.debug("added "+c.getId() +" into "+ p.getId());
+			
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage(),e);
+		}
+		return p;
+		
 	}
 
 }
