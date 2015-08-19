@@ -113,8 +113,7 @@ public class I2b2FhirWS {
 
 	@POST
 	@Path("auth")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
-			"application/xml+fhir", "application/json+fhir" })
+	@Produces({ MediaType.TEXT_PLAIN})
 	public Response doAuthentication(@Context HttpServletRequest request,
 			@FormParam("username") String usernameForm,
 			@FormParam("password") String passwordForm,
@@ -283,10 +282,10 @@ public class I2b2FhirWS {
 			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.hapiBundleToJsonString(FhirUtil
 						.fhirBundleToHapiBundle(s));
-				mediaType = MediaType.APPLICATION_JSON;
+				mediaType = "application/json+fhir";
 			} else {
 				msg = JAXBUtil.toXml(s);
-				mediaType = MediaType.APPLICATION_XML;
+				mediaType = "application/xml+fhir";
 			}
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
@@ -336,9 +335,10 @@ public class I2b2FhirWS {
 	}
 
 	@GET
-	// @Path("{resourceName:[a-z]+}/{id:[0-9]+}")
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+		"application/xml+fhir", "application/json+fhir" })
+
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
@@ -379,10 +379,10 @@ public class I2b2FhirWS {
 			String mediaType = null;
 			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
-				mediaType = MediaType.APPLICATION_JSON;
+				mediaType = "application/json+fhir";
 			} else {
 				msg = JAXBUtil.toXml(r);
-				mediaType = MediaType.APPLICATION_XML;
+				mediaType = "application/xml+fhir";
 			}
 
 			msg = I2b2Helper.removeSpace(msg);
