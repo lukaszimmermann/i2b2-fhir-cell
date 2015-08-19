@@ -77,6 +77,7 @@ public class SearchParameterMap {
 	public SearchParameter getSearchParameter(Class c, String parName) throws FhirCoreException {
 	
 		for(SearchParameter sp:list){
+			logger.trace("sp:"+sp);
 			String resourceClassString=sp.getBase().getValue();
 			Class foundClass=FhirUtil.getResourceClass(resourceClassString);
 			String foundName=sp.getName().getValue();

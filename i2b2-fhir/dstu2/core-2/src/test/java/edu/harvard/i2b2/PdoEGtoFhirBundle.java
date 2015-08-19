@@ -25,6 +25,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Medication;
+import org.hl7.fhir.MedicationPrescription;
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
@@ -97,6 +98,15 @@ public class PdoEGtoFhirBundle {
 				msg);
 	}
 
+	@Test
+	public void contain() throws JAXBException {
+		// URL path=FhirUtil.class.getResource("validation.zip");
+		// System.out.println(FhirUtil.isValid(Utils.getFile("example/fhir/singlePatient.xml")));
+		MedicationPrescription mp= JAXBUtil.fromXml(Utils.getFile("example/fhir/dstu2/singleMedicationPresricption.xml"),MedicationPrescription.class);
+		Medication m= JAXBUtil.fromXml(Utils.getFile("example/fhir/dstu2/singleMedication.xml"),MedicationPrescription.class);
+		logger.info("after containing:"+FhirUtil.containResource(mp, m));
+	}
+	
 	// @Test
 	/*
 	public void search() {

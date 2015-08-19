@@ -31,10 +31,10 @@ function updatePatientDisplay() {
 	var patientIdInput=$("#patientId").val();
 	var demo = null;
 	demo={
-		 //serviceUrl: "http://localhost:8080/srv-dstu2-0.2/api/open",
-		 //patientId: "1000000005"
-		serviceUrl : "https://fhir-open-api-dstu2.smarthealthit.org",
-		 patientId: "1098667"
+		 serviceUrl: "http://localhost:8080/srv-dstu2-0.2/api/open",
+		 patientId: "1000000005"
+		//serviceUrl : "https://fhir-open-api-dstu2.smarthealthit.org",
+		// patientId: "1098667"
 		 //patientId : patientIdInput
 
 	//	// serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
@@ -48,7 +48,7 @@ function updatePatientDisplay() {
 
 	pt.read().then(function(p) {
 	var row = $("<tr>");
-	document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
+	//document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
 	row.append( '<tr><td>Gender:</td><td>'+p.gender+'</td></tr>');
 	row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
 	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus+'</td></tr>');
@@ -59,17 +59,17 @@ function updatePatientDisplay() {
 	});
 	
 
-	/*
+	
 	pt.MedicationPrescription.where// .status("active")
-	//._include("MedicationStatement.medication")
-	//._include("MedicationStatement.patient")
+//	._include("MedicationPrescription.medication")
+	//._include("MedicationPrescription.patient")
 	.search().then(
 			function(prescriptions) {
-				document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
+				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
 				
-			//	document.getElementById("display").innerHTML=JSON.stringify(prescriptions[0],null,4);
+				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
 					var rx=prescriptions[0];
-				var p= smart.cachedLink(rx, rx.patient);
+				//var p= smart.cachedLink(rx, rx.patient);
 				
 				
 				$('#med_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
@@ -80,25 +80,28 @@ function updatePatientDisplay() {
 				
 				$('#diag_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 				$("#diag_list").append('<th align="left">Diagnosis:</th>');
-					//document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
+				//	document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
 					
 				prescriptions.forEach(function(rx) {
+					document.getElementById("display").innerHTML=JSON.stringify(rx,null,4);
 					var med = smart.cachedLink(rx, rx.medication);
+					/*
 					var row = $("<tr>");
-					row.append( $("<td>").text(rx.dateWritten.split("T")[0]));
-					row.append( $("<td>").text(med.name ));
 					var di=rx.dosageInstruction[0];
-					row.append( $("<td>").text(di.timingSchedule.repeat.frequency+"/"+di.timingSchedule.repeat.units));
-					//row.append( $("<td>").text(di.doseQuantity.value+" "+di.doseQuantity.units));
+					//row.append( $("<td>").text(di.scheduledTiming.repeat.bounds.start));
+					row.append( $("<td>").text(med.name ));
+					
+					//row.append( $("<td>").text(di.scheduledTiming.repeat.duration+"/"+di.scheduledTiming.repeat.durationUnits));
+					//row.append( $("<td>").text(rx.dispense.quantity.value+" "+rx.dispense.quantity.units));
 					// $("#med_list").append('<tr><td>'+rx.dateWritten.split("T")[0]+'</td><td>'+med.name+'</td></tr>');
 					$("#med_list").append(row);
-					
+					*/
 					
 				});
 			
 			
 		});
-	*/
+	/*
 	pt.Observation.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(
@@ -132,11 +135,13 @@ function updatePatientDisplay() {
 				$("#lab_list").append(row);
 				
 				});
-				document.getElementById("display").innerHTML="";
+				
+				//document.getElementById("display").innerHTML="";
 			
 				}
+				
 	);
-	/*
+	
 	pt.Condition.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(
