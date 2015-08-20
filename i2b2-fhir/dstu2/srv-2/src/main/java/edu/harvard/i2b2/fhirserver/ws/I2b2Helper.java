@@ -236,7 +236,7 @@ public class I2b2Helper {
 	}
 
 	static void getSessionLock(HttpSession session) throws InterruptedException {
-
+/*
 		while (session.getAttribute("SESSION_LOCK") != null
 				&& session.getAttribute("SESSION_LOCK").equals(true)) {
 			Thread.sleep(100);
@@ -245,13 +245,16 @@ public class I2b2Helper {
 		}
 		logger.trace("setting session Lock:" + session.getId());
 		session.setAttribute("SESSION_LOCK", true);
+	*/
 		return;
 
 	}
 
 	static void releaseSessionLock(HttpSession session) {
+		/*
 		logger.trace("releasing session Lock:" + session.getId());
 		session.setAttribute("SESSION_LOCK", false);
+*/
 	}
 
 	static String removeSpace(String input)

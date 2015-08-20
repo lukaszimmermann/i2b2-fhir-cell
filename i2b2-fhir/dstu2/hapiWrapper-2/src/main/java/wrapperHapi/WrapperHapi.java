@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Bundle;
@@ -16,12 +17,14 @@ public class WrapperHapi {
 	static IParser xmlParser = ctx.newXmlParser();
 	static IParser jParser = ctx.newJsonParser();
 
-	public static String resourceXmlToJson(String xmlString) throws IOException {
-		IResource r = resourceXmlToIResource(xmlString);
-		jParser.setPrettyPrint(true);
-		String jsonString = jParser.encodeResourceToString(r);
-		// System.out.println(jsonString);
-		return jsonString;
+	public static String resourceXmlToJson(String inputXml) throws IOException {
+			FhirContext ctx = FhirContext.forDstu2();
+			jParser.setPrettyPrint(true);
+			IBaseResource parsed = xmlParser.parseResource(inputXml);
+			String outputJson = jParser.encodeResourceToString(parsed);
+			//logger.trace(""+outputJson);
+		
+		return outputJson;
 	}
 	
 	public static IResource resourceXmlToIResource(String xmlString) throws IOException {

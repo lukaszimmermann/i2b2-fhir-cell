@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bundle xmlns="http://hl7.org/fhir">
+    <type value="searchset"/>
+    <total value="5"/>
+    <link>
+        <relation value="self"/>
+        <url value="https://fhir-open-api-dstu2.smartplatforms.org/MedicationPrescription?patient=1098667&amp;_include=MedicationPrescription.Medication"/>
+    </link>
+    <entry>
+        <resource>
+            <MedicationPrescription>
+                <id value="109"/>
+                <meta>
+                    <versionId value="406"/>
+                    <lastUpdated value="2015-07-21T19:05:49.893+00:00"/>
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+      Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin] (rxnorm: 150840)
+    </div>
+                </text>
+                <contained>
+                    <Medication>
+                        <id value="med"/>
+                        <name value="Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin]"/>
+                        <code>
+                            <coding>
+                                <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+                                <code value="150840"/>
+                                <display value="Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin]"/>
+                            </coding>
+                        </code>
+                    </Medication>
+                </contained>
+                <status value="active"/>
+                <patient>
+                    <reference value="Patient/1098667"/>
+                </patient>
+                <medication>
+                    <reference value="#med"/>
+                </medication>
+                <dosageInstruction>
+                    <text value="1 daily"/>
+                    <scheduledTiming>
+                        <repeat>
+                            <bounds>
+                                <start value="2005-01-13"/>
+                            </bounds>
+                            <duration value="1"/>
+                            <durationUnits value="d"/>
+                            <frequency value="1"/>
+                        </repeat>
+                    </scheduledTiming>
+                    <doseQuantity>
+                        <value value="1"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </doseQuantity>
+                </dosageInstruction>
+                <dispense>
+                    <numberOfRepeatsAllowed value="1"/>
+                    <quantity>
+                        <value value="30"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </quantity>
+                    <expectedSupplyDuration>
+                        <value value="30"/>
+                        <units value="days"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="d"/>
+                    </expectedSupplyDuration>
+                </dispense>
+            </MedicationPrescription>
+        </resource>
+        <search>
+            <mode value="match"/>
+        </search>
+    </entry>
+    <entry>
+        <resource>
+            <MedicationPrescription>
+                <id value="110"/>
+                <meta>
+                    <versionId value="426"/>
+                    <lastUpdated value="2015-07-21T19:05:50.037+00:00"/>
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+      Acetaminophen 300 MG / Codeine 30 MG Oral Tablet (rxnorm: 309462)
+    </div>
+                </text>
+                <contained>
+                    <Medication>
+                        <id value="med"/>
+                        <name value="Acetaminophen 300 MG / Codeine 30 MG Oral Tablet"/>
+                        <code>
+                            <coding>
+                                <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+                                <code value="309462"/>
+                                <display value="Acetaminophen 300 MG / Codeine 30 MG Oral Tablet"/>
+                            </coding>
+                        </code>
+                    </Medication>
+                </contained>
+                <status value="active"/>
+                <patient>
+                    <reference value="Patient/1098667"/>
+                </patient>
+                <medication>
+                    <reference value="#med"/>
+                </medication>
+                <dosageInstruction>
+                    <text value="1 q6h prn pain"/>
+                    <scheduledTiming>
+                        <repeat>
+                            <bounds>
+                                <start value="2005-07-30"/>
+                            </bounds>
+                            <duration value="1"/>
+                            <durationUnits value="d"/>
+                            <frequency value="4"/>
+                        </repeat>
+                    </scheduledTiming>
+                    <asNeededBoolean value="true"/>
+                    <doseQuantity>
+                        <value value="1"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </doseQuantity>
+                </dosageInstruction>
+                <dispense>
+                    <numberOfRepeatsAllowed value="1"/>
+                    <quantity>
+                        <value value="24"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </quantity>
+                    <expectedSupplyDuration>
+                        <value value="6"/>
+                        <units value="days"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="d"/>
+                    </expectedSupplyDuration>
+                </dispense>
+            </MedicationPrescription>
+        </resource>
+        <search>
+            <mode value="match"/>
+        </search>
+    </entry>
+    <entry>
+        <resource>
+            <MedicationPrescription>
+                <id value="111"/>
+                <meta>
+                    <versionId value="446"/>
+                    <lastUpdated value="2015-07-21T19:05:50.167+00:00"/>
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+      fexofenadine 180 MG Oral Tablet (rxnorm: 310333)
+    </div>
+                </text>
+                <contained>
+                    <Medication>
+                        <id value="med"/>
+                        <name value="fexofenadine 180 MG Oral Tablet"/>
+                        <code>
+                            <coding>
+                                <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+                                <code value="310333"/>
+                                <display value="fexofenadine 180 MG Oral Tablet"/>
+                            </coding>
+                        </code>
+                    </Medication>
+                </contained>
+                <status value="active"/>
+                <patient>
+                    <reference value="Patient/1098667"/>
+                </patient>
+                <medication>
+                    <reference value="#med"/>
+                </medication>
+                <dosageInstruction>
+                    <text value="1 daily"/>
+                    <scheduledTiming>
+                        <repeat>
+                            <bounds>
+                                <start value="2008-09-10"/>
+                            </bounds>
+                            <duration value="1"/>
+                            <durationUnits value="d"/>
+                            <frequency value="1"/>
+                        </repeat>
+                    </scheduledTiming>
+                    <doseQuantity>
+                        <value value="1"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </doseQuantity>
+                </dosageInstruction>
+                <dispense>
+                    <numberOfRepeatsAllowed value="1"/>
+                    <quantity>
+                        <value value="90"/>
+                        <units value="{tablet}"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="{tablet}"/>
+                    </quantity>
+                    <expectedSupplyDuration>
+                        <value value="90"/>
+                        <units value="days"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="d"/>
+                    </expectedSupplyDuration>
+                </dispense>
+            </MedicationPrescription>
+        </resource>
+        <search>
+            <mode value="match"/>
+        </search>
+    </entry>
+    <entry>
+        <resource>
+            <MedicationPrescription>
+                <id value="112"/>
+                <meta>
+                    <versionId value="499"/>
+                    <lastUpdated value="2015-07-21T19:05:50.556+00:00"/>
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+      Hydrocortisone 25 MG/ML Rectal Cream [Proctozone HC] (rxnorm: 351396)
+    </div>
+                </text>
+                <contained>
+                    <Medication>
+                        <id value="med"/>
+                        <name value="Hydrocortisone 25 MG/ML Rectal Cream [Proctozone HC]"/>
+                        <code>
+                            <coding>
+                                <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+                                <code value="351396"/>
+                                <display value="Hydrocortisone 25 MG/ML Rectal Cream [Proctozone HC]"/>
+                            </coding>
+                        </code>
+                    </Medication>
+                </contained>
+                <status value="active"/>
+                <patient>
+                    <reference value="Patient/1098667"/>
+                </patient>
+                <medication>
+                    <reference value="#med"/>
+                </medication>
+                <dosageInstruction>
+                    <text value="Apply bid x7 days"/>
+                    <scheduledTiming>
+                        <repeat>
+                            <bounds>
+                                <start value="2008-09-12"/>
+                            </bounds>
+                            <duration value="1"/>
+                            <durationUnits value="d"/>
+                            <frequency value="2"/>
+                        </repeat>
+                    </scheduledTiming>
+                </dosageInstruction>
+                <dispense>
+                    <numberOfRepeatsAllowed value="1"/>
+                    <quantity>
+                        <value value="30"/>
+                        <system value="http://unitsofmeasure.org"/>
+                    </quantity>
+                    <expectedSupplyDuration>
+                        <value value="10"/>
+                        <units value="days"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="d"/>
+                    </expectedSupplyDuration>
+                </dispense>
+            </MedicationPrescription>
+        </resource>
+        <search>
+            <mode value="match"/>
+        </search>
+    </entry>
+    <entry>
+        <resource>
+            <MedicationPrescription>
+                <id value="113"/>
+                <meta>
+                    <versionId value="519"/>
+                    <lastUpdated value="2015-07-21T19:05:50.680+00:00"/>
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <div xmlns="http://www.w3.org/1999/xhtml">
+      Hydrocortisone 25 MG/ML / pramoxine 10 MG/ML Topical Cream (rxnorm: 310893)
+    </div>
+                </text>
+                <contained>
+                    <Medication>
+                        <id value="med"/>
+                        <name value="Hydrocortisone 25 MG/ML / pramoxine 10 MG/ML Topical Cream"/>
+                        <code>
+                            <coding>
+                                <system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+                                <code value="310893"/>
+                                <display value="Hydrocortisone 25 MG/ML / pramoxine 10 MG/ML Topical Cream"/>
+                            </coding>
+                        </code>
+                    </Medication>
+                </contained>
+                <status value="active"/>
+                <patient>
+                    <reference value="Patient/1098667"/>
+                </patient>
+                <medication>
+                    <reference value="#med"/>
+                </medication>
+                <dosageInstruction>
+                    <text value="Apply bid x7 days"/>
+                    <scheduledTiming>
+                        <repeat>
+                            <bounds>
+                                <start value="2009-04-23"/>
+                            </bounds>
+                            <duration value="1"/>
+                            <durationUnits value="d"/>
+                            <frequency value="2"/>
+                        </repeat>
+                    </scheduledTiming>
+                </dosageInstruction>
+                <dispense>
+                    <numberOfRepeatsAllowed value="1"/>
+                    <quantity>
+                        <value value="28"/>
+                        <system value="http://unitsofmeasure.org"/>
+                    </quantity>
+                    <expectedSupplyDuration>
+                        <value value="28"/>
+                        <units value="days"/>
+                        <system value="http://unitsofmeasure.org"/>
+                        <code value="d"/>
+                    </expectedSupplyDuration>
+                </dispense>
+            </MedicationPrescription>
+        </resource>
+        <search>
+            <mode value="match"/>
+        </search>
+    </entry>
+</Bundle>

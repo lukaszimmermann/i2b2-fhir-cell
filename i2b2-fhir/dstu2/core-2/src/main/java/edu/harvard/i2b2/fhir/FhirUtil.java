@@ -606,18 +606,28 @@ public class FhirUtil {
 
 	}
 
-	public static Resource containResource(Resource p, Resource c) {
+	public static Resource containResource(Resource p, Resource c) throws JAXBException {
 		
 		ResourceContainer childRc=FhirUtil.getResourceContainer(c);
 		Class parentClass=FhirUtil.getResourceClass(p);
 		Method method;
 		Object o;
 		try {
+			//add # prefix to reference of contained resource?
+			String childReference=c.getId().getValue();
+			String xml=JAXBUtil.toXml(p);
+			xml=xml.replace(childReference, "#"+childReference);
+			p=JAXBUtil.fromXml(xml, parentClass);
+			
+			
 			method = parentClass.getMethod("getContained", null);
 			o = method.invoke(parentClass.cast(p));
 			List<ResourceContainer> listRC=(List<ResourceContainer>)o;
+			
 			listRC.add(childRc);
 			logger.debug("added "+c.getId() +" into "+ p.getId());
+			
+			
 			
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
@@ -625,6 +635,10 @@ public class FhirUtil {
 		}
 		return p;
 		
+	}
+	
+	public static String bundleToJsonString(Bundle s) throws IOException, JAXBException{
+		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(s));
 	}
 
 }

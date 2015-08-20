@@ -80,6 +80,10 @@ import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 
+
+/*
+ * to use accessToken for authentication
+ */
 @Path("")
 public class I2b2FhirWS {
 	static Logger logger = LoggerFactory.getLogger(I2b2FhirWS.class);
@@ -280,8 +284,7 @@ public class I2b2FhirWS {
 			String msg = null;
 			String mediaType = null;
 			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
-				msg = FhirUtil.hapiBundleToJsonString(FhirUtil
-						.fhirBundleToHapiBundle(s));
+				msg = FhirUtil.bundleToJsonString(s);
 				mediaType = "application/json";
 			} else {
 				msg = JAXBUtil.toXml(s);

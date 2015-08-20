@@ -8,9 +8,12 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 
 @Provider
@@ -65,7 +68,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	}
 
 	Response denyRequest() {
-		Response r = Response.ok().entity("Authentication Failure")
+		Response r = Response.status(Status.UNAUTHORIZED).entity("Authentication Failure")
 		// .cookie(authIdCookie)
 				.type(MediaType.TEXT_PLAIN)
 				// .header("session_id", session.getId())
