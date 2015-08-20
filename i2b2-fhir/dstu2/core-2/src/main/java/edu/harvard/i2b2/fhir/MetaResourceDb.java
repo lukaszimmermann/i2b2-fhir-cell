@@ -271,7 +271,7 @@ public class MetaResourceDb {
 	public List<Resource> getIncludedResources(Class c,
 			List<Resource> inputSet, List<String> includeResources)
 			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+			InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
 		// MetaResourceSet s = new MetaResourceSet();
 		List<Resource> outList = new ArrayList<Resource>();
 		// list.addAll(metaResourceDb.getAll(Medication.class));

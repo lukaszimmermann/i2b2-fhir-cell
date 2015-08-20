@@ -42,8 +42,8 @@ public class AuthTokenBean {
 					.createEntityManagerFactory("testPer");
 			em = factory.createEntityManager();
 			Random r = new Random();
-			String rs=Integer.toString(r.nextInt());
-			createAuthToken(rs,rs,rs,rs,rs,rs,rs,rs);
+			String rs = Integer.toString(r.nextInt());
+			createAuthToken(rs, rs, rs, rs, rs, rs, rs, rs);
 			logger.info("total:" + totalCount());
 			// createAuthToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
@@ -51,9 +51,9 @@ public class AuthTokenBean {
 		}
 	}
 
-	public AuthToken createAuthToken(String authCode,String resourceUserId, String i2b2Token,
-			 String clientRedirectUri,
-			String clientId, String state, String scope,String i2b2Project) {
+	public AuthToken createAuthToken(String authCode, String resourceUserId,
+			String i2b2Token, String clientRedirectUri, String clientId,
+			String state, String scope, String i2b2Project) {
 		try {
 			AuthToken tok = new AuthToken();
 			tok.setAuthorizationCode(authCode);
@@ -65,8 +65,8 @@ public class AuthTokenBean {
 			tok.setScope(scope);
 			tok.setI2b2Project(i2b2Project);
 			tok.setCreatedDate(new Date());
-			tok.setExpiryDate(DateUtils.addMinutes(new Date(),30));
-			
+			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
+
 			logger.info("Created authToken.." + tok.toString());
 			em.getTransaction().begin();
 			em.persist(tok);
@@ -83,7 +83,8 @@ public class AuthTokenBean {
 	public List<AuthToken> getAuthTokens() {
 		try {
 			em.getTransaction().begin();
-			List<AuthToken> tokens = em.createQuery("from AuthToken").getResultList();
+			List<AuthToken> tokens = em.createQuery("from AuthToken")
+					.getResultList();
 			em.getTransaction().commit();
 			return tokens;
 		} catch (Exception e) {
@@ -96,9 +97,9 @@ public class AuthTokenBean {
 	public void removeAuthToken(AuthToken authToken) {
 		try {
 			em.getTransaction().begin();
-			logger.info("deleting from db:"+authToken);
+			logger.info("deleting from db:" + authToken);
 			em.remove(authToken);
-			
+
 			em.getTransaction().commit();
 		} catch (Exception e) {
 			em.getTransaction().rollback();
@@ -111,11 +112,11 @@ public class AuthTokenBean {
 		try {
 			em.getTransaction().begin();
 			AuthToken tok = em.find(AuthToken.class, authCode);
-					//.createQuery(
-						//	"select a from AuthToken a where AuthorizationCode = :ac ")
-					//.setParameter("ac", authCode).getResultList();
+			// .createQuery(
+			// "select a from AuthToken a where AuthorizationCode = :ac ")
+			// .setParameter("ac", authCode).getResultList();
 			em.getTransaction().commit();
-			logger.info("found token:"+tok);
+			logger.info("found token:" + tok);
 			return tok;
 		} catch (Exception e) {
 			em.getTransaction().rollback();
@@ -124,7 +125,7 @@ public class AuthTokenBean {
 		}
 
 	}
-	
+
 	public void listAuthTokens() {
 		try {
 			em.getTransaction().begin();
@@ -134,7 +135,7 @@ public class AuthTokenBean {
 			for (Iterator<AuthToken> iterator = list.iterator(); iterator
 					.hasNext();) {
 				AuthToken a = (AuthToken) iterator.next();
-				logger.info( a.toString());
+				logger.info(a.toString());
 			}
 			em.getTransaction().commit();
 		} catch (Exception e) {
@@ -142,22 +143,23 @@ public class AuthTokenBean {
 		}
 	}
 
-
 	public int totalCount() {
-		int count= getAuthTokens().size();
-		logger.trace("AuthToken count:"+count);
+		int count = getAuthTokens().size();
+		logger.trace("AuthToken count:" + count);
 		return count;
 	}
 
 	public AuthToken findByClientId(String clientId) {
 		try {
-			AuthToken tok=null;
+			AuthToken tok = null;
 			em.getTransaction().begin();
-			List<AuthToken> list = em.createQuery(
+			List<AuthToken> list = em
+					.createQuery(
 							"select a from AuthToken a where clientId = :ac ")
 					.setParameter("ac", clientId).getResultList();
 			em.getTransaction().commit();
-			if (list.size()>0) tok=list.get(0);
+			if (list.size() > 0)
+				tok = list.get(0);
 			return tok;
 		} catch (Exception e) {
 			em.getTransaction().rollback();
@@ -167,11 +169,19 @@ public class AuthTokenBean {
 
 	}
 
-
-	
-
-	// @PreDestroy
+	//@PreDestroy
 	// @Transactional
+	public void shutdownDb() {
+		try {
+			em.createQuery("SHUTDOWN").executeUpdate();
+		} catch (Exception e) {
+			em.getTransaction().rollback();
+			logger.error(e.getMessage(), e);
+			throw new EJBException(e.getMessage());
+		}
+
+	}
+
 	/*
 	 * public void dropTable() { try { EntityManagerFactory factory =
 	 * Persistence .createEntityManagerFactory("testPer"); em.joinTransaction();

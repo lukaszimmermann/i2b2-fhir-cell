@@ -1,0 +1,68 @@
+<!--https://fhir-open-api-dstu2.smarthealthit.org/MedicationPrescription?patient=1098667&_include=MedicationPrescription.Medication
+-->
+<MedicationPrescription>
+	<id value="109"/>
+	<meta>
+		<versionId value="406"/>
+		<lastUpdated value="2015-07-21T19:05:49.893+00:00"/>
+	</meta>
+	<text>
+		<status value="generated"/>
+		<div xmlns="http://www.w3.org/1999/xhtml">Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin] (rxnorm: 150840)</div>
+	</text>
+	<contained>
+		<Medication>
+			<id value="med"/>
+			<name value="Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin]"/>
+			<code>
+				<coding>
+					<system value="http://www.nlm.nih.gov/research/umls/rxnorm"/>
+					<code value="150840"/>
+					<display value="Estrogens, Conjugated (USP) 0.625 MG Oral Tablet [Premarin]"/>
+				</coding>
+			</code>
+		</Medication>
+	</contained>
+	<status value="active"/>
+	<patient>
+		<reference value="Patient/1098667"/>
+	</patient>
+	<medication>
+		<reference value="#med"/>
+	</medication>
+	<dosageInstruction>
+		<text value="1 daily"/>
+		<scheduledTiming>
+			<repeat>
+				<bounds>
+					<start value="2005-01-13"/>
+				</bounds>
+				<duration value="1"/>
+				<durationUnits value="d"/>
+				<frequency value="1"/>
+			</repeat>
+		</scheduledTiming>
+		<doseQuantity>
+			<value value="1"/>
+			<units value="{tablet}"/>
+			<system value="http://unitsofmeasure.org"/>
+			<code value="{tablet}"/>
+		</doseQuantity>
+	</dosageInstruction>
+	<dispense>
+		<numberOfRepeatsAllowed value="1"/>
+		<quantity>
+			<value value="30"/>
+			<units value="{tablet}"/>
+			<system value="http://unitsofmeasure.org"/>
+			<code value="{tablet}"/>
+		</quantity>
+		<expectedSupplyDuration>
+			<value value="30"/>
+			<units value="days"/>
+			<system value="http://unitsofmeasure.org"/>
+			<code value="d"/>
+		</expectedSupplyDuration>
+	</dispense>
+</MedicationPrescription>
+       

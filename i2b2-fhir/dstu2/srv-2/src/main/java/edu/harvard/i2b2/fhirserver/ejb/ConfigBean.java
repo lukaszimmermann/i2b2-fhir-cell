@@ -32,7 +32,23 @@ import edu.harvard.i2b2.fhirserver.entity.Person;
 public class ConfigBean {
 	static Logger logger = LoggerFactory.getLogger(ConfigBean.class);
 
-	//@PostConstruct
+	//@PreDestroy
+	public void shutdownDb() {
+		try {
+			JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/test",
+					"sa", "sa");
+			Connection conn = cp.getConnection();
+			Statement stmt = conn.createStatement();
+			stmt.execute("shutdown;");
+			conn.close();
+			cp.dispose();
+		} catch (Exception e) {
+			logger.info("erro", e);
+			e.printStackTrace();
+		}
+
+	}
+	
 	public void init() {
 		try {
 			JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/test",
@@ -101,8 +117,5 @@ public class ConfigBean {
 		logger.info("COMPLETEDa");
 	}
 */
-	@PreDestroy
-	public void deleteData() {
-
-	}
+	
 }
