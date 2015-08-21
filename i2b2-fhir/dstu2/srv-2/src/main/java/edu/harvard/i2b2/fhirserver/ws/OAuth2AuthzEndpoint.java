@@ -326,6 +326,7 @@ public class OAuth2AuthzEndpoint {
 				+ request.getRequestURI()
 				+ (request.getQueryString() != null ? "?"
 						+ request.getQueryString() : "");
+		if(uri.contains("?")) uri=uri.split("\\?")[0];
 		logger.trace("full uri:" + uri);
 		uri = uri.substring(0, uri.lastIndexOf('/')) + "/";
 		logger.trace("base uri:" + uri);
