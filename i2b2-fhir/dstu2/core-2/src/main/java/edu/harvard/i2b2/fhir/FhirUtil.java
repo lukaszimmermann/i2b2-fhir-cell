@@ -94,9 +94,8 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	 final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
-     public static ArrayList<Class> resourceClassList = null;
-
+	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
+	public static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
 
@@ -185,47 +184,46 @@ public class FhirUtil {
 
 	}
 
+	public static List<Class> getAllFhirResourceClasses(String packageName)
+			throws IOException {
 
-    public static List<Class> getAllFhirResourceClasses(String packageName)
-                    throws IOException {
+		// logger.trace("Running getAllFhirResourceClasses for:" +
+		// packageName);
+		List<Class> commands = new ArrayList<Class>();
 
-            // logger.trace("Running getAllFhirResourceClasses for:" +
-            // packageName);
-            List<Class> commands = new ArrayList<Class>();
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+				null, null, null);
 
-            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-            StandardJavaFileManager fileManager = compiler.getStandardFileManager(
-                            null, null, null);
+		Location location = StandardLocation.CLASS_PATH;
 
-            Location location = StandardLocation.CLASS_PATH;
+		Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
+		kinds.add(JavaFileObject.Kind.CLASS);
+		boolean recurse = false;
 
-            Set<JavaFileObject.Kind> kinds = new HashSet<JavaFileObject.Kind>();
-            kinds.add(JavaFileObject.Kind.CLASS);
-            boolean recurse = false;
+		Iterable<JavaFileObject> list = fileManager.list(location, packageName,
+				kinds, recurse);
 
-            Iterable<JavaFileObject> list = fileManager.list(location, packageName,
-                            kinds, recurse);
+		for (JavaFileObject javaFileObject : list) {
 
-            for (JavaFileObject javaFileObject : list) {
+			// commands.add(javaFileObject.getClass());
+		}
 
-                    // commands.add(javaFileObject.getClass());
-            }
+		Class c = null;
 
-            Class c = null;
-            
-            
-            for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(","").replace(")","").split("\\|")))
-                          
-            {
-                    x="org.hl7.fhir."+x;
-                    //logger.trace("X:"+x);
-                    c = Utils.getClassFromClassPath(x);
-                    if (c != null)
-                            commands.add(c);
-            }
-            // logger.trace(commands.toString());
-            return commands;
-    }
+		for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(", "")
+				.replace(")", "").split("\\|")))
+
+		{
+			x = "org.hl7.fhir." + x;
+			// logger.trace("X:"+x);
+			c = Utils.getClassFromClassPath(x);
+			if (c != null)
+				commands.add(c);
+		}
+		// logger.trace(commands.toString());
+		return commands;
+	}
 
 	public static Class getResourceClass(String resourceName) {
 		if (resourceClassList == null)
@@ -461,13 +459,13 @@ public class FhirUtil {
 
 			be.setResource(rc);
 			b.getEntry().add(be);
-			
+
 		}
-		UnsignedInt total= new UnsignedInt();
+		UnsignedInt total = new UnsignedInt();
 		total.setValue(BigInteger.valueOf(s.size()));
 		b.setTotal(total);
-		
-		Uri u=new Uri();
+
+		Uri u = new Uri();
 		u.setValue(basePath);
 		b.setBase(u);
 		return b;
@@ -499,7 +497,7 @@ public class FhirUtil {
 			rc.setBundle((Bundle) r);
 			break;
 		default:
-			throw new RuntimeException("ResourceType not found:"+rClass);
+			throw new RuntimeException("ResourceType not found:" + rClass);
 		}
 		return rc;
 	}
@@ -532,13 +530,13 @@ public class FhirUtil {
 		if (rc.getSearchParameter() != null)
 			return rc.getSearchParameter();
 
-		String xml=null;
+		String xml = null;
 		try {
 			xml = JAXBUtil.toXml(rc);
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException("Not implemented all resource types:"+xml);
+		throw new RuntimeException("Not implemented all resource types:" + xml);
 	}
 
 	public static String resourceToJsonString(Resource r) throws JSONException,
@@ -556,11 +554,11 @@ public class FhirUtil {
 			throws Exception {
 		ca.uhn.fhir.model.api.Bundle hb = new ca.uhn.fhir.model.api.Bundle();
 
-		//IdDt idb = new IdDt();
-		//idb.setValue(b.getId().getValue());
+		// IdDt idb = new IdDt();
+		// idb.setValue(b.getId().getValue());
 		// id.setValue(fhirBase + UUID.randomUUID().toString());
 
-		//hb.setId(idb);
+		// hb.setId(idb);
 
 		String fhirBase = "b.getBase().toString()";
 
@@ -606,38 +604,46 @@ public class FhirUtil {
 
 	}
 
-	public static Resource containResource(Resource p, Resource c) throws JAXBException {
-		
-		ResourceContainer childRc=FhirUtil.getResourceContainer(c);
-		Class parentClass=FhirUtil.getResourceClass(p);
-		Method method;
-		Object o;
+	public static Resource containResource(Resource p, Resource c)
+			throws JAXBException {
 		try {
-			//add # prefix to reference of contained resource?
-			String childReference=c.getId().getValue();
-			String xml=JAXBUtil.toXml(p);
-			xml=xml.replace(childReference, "#"+childReference);
-			p=JAXBUtil.fromXml(xml, parentClass);
-			
-			
+			Class parentClass = FhirUtil.getResourceClass(p);
+
+			String xml = JAXBUtil.toXml(p);
+			// add # prefix to reference of contained resource?
+			String childReference = c.getId().getValue();
+			xml = xml.replace(childReference, "#-" + childReference.replace("/","-"));
+			p = JAXBUtil.fromXml(xml, parentClass);
+
+			Class childClass = FhirUtil.getResourceClass(c);
+			Id cId = c.getId();
+			cId.setValue("-" //+ childClass.getSimpleName() + "/"
+					+ cId.getValue().replace("/","-"));
+			c.setId(cId);
+			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
+
+			Method method;
+			Object o;
+
 			method = parentClass.getMethod("getContained", null);
 			o = method.invoke(parentClass.cast(p));
-			List<ResourceContainer> listRC=(List<ResourceContainer>)o;
-			
+			List<ResourceContainer> listRC = (List<ResourceContainer>) o;
+
 			listRC.add(childRc);
-			logger.debug("added "+c.getId() +" into "+ p.getId());
-			
-			
-			
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			logger.debug("added " + c.getId() + " into " + p.getId());
+
+		} catch (NoSuchMethodException | SecurityException
+				| IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
 			e.printStackTrace();
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 		return p;
-		
+
 	}
-	
-	public static String bundleToJsonString(Bundle s) throws IOException, JAXBException{
+
+	public static String bundleToJsonString(Bundle s) throws IOException,
+			JAXBException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(s));
 	}
 

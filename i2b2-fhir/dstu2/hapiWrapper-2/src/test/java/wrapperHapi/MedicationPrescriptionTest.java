@@ -20,7 +20,7 @@ public class MedicationPrescriptionTest {
 		//IBaseResource parsed = ctx.newXmlParser().parseResource(inputXml);
 		//String outputJson = ctx.newJsonParser().encodeResourceToString(parsed);
 		//logger.trace(""+outputJson);
-		logger.trace(""+WrapperHapi.resourceXmlToJson(Utils.getFile("BundleContained3.xml")));
+		logger.trace(""+WrapperHapi.resourceXmlToJson(Utils.getFile("BundleContained4.xml")));
 		
 
 	}

@@ -33,8 +33,10 @@ function updatePatientDisplay() {
 	demo={
 		 serviceUrl: "http://localhost:8080/srv-dstu2-0.2/api/open",
 		 patientId: "1000000005"
+		// serviceUrl :"http://localhost:8080/test-srv-dstu2-0.2",
+		
 		//serviceUrl : "https://fhir-open-api-dstu2.smarthealthit.org",
-		// patientId: "1098667"
+		 //patientId: "1098667"
 		 //patientId : patientIdInput
 
 	//	// serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
@@ -45,7 +47,7 @@ function updatePatientDisplay() {
 	var smart = FHIR.client(demo);
 	var pt = null;
 	pt=smart.context.patient;
-
+/*
 	pt.read().then(function(p) {
 	var row = $("<tr>");
 	//document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
@@ -59,9 +61,9 @@ function updatePatientDisplay() {
 	});
 	
 
-	
+	*/
 	pt.MedicationPrescription.where// .status("active")
-//	._include("MedicationPrescription.medication")
+	._include("MedicationPrescription.Medication")
 	//._include("MedicationPrescription.patient")
 	.search().then(
 			function(prescriptions) {
@@ -83,13 +85,16 @@ function updatePatientDisplay() {
 				//	document.getElementById("display").innerHTML =JSON.stringify(rx, null, 4);
 					
 				prescriptions.forEach(function(rx) {
-					document.getElementById("display").innerHTML=JSON.stringify(rx,null,4);
+					//document.getElementById("display").innerHTML=JSON.stringify(rx,null,4);
 					var med = smart.cachedLink(rx, rx.medication);
-					/*
+					document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
+						
+				/*	var name="-";
+					if(med.hasOwnProperty("name")) name=med.name;
 					var row = $("<tr>");
 					var di=rx.dosageInstruction[0];
 					//row.append( $("<td>").text(di.scheduledTiming.repeat.bounds.start));
-					row.append( $("<td>").text(med.name ));
+					row.append( $("<td>").text(name ));
 					
 					//row.append( $("<td>").text(di.scheduledTiming.repeat.duration+"/"+di.scheduledTiming.repeat.durationUnits));
 					//row.append( $("<td>").text(rx.dispense.quantity.value+" "+rx.dispense.quantity.units));

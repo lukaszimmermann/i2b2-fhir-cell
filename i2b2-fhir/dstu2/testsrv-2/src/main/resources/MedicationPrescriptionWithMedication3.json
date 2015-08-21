@@ -1,0 +1,31 @@
+{
+  "resourceType": "Bundle",
+  "base": "http://localhost:8080/srv-dstu2-0.2/api/open/",
+  "total": 14,
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "MedicationPrescription",
+        "id": "1000000005-1",
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "1000000005-1",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://../NDC",
+                  "code": "00054823401",
+                  "primary": true
+                }
+              ]
+            }
+          }
+        ],
+        "medication": {
+          "reference": "#1000000005-1"
+        }
+      }
+    }
+  ]
+}
