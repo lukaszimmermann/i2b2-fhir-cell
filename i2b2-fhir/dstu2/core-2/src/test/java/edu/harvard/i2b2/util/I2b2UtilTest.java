@@ -16,7 +16,6 @@ public class I2b2UtilTest {
 		String pmResponseXml=Utils.getFile("pmResponse.xml");
 		//logger.info(pmResponseXml);
 		logger.info("::"+I2b2Util.getUserProjects(pmResponseXml));
-		logger.info(":::");
 	}
 
 }

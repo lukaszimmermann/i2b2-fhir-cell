@@ -78,7 +78,10 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhir.query.QueryParameterException;
 import edu.harvard.i2b2.fhir.query.QueryValueException;
+import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
+import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
+import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 
 
 /*
@@ -87,6 +90,13 @@ import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 @Path("")
 public class I2b2FhirWS {
 	static Logger logger = LoggerFactory.getLogger(I2b2FhirWS.class);
+	
+	@EJB
+	AuthenticationService authService;
+	
+	@EJB
+	AccessTokenBean accessTokenBean;
+
 	String i2b2SessionId;
 	// contains ids of patients already called.
 
@@ -100,94 +110,15 @@ public class I2b2FhirWS {
 	private void init() {
 
 		try {
+			//to remove prop and use server config
+			Properties props = new Properties();
+			props.load(getClass().getResourceAsStream("/log4j.properties"));
+			PropertyConfigurator.configure(props);
+			
 			logger.info("Got init request");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@GET
-	@Path("sdsd")
-	public Response getIndex() throws URISyntaxException {
-		return Response.seeOther(new URI("./demo/"))// .ok()//.entity("OK!!")
-				// .type(MediaType.TEXT_PLAIN)
-				// .seeOther("demo/index.html")
-				.build();
-	}
-
-	@POST
-	@Path("auth")
-	@Produces({ MediaType.TEXT_PLAIN})
-	public Response doAuthentication(@Context HttpServletRequest request,
-			@FormParam("username") String usernameForm,
-			@FormParam("password") String passwordForm,
-			@FormParam("i2b2domain") String i2b2domainForm,
-			@FormParam("i2b2url") String i2b2urlForm)
-			throws XQueryUtilException, IOException, JAXBException {
-		// Exception e1=new RuntimeException("test error");
-		// logger.error("test error1:",e1);
-		// if(1==1) throw (RuntimeException)e1;
-		Properties props = new Properties();
-		props.load(getClass().getResourceAsStream("/log4j.properties"));
-		PropertyConfigurator.configure(props);
-		logger.info("Got Auth request:");
-
-		HttpSession session = request.getSession(false);
-		if (session != null) {
-			// logger.info("invalidated session");
-			// session.invalidate();
-		}
-
-		String username = request.getHeader("username");
-		String password = request.getHeader("password");
-		String i2b2domain = request.getHeader("i2b2domain");
-		String i2b2url = request.getHeader("i2b2url");
-		String basePath = request
-				.getRequestURL()
-				.toString()
-				.replaceAll(
-						I2b2FhirWS.class.getAnnotation(Path.class).value()
-								.toString()
-								+ "$", "");
-
-		// after headers check for form
-		if (username == null)
-			username = usernameForm;
-		if (password == null)
-			password = passwordForm;
-		if (i2b2domain == null)
-			i2b2domain = i2b2domainForm;
-		if (i2b2url == null)
-			i2b2url = i2b2urlForm;
-		session = request.getSession();// new session
-
-		try {
-			if (username != null && password != null) {
-				// ArrayList<String> PDOcallHistory= new ArrayList<String> ();
-
-				session.setAttribute("i2b2domain", i2b2domain);
-				session.setAttribute("i2b2domainUrl", i2b2url);
-				session.setAttribute("username", username);
-				session.setAttribute("password", password);
-
-				I2b2Helper.initAllPatients(session, sbb);
-				return Response.ok().entity("Auth successful.")
-						.type(MediaType.TEXT_PLAIN)
-						.header("session_id", session.getId()).build();
-			}
-		} catch (AuthenticationFailure e) {
-
-			return Response.ok().entity("Authentication Failure")
-					// .cookie(authIdCookie)
-					.type(MediaType.TEXT_PLAIN)
-					.header("session_id", session.getId()).build();
-
-		} catch (FhirServerException e) {
-			Response.ok().entity(e.getMessage())// .cookie(authIdCookie)
-					.header("session_id", session.getId()).build();
-		}
-		return Response.ok().entity("Unknown ERROR")// .cookie(authIdCookie)
-				.header("session_id", session.getId()).build();
 	}
 
 	@GET
@@ -203,22 +134,22 @@ public class I2b2FhirWS {
 			@Context ServletContext servletContext) {
 		HttpSession session = null;
 		try {
-			// String resourceName="MedicationPrescription";
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = new Bundle();
-			session = request.getSession(false);
+			session = request.getSession();
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			if (session == null) {
-				byPassAuthentication(request);
-				session = request.getSession(false);
+			if (authenticateSession(session,request)== false) {	return Response.status(Status.BAD_REQUEST)
+					.type(MediaType.APPLICATION_XML).entity("login first")
+					.build();
 			}
+			
+			
 			logger.debug("session id:" + session.getId());
-			// I2b2Helper.getSessionLock(session);
 			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			// filter if patientId is mentioned in query string
@@ -312,29 +243,23 @@ public class I2b2FhirWS {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
-	private void byPassAuthentication(HttpServletRequest request)
+	private boolean authenticateSession(HttpSession session,HttpServletRequest request)
 			throws XQueryUtilException, IOException, JAXBException,
 			InterruptedException {
-		/*
-		 * return Response.status(Status.BAD_REQUEST)
-		 * .type(MediaType.APPLICATION_XML).entity("login first ") .build();
-		 */
-		HttpSession session = request.getSession();
-		I2b2Helper.getSessionLock(session);
-
-		if (session == null || session.getAttribute("md") == null) {
-			String username = request.getHeader("username");
-			String password = request.getHeader("password");
-			String i2b2domain = request.getHeader("i2b2domain");
-			String i2b2url = request.getHeader("i2b2url");
-			doAuthentication(request, username == null ? "demo" : username,
-					password == null ? "demouser" : password,
-					i2b2domain == null ? "i2b2demo" : i2b2domain,
-					i2b2url == null ? "http://services.i2b2.org:9090/i2b2"
-							: i2b2url);
+		String authHeaderContent = request.getHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
+		boolean authenticationStatus = authService
+				.authenticate(authHeaderContent);
+		if (authenticationStatus == false) {
+			return false;
 		}
-		I2b2Helper.releaseSessionLock(session);
-
+		
+		AccessToken tok=authService.getAccessTokenString(authHeaderContent);
+		session.setAttribute("i2b2domain", tok.getI2b2Project());
+		session.setAttribute("i2b2domainUrl", Parameters.i2b2Url);
+		session.setAttribute("username", tok.getResourceUserId());
+		session.setAttribute("password", tok.getI2b2Token());
+		
+		return true;
 	}
 
 	@GET
@@ -352,15 +277,10 @@ public class I2b2FhirWS {
 			JAXBException, JSONException, XQueryUtilException,
 			InterruptedException {
 
-		HttpSession session = request.getSession(false);
-
+		HttpSession session = request.getSession();
+	
 		try {
-			if (session == null) {
-				byPassAuthentication(request);
-				session = request.getSession(false);
-			}
-			if (session == null) {
-				return Response.status(Status.BAD_REQUEST)
+			if (authenticateSession(session,request)== false) {	return Response.status(Status.BAD_REQUEST)
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
@@ -412,7 +332,7 @@ public class I2b2FhirWS {
 
 	@GET
 	@Path("open")
-	public Response byPassAuthentication() {
+	public Response dummyToByPassAuthentication() {
 		return Response.ok().entity("dummy").build();
 
 	}

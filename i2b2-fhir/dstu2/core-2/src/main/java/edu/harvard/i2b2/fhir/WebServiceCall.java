@@ -33,6 +33,7 @@ public class WebServiceCall {
 						String.class);
 		*/
 		
+		logger.trace("webservice call to path:"+path+"\n request:"+requestXml);
 		Client c = Client.create();
 		WebResource r = c.resource(path);
 	    response = r.accept("Context-Type", "application/xml")

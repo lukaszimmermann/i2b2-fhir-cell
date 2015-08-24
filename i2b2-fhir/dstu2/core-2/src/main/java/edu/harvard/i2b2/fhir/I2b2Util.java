@@ -31,7 +31,12 @@ public class I2b2Util {
 		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
 				+ "/services/QueryToolService/pdorequest");
 		// logger.info("returning xml:"+xml);
-		xml = xml.replace("<password>", "<password is_token=\"true\">");
+		
+		//if password is token then indicate so
+		if (authToken.contains("SessionKey:")) {
+		} else {
+			xml = xml.replace("<password>", "<password is_token=\"true\">");
+		}
 		return xml;
 	}
 
@@ -87,11 +92,12 @@ public class I2b2Util {
 
 	public static List<String> getUserProjects(String pmResponseXml)
 			throws XQueryUtilException {
-		logger.trace("got xml"+pmResponseXml);
-		List<String> projects= XQueryUtil.getStringSequence("//user/project/name/text()", pmResponseXml);
-		
-		logger.trace("returning projects:"+projects.toString());
+		logger.trace("got xml" + pmResponseXml);
+		List<String> projects = XQueryUtil.getStringSequence(
+				"//user/domain/text()", pmResponseXml);
+
+		logger.trace("returning projects:" + projects.toString());
 		return projects;
-		
+
 	}
 }
