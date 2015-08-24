@@ -110,6 +110,7 @@ public class AuthTokenBean {
 
 	public AuthToken find(String authCode) {
 		try {
+			if (authCode==null) throw new IllegalArgumentException("search parameter:auth code is null");
 			em.getTransaction().begin();
 			AuthToken tok = em.find(AuthToken.class, authCode);
 			// .createQuery(

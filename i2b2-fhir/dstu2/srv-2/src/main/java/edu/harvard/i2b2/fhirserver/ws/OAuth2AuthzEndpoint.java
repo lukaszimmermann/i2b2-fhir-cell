@@ -89,6 +89,7 @@ public class OAuth2AuthzEndpoint {
 	@EJB
 	AuthTokenBean authTokenBean;
 
+	
 	// http://localhost:8080/srv-dstu2-0.2/api/authz/authorize?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=fcclient1
 	@GET
 	@Path("authorize")
@@ -152,6 +153,7 @@ public class OAuth2AuthzEndpoint {
 		}
 	}
 
+	
 	// Authenticate resource owner
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode

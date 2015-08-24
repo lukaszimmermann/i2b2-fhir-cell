@@ -20,18 +20,38 @@ public class AuthenticationService {
 	
 	@EJB
 	AccessTokenBean accessTokenBean;
-	
-	public boolean authenticate(String accessToken) {
-		AccessToken tok=accessTokenBean.find(accessToken);
-		return (tok!=null && (!isExpired(tok.getExpiryDate())))?true:false;
+
+	public boolean authenticate(String authHeaderContent) {
+		if (authHeaderContent == null){
+			logger.info("authfailure: authHeaderContent is null");
+			return false;
+		}
+
+		
+		AccessToken tok=getAccessTokenString(authHeaderContent);
+		boolean res= (tok != null && (!isExpired(tok.getExpiryDate()))) ? true
+				: false;
+		logger.info("auth is"+res);
+		return res;
 	}
 	
-	private boolean isExpired(Date inputDate){
-			
-			Date current=new Date();
-			boolean result= current.after(inputDate)?true:false;
-			logger.info("current Date:"+current.toGMTString()+"\ninputDate:"+inputDate.toGMTString()+"\nisExpired?:"+result);
-			return result;
+	public AccessToken getAccessTokenString(String authHeaderContent) {
+		if (authHeaderContent == null) return null;
+		String accessTokenId= authHeaderContent.replaceAll("Bearer\\s*", "");
+		
+		//if (accessTokenId.equals(AccessTokenBean.HARD_CODED_DAFEFAULT_TOKEN)) {
+		//	return accessTokenBean.createIfNotExistsDemoAccessToken();
+		//}
+		return accessTokenBean.find(accessTokenId);
+	}
+
+	private boolean isExpired(Date inputDate) {
+
+		Date current = new Date();
+		boolean result = current.after(inputDate) ? true : false;
+		logger.info("current Date:" + current.toGMTString() + "\ninputDate:"
+				+ inputDate.toGMTString() + "\nisExpired?:" + result);
+		return result;
 	}
 
 }
