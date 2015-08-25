@@ -84,8 +84,7 @@ import edu.harvard.i2b2.fhirserver.entity.AuthToken;
 public class OAuth2AuthzEndpoint {
 	static Logger logger = LoggerFactory.getLogger(OAuth2AuthzEndpoint.class);
 
-	static final String i2b2Url="http://services.i2b2.org:9090/i2b2";
-	
+
 	@EJB
 	AuthTokenBean authTokenBean;
 
@@ -136,7 +135,7 @@ public class OAuth2AuthzEndpoint {
 			String clientId = (String) oauthRequest.getClientId();
 			if (isClientIdValid(clientId) == true) {
 				
-				String uri = getBasePath(request).toString() + "i2b2login";
+				String uri = HttpHelper.getBasePath(request).toString() + "i2b2login";
 				logger.trace("redirecting to:" + uri);
 				return Response.status(Status.MOVED_PERMANENTLY)
 						.location(new URI(uri))
@@ -211,7 +210,7 @@ public class OAuth2AuthzEndpoint {
 		logger.trace("sessionid:" + session.getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
-				"i2b2demo", i2b2Url);
+				"i2b2demo", Config.i2b2Url);
 		logger.trace("got pmResponseXml:" + pmResponseXml);
 		if (I2b2Util.authenticateUser(pmResponseXml)) {
 			// logger.trace("got pmResponseXml:" + pmResponseXml);
@@ -231,7 +230,7 @@ public class OAuth2AuthzEndpoint {
 
 		} else {
 			session.setAttribute("msg","username or password was invalid");
-			String uri = getBasePath(request).toString() + "i2b2login";
+			String uri = HttpHelper.getBasePath(request).toString() + "i2b2login";
 			logger.trace("redirecting to:" + uri);
 			return Response.status(Status.MOVED_PERMANENTLY)
 					.location(new URI(uri))
@@ -315,25 +314,7 @@ public class OAuth2AuthzEndpoint {
 
 	// obtains an authorization decision (by asking the resource owner or by
 	// establishing approval via other means).
-	static public URI getBasePath(HttpServletRequest request)
-			throws URISyntaxException {
-		String uri = request.getScheme()
-				+ "://"
-				+ request.getServerName()
-				+ ("http".equals(request.getScheme())
-						&& request.getServerPort() == 80
-						|| "https".equals(request.getScheme())
-						&& request.getServerPort() == 443 ? "" : ":"
-						+ request.getServerPort())
-				+ request.getRequestURI()
-				+ (request.getQueryString() != null ? "?"
-						+ request.getQueryString() : "");
-		if(uri.contains("?")) uri=uri.split("\\?")[0];
-		logger.trace("full uri:" + uri);
-		uri = uri.substring(0, uri.lastIndexOf('/')) + "/";
-		logger.trace("base uri:" + uri);
-		return new URI(uri);
-	}
+	
 
 	String successfulResponse(HttpServletRequest request)
 			throws OAuthSystemException, URISyntaxException,
