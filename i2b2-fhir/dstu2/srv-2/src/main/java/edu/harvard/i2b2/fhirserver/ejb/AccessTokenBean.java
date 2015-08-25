@@ -26,13 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 import edu.harvard.i2b2.fhirserver.entity.AuthToken;
+import edu.harvard.i2b2.fhirserver.ws.Config;
 
 //@Stateful
 @Singleton
 @Startup
 public class AccessTokenBean {
 	static Logger logger = LoggerFactory.getLogger(AccessTokenBean.class);
-	public static final String HARD_CODED_DAFEFAULT_TOKEN = "1f4ffead29414d1977fba44e2bf4d8b7";
 
 	// @PersistenceContext
 	private EntityManager em;
@@ -46,7 +46,9 @@ public class AccessTokenBean {
 			Random r = new Random();
 			// createAccessToken("clientId232" + r.nextInt());
 			// deleteAllAccessTokens();
-			createIfNotExistsDemoAccessToken();
+			if (Config.demoAccessToken != null) {
+				createIfNotExistsDemoAccessToken();
+			}
 		} catch (Exception ex) {
 
 			logger.error("", ex);
@@ -98,13 +100,13 @@ public class AccessTokenBean {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
 			em.getTransaction().begin();
-			tok = em.find(AccessToken.class, HARD_CODED_DAFEFAULT_TOKEN);
+			tok = em.find(AccessToken.class, Config.demoAccessToken);
 			em.getTransaction().commit();
 
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(HARD_CODED_DAFEFAULT_TOKEN);
+				tok.setTokenString(Config.demoAccessToken);
 				tok.setResourceUserId("demo");
 				tok.setI2b2Token("demouser");
 				tok.setI2b2Project("i2b2demo");
@@ -120,7 +122,7 @@ public class AccessTokenBean {
 				em.getTransaction().commit();
 				logger.info("Persisted " + tok.toString());
 			}
-			logger.trace("returning:"+tok.toString());
+			logger.trace("returning:" + tok.toString());
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
@@ -227,14 +229,17 @@ public class AccessTokenBean {
 		}
 	}
 
-	/*
-	 * @PreDestroy
-	 * 
-	 * @Transactional public void dropTable() { try { EntityManagerFactory
-	 * factory = Persistence .createEntityManagerFactory("testPer");
-	 * em.joinTransaction(); em = factory.createEntityManager();
-	 * em.createNativeQuery("Drop table AccessToken;").executeUpdate();
-	 * em.createNativeQuery("shutdown;").executeUpdate(); } catch (Exception ex)
-	 * { em.getTransaction().rollback(); logger.error("", ex); } }
-	 */
+	/*@PreDestroy
+	public void dropTable() {
+		try {
+			em.getTransaction().begin();
+			em.createQuery("Drop table AccessToken;").executeUpdate();
+			//em.createNativeQuery("shutdown;").executeUpdate();
+			em.getTransaction().commit();
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+			em.getTransaction().rollback();
+		}
+	}*/
+
 }

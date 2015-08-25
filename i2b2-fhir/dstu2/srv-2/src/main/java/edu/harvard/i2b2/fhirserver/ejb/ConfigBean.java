@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 import edu.harvard.i2b2.fhirserver.entity.Person;
+import edu.harvard.i2b2.fhirserver.ws.Config;
 
 @Singleton
 @Startup
@@ -48,8 +49,12 @@ public class ConfigBean {
 		}
 
 	}
+	@PostConstruct
+	public void init(){
+	//	logger.info("initialized config:"+new Config());
+	}
 	
-	public void init() {
+	public void init1() {
 		try {
 			JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:~/test",
 					"sa", "sa");

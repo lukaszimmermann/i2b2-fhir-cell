@@ -255,7 +255,7 @@ public class I2b2FhirWS {
 		
 		AccessToken tok=authService.getAccessTokenString(authHeaderContent);
 		session.setAttribute("i2b2domain", tok.getI2b2Project());
-		session.setAttribute("i2b2domainUrl", Parameters.i2b2Url);
+		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
 		session.setAttribute("username", tok.getResourceUserId());
 		session.setAttribute("password", tok.getI2b2Token());
 		

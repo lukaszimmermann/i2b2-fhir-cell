@@ -38,10 +38,7 @@ public class AuthenticationService {
 	public AccessToken getAccessTokenString(String authHeaderContent) {
 		if (authHeaderContent == null) return null;
 		String accessTokenId= authHeaderContent.replaceAll("Bearer\\s*", "");
-		
-		//if (accessTokenId.equals(AccessTokenBean.HARD_CODED_DAFEFAULT_TOKEN)) {
-		//	return accessTokenBean.createIfNotExistsDemoAccessToken();
-		//}
+
 		return accessTokenBean.find(accessTokenId);
 	}
 
