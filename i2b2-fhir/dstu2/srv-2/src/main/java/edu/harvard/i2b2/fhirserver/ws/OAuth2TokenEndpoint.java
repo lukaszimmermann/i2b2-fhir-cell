@@ -59,9 +59,9 @@ public class OAuth2TokenEndpoint {
 			// find if AuthToken was issued, from db
 			String authCode = oauthRequest.getCode();
 			AuthToken authToken = authTokenBean.find(authCode);
-			if (authToken == null)
+			if (authToken == null){
 				return buildBadAuthCodeResponse();
-
+			}
 			// check if clientid is valid
 			if (!checkClientId(oauthRequest.getClientId())) {
 				return buildInvalidClientIdResponse();
@@ -134,7 +134,7 @@ public class OAuth2TokenEndpoint {
 
 	private Response buildBadAuthCodeResponse() {
 		// TODO Auto-generated method stub
-		return Response.status(Status.BAD_REQUEST).entity("bad auth code")
+		return Response.status(Status.BAD_REQUEST).entity("{'x-reason'='bad auth code'").header("x-reason","bad auth code")
 				.build();
 	}
 
