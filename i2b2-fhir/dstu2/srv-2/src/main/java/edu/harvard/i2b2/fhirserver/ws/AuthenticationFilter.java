@@ -46,8 +46,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		if (context.getUriInfo().getPath().toString().startsWith("/authz")
 				|| context.getUriInfo().getPath().toString()
 						.startsWith("/token")
-			//	|| context.getUriInfo().getPath().toString()
-				//		.startsWith("/api/meta")
+				|| context.getUriInfo().getPath().toString()
+						.startsWith("/meta")
 		// bypass Authentication
 		)
 			return;
