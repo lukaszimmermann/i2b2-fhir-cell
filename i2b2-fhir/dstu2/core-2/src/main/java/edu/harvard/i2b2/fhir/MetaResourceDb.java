@@ -37,8 +37,7 @@ public class MetaResourceDb {
 	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
 	List<Resource> resourceList;
-	static RxNormAdapter rxNormAdapter = null;
-
+	
 	public MetaResourceDb() throws IOException {
 		init();
 	}
@@ -48,8 +47,6 @@ public class MetaResourceDb {
 	}
 
 	public void init() throws IOException {
-		if (rxNormAdapter == null)
-			rxNormAdapter = new RxNormAdapter();
 		resourceList=new ArrayList<Resource>();
 		// metaResources = new MetaResourcePrimaryDb();
 		logger.trace("created resourcedb");
@@ -81,10 +78,7 @@ public class MetaResourceDb {
 			resourceList.remove(presentRes);
 		}
 
-		if (Medication.class.isInstance(r)) {
-			Medication m = Medication.class.cast(r);
-			rxNormAdapter.addRxCui(m);
-		}
+		r=FhirEnrich.enrich(r);
 		resourceList.add(r);
 		
 		

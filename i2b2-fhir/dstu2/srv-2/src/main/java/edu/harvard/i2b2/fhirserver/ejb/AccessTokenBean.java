@@ -195,6 +195,7 @@ public class AccessTokenBean {
 	public AccessToken find(String accessCode) {
 		try {
 			em.getTransaction().begin();
+			logger.trace("find accesstok with id:"+accessCode);
 			AccessToken tok = em.find(AccessToken.class, accessCode);
 			if (tok != null) {
 				logger.info("returning :" + tok);
