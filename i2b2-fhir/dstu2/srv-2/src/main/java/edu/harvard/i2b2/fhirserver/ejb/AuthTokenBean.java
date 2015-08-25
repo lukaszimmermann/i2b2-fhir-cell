@@ -74,8 +74,8 @@ public class AuthTokenBean {
 			logger.info("Persisted authToken" + tok.toString());
 			return tok;
 		} catch (Exception ex) {
-			em.getTransaction().rollback();
 			logger.error(ex.getMessage(), ex);
+			em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 	}
@@ -88,8 +88,8 @@ public class AuthTokenBean {
 			em.getTransaction().commit();
 			return tokens;
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			logger.error(e.getMessage(), e);
+			em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 	}
@@ -102,8 +102,8 @@ public class AuthTokenBean {
 
 			em.getTransaction().commit();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			logger.error(e.getMessage(), e);
+			em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 	}
@@ -120,8 +120,8 @@ public class AuthTokenBean {
 			logger.info("found token:" + tok);
 			return tok;
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			logger.error(e.getMessage(), e);
+			em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 
@@ -140,6 +140,7 @@ public class AuthTokenBean {
 			}
 			em.getTransaction().commit();
 		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			em.getTransaction().rollback();
 		}
 	}
@@ -163,8 +164,8 @@ public class AuthTokenBean {
 				tok = list.get(0);
 			return tok;
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			logger.error(e.getMessage(), e);
+			em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 
@@ -176,8 +177,8 @@ public class AuthTokenBean {
 		try {
 			em.createQuery("SHUTDOWN").executeUpdate();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			logger.error(e.getMessage(), e);
+			em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 

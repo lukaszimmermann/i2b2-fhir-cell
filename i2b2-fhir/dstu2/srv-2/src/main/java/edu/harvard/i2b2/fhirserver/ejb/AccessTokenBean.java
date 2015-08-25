@@ -153,7 +153,7 @@ public class AccessTokenBean {
 			em.persist(tok);
 
 			AuthToken authTok = em.find(AuthToken.class, authCode);
-			logger.info("Removing " + authTok.toString());
+			logger.info("Removing authTok " );
 			em.remove(authTok);
 
 			em.getTransaction().commit();
