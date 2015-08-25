@@ -19,9 +19,11 @@ package org.hl7.fhir;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -88,6 +90,7 @@ import javax.xml.bind.annotation.XmlType;
     "messaging",
     "document"
 })
+@XmlRootElement(name="Conformance")
 public class Conformance
     extends DomainResource
 {

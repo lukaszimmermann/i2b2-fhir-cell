@@ -50,6 +50,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -61,6 +62,10 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.Conformance;
+import org.hl7.fhir.ConformanceRest;
+import org.hl7.fhir.ConformanceSecurity;
+import org.hl7.fhir.Extension;
 import org.hl7.fhir.Instant;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Uri;
@@ -83,17 +88,16 @@ import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 
-
 /*
  * to use accessToken for authentication
  */
 @Path("")
 public class I2b2FhirWS {
 	static Logger logger = LoggerFactory.getLogger(I2b2FhirWS.class);
-	
+
 	@EJB
 	AuthenticationService authService;
-	
+
 	@EJB
 	AccessTokenBean accessTokenBean;
 
@@ -110,11 +114,11 @@ public class I2b2FhirWS {
 	private void init() {
 
 		try {
-			//to remove prop and use server config
+			// to remove prop and use server config
 			Properties props = new Properties();
 			props.load(getClass().getResourceAsStream("/log4j.properties"));
 			PropertyConfigurator.configure(props);
-			
+
 			logger.info("Got init request");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -130,6 +134,7 @@ public class I2b2FhirWS {
 			@QueryParam("_include") List<String> includeResources,
 			@QueryParam("filterf") String filterf,
 			@HeaderParam("accept") String acceptHeader,
+			@Context HttpHeaders headers,
 			@Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		HttpSession session = null;
@@ -137,18 +142,23 @@ public class I2b2FhirWS {
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
+			for (String h : headers.getRequestHeaders().keySet()) {
+				logger.info("Header->" + h + ":" + headers.getRequestHeader(h));
+
+			}
+
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = new Bundle();
 			session = request.getSession();
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			if (authenticateSession(session,request)== false) {	return Response.status(Status.BAD_REQUEST)
-					.type(MediaType.APPLICATION_XML).entity("login first")
-					.build();
+			if (authenticateSession(session, headers) == false) {
+				return Response.status(Status.BAD_REQUEST)
+						.type(MediaType.APPLICATION_XML).entity("login first")
+						.build();
 			}
-			
-			
+
 			logger.debug("session id:" + session.getId());
 			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
@@ -214,7 +224,8 @@ public class I2b2FhirWS {
 			logger.info("returning response...");
 			String msg = null;
 			String mediaType = null;
-			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
+			if (acceptHeader.contains("application/json")
+					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.bundleToJsonString(s);
 				mediaType = "application/json";
 			} else {
@@ -243,44 +254,50 @@ public class I2b2FhirWS {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
-	private boolean authenticateSession(HttpSession session,HttpServletRequest request)
+	private boolean authenticateSession(HttpSession session, HttpHeaders headers)
 			throws XQueryUtilException, IOException, JAXBException,
 			InterruptedException {
-		String authHeaderContent = request.getHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
+		List<String> authHeaderContentList = headers
+				.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
+		if (authHeaderContentList.size() == 0) {
+			logger.warn("No Authentication header present");
+			return false;
+		}
+		String authHeaderContent = authHeaderContentList.get(0);
 		boolean authenticationStatus = authService
 				.authenticate(authHeaderContent);
 		if (authenticationStatus == false) {
 			return false;
 		}
-		
-		AccessToken tok=authService.getAccessTokenString(authHeaderContent);
+
+		AccessToken tok = authService.getAccessTokenString(authHeaderContent);
 		session.setAttribute("i2b2domain", tok.getI2b2Project());
 		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
 		session.setAttribute("username", tok.getResourceUserId());
 		session.setAttribute("password", tok.getI2b2Token());
-		
+
 		return true;
 	}
 
 	@GET
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
-		"application/xml+fhir", "application/json+fhir" })
-
+			"application/xml+fhir", "application/json+fhir" })
 	public Response getParticularResource(
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader,
-			@Context HttpServletRequest request)
+			@Context HttpHeaders headers, @Context HttpServletRequest request)
 			throws DatatypeConfigurationException,
 			ParserConfigurationException, SAXException, IOException,
 			JAXBException, JSONException, XQueryUtilException,
 			InterruptedException {
 
 		HttpSession session = request.getSession();
-	
+
 		try {
-			if (authenticateSession(session,request)== false) {	return Response.status(Status.BAD_REQUEST)
+			if (authenticateSession(session, headers) == false) {
+				return Response.status(Status.BAD_REQUEST)
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
@@ -300,7 +317,8 @@ public class I2b2FhirWS {
 
 			r = md.getParticularResource(c, id);
 			String mediaType = null;
-			if (acceptHeader.contains("application/json")||acceptHeader.contains("application/json+fhir")) {
+			if (acceptHeader.contains("application/json")
+					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
 				mediaType = "application/json";
 			} else {
@@ -334,6 +352,58 @@ public class I2b2FhirWS {
 	@Path("open")
 	public Response dummyToByPassAuthentication() {
 		return Response.ok().entity("dummy").build();
+
+	}
+
+	@GET
+	@Path("meta")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+		"application/xml+fhir", "application/json+fhir" })
+
+	public Response conformanceStatement(@HeaderParam("accept") String acceptHeader,
+			@Context HttpServletRequest request) throws JAXBException, JSONException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
+		URI fhirBase = HttpHelper.getBasePath(request);
+		Conformance c = new Conformance();
+		ConformanceRest rest = new ConformanceRest();
+		ConformanceSecurity security = new ConformanceSecurity();
+		Extension OAuthext = new Extension();
+		security.getExtension().add(OAuthext);
+		OAuthext.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
+
+		Extension authExt = new Extension();
+		authExt.setUrl("authorize");
+		Uri uri = new Uri();
+		uri.setValue(fhirBase + "api/authz/authorize");
+		authExt.setValueUri(uri);
+		OAuthext.getExtension().add(authExt);
+
+		Extension tokenExt = new Extension();
+		tokenExt.setUrl("token");
+		uri = new Uri();
+		uri.setValue(fhirBase + "api/token");
+		tokenExt.setValueUri(uri);
+		OAuthext.getExtension().add(tokenExt);
+
+		rest.setSecurity(security);
+		c.getRest().add(rest);
+		logger.trace("conf:" + JAXBUtil.toXml(c));
+
+		
+		String msg;
+		String mediaType;
+		if (acceptHeader.contains("application/json")
+				|| acceptHeader.contains("application/json+fhir")) {
+			msg = FhirUtil.resourceToJsonString(c);
+			mediaType = "application/json";
+		} else {
+			msg = JAXBUtil.toXml(c);
+			mediaType = "application/xml";
+		}
+		msg = I2b2Helper.removeSpace(msg);
+		logger.info("acceptHeader:" + acceptHeader);
+	
+		return Response.ok().type(mediaType)
+				.entity(msg).build();
 
 	}
 
