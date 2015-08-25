@@ -373,14 +373,14 @@ public class I2b2FhirWS {
 		Extension authExt = new Extension();
 		authExt.setUrl("authorize");
 		Uri uri = new Uri();
-		uri.setValue(fhirBase + "api/authz/authorize");
+		uri.setValue(fhirBase + "authz/authorize");
 		authExt.setValueUri(uri);
 		OAuthext.getExtension().add(authExt);
 
 		Extension tokenExt = new Extension();
 		tokenExt.setUrl("token");
 		uri = new Uri();
-		uri.setValue(fhirBase + "api/token");
+		uri.setValue(fhirBase + "token");
 		tokenExt.setValueUri(uri);
 		OAuthext.getExtension().add(tokenExt);
 
