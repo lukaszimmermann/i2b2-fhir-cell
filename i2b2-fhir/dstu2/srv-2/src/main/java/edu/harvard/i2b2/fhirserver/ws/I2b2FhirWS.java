@@ -44,6 +44,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -134,8 +135,7 @@ public class I2b2FhirWS {
 			@QueryParam("_include") List<String> includeResources,
 			@QueryParam("filterf") String filterf,
 			@HeaderParam("accept") String acceptHeader,
-			@Context HttpHeaders headers,
-			@Context HttpServletRequest request,
+			@Context HttpHeaders headers, @Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		HttpSession session = null;
 		try {
@@ -355,13 +355,29 @@ public class I2b2FhirWS {
 
 	}
 
+	@OPTIONS
+	@Path("")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+			"application/xml+fhir", "application/json+fhir" })
+	public Response conformanceStatement2(
+			@HeaderParam("accept") String acceptHeader,
+			@Context HttpServletRequest request) throws JAXBException,
+			JSONException, IOException, ParserConfigurationException,
+			SAXException, URISyntaxException {
+		return conformanceStatement(acceptHeader, request);
+
+	}
+
 	@GET
 	@Path("meta")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
-		"application/xml+fhir", "application/json+fhir" })
+			"application/xml+fhir", "application/json+fhir" })
+	public Response conformanceStatement(
+			@HeaderParam("accept") String acceptHeader,
+			@Context HttpServletRequest request) throws JAXBException,
+			JSONException, IOException, ParserConfigurationException,
+			SAXException, URISyntaxException {
 
-	public Response conformanceStatement(@HeaderParam("accept") String acceptHeader,
-			@Context HttpServletRequest request) throws JAXBException, JSONException, IOException, ParserConfigurationException, SAXException, URISyntaxException {
 		URI fhirBase = HttpHelper.getBasePath(request);
 		Conformance c = new Conformance();
 		ConformanceRest rest = new ConformanceRest();
@@ -388,7 +404,6 @@ public class I2b2FhirWS {
 		c.getRest().add(rest);
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
-		
 		String msg;
 		String mediaType;
 		if (acceptHeader.contains("application/json")
@@ -401,9 +416,8 @@ public class I2b2FhirWS {
 		}
 		msg = I2b2Helper.removeSpace(msg);
 		logger.info("acceptHeader:" + acceptHeader);
-	
-		return Response.ok().type(mediaType)
-				.entity(msg).build();
+
+		return Response.ok().type(mediaType).entity(msg).build();
 
 	}
 
