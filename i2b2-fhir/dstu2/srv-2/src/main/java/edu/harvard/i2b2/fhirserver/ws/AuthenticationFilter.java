@@ -67,9 +67,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	Response denyRequest() {
 		Response r = Response.status(Status.UNAUTHORIZED)
 				.entity("Authentication Failure")
-				// .cookie(authIdCookie)
 				.type(MediaType.TEXT_PLAIN)
-				// .header("session_id", session.getId())
 				.build();
 		return r;
 	}

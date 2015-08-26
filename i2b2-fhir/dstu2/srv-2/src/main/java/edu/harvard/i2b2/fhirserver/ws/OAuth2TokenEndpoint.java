@@ -60,8 +60,12 @@ public class OAuth2TokenEndpoint {
 			String authCode = oauthRequest.getCode();
 			AuthToken authToken = authTokenBean.find(authCode);
 			if (authToken == null){
+				logger.debug("authToken is not found");
+				
 				return buildBadAuthCodeResponse();
 			}
+			logger.debug("authToken is "+authToken.toString());
+			
 			// check if clientid is valid
 			if (!checkClientId(oauthRequest.getClientId())) {
 				return buildInvalidClientIdResponse();
@@ -89,9 +93,10 @@ public class OAuth2TokenEndpoint {
 					GrantType.REFRESH_TOKEN.toString())) {
 				// refresh token is not supported in this implementation
 				// buildInvalidUserPassResponse();
+				//buildAccessTokenNotSupportedResponse();
 			}
 
-			final String accessToken = oauthIssuerImpl.accessToken();
+			final String accessTokenString = oauthIssuerImpl.accessToken();
 			// database.addToken(accessToken);
 			String resourceUserId=authToken.getResourceUserId();
 			String i2b2Token=authToken.getI2b2Token();
@@ -99,12 +104,13 @@ public class OAuth2TokenEndpoint {
 			String clientId=authToken.getClientId();
 			String scope=authToken.getScope();
 			
-			accessTokenBean.createAccessTokenAndDeleteAuthToken(authCode,accessToken, resourceUserId, i2b2Token, i2b2Project, clientId, scope);
+			
+			accessTokenBean.createAccessTokenAndDeleteAuthToken(authCode,accessTokenString, resourceUserId, i2b2Token, i2b2Project, clientId, scope);
 			
 			
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
-					.setAccessToken(accessToken).setExpiresIn("3600")
+					.setAccessToken(accessTokenString).setExpiresIn("3600")
 					.buildJSONMessage();
 			logger.info("returning res:" + response.getBody());
 
@@ -134,7 +140,8 @@ public class OAuth2TokenEndpoint {
 
 	private Response buildBadAuthCodeResponse() {
 		// TODO Auto-generated method stub
-		return Response.status(Status.BAD_REQUEST).entity("{'x-reason'='bad auth code'").header("x-reason","bad auth code")
+		return Response
+				.status(Status.BAD_REQUEST).entity("{'x-reason':'bad auth code'}").header("x-reason","bad auth code")
 				.build();
 	}
 

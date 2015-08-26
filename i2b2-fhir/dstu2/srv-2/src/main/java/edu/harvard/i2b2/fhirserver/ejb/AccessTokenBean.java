@@ -153,10 +153,12 @@ public class AccessTokenBean {
 			em.persist(tok);
 
 			AuthToken authTok = em.find(AuthToken.class, authCode);
+			if (authTok==null) throw new RuntimeException("auth Tok was not found");
 			logger.info("Removing authTok " );
 			em.remove(authTok);
-
+			
 			em.getTransaction().commit();
+			
 			logger.info("Persisted " + tok.toString());
 			return tok;
 		} catch (Exception ex) {
