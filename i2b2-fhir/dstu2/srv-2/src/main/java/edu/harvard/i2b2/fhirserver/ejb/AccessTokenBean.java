@@ -113,7 +113,7 @@ public class AccessTokenBean {
 				tok.setClientId("fcclient1");
 				tok.setScope("user *.read");
 				tok.setCreatedDate(new Date());
-				tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
+				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
 
 				logger.info("Demo token does not exist; Hence creating .."
 						+ tok.toString());
