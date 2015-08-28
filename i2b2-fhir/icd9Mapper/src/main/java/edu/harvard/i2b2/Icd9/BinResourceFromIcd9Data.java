@@ -119,7 +119,7 @@ public class BinResourceFromIcd9Data {
 		InputStream fis = null;
 
 		try {
-			fis = Utils.getInputStream("Icd9/Icd9CodeToNameMap.bin");
+			fis = BinResourceFromIcd9Data.class.getResourceAsStream("/Icd9/Icd9CodeToNameMap.bin");
 			ois = new ObjectInputStream(fis);
 			map = (HashMap<String, String>) ois.readObject();
 

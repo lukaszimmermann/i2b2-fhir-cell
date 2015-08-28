@@ -115,7 +115,7 @@ public class BinResourceFromLoincData {
 		InputStream fis = null;
 
 		try {
-			fis = Utils.getInputStream("loinc/loincCodeToNameMap.bin");
+			fis = BinResourceFromLoincData.class.getResourceAsStream("/loinc/loincCodeToNameMap.bin");
 			ois = new ObjectInputStream(fis);
 			map = (HashMap<String, String>) ois.readObject();
 
