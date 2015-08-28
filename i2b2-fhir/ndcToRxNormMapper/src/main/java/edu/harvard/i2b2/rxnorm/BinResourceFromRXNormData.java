@@ -257,7 +257,7 @@ public class BinResourceFromRXNormData {
 		InputStream fis = null;
 
 		try {
-			fis = Utils.getInputStream("rxnorm/rxCuiMap.bin");
+			fis = BinResourceFromRXNormData.class.getResourceAsStream("/rxnorm/rxCuiMap.bin");
 			ois = new ObjectInputStream(fis);
 			rxCuiMap2 = (HashMap<Integer, String>) ois.readObject();
 
@@ -279,7 +279,7 @@ public class BinResourceFromRXNormData {
 		InputStream fis = null;
 
 		try {
-			fis = Utils.getInputStream("rxnorm/ndc2CuiMap.bin");
+			fis = BinResourceFromRXNormData.class.getResourceAsStream("/rxnorm/ndc2CuiMap.bin");
 			ois = new ObjectInputStream(fis);
 			Ndc2CuiMap2 = (HashMap<String, Integer>) ois.readObject();
 
