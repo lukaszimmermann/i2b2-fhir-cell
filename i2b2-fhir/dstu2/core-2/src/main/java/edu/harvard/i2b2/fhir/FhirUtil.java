@@ -631,6 +631,7 @@ public class FhirUtil {
 
 			listRC.add(childRc);
 			logger.debug("added " + c.getId() + " into " + p.getId());
+			logger.trace(JAXBUtil.toXml(p));
 
 		} catch (NoSuchMethodException | SecurityException
 				| IllegalAccessException | IllegalArgumentException

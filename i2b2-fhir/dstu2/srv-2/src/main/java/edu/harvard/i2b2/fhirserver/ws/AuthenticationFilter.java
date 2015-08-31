@@ -33,6 +33,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		logger.trace("Authorization header:" + authHeaderContent + "\n for"
 				+ context.getUriInfo().getPath().toString());
 
+		
 		if (Config.demoAccessToken != null & Config.openAccess
 				& context.getUriInfo().getPath().toString().startsWith("/open")) {
 			logger.debug("for open connection adding demo access token to header");
