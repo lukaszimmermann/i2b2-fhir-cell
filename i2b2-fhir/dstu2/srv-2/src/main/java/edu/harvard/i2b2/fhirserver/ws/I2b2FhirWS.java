@@ -138,6 +138,8 @@ public class I2b2FhirWS {
 			@Context HttpHeaders headers, @Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
 		HttpSession session = null;
+		logger.debug("got request " + request.getPathInfo()+"?"+request.getQueryString());
+		
 		try {
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
@@ -213,7 +215,6 @@ public class I2b2FhirWS {
 
 			// String returnString = FhirUtil.getResourceBundle(s, basePath,
 			// url);
-			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
 			String msg = null;
@@ -286,7 +287,8 @@ public class I2b2FhirWS {
 			ParserConfigurationException, SAXException, IOException,
 			JAXBException, JSONException, XQueryUtilException,
 			InterruptedException {
-
+		
+		logger.debug("got request " + request.getPathInfo()+"?"+request.getQueryString());
 		HttpSession session = request.getSession();
 
 		try {

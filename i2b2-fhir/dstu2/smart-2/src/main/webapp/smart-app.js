@@ -67,10 +67,9 @@ function updatePatientDisplay() {
 	//._include("MedicationPrescription.patient")
 	.search().then(
 			function(prescriptions) {
-				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
 				
-				//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
-					var rx=prescriptions[0];
+			//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
+				//	var rx=prescriptions[0];
 				//var p= smart.cachedLink(rx, rx.patient);
 				
 				
@@ -87,9 +86,9 @@ function updatePatientDisplay() {
 				prescriptions.forEach(function(rx) {
 					//document.getElementById("display").innerHTML=JSON.stringify(rx,null,4);
 					var med = smart.cachedLink(rx, rx.medication);
-					document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
+					//document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
 						
-				/*	var name="-";
+				var name="-";
 					if(med.hasOwnProperty("name")) name=med.name;
 					var row = $("<tr>");
 					var di=rx.dosageInstruction[0];
@@ -100,19 +99,19 @@ function updatePatientDisplay() {
 					//row.append( $("<td>").text(rx.dispense.quantity.value+" "+rx.dispense.quantity.units));
 					// $("#med_list").append('<tr><td>'+rx.dateWritten.split("T")[0]+'</td><td>'+med.name+'</td></tr>');
 					$("#med_list").append(row);
-					*/
+					
 					
 				});
 			
 			
 		});
-	/*
+	
 	pt.Observation.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(
 	
 			function(observations) {
-				document.getElementById("display1").innerHTML=JSON.stringify(observations[0],null,4);
+				//document.getElementById("display1").innerHTML=JSON.stringify(observations[0],null,4);
 			
 				observations.forEach(function(lab) {
 				var row = $("<tr>");
@@ -146,6 +145,7 @@ function updatePatientDisplay() {
 				}
 				
 	);
+	/*
 	
 	pt.Condition.where// .status("active")
 	//._include("Observation.subject")
