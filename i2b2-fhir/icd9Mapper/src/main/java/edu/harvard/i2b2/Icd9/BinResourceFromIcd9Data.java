@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,6 +47,8 @@ import au.com.bytecode.opencsv.CSVReader;
 
 /*
 Download data from http://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html
+
+to get codes from metathesaurus!
 */	
 public class BinResourceFromIcd9Data {
 	static Logger logger = LoggerFactory
@@ -66,6 +69,48 @@ public class BinResourceFromIcd9Data {
 	private static final CSV csv = CSV.separator(';').quote('\'').skipLines(1)
 			.charset("UTF-8").create();
 
+	/*
+	public void toDoinitIcd9CodeToNameMap() throws IOException, TikaException {
+		String inputFilePath = "/Users/***REMOVED***/Downloads/Dindex12.rtf";
+		FileInputStream is=new FileInputStream(inputFilePath);
+		
+		
+
+
+		File tmpFile= File.createTempFile("Dindex12",".txt.tmp");
+		FileOutputStream os=new FileOutputStream(tmpFile);
+
+		Tika tika = new Tika();
+	    String txtFormat=null;
+		try {
+	        txtFormat=tika.parseToString(is);
+	    } finally {
+	        is.close();
+	    }
+		
+	    os.write(txtFormat.getBytes());
+	    os.close();
+	    logger.info("created:"+tmpFile.getAbsolutePath());
+	    
+		final int maxLines = Utils.countLines(tmpFile.getAbsolutePath());
+		try (BufferedReader br = new BufferedReader(new FileReader(tmpFile)))
+		{
+
+			String sCurrentLine;
+
+			while ((sCurrentLine = br.readLine()) != null) {
+				System.out.println(sCurrentLine);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+
+		
+		
+	}
+	*/
+	
 	public void initIcd9CodeToNameMap() throws IOException {
 		String inputFilePath = inputDataFolder+"CMS31_DESC_LONG_DX.txt";
 		final int maxLines = Utils.countLines(inputFilePath);
@@ -79,13 +124,14 @@ public class BinResourceFromIcd9Data {
 		     	List<String> arr=Arrays.asList(values);
 		        //logger.trace(rowIndex+""+Arrays.asList(values).get(0));
 		        if(rowIndex>1){
-		        	String num=arr.get(0).substring(0,4).replaceAll(" ", "");
-		        	String name=arr.get(0).substring(6);
-		        	if(num.equals("V902"))logger.trace(num+"->"+name);
-		        	logger.trace(num+"->"+name);
+		        	int sep=arr.get(0).indexOf(" ");
+		        	String num=arr.get(0).substring(0,sep).trim();
+		        	String name=arr.get(0).substring(sep+1).trim();
+		        	if(num.contains("37993")||num.contains("V902"))logger.trace("<"+num+">-><"+name+">");
+		        	//logger.trace(num+"->"+name);
 		        	Icd9CodeToNameMap.put(num,name);
 		        }
-		        if (rowIndex % 10000 == 0)
+		        if (rowIndex % 1000 == 0)
 					System.out.println((rowIndex * 100) / maxLines + "%-"
 							+Icd9CodeToNameMap.size());
 		    }
@@ -119,7 +165,7 @@ public class BinResourceFromIcd9Data {
 		InputStream fis = null;
 
 		try {
-			fis = BinResourceFromIcd9Data.class.getResourceAsStream("/Icd9/Icd9CodeToNameMap.bin");
+			fis = BinResourceFromIcd9Data.class.getResourceAsStream("/icd9/Icd9CodeToNameMap.bin");
 			ois = new ObjectInputStream(fis);
 			map = (HashMap<String, String>) ois.readObject();
 
@@ -136,10 +182,12 @@ public class BinResourceFromIcd9Data {
 	public static void main(String[] args) {
 
 		try {
-			new BinResourceFromIcd9Data(
+			new BinResourceFromIcd9Data(//"/Users/***REMOVED***/Downloads/");
 					"/Users/***REMOVED***/Downloads/cmsv31-master-descriptions/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+			
 			e.printStackTrace();
 		}
 	}

@@ -26,7 +26,7 @@ public class FhirEnrich {
 		try {
 			rxNormAdapter = new RxNormAdapter();
 			loincAdapter = new LoincFhirAdapter();
-	//		icd9Adapter = new Icd9FhirAdapter();
+			icd9Adapter = new Icd9FhirAdapter();
 		} catch (IOException e) {
 			logger.error(e.getMessage(),e);
 		}
@@ -45,11 +45,11 @@ public class FhirEnrich {
 			Observation ob = Observation.class.cast(r);
 			loincAdapter.addLoincName(ob);
 		}
-		/*
+		
 		if (Condition.class.isInstance(r)) {
 			Condition cond = Condition.class.cast(r);
 			 icd9Adapter.addIcd9Name(cond);
-		}*/
+		}
 
 		// Labs loinc
 

@@ -110,15 +110,14 @@ return
         <ns2:div>{$cn}</ns2:div>
     </text>
   
-  
-  <name>
+    <code>  
     <coding>
       <system value="http://loinc.org"/>
       <code value="{$cid}"/>
       <display value="{$cn}"/>
       <primary value="true"/>
     </coding>
-  </name>
+</code>
   
   <appliesPeriod>
     <start value="{$sd}"/>

@@ -32,7 +32,20 @@
 	<version>1.1</version>
 </dependency>
 
+<!-- 
+<dependency>
+	<groupId>org.apache.tika</groupId>
+	<artifactId>tika-core</artifactId>
+	<version>1.10</version>
+	
+</dependency>
+<dependency>
+	<groupId>org.apache.tika</groupId>
+	<artifactId>tika-parsers</artifactId>
+	<version>1.10</version>
+</dependency>
 
+-->
 		</dependencies>
 
 

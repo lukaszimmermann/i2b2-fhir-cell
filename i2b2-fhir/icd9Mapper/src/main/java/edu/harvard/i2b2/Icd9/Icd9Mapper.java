@@ -41,9 +41,11 @@ public class Icd9Mapper {
 	
 
 	
-	public String getIcd9Name(String Icd9Number) {
-		if (Icd9Number != null) {
-			return Icd9CodeToNameMap.get(Icd9Number);
+	public String getIcd9Name(String icd9Number) {
+		icd9Number=icd9Number.replace(".","");
+		logger.trace("icd9Number:<"+icd9Number+">");
+		if (icd9Number != null) {
+			return Icd9CodeToNameMap.get(icd9Number);
 		} else {
 			return null;
 		}

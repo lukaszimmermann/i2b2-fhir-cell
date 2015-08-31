@@ -36,8 +36,13 @@ public class ICD9AdapterTest {
 
 	@Test
 	public void Icd9CodeToNameTest() throws IOException, JAXBException {
-		assertEquals( "Retained plastic fragments",rA.getIcd9Name("V902"));
-		//logger.trace("->"+rA.getIcd9Name("789-8"));
+		assertEquals("Retained plastic fragments",rA.getIcd9Name("V902"));
+		//
+		logger.trace("->"+rA.getIcd9Name("V25.41"));
+		assertEquals("Surveillance of contraceptive pill",rA.getIcd9Name("V25.41"));
+		logger.trace("->"+rA.getIcd9Name("379.93"));;
+		assertEquals("Redness or discharge of eye",rA.getIcd9Name("379.93"));
+		
 	}
 
 }
