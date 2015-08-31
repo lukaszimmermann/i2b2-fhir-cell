@@ -213,6 +213,7 @@ public class I2b2FhirWS {
 
 			// String returnString = FhirUtil.getResourceBundle(s, basePath,
 			// url);
+			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 			logger.info("size of db:" + md.getSize());
 			logger.info("returning response...");
 			String msg = null;
@@ -220,10 +221,10 @@ public class I2b2FhirWS {
 			if (acceptHeader.contains("application/json")
 					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.bundleToJsonString(s);
-				mediaType = "application/json";
+				mediaType="application/json+fhir";
 			} else {
 				msg = JAXBUtil.toXml(s);
-				mediaType = "application/xml";
+				mediaType="application/xml+fhir";
 			}
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);

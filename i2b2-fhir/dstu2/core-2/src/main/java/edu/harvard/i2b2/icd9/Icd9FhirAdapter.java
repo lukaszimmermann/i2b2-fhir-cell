@@ -54,9 +54,11 @@ public class Icd9FhirAdapter {
 					) {
 				
 				String Icd9Number=coding.getCode().getValue().replace("Icd9:", "");
-				logger.trace("Icd9Num:"+Icd9Number);
+				String display=Icd9Mapper.getIcd9Name(Icd9Number);
+				logger.trace("Icd9Num:"+Icd9Number+"->"+display);
+				
 				org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-				displayValue.setValue(Icd9Mapper.getIcd9Name(Icd9Number));
+				displayValue.setValue(display);
 				coding.setDisplay(displayValue);
 			}
 		}

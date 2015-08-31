@@ -202,19 +202,7 @@ public class I2b2Helper {
 		return id;
 	}
 
-	static String extractPatientId(String input) {
-		if (input == null)
-			return null;
-		String id = null;
-		Pattern p = Pattern.compile("[P|p]atient=([a-zA-Z0-9]+)");
-		Matcher m = p.matcher(input);
-
-		if (m.find()) {
-			id = m.group(1);
-			logger.trace(id);
-		}
-		return id;
-	}
+	
 
 	static String insertSessionParametersInXml(String xml, HttpSession session)
 			throws XQueryUtilException {
@@ -300,6 +288,19 @@ public class I2b2Helper {
 		}
 	}
 
+	static String extractPatientId(String input) {
+		if (input == null)
+			return null;
+		String id = null;
+		Pattern p = Pattern.compile("[Subject:subject|Patient|patient]=([a-zA-Z0-9]+)");
+		Matcher m = p.matcher(input);
+
+		if (m.find()) {
+			id = m.group(1);
+			logger.trace(id);
+		}
+		return id;
+	}
 	 static String extractPatientId2(String string) {
 		logger.debug("requestUrl is:"+string);
 		if (string == null)

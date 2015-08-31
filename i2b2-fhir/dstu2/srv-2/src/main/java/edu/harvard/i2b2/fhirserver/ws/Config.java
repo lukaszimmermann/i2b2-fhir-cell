@@ -8,10 +8,11 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
 	static public String i2b2Url ;
-	static public String demoAccessToken ;
+	static public String demoAccessToken;
+	static public boolean openAccess;
 
 	static Logger logger = LoggerFactory.getLogger(Config.class);
-
+	
 	static {
 		try {
 			CompositeConfiguration config = new CompositeConfiguration();
@@ -21,9 +22,10 @@ public class Config {
 			
 			i2b2Url =config.getString("i2b2Url");
 			demoAccessToken =config.getString("demoAccessToken");
+			openAccess=Boolean.parseBoolean(config.getString("openAccess"));
 			
 			logger.info("initialized:"+"\ni2b2Url:"+i2b2Url
-					+"\ndemoAccessToken:"+demoAccessToken);
+					+"\ndemoAccessToken:"+demoAccessToken+"\n openAccess:"+openAccess);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

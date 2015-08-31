@@ -10,6 +10,9 @@
         <dependent-module archiveName="xquery-dstu2-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/xquery/xquery">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="ndcToRxNormMapper-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ndcToRxNormMapper/ndcToRxNormMapper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="loincMapper-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/loincMapper/loincMapper">
             <dependency-type>uses</dependency-type>
         </dependent-module>
