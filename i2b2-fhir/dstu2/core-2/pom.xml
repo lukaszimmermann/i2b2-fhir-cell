@@ -94,7 +94,7 @@
 			<groupId>org.hl7.fhir.tools</groupId>
 			<artifactId>validator</artifactId>
 			<version>1.0</version>
-			<!-- <scope>system</scope> <systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath> -->
+			<scope>system</scope> <systemPath>${project.basedir}/lib/validator-1.0.jar</systemPath> 
 		</dependency>
 
 
