@@ -346,7 +346,7 @@ public class I2b2FhirWS {
 	}
 
 	@GET
-	@Path("meta")
+	@Path("(meta|metadata)")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
 			"application/xml+fhir", "application/json+fhir" })
 	public Response conformanceStatement(
