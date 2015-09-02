@@ -1,4 +1,6 @@
 
+export IPADD=$(ifconfig eth0 | grep inet | awk '{print $2}' | sed 's/addr://'|head -n 1)
+
 #check if java is installed
 
 $(java 2>/dev/null );if [ $? == 0 ];  then echo "Java was not found. Please install java 1.7 or higher"; fi
@@ -6,6 +8,10 @@ JAVA_VER=$(java -version 2>&1 | sed 's/java version "\(.*\)\.\(.*\)\..*"/\1\2/; 
 echo "java version:$JAVA_VER" 
 
 if [ $JAVA_VER -lt 17 ]; then echo " Java 1.7 or higher is required" ;fi
+wget --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+tar -xvzf jdk-7u79-linux-x64.tar.gz
+
+
 
 export JAVA_HOME="$(pwd)/jdk1.7.0_79"
 export java="$JAVA_HOME/bin/java"
@@ -51,4 +57,4 @@ mvn clean install -Dmaven.test.skip=true;
 cd dstu2 ;
 mvn clean install -Dmaven.test.skip=true; 
 cp srv-2/target/*.war $DEPLOY_DIR
-"$WILDFLY_DIR/bin/standalone.sh"
+"$WILDFLY_DIR/bin/standalone.sh -b=$IPADD"
