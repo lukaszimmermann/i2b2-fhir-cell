@@ -12,21 +12,9 @@ package edu.harvard.i2b2.fhirserver.ws;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Set;
-
 import javax.ejb.EJB;
-import javax.jcr.Session;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.Query;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -43,7 +31,6 @@ import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse.OAuthAuthorizationResponseBuilder;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -54,7 +41,6 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
-import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 import edu.harvard.i2b2.fhirserver.ejb.AuthTokenBean;
 import edu.harvard.i2b2.fhirserver.entity.AuthToken;
 
