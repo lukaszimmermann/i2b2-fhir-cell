@@ -19,33 +19,22 @@
  */
 package edu.harvard.i2b2.fhirserver.ws;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -57,33 +46,22 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Conformance;
 import org.hl7.fhir.ConformanceRest;
 import org.hl7.fhir.ConformanceSecurity;
 import org.hl7.fhir.Extension;
-import org.hl7.fhir.Instant;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Uri;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-
+	
 import edu.harvard.i2b2.fhir.*;
-import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
-import edu.harvard.i2b2.fhir.query.QueryParameterException;
-import edu.harvard.i2b2.fhir.query.QueryValueException;
 import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
@@ -116,9 +94,9 @@ public class I2b2FhirWS {
 
 		try {
 			// to remove prop and use server config
-			Properties props = new Properties();
-			props.load(getClass().getResourceAsStream("/log4j.properties"));
-			PropertyConfigurator.configure(props);
+			//Properties props = new Properties();
+			//props.load(getClass().getResourceAsStream("/log4j.properties"));
+			//PropertyConfigurator.configure(props);
 
 			logger.info("Got init request");
 		} catch (Exception e) {
