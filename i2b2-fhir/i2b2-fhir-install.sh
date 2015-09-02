@@ -39,12 +39,13 @@ fi
 
 #check if maven is installed
 $(mvn 1>/dev/null );
-#echo $?
+echo $?
+
 if [ $? == 0 ]
   then echo "mvn was not found. Installing maven" 
-
+	
 	if [ -f apache-maven-3.3.3-bin.tar.gz ] 
-	then echo ""
+	then echo "mvn tar found"
 	else
 
 		wget http://apache.mirrors.ionfish.org/maven/maven-3/3.3.3/binaries/apache-maven-3.3.3-bin.tar.gz
@@ -54,6 +55,7 @@ if [ $? == 0 ]
 	export MAVEN_HOME="$(pwd)/apache-maven-3.3.3"
 	echo "MAVEN_HOME=$MAVEN_HOME"
 	export MVN="$MAVEN_HOME/bin/mvn"
+	alias mvn="$MAVEN_HOME/bin/mvn"
 	echo "MVN:$MVN" 
 
 fi
@@ -76,7 +78,7 @@ then echo ""
 else
 	wget https://github.com/waghsk/i2b2-fhir/archive/master.zip 
 	unzip master.zip
-	git clone https://github.com/waghsk/i2b2-fhir.git
+	#git clone https://github.com/waghsk/i2b2-fhir.git
 fi
 
 alias mvn=$MVN
