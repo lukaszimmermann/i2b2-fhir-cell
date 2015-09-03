@@ -56,6 +56,7 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.Parser;
 import org.apache.abdera.writer.Writer;
+import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
@@ -454,10 +455,7 @@ public class FhirUtil {
 			String url) {
 		Bundle b = new Bundle();
 		for (Resource r : s) {
-			BundleEntry be = new BundleEntry();
-			ResourceContainer rc = FhirUtil.getResourceContainer(r);
-
-			be.setResource(rc);
+			BundleEntry be = FhirUtil.newBundleEntryForResource(r);
 			b.getEntry().add(be);
 
 		}
@@ -469,6 +467,13 @@ public class FhirUtil {
 		u.setValue(basePath);
 		b.setBase(u);
 		return b;
+	}
+
+	private static BundleEntry newBundleEntryForResource(Resource r) {
+		BundleEntry be=new BundleEntry();
+		ResourceContainer rc = FhirUtil.getResourceContainer(r);
+		be.setResource(rc);
+		return be;
 	}
 
 	public static ResourceContainer getResourceContainer(Resource r) {
@@ -646,6 +651,24 @@ public class FhirUtil {
 	public static String bundleToJsonString(Bundle s) throws IOException,
 			JAXBException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(s));
+	}
+	
+	public static Patient getPatientResource(String inputXml) throws XQueryUtilException, JAXBException, IOException {
+		String query = IOUtils.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
+		String bundleXml=XQueryUtil.processXQuery( query,inputXml).toString();
+		Bundle b=JAXBUtil.fromXml(bundleXml,Bundle.class);
+		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0).getResource());
+	}
+	
+	public static Bundle convertI2b2ToFhirResources(String i2b2Xml) throws IOException, XQueryUtilException, JAXBException{
+		
+		String query = IOUtils.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
+		
+		String xQueryResultString = XQueryUtil.processXQuery(query, i2b2Xml).toString();
+		Bundle b= JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+		Patient p=getPatientResource( i2b2Xml) ;
+		b.getEntry().add(newBundleEntryForResource(p));
+		return b;
 	}
 
 }

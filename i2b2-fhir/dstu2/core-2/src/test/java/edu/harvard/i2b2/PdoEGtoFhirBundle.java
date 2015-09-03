@@ -51,7 +51,6 @@ import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.query.Query;
 
-
 public class PdoEGtoFhirBundle {
 	static Logger logger = LoggerFactory.getLogger(PdoEGtoFhirBundle.class);
 
@@ -205,6 +204,22 @@ public class PdoEGtoFhirBundle {
 		String xmlString=Utils.getFile("example/fhir/DSTU2/PatientBundle.xml");
 		Bundle b=JAXBUtil.fromXml(xmlString,Bundle.class);
 		logger.info("b:"+JAXBUtil.toXml(b));
+	}
+	
+	@Test
+	public void  getPatientResource() throws XQueryUtilException {
+		String query = Utils
+				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
+		String input = Utils.getFile("example/i2b2/PDO1.xml");
+
+		logger.info(XQueryUtil.processXQuery( query,input).toString());
+	}
+	
+
+	@Test
+	public void  getPatientResource2() throws XQueryUtilException, JAXBException, IOException {
+		Patient p=FhirUtil.getPatientResource(Utils.getFile("example/i2b2/PDO1.xml"));
+		logger.info(""+JAXBUtil.toXml(p));
 	}
 	
 
