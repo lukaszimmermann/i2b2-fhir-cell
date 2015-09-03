@@ -1,8 +1,10 @@
 package edu.harvard.i2b2.fhir;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +71,8 @@ public class I2b2Util {
 
 	public static String getPmResponseXmlWithAuthToken(String username,
 			String authToken, String i2b2domain, String i2b2domainUrl)
-			throws XQueryUtilException {
-		String requestStr = Utils.getFile("i2b2query/getServices.xml");
+			throws XQueryUtilException, IOException {
+		String requestStr = IOUtils.toString(I2b2Util.class.getResourceAsStream("i2b2query/getServices.xml"));
 		requestStr = insertI2b2ParametersAuthTokenInXml(requestStr, username,
 				authToken, i2b2domain, i2b2domainUrl);
 		logger.trace("requestStr:" + requestStr);
