@@ -51,6 +51,7 @@
 			<artifactId>xquery</artifactId>
 			<version>${my-project-version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>edu.harvard.i2b2.fhir</groupId>
 			<artifactId>ndcToRxNormMapper</artifactId>

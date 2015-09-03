@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,9 +137,8 @@ public class I2b2Helper {
 		// MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
 		MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
-		String requestStr = Utils
-		// .getFile("i2b2query/i2b2RequestMedsForAPatient.xml");
-				.getFile("i2b2query/i2b2RequestAllDataForAPatient.xml");
+		String requestStr = IOUtils.toString(I2b2Helper.class.getResourceAsStream("/i2b2query/i2b2RequestMedsForAPatient.xml"));
+				//("i2b2query/i2b2RequestAllDataForAPatient.xml");
 		requestStr = I2b2Helper.insertSessionParametersInXml(requestStr,
 				session);
 		if (patientId != null)
