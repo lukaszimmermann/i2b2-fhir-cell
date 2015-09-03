@@ -59,8 +59,8 @@ public class I2b2Util {
 	}
 
 	public static String getPmResponseXml(String username, String password,
-			String i2b2domain, String i2b2domainUrl) throws XQueryUtilException {
-		String requestStr = Utils.getFile("i2b2query/getServices.xml");
+			String i2b2domain, String i2b2domainUrl) throws XQueryUtilException, IOException {
+		String requestStr = IOUtils.toString(I2b2Util.class.getResourceAsStream("/i2b2query/getServices.xml"));
 		requestStr = insertI2b2ParametersInXml(requestStr, username, password,
 				i2b2domain, i2b2domainUrl);
 		logger.trace("requestStr:" + requestStr);
@@ -72,7 +72,7 @@ public class I2b2Util {
 	public static String getPmResponseXmlWithAuthToken(String username,
 			String authToken, String i2b2domain, String i2b2domainUrl)
 			throws XQueryUtilException, IOException {
-		String requestStr = IOUtils.toString(I2b2Util.class.getResourceAsStream("i2b2query/getServices.xml"));
+		String requestStr = IOUtils.toString(I2b2Util.class.getResourceAsStream("/i2b2query/getServices.xml"));
 		requestStr = insertI2b2ParametersAuthTokenInXml(requestStr, username,
 				authToken, i2b2domain, i2b2domainUrl);
 		logger.trace("requestStr:" + requestStr);
