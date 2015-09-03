@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -144,8 +145,8 @@ public class I2b2Helper {
 		if (patientId != null)
 			requestStr = requestStr.replaceAll("PATIENTID", patientId);
 
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
+		//String query = Utils
+			//	.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery");
 		// .getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
 
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
@@ -155,11 +156,12 @@ public class I2b2Helper {
 				+ "/services/QueryToolService/pdorequest", requestStr);
 		logger.trace("got i2b2 response:" + oStr);
 		logger.info("running transformation...");
-		String xQueryResultString = I2b2Helper.processXquery(query, oStr);
-		logger.trace("xQueryResultString1:" + xQueryResultString);
+		//String xQueryResultString = I2b2Helper.processXquery(query, oStr);
+		//logger.trace("xQueryResultString1:" + xQueryResultString);
 
 		try {
-			Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+			//Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+			Bundle b=FhirUtil.convertI2b2ToFhirResources(oStr);
 			logger.trace("bundle:" + JAXBUtil.toXml(b));
 			logger.trace("list size:" + b.getEntry().size());
 			logger.info("adding to memory...");
@@ -167,7 +169,7 @@ public class I2b2Helper {
 			I2b2Helper.saveMetaResourceDb(session, md, sbb);
 
 		} catch (Exception e) {
-			logger.trace("xQueryResultString1:" + xQueryResultString);
+			//logger.trace("xQueryResultString1:" + xQueryResultString);
 
 			logger.error("ERROR MSG:" + e.getMessage(), e);
 			// e.printStackTrace();
@@ -175,19 +177,16 @@ public class I2b2Helper {
 		}
 	}
 
-	static void scanQueryParametersToGetPdo(HttpSession session,
-			String queryString, SessionBundleBean sbb)
+	
+	
+	static void getPdo(HttpSession session, SessionBundleBean sbb,String pid)
 			throws XQueryUtilException, JAXBException, IOException {
-		if (queryString != null) {
-			String pid = extractPatientId(queryString);
 			if (pid != null) {
 				logger.info("will fetch Patient with id:" + pid);
 				getPdo(session, pid, sbb);
 			} else {
 				logger.info("will not fetch Patient as there is no Patient id in query");
 			}
-
-		}
 	}
 
 	private static String extractPatientIdFromQuery(HashMap<String, String> hm) {
@@ -283,8 +282,7 @@ public class I2b2Helper {
 		logger.info("PatientId:" + patientId);
 		if (patientId != null) {
 			// filter.put("Patient", "Patient/" + patientId);
-			I2b2Helper.scanQueryParametersToGetPdo(session,
-					request.getQueryString(), sbb);
+			I2b2Helper.getPdo(session, sbb,patientId);
 		}
 	}
 
@@ -307,7 +305,7 @@ public class I2b2Helper {
 			return null;
 		String id = null;
 		
-		Pattern p = Pattern.compile(".*/([a-zA-Z0-9]+)-[0-9]$");
+		Pattern p = Pattern.compile(".*/([a-zA-Z0-9]+)[-]*.*$");
 		Matcher m = p.matcher(string);
 
 		if (m.find()) {
