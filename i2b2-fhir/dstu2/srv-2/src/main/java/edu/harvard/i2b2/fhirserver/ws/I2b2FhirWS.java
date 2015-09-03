@@ -177,24 +177,17 @@ public class I2b2FhirWS {
 
 			logger.info("including...._include:" + includeResources.toString());
 			if (s.getEntry().size() > 0) {
-				s = FhirUtil.getResourceBundle(md
-						.getIncludedResources(c,
-								FhirUtil.getResourceListFromBundle(s),
-								includeResources), basePath, "url");
+				List<Resource> list=md.getIncludedResources(c,
+						FhirUtil.getResourceListFromBundle(s),
+						includeResources);
+				logger.trace("includedListsize:"+list.size());
+				s = FhirUtil.getResourceBundle(
+						list, basePath, "url");
 			}
 
-			logger.info("getting bundle string...");
-
-			String url = request.getRequestURL().toString();
-			if (url.contains(";"))
-				url = url.substring(0, url.indexOf(";"));
-			if (request.getQueryString() != null)
-				url += "?" + request.getQueryString();
-
-			// String returnString = FhirUtil.getResourceBundle(s, basePath,
-			// url);
-			logger.info("size of db:" + md.getSize());
-			logger.info("returning response...");
+			//logger.info("getting bundle string..."+JAXBUtil.toXml(s));
+			//logger.info("size of db:" + md.getSize());
+			logger.info("returning response..."+JAXBUtil.toXml(s));
 			String msg = null;
 			String mediaType = null;
 			if (acceptHeader.contains("application/json")
@@ -211,10 +204,7 @@ public class I2b2FhirWS {
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 
-			// return Response.ok().type(MediaType.APPLICATION_XML)
-			// .header("session_id", session.getId())
-			// .entity(msg).build();
-
+		
 		} catch (Exception e) {
 			// I2b2Helper.releaseSessionLock(session);
 			e.printStackTrace();
