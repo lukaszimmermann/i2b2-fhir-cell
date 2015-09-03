@@ -189,7 +189,7 @@ public class OAuth2AuthzEndpoint {
 			@FormParam("username") String username,
 			@FormParam("password") String password,
 			@Context HttpServletRequest request) throws XQueryUtilException,
-			URISyntaxException {
+			URISyntaxException, IOException {
 		logger.trace("processing login: for username:" + username
 				+ "\npassword:" + password + "\nclientId:" + request.getSession().getAttribute("clientId"));
 		HttpSession session = request.getSession();
