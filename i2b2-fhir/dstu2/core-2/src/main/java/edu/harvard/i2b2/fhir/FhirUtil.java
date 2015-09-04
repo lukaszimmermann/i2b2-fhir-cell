@@ -660,7 +660,7 @@ public class FhirUtil {
 		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0).getResource());
 	}
 	
-	public static Bundle convertI2b2ToFhirResources(String i2b2Xml) throws IOException, XQueryUtilException, JAXBException{
+	public static Bundle convertI2b2ToFhirForAParticularPatient(String i2b2Xml) throws IOException, XQueryUtilException, JAXBException{
 		
 		String query = IOUtils.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
 		
@@ -670,5 +670,8 @@ public class FhirUtil {
 		b.getEntry().add(newBundleEntryForResource(p));
 		return b;
 	}
+	
+	
+	
 
 }

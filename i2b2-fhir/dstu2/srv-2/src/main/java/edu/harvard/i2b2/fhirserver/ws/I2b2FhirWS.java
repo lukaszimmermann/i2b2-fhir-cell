@@ -145,7 +145,7 @@ public class I2b2FhirWS {
 			// filter if patientId is mentioned in query string
 			HashMap<String, String> filter = new HashMap<String, String>();
 
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb);
+			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName);
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			Map<String, String[]> q = request.getParameterMap();
@@ -279,8 +279,9 @@ public class I2b2FhirWS {
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
 
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb);
+			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName);
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
+			
 			
 			r = md.getParticularResource(c, id);
 			String mediaType = null;
