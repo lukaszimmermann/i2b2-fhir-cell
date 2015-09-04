@@ -17,7 +17,7 @@
  * Contributors:
  * 		Kavishwar Wagholikar (kavi)
  */
-package edu.harvard.i2b2.fhirserver.ws;
+package edu.harvard.i2b2.fhir;
 
 public class AuthenticationFailure extends Exception {
 
