@@ -248,7 +248,7 @@ button:hover{
 		<form id=form_bar method="POST" accept-charset="UTF-8" enctype="application/x-www-form-urlencoded" 
 		action="javascript:runMyFunction2()" >
 		<br>URL:<input style="text-align: left;" id="url_bar" size="150"></input>
-			<input  type="submit" value="Submit">
+			<input  type="submit" value="Submit" >
 	<input style="text-align: left;background-color:#E0EBFF;border: 0px solid;" id="time_bar" size="7" readonly></input>
 			
 
@@ -276,13 +276,14 @@ button:hover{
 			I2B2Domain:<input type="text" id="i2b2domain" name="i2b2domain" value="i2b2demo">
 			I2B2Url:<input type="text" id="i2b2url" name="i2b2url"
 				value="http://services.i2b2.org:9090/i2b2">
-			<input type="submit" value="Submit">
+			<!--<input type="submit" value="Submit">-->
 
 		</form>
 		<footer>
 	<script>
 			setXmlDisplay("..loading");
-			getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
+			//getAuth() ;//setXmlDisplay("<a><b>c</b></a>")
+			 runMyFunction(fhirServerBase+"/Patient");			
 			setMsg("Select a use case on the left, to get response below...");
 			</script>
 		<script src="fhir-i2b2-code.js"></script>
