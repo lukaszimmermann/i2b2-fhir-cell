@@ -38,7 +38,7 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 public class SearchParameterMap {
 	static Logger logger = LoggerFactory.getLogger(SearchParameterMap.class);
 
-	static List<SearchParameter> list= new ArrayList <SearchParameter>();
+	List<SearchParameter> list;
 	
 	public SearchParameterMap() throws FhirCoreException {
 		try {
@@ -53,6 +53,7 @@ public class SearchParameterMap {
 		JAXBContext context = JAXBContext.newInstance(SearchParameter.class);
 		Unmarshaller um = context.createUnmarshaller();
 		SearchParameter p = null;
+		list= new ArrayList <SearchParameter>();
 		String bundleString= Utils.getFile("profiles/search-parameters.xml");
 		//logger.trace("bundleString:"+bundleString);
 		Bundle b= JAXBUtil.fromXml(bundleString, Bundle.class);

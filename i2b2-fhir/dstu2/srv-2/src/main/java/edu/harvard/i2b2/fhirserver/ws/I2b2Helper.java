@@ -83,7 +83,7 @@ public class I2b2Helper {
 
 		String requestStr = IOUtils
 				.toString(I2b2Helper.class
-						.getResourceAsStream("/i2b2query/i2b2RequestMedsForAPatient.xml"));
+						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
 		// ("i2b2query/i2b2RequestAllDataForAPatient.xml");
 		requestStr = I2b2Util.insertSessionParametersInXml(requestStr, session);
 
@@ -93,16 +93,16 @@ public class I2b2Helper {
 		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
 
 		logger.info("fetching from i2b2host...");
-		String oStr = WebServiceCall.run(i2b2Url
+		String i2b2XmlResponse = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestStr);
-		logger.trace("got i2b2 response:" + oStr);
+		logger.trace("got i2b2 response:" + i2b2XmlResponse);
 		logger.info("running transformation...");
 		// String xQueryResultString = I2b2Helper.processXquery(query, oStr);
 		// logger.trace("xQueryResultString1:" + xQueryResultString);
 
 		try {
 			// Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
-			Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(oStr);
+			Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(i2b2XmlResponse);
 			logger.trace("bundle:" + JAXBUtil.toXml(b));
 			logger.trace("list size:" + b.getEntry().size());
 			logger.info("adding to memory...");

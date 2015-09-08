@@ -44,6 +44,7 @@ public class FhirEnrich {
 		if (Observation.class.isInstance(r)) {
 			Observation ob = Observation.class.cast(r);
 			loincAdapter.addLoincName(ob);
+			
 		}
 		
 		if (Condition.class.isInstance(r)) {

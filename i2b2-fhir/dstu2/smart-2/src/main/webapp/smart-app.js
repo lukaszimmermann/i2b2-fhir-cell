@@ -32,12 +32,12 @@ function updatePatientDisplay() {
 	var demo = null;
 	demo={
 		 serviceUrl: "http://localhost:8080/srv-dstu2-0.2/api/open",
-		 patientId: "1000000005"
+		 //patientId: "1000000005"
 		// serviceUrl :"http://localhost:8080/test-srv-dstu2-0.2",
 		
 		//serviceUrl : "https://fhir-open-api-dstu2.smarthealthit.org",
 		 //patientId: "1098667"
-		 //patientId : patientIdInput
+		 patientId : patientIdInput
 
 	//	// serviceUrl: "http://fhirtest.uhn.ca/baseDstu1",
 	// patientId: "19324"
@@ -47,13 +47,13 @@ function updatePatientDisplay() {
 	var smart = FHIR.client(demo);
 	var pt = null;
 	pt=smart.context.patient;
-/*
+
 	pt.read().then(function(p) {
 	var row = $("<tr>");
 	//document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
 	row.append( '<tr><td>Gender:</td><td>'+p.gender+'</td></tr>');
 	row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
-	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus+'</td></tr>');
+	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display +'</td></tr>');
 	$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
 	$("#demo_list").append('<th align="left"">Demographics</th>');
 	$("#demo_list").append(row);
@@ -61,7 +61,7 @@ function updatePatientDisplay() {
 	});
 	
 
-	*/
+	
 	pt.MedicationPrescription.where// .status("active")
 	._include("MedicationPrescription.Medication")
 	//._include("MedicationPrescription.patient")
@@ -118,10 +118,11 @@ function updatePatientDisplay() {
 				row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
 				
 				var labName="--";
-				if(lab.hasOwnProperty("name")){	
-						labName=lab.name.coding[0].display;
+				if(lab.hasOwnProperty("code")){	
+						labName=lab.code.coding[0].display;
 				}
 				if(labName==null) {labName="--";}
+				
 				
 				row.append( $("<td>").text(labName));
 				var val="";	var units="";	
@@ -145,14 +146,14 @@ function updatePatientDisplay() {
 				}
 				
 	);
-	/*
+	
 	
 	pt.Condition.where// .status("active")
 	//._include("Observation.subject")
 	.search().then(
 	
 			function(conditions) {
-				//document.getElementById("display1").innerHTML=JSON.stringify(conditions[0],null,4);
+				//document.getElementById("display1").innerHTML=JSON.stringify(conditions,null,4);
 			
 				conditions.forEach(function(cond) {
 				var row = $("<tr>");
@@ -160,7 +161,7 @@ function updatePatientDisplay() {
 				
 				var condName="--";
 				if(cond.hasOwnProperty("code")){	
-						condName=cond.code.coding[0].code;
+						condName=cond.code.coding[0].display;
 				}
 				if(condName==null) {condName="--";}
 				
@@ -173,7 +174,7 @@ function updatePatientDisplay() {
 			
 				}
 	);
-*/	
+	
 	
 	
 	
