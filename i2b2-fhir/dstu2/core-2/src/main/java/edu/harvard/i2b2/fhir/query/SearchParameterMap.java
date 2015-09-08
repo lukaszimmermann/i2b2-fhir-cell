@@ -38,8 +38,8 @@ import edu.harvard.i2b2.fhir.core.FhirCoreException;
 public class SearchParameterMap {
 	static Logger logger = LoggerFactory.getLogger(SearchParameterMap.class);
 
-	List<SearchParameter> list;
-	
+	static List<SearchParameter> list;
+
 	public SearchParameterMap() throws FhirCoreException {
 		try {
 			init();
@@ -53,40 +53,46 @@ public class SearchParameterMap {
 		JAXBContext context = JAXBContext.newInstance(SearchParameter.class);
 		Unmarshaller um = context.createUnmarshaller();
 		SearchParameter p = null;
-		list= new ArrayList <SearchParameter>();
-		String bundleString= Utils.getFile("profiles/search-parameters.xml");
-		//logger.trace("bundleString:"+bundleString);
-		Bundle b= JAXBUtil.fromXml(bundleString, Bundle.class);
-		for (BundleEntry rc : b.getEntry()) {
-			p=rc.getResource().getSearchParameter();
-			list.add(p);
+		if (list == null) {
+			list = new ArrayList<SearchParameter>();
+			String bundleString = Utils
+					.getFile("profiles/search-parameters.xml");
+			// logger.trace("bundleString:"+bundleString);
+			Bundle b = JAXBUtil.fromXml(bundleString, Bundle.class);
+			for (BundleEntry rc : b.getEntry()) {
+				p = rc.getResource().getSearchParameter();
+				list.add(p);
+			}
 		}
 	}
 
 	public String getParameterPath(Class c, String parName)
 			throws FhirCoreException {
-		return getSearchParameter(c,parName).getXpath().getValue().toString().replace("f:", "");
-				}
-
-	public String getType(Class c, String parName)
-			throws FhirCoreException {
-		
-		return getSearchParameter(c,parName).getType().getValue().toString();
-				
+		return getSearchParameter(c, parName).getXpath().getValue().toString()
+				.replace("f:", "");
 	}
 
-	public SearchParameter getSearchParameter(Class c, String parName) throws FhirCoreException {
-	
-		for(SearchParameter sp:list){
-			logger.trace("sp:"+sp);
-			String resourceClassString=sp.getBase().getValue();
-			Class foundClass=FhirUtil.getResourceClass(resourceClassString);
-			String foundName=sp.getName().getValue();
-			
-			if(c.equals(foundClass) && foundName.equals(parName)){
+	public String getType(Class c, String parName) throws FhirCoreException {
+
+		return getSearchParameter(c, parName).getType().getValue().toString();
+
+	}
+
+	public SearchParameter getSearchParameter(Class c, String parName)
+			throws FhirCoreException {
+
+		for (SearchParameter sp : list) {
+			logger.trace("sp:" + sp);
+			String resourceClassString = sp.getBase().getValue();
+			Class foundClass = FhirUtil.getResourceClass(resourceClassString);
+			String foundName = sp.getName().getValue();
+
+			if (c.equals(foundClass) && foundName.equals(parName)) {
 				return sp;
 			}
 		}
-		throw new FhirCoreException("No SearchParameterSearchParam found for class:"+c.getCanonicalName()+" for param:"+parName) ;
+		throw new FhirCoreException(
+				"No SearchParameterSearchParam found for class:"
+						+ c.getCanonicalName() + " for param:" + parName);
 	}
 }
