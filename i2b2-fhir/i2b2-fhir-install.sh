@@ -64,12 +64,19 @@ fi
 #echo $?
 #if [ $? -ne 0 ];  then echo "mvn was not found. Please install maven  or higher"; fi
 
-
 if [ -f wildfly-9.0.1.Final.tar.gz ]
 then echo ""
 else
 	wget http://download.jboss.org/wildfly/9.0.1.Final/wildfly-9.0.1.Final.tar.gz
+fi
+
+if [ -d $WILDFLY_DIR ]
+then echo ""
+else
 	tar -xzf wildfly-9.0.1.Final.tar.gz
+	export CMD=" cat \"$WILDFLY_DIR/bin/standalone.conf\"| sed -e 's/MaxPermSize=256m/MaxPermSize=512m/' > result; mv result $WILDFLY_DIR/bin/standalone.conf"
+	echo $CMD
+	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=512m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
 fi
 
 echo "Installing source code from githib repository"
@@ -95,6 +102,7 @@ mvn clean install -Dmaven.test.skip=true;
 cp srv-2/target/*.war $DEPLOY_DIR
 
 echo "running server on port 8080"
+
 
 export RUN_WF="$WILDFLY_DIR/bin/standalone.sh" #-b=$IPADD"
 sh $RUN_WF
