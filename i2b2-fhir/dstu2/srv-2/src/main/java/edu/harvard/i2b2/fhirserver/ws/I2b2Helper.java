@@ -42,6 +42,9 @@ public class I2b2Helper {
 		if (session == null) {
 			return;
 		}
+		//avoid redundant run
+		if(session.getAttribute("INIT_ALL_PATIENTS")!=null) return;
+		
 		MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 		Bundle b = null;
@@ -56,6 +59,7 @@ public class I2b2Helper {
 		md.addBundle(b);
 		I2b2Helper.saveMetaResourceDb(session, md, sbb);
 
+		session.setAttribute("INIT_ALL_PATIENTS","TRUE");
 	}
 
 	private static void getPdo(HttpSession session, String patientId,
