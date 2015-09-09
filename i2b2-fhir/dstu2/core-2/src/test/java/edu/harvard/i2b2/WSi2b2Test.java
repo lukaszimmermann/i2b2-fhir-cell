@@ -114,6 +114,18 @@ public class WSi2b2Test {
 	}
 
 	@Test
+	public void getEntirePatientData() throws XQueryUtilException {
+		String requestXml = Utils.getFile("i2b2query/i2b2RequestEntireDataForAPatient.xml");
+		requestXml=I2b2Util.insertI2b2ParametersInXml(requestXml, "demo", "demouser", "i2b2demo", "http://services.i2b2.org:9090/i2b2");
+		requestXml = requestXml.replaceAll("PATIENTID", "1000000005");
+		String i2b2Response=WebServiceCall
+		.run("http://services.i2b2.org:9090/i2b2/services/QueryToolService/pdorequest",
+				requestXml);
+
+		logger.trace( "i2b2Response"+ i2b2Response);
+	}	
+
+	@Test
 	public void getAuthorizationToken() throws XQueryUtilException {
 		String requestStr = Utils.getFile("i2b2query/getServices.xml");
 		String oStr = WebServiceCall
@@ -128,7 +140,7 @@ public class WSi2b2Test {
 	}
 	
 	@Test
-	public void getProjects() throws XQueryUtilException {
+	public void getProjects() throws XQueryUtilException, IOException {
 		//String pmResponseXml=I2b2Util.getPmResponseXml("demo","demouser","i2b2demo","http://services.i2b2.org:9090/i2b2");
 		String pmResponseXml=I2b2Util.getPmResponseXml("demo","SessionKey:s65KNwdab6FSWJv3cCEL","i2b2demo","http://services.i2b2.org:9090/i2b2");
 		logger.info("pmResponseXml:"+pmResponseXml);
