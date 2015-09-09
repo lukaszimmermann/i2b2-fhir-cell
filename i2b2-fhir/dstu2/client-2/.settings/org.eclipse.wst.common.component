@@ -4,6 +4,24 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
+        <dependent-module archiveName="core-dstu2-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/core/core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="xquery-dstu2-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/xquery/xquery">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ndcToRxNormMapper-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ndcToRxNormMapper/ndcToRxNormMapper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="loincMapper-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/loincMapper/loincMapper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="icd9Mapper-0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/icd9Mapper/icd9Mapper">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="wrapperHapi-dstu2-0.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/wrapperHapi/wrapperHapi">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="context-root" value="client"/>
         <property name="java-output-path" value="/client/target/classes"/>
     </wb-module>
