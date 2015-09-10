@@ -17,5 +17,6 @@ public enum QueryType {
 	REFERENCE,
 	COMPOSITE,
 	QUANTITY,
-	CHAINED
+	CHAINED,
+	ID
 }

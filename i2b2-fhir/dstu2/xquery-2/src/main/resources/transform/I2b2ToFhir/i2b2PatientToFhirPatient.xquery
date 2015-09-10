@@ -81,7 +81,7 @@ declare function local:fnPatient($zip as xs:string?,
                                  $race_code as xs:string?
 ) as node()?{
 <Patient  namespace="http://hl7.org/fhir"  >
-  <id value="Patient/{$id}"/>
+  <id value="{$id}"/>
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
