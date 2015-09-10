@@ -69,7 +69,7 @@ declare function local:fnFhirDosage($d as node()?, $q as node()?) as node()?
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){
 <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="Medication/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
@@ -99,7 +99,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $route a
         $sd as xs:string, $ed as xs:string, $pid as xs:string?) as node(){
  <MedicationStatement xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
 
- <id value="MedicationStatement/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">

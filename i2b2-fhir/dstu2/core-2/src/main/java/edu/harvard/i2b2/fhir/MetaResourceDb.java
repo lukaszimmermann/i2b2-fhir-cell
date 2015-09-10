@@ -175,7 +175,7 @@ public class MetaResourceDb {
 			logger.trace(r.getId().getValue().toString());
 			if (c.isInstance(r)
 					&& r.getId().getValue().toString()
-							.equals(c.getSimpleName() + "/" + id)) {
+							.equals( id)) {
 				return r;
 			}
 		}

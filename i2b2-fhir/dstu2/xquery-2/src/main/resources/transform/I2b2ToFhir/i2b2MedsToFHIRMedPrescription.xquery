@@ -76,7 +76,7 @@ return
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
   <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="Medication/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
    <text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
@@ -104,7 +104,7 @@ declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$
 
 return
   <Observation xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="Observation/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
@@ -170,7 +170,7 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 
 declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string) as node(){           
    <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="Condition/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
    <status value="generated"/>
   <text>   
   </text>
@@ -214,7 +214,7 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
         $sd as xs:string, $ed as xs:string, $pid as xs:string?,$instr as xs:string?) as node(){
  
   <MedicationPrescription xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="MedicationPrescription/{$pid}-{$count}"/>
+ <id value="{$pid}-{$count}"/>
  
   
 <!--<identifier value="MedicationPrescription/{$pid}-{$count}"/>-->

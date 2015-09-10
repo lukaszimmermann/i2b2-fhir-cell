@@ -81,6 +81,7 @@ public class QueryBuilder {
         if (this.rawParameter.equals("subject:Patient")) {this.rawParameter="subject";}
         String parameter = this.rawParameter;
         
+        if (this.rawParameter.equals("_id")) {this.queryTypeStr="id";}
         
         
         if (parameter.contains(":"))
@@ -132,6 +133,11 @@ public class QueryBuilder {
 		case "custom":
 			q = new QueryCustom(resourceClass, rawParameter, rawValue,false);
 			logger.info("created query:" + (QueryCustom) q);
+			break;
+		case "id":
+			q = new QueryId(resourceClass, rawParameter, rawValue);
+			logger.info("created query:" + (QueryId) q);
+
 			break;
 		default:
 			q = new QueryChained(resourceClass, rawParameter, rawValue);

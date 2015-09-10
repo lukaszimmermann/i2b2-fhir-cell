@@ -34,7 +34,7 @@ public abstract class Query {
 
 	private String rawParameter;
 	private String rawValue;
-	private String parameterPath;// this will be resource specific defined at
+	protected String parameterPath;// this will be resource specific defined at
 									// runTime
 	private Class resourceClass;
 	private String modifier;
