@@ -129,7 +129,7 @@ return
   <reliability value="ok"/>
   
    <subject>
-     <reference value="Patient/{$pid}"/>
+     <reference value="{$pid}"/>
   </subject>
 
   </Observation>
@@ -175,7 +175,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
   <text>   
   </text>
   <patient>
-     <reference value="Patient/{$pid}"/>
+     <reference value="{$pid}"/>
   </patient>
   
   <dateAsserted value="{$sd}"/>
@@ -230,7 +230,7 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
   <!--<status value="active"/>-->
   
   <patient>
-     <reference value="Patient/{$pid}"/>
+     <reference value="{$pid}"/>
   </patient>
  
  <!-- <prescriber>
@@ -362,7 +362,7 @@ let $sd := $refObs/start_date/text()
 let $ed := $refObs/end_date/text()
 
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid)
-let $medication_id:=concat("Medication/",$pid,"-",$count)
+let $medication_id:=concat("",$pid,"-",$count)
 let $timingScheduleFhir:=local:fnTimingSchedule($freq)
 let $routeFhir:=local:fnRoute($route)
 let $doseQuantityFhir:=local:fnDoseFhir($dose,$doseUnit)

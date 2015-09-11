@@ -58,15 +58,9 @@ public class QueryReference extends Query {
 			rawId = getXmlFromParameterPath(resourceXml,  getParameterPath()+"/reference/@value/string()");
 		
 		// id=this.getLastElementOfparamPath()+"/"+id;
-		Pattern p = Pattern.compile(".*/([^/]+)$");
-		Matcher m = p.matcher(rawId);
-		param="-";
-		if (m.matches()) {
-			param = m.group(1);
-			logger.trace("id is:"+param);
-		}
-		// logger.info("matching "+id+" to value:"+this.getRawValue());
-		if (param.equals(this.getRawValue())) {
+
+		 logger.info("matching "+rawId+" to value:"+this.getRawValue());
+		if (rawId.equals(this.getRawValue())) {
 			logger.info("param:"+param+" matched:" + this.getRawParameter() + "="
 					+ this.getRawValue());
 			return true;

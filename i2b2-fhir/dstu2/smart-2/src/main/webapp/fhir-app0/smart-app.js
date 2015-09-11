@@ -30,11 +30,11 @@ function updatePatientDisplay() {
 
 	FHIR.oauth2.ready(function(smart){
 		
-		var p=null;
-		smart.api.Patient.where._id(patientIdInput).search().then(function(ptl){
-			p=ptl[0];
 		
-			document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
+		smart.api.Patient.where._id(patientIdInput).search().then(function(ptl){
+			var p=ptl[0];
+		
+			//document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
 		
 			var row = $("<tr>");
 			// document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
@@ -45,14 +45,14 @@ function updatePatientDisplay() {
 			$("#demo_list").append('<th align="left"">Demographics</th>');
 			$("#demo_list").append(row);
 	
+			});
+
 		
-	
-	
-		
-	p.MedicationPrescription.where// .status("active")
-	._include("MedicationPrescription.Medication")
-	//._include("MedicationPrescription.patient")
-	.search().then(
+		smart.api.MedicationPrescription.where// .status("active")
+		.patient(patientIdInput)
+		._include("MedicationPrescription.Medication")
+		._include("MedicationPrescription.patient")
+		.search().then(
 			function(prescriptions) {
 				
 			//document.getElementById("display").innerHTML=JSON.stringify(prescriptions,null,4);
@@ -92,7 +92,79 @@ function updatePatientDisplay() {
 			
 			
 		});
-});
+		
+		smart.api.Observation.where
+		.subject(patientIdInput)
+	//._include("Observation.subject")
+	.search().then(
+	
+			function(observations) {
+				//document.getElementById("display1").innerHTML=JSON.stringify(observations[0],null,4);
+			
+				observations.forEach(function(lab) {
+				var row = $("<tr>");
+				row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
+				
+				var labName="--";
+				if(lab.hasOwnProperty("code")){	
+						labName=lab.code.coding[0].display;
+				}
+				if(labName==null) {labName="--";}
+				
+				
+				row.append( $("<td>").text(labName));
+				var val="";	var units="";	
+				if(lab.hasOwnProperty("valueQuantity") && lab.valueQuantity.hasOwnProperty("value")){
+					val=lab.valueQuantity.value;
+					units=lab.valueQuantity.units;
+				}
+				if(lab.hasOwnProperty("valueCodeableConcept")  ){
+					val=lab.valueCodeableConcept.coding[0].code;
+					//units=lab.valueQuantity.units;
+				}
+				row.append( $("<td>").text(val+"  "+units));
+				//row.append( $("<td>").text(units));
+				
+				$("#lab_list").append(row);
+				
+				});
+				
+				//document.getElementById("display").innerHTML="";
+			
+				}
+				
+	);
+	
+	
+		smart.api.Condition.where
+		.subject(patientIdInput)
+	.search().then(
+	
+			function(conditions) {
+				//document.getElementById("display1").innerHTML=JSON.stringify(conditions,null,4);
+			
+				conditions.forEach(function(cond) {
+				var row = $("<tr>");
+				row.append( $("<td>").text(cond.dateAsserted.replace("T"," ")));
+				
+				var condName="--";
+				if(cond.hasOwnProperty("code")){	
+						condName=cond.code.coding[0].display;
+				}
+				if(condName==null) {condName="--";}
+				
+				row.append( $("<td>").text(condName));
+			
+				$("#diag_list").append(row);
+			
+				});
+				document.getElementById("display").innerHTML="";
+			
+				}
+	);
+	
+	
+	
 	
 	
 	
