@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import javax.annotation.Priority;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -26,6 +27,7 @@ import edu.harvard.i2b2.fhir.FhirUtil;
  */
 @Provider
 @PreMatching
+@Priority(2)
 public class OpenEndpointUrlFilter implements ContainerRequestFilter {
 	static Logger logger = LoggerFactory.getLogger(OpenEndpointUrlFilter .class);
 	

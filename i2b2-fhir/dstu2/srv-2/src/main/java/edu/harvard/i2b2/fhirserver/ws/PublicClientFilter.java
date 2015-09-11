@@ -22,7 +22,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//@WebFilter(urlPatterns = {"/*"}, description = "Session Checker Filter")
+@WebFilter(urlPatterns = {"/*"}, description = "Session Checker Filter")
 public class PublicClientFilter implements Filter {
 	static Logger logger = LoggerFactory.getLogger(PublicClientFilter.class);
 	private FilterConfig config = null;
