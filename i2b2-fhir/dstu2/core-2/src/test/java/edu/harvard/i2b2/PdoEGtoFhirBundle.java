@@ -97,14 +97,7 @@ public class PdoEGtoFhirBundle {
 				msg);
 	}
 
-	@Test
-	public void contain() throws JAXBException {
-		// URL path=FhirUtil.class.getResource("validation.zip");
-		// System.out.println(FhirUtil.isValid(Utils.getFile("example/fhir/singlePatient.xml")));
-		MedicationPrescription mp= JAXBUtil.fromXml(Utils.getFile("example/fhir/dstu2/singleMedicationPresricption.xml"),MedicationPrescription.class);
-		Medication m= JAXBUtil.fromXml(Utils.getFile("example/fhir/dstu2/singleMedication.xml"),MedicationPrescription.class);
-		logger.info("after containing:"+FhirUtil.containResource(mp, m));
-	}
+	
 	
 	// @Test
 	/*

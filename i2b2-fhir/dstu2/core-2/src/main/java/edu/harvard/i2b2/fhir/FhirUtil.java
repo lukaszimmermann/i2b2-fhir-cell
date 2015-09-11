@@ -432,7 +432,7 @@ public class FhirUtil {
 	public static Resource setId(Resource r, String idStr) {
 		Id id = new Id();
 		id.setValue(idStr);
-		;
+		
 		r.setId(id);
 		return r;
 	}
@@ -613,17 +613,22 @@ public class FhirUtil {
 			throws JAXBException {
 		try {
 			Class parentClass = FhirUtil.getResourceClass(p);
+			Class childClass = FhirUtil.getResourceClass(c);
 
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
 			String childReference = c.getId().getValue();
-			xml = xml.replace(childReference, "#-" + childReference.replace("/","-"));
-			p = JAXBUtil.fromXml(xml, parentClass);
+			//xml = xml.replace(childReference, "#-" + childReference);
+			//p = JAXBUtil.fromXml(xml, parentClass);
 
-			Class childClass = FhirUtil.getResourceClass(c);
+			Reference childRef=(Reference) FhirUtil.getChild(p, childClass.getSimpleName());
+			String childId=childRef.getReference().getValue();
+			childRef.getReference().setValue("#"+childClass.getSimpleName()+"-"+childId);
+			
+			
 			Id cId = c.getId();
-			cId.setValue("-" //+ childClass.getSimpleName() + "/"
-					+ cId.getValue().replace("/","-"));
+			cId.setValue(childClass.getSimpleName() + "-"
+					+ cId.getValue());
 			c.setId(cId);
 			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
 
