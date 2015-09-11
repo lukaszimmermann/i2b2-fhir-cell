@@ -266,12 +266,7 @@ public class MetaResourceDb {
 			SecurityException, JAXBException {
 		// MetaResourceSet s = new MetaResourceSet();
 		List<Resource> outList = new ArrayList<Resource>();
-		// list.addAll(metaResourceDb.getAll(Medication.class));
-		// list.addAll(this.getAll(c));
-		// XXX include dependent resources based on include portion of query
-		// XXX to make the resource id accessible via cRud(readOnly) webservice
-
-		// iterate through resources and add included dependencies
+			// iterate through resources and add included dependencies
 
 		for (String ir : includeResources) {
 			String methodName = ir.split("\\.")[1];
