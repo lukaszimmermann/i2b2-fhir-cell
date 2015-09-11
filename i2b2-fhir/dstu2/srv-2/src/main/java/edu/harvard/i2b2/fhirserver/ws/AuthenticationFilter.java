@@ -2,6 +2,7 @@ package edu.harvard.i2b2.fhirserver.ws;
 
 import java.io.IOException;
 
+import javax.annotation.Priority;
 import javax.ejb.EJB;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -18,6 +19,8 @@ import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 
 @Provider
 @PreMatching
+@Priority( 1)//Priorities.HEADER_DECORATOR)
+
 public class AuthenticationFilter implements ContainerRequestFilter {
 	static Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
 	// public class RestAuthenticationFilter implements javax.servlet.Filter {
