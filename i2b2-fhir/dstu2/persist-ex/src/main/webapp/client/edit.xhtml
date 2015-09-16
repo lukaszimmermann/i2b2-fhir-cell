@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>My Facelet Page Title</title>
+</h:head>
+<h:body>
+	<h:form>
+		<h2>Register Client</h2>
+
+		Id:<h:inputText id="clientId" title="ClientId is: "
+			value="#{clientManager.client.clientId}" required="true"
+			requiredMessage="Error: ClientId is required." maxlength="25" />
+		<p></p>
+		Secret:<h:inputText id="clientSecret" title="ClientSecret is: "
+			value="#{clientManager.client.clientSecret}" required="true"
+			requiredMessage="Error: ClientSecret is required." maxlength="25" />
+		<p></p>
+		Description:<h:inputText id="clientDescription" title="ClientDescription is: "
+			value="#{clientManager.client.description}" required="true"
+			requiredMessage="Error: ClientDescription is required."
+			maxlength="250" />
+		<p></p>
+		EmailContact:<h:inputText id="clientEmailContant" title="ClientEmailContant is: "
+			value="#{clientManager.client.contactEmail}" required="true"
+			requiredMessage="Error: ClientEmailContant is required."
+			validatorMessage="Invalid email format"
+			maxlength="70">
+			<f:validateRegex
+				pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+			</h:inputText>
+		<p></p>
+		RedirectUrl:<h:inputText id="clientRedirectUrl" title="ClientRedirectUrlis: "
+			value="#{clientManager.client.redirectUrl}" required="true"
+			requiredMessage="Error: ClientRedirectUrl is required."
+			
+			maxlength="70"/>
+			
+		
+		<p></p>
+
+		<h:commandButton id="submit" value="Submit" action="register">
+		</h:commandButton>
+		<h:commandButton id="reset" value="Reset" type="reset">
+		</h:commandButton>
+	</h:form>
+</h:body>
+</html>
+
