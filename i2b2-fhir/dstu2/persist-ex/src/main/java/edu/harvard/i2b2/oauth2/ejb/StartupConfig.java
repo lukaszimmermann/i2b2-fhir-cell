@@ -25,6 +25,6 @@ public class StartupConfig {
 	
 	@PostConstruct
 	public void init(){
-		service.setup();
+		//service.setup();
 	}
 }

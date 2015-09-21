@@ -74,9 +74,9 @@ if [ -d $WILDFLY_DIR ]
 then echo ""
 else
 	tar -xzf wildfly-9.0.1.Final.tar.gz
-	export CMD=" cat \"$WILDFLY_DIR/bin/standalone.conf\"| sed -e 's/MaxPermSize=256m/MaxPermSize=512m/' > result; mv result $WILDFLY_DIR/bin/standalone.conf"
+	export CMD=" cat \"$WILDFLY_DIR/bin/standalone.conf\"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/' | sed -e 's/Xmx512m/Xmx1024m/' > result; mv result $WILDFLY_DIR/bin/standalone.conf"
 	echo $CMD
-	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=512m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
+	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
 fi
 
 echo "Installing source code from githib repository"

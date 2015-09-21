@@ -26,10 +26,13 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.Observation;
 import org.hl7.fhir.Condition;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.ResourceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,15 @@ public class FhirEnrich {
 	}
 
 	static public Resource enrich(Resource r) throws JAXBException {
+		
+		if (Bundle.class.isInstance(r)) {
+			Bundle b=Bundle.class.cast(r);
+			for (BundleEntry e : b.getEntry()) {
+				ResourceContainer rc = e.getResource();
+				Resource re = FhirUtil.getResourceFromContainer(rc);
+				enrich(re);
+			}
+		}
 		// Medication rxnorm
 		if (Medication.class.isInstance(r)) {
 			Medication m = Medication.class.cast(r);

@@ -100,7 +100,7 @@ public class MetaResourceDb {
 			resourceList.remove(presentRes);
 		}
 
-		r = FhirEnrich.enrich(r);
+		//r = FhirEnrich.enrich(r);
 		resourceList.add(r);
 
 		logger.trace("EJB resources (after adding) size:" + this.getSize());
@@ -318,56 +318,7 @@ public class MetaResourceDb {
 		return inputSet;
 	}
 
-	public List<Resource> filterResources(Class c,
-			HashMap<String, String> filter) throws NoSuchMethodException,
-			SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
-		List<Resource> list = new ArrayList<Resource>();
-
-		logger.trace("filtering by:" + filter.toString());
-
-		logger.trace("size:" + this.getSize());
-		for (Resource r : resourceList) {
-			logger.trace("filtering on:" + r.getId());
-
-			boolean matchF = false;
-			for (String k : filter.keySet()) {
-				if (matchF == true)
-					continue;
-				String v = filter.get(k);
-				logger.trace("filter:" + k + "=" + v);
-
-				// child
-				Resource child = null;
-				Object obj = getChildOfResource(r, k);
-				try {
-					child = (Resource) obj;
-				} catch (ClassCastException e) {
-
-					logger.trace("Not a Resource:<" + obj + ">. Its a "
-							+ e.getMessage());
-					String gotVal = (String) obj;
-					logger.trace("comparing <" + v + "> with <" + gotVal + ">");
-					if (gotVal.equals(v))
-						matchF = true;
-				}
-				if (child != null) {
-					logger.trace("filterinput child:" + child.getId());
-				} else {
-					logger.trace("filterinput child:NULL");
-				}
-				if (child != null && child.getId().equals(v)) {
-					matchF = true;
-					continue;
-				}
-			}
-			if (matchF == true) {
-				logger.trace("adding:" + r.getId());
-				list.add(r);
-			}
-		}
-		return list;
-	}
+	
 
 	public void addResourceList(List<Resource> s) throws JAXBException {
 		for (Resource r : s)

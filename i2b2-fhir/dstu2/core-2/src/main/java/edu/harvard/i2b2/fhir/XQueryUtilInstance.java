@@ -32,7 +32,10 @@
  */
 package edu.harvard.i2b2.fhir;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -49,24 +52,63 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public final class  XQueryUtil{
-	static Logger logger = LoggerFactory.getLogger(XQueryUtil.class);
+public final class  XQueryUtilInstance{
+	static Logger logger = LoggerFactory.getLogger(XQueryUtilInstance.class);
 	
-	/**
-	 * Runs the example code.
-	 * 
-	 * @param args
-	 *            (ignored) command-line arguments
-	 * @throws XQueryUtilException
-	 * @throws BaseXException
-	 *             if a database command fails
-	 */
+	String dbName;
+	Context context; 
+	CreateDB db;
+	public XQueryUtilInstance() throws BaseXException{
+		dbName=UUID.randomUUID().toString();
+		
+			context = new Context();
+		
+			try {
+				new Set("intparse", true).execute(context);
+			} catch (BaseXException e) {
+				logger.error(e.getMessage(),e);
+				throw e;
+			}
+			db = new org.basex.core.cmd.CreateDB(dbName);
+			
+		
+	}
+	
+	public void close() throws BaseXException{
+		new DropDB(dbName).execute(context);
+		context.close();
+	}
+	
+	public String processXQuery(String query, String input)
+			throws XQueryUtilException, BaseXException {
+		String result = null;
+		InputStream is=  new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
+		db.setInput(is);
+		db.execute(context);
+		
+		// Create a database from a remote XML document
+		// System.out.println("\n* Create a database from a file via http.");
 
-	public static ArrayList<String> getStringSequence(String query, String input)
+		try (QueryProcessor proc = new QueryProcessor(query, context)) {
+			// Store the pointer to the result in an iterator:
+			result = proc.execute().serialize();
+		} catch (IOException |QueryException e) {
+			e.printStackTrace();
+			logger.error("",e);
+			throw new XQueryUtilException(e);
+
+		} 	
+		
+		return result;
+	}
+
+	
+
+	public  ArrayList<String> getStringSequence(String query, String input)
 			throws XQueryUtilException {
 		ArrayList<String> resList = new ArrayList<String>();
 		// Database context.
-		Context context = new Context();
+		
 
 		// Create a database from a remote XML document
 		// System.out.println("\n* Create a database from a file via http.");
@@ -74,7 +116,6 @@ public final class  XQueryUtil{
 		// Use internal parser to skip DTD parsing
 		try {
 			new Set("intparse", true).execute(context);
-			String dbName=UUID.randomUUID().toString();
 			new org.basex.core.cmd.CreateDB(dbName, input).execute(context);
 
 			try (QueryProcessor proc = new QueryProcessor(query, context)) {
@@ -92,11 +133,6 @@ public final class  XQueryUtil{
 			}
 
 			// System.out.println("\n* Drop the database.");
-			
-			 new DropIndex("text").execute(context);
-			 new DropIndex("attribute").execute(context);
-			 new DropIndex("fulltext").execute(context);
-			    
 			new DropDB(dbName).execute(context);
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
@@ -109,48 +145,5 @@ public final class  XQueryUtil{
 
 	
 
-	public static String processXQuery(String query, String input)
-			throws XQueryUtilException {
-		String result = null;
-		Context context = new Context();
-
-		// Create a database from a remote XML document
-		// System.out.println("\n* Create a database from a file via http.");
-
-		// Use internal parser to skip DTD parsing
-		String dbName=UUID.randomUUID().toString();
-		try {
-			if (input != null) {
-				new Set("intparse", true).execute(context);
-				
-				new org.basex.core.cmd.CreateDB(dbName, input)
-						.execute(context);
-			}
-			try (QueryProcessor proc = new QueryProcessor(query, context)) {
-				// Store the pointer to the result in an iterator:
-				result = proc.execute().serialize();
-			} catch (QueryException | IOException e) {
-				e.printStackTrace();
-				throw new XQueryUtilException(e);
-
-			}
-
-			// System.out.println("\n* Drop the database.");
-			if (input != null) {
-				new DropIndex("text").execute(context);
-				new DropIndex("attribute").execute(context);
-			 new DropIndex("fulltext").execute(context);
-				 
-				new DropDB(dbName).execute(context);
-			}
-		} catch (BaseXException e1) {
-			e1.printStackTrace();
-			logger.error("",e1);
-			throw new XQueryUtilException(e1);
-
-		}
-		context.close();
-		return result;
-	}
-
+	
 }
