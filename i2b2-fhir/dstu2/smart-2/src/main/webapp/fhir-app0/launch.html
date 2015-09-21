@@ -3,8 +3,9 @@
   <head>
     <script src="https://rawgit.com/smart-on-fhir/client-js/dstu2-wip/dist/fhir-client.js"></script>
     <script>
+    var fhirServerBase="http://"+location.host+path+"api"
       FHIR.oauth2.authorize({
-        "server": "http://localhost:8080/srv-dstu2-0.2/api",
+        "server": fhirServerBase,//"http://localhost:8080/srv-dstu2-0.2/api",
         "client": {
           "client_id": "my_web_app",
           "scope":  "user/*.*",

@@ -91,12 +91,12 @@ public class MetaResourceDbTest {
 	*/	
 		filter= new HashMap<String,String>();
 		filter.put("id", "MedicationStatement/1000000001-1");
-		res=db.filterResources(MedicationStatement.class, filter);
+		//res=db.filterResources(MedicationStatement.class, filter);
 		logger.info("filtered bundle:"+FhirUtil.getResourceBundle(res, "X/", "Y/") );
 		
 		filter= new HashMap<String,String>();
 		filter.put("Patient.id", "Patient/1000000005");
-		res=db.filterResources(MedicationStatement.class, filter);
+		//res=db.filterResources(MedicationStatement.class, filter);
 		logger.info("filtered bundle:"+FhirUtil.getResourceBundle(res, "X/", "Y/") );
 		
 		
