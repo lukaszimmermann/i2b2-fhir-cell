@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import edu.harvard.i2b2.fhir.AuthenticationFailure;
+import edu.harvard.i2b2.fhir.FhirEnrich;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
@@ -114,6 +115,7 @@ public class I2b2Helper {
 		try {
 			// Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
 			Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(i2b2XmlResponse);
+			FhirEnrich.enrich(b);
 			logger.trace("bundle:" + JAXBUtil.toXml(b));
 			logger.trace("list size:" + b.getEntry().size());
 			logger.info("adding to memory...");
