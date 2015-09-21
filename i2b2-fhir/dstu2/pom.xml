@@ -11,6 +11,7 @@
 		<module>client-2</module>
 		<module>srv-2</module>
 		<module>hapiWrapper-2</module>
+		<module>smart-2</module>
   </modules>
 
 	<properties>

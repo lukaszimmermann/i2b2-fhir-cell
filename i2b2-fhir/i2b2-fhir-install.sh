@@ -77,6 +77,8 @@ else
 	export CMD=" cat \"$WILDFLY_DIR/bin/standalone.conf\"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/' | sed -e 's/Xmx512m/Xmx1024m/' > result; mv result $WILDFLY_DIR/bin/standalone.conf"
 	echo $CMD
 	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
+	#seeting srv as default servlet
+	cp ~/i2b2-fhir-cell/i2b2-fhir-master/i2b2-fhir/install/srv-default-servlet/standalone.xml ~/i2b2-fhir-cell/wildfly-9.0.1.Final/standalone/configuration/
 fi
 
 echo "Installing source code from githib repository"
@@ -98,8 +100,10 @@ mvn clean install -Dmaven.test.skip=true;
 cd dstu2 ;
 mvn clean install -Dmaven.test.skip=true; 
 
+
 #deploy
 cp srv-2/target/*.war $DEPLOY_DIR
+cp smart-2/target/*.war $DEPLOY_DIR
 
 echo "running server on port 8080"
 
