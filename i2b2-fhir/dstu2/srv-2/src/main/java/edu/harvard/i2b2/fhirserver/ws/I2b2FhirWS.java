@@ -9,8 +9,6 @@
  * 		July 4, 2015
  */
 
-
-
 package edu.harvard.i2b2.fhirserver.ws;
 
 import java.net.URI;
@@ -79,7 +77,7 @@ public class I2b2FhirWS {
 
 	@EJB
 	SessionBundleBean sbb;
-	
+
 	@EJB
 	PatientBundleService service;
 
@@ -91,9 +89,9 @@ public class I2b2FhirWS {
 
 		try {
 			// to remove prop and use server config
-			//Properties props = new Properties();
-			//props.load(getClass().getResourceAsStream("/log4j.properties"));
-			//PropertyConfigurator.configure(props);
+			// Properties props = new Properties();
+			// props.load(getClass().getResourceAsStream("/log4j.properties"));
+			// PropertyConfigurator.configure(props);
 
 			logger.info("Got init request");
 		} catch (Exception e) {
@@ -112,9 +110,15 @@ public class I2b2FhirWS {
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpHeaders headers, @Context HttpServletRequest request,
 			@Context ServletContext servletContext) {
-		HttpSession session = null;
-		logger.debug("got request " + request.getPathInfo()+"?"+request.getQueryString());
 		
+		HttpSession session = null;
+		String msg = null;
+		String mediaType = null;
+		MetaResourceDb md =null;
+		
+		logger.debug("got request " + request.getPathInfo() + "?"
+				+ request.getQueryString());
+
 		try {
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
@@ -124,9 +128,12 @@ public class I2b2FhirWS {
 
 			}
 
+			//md = I2b2Helper.getMetaResourceDb(session, sbb);
+
 			Class c = FhirUtil.getResourceClass(resourceName);
-			Bundle s = new Bundle();
+			Bundle s = null;
 			session = request.getSession();
+			
 			
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
@@ -136,34 +143,24 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			//I2b2Helper.resetMetaResourceDb(session,sbb);
+			I2b2Helper.resetMetaResourceDb(session,sbb);
 			logger.debug("session id:" + session.getId());
-			
-			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-			
 
-			// filter if patientId is mentioned in query string
-			HashMap<String, String> filter = new HashMap<String, String>();
-
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName,service);
+			I2b2Helper.parsePatientIdToFetchPDO(request, session, sbb,
+					resourceName, service);
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			Map<String, String[]> q = request.getParameterMap();
 			for (String k : q.keySet()) {
-				if (k.equals("_include"))// || k.equals("patient"))
+				if (k.equals("_include"))
 					continue;
-
-				// filter.put(k, new String(request.getParameter(k)));
 			}
-			// XXX filter has to be translated to correct "Patient" path based
-			// on class
-			logger.info("running filter..." + filter.toString());
+			logger.info("running filter..." );
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
 			logger.info("running sophisticated query for:"
 					+ request.getQueryString());
-			// q.remove("_id");q.remove("_date");
-
+		
 			if (request.getQueryString() != null) {
 				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
 						+ request.getQueryString());
@@ -177,36 +174,31 @@ public class I2b2FhirWS {
 
 			logger.info("including...._include:" + includeResources.toString());
 			if (s.getEntry().size() > 0) {
-				List<Resource> list=md.getIncludedResources(c,
-						FhirUtil.getResourceListFromBundle(s),
-						includeResources);
-				logger.trace("includedListsize:"+list.size());
-				s = FhirUtil.getResourceBundle(
-						list, basePath, "url");
+				List<Resource> list = md
+						.getIncludedResources(c,
+								FhirUtil.getResourceListFromBundle(s),
+								includeResources);
+				logger.trace("includedListsize:" + list.size());
+				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
 
-			//logger.info("getting bundle string..."+JAXBUtil.toXml(s));
-			//logger.info("size of db:" + md.getSize());
-			logger.info("returning response..."+JAXBUtil.toXml(s));
-			String msg = null;
-			String mediaType = null;
+			// logger.info("getting bundle string..."+JAXBUtil.toXml(s));
+			// logger.info("size of db:" + md.getSize());
+			logger.info("returning response..." + JAXBUtil.toXml(s));
 			if (acceptHeader.contains("application/json")
 					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.bundleToJsonString(s);
-				mediaType="application/json+fhir";
+				mediaType = "application/json+fhir";
 			} else {
 				msg = JAXBUtil.toXml(s);
-				mediaType="application/xml+fhir";
+				mediaType = "application/xml+fhir";
 			}
 			msg = I2b2Helper.removeSpace(msg);
 			logger.info("acceptHeader:" + acceptHeader);
-			// I2b2Helper.releaseSessionLock(session);
 			return Response.ok().type(mediaType)
 					.header("session_id", session.getId()).entity(msg).build();
 
-		
 		} catch (Exception e) {
-			// I2b2Helper.releaseSessionLock(session);
 			e.printStackTrace();
 			logger.error("", e);
 			return Response.status(Status.BAD_REQUEST)
@@ -217,30 +209,7 @@ public class I2b2FhirWS {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
-	private boolean authenticateSession(HttpSession session, HttpHeaders headers)
-			throws XQueryUtilException, IOException, JAXBException,
-			InterruptedException {
-		List<String> authHeaderContentList = headers
-				.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
-		if (authHeaderContentList.size() == 0) {
-			logger.warn("No Authentication header present");
-			return false;
-		}
-		String authHeaderContent = authHeaderContentList.get(0);
-		boolean authenticationStatus = authService
-				.authenticate(authHeaderContent);
-		if (authenticationStatus == false) {
-			return false;
-		}
-
-		AccessToken tok = authService.getAccessTokenString(authHeaderContent);
-		session.setAttribute("i2b2domain", tok.getI2b2Project());
-		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
-		session.setAttribute("username", tok.getResourceUserId());
-		session.setAttribute("password", tok.getI2b2Token());
-
-		return true;
-	}
+	
 
 	@GET
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
@@ -255,9 +224,11 @@ public class I2b2FhirWS {
 			ParserConfigurationException, SAXException, IOException,
 			JAXBException, JSONException, XQueryUtilException,
 			InterruptedException {
-		
-		logger.debug("got request " + request.getPathInfo()+"?"+request.getQueryString());
+
+		logger.debug("got request " + request.getPathInfo() + "?"
+				+ request.getQueryString());
 		HttpSession session = request.getSession();
+		
 
 		try {
 			if (authenticateSession(session, headers) == false) {
@@ -265,12 +236,16 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-				MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-			logger.debug("session id:" + session.getId());
-
+			I2b2Helper.resetMetaResourceDb(session, sbb);
+			
+			//MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
+			
+			MetaResourceDb md =null;
 			String msg = null;
 			Resource r = null;
-			//I2b2Helper.resetMetaResourceDb(session, sbb);
+			String mediaType = null;
+			
+			logger.debug("session id:" + session.getId());
 			logger.info("searching particular resource:<" + resourceName
 					+ "> with id:<" + id + ">");
 			Class c = FhirUtil.getResourceClass(resourceName);
@@ -278,13 +253,12 @@ public class I2b2FhirWS {
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
 
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName,service);
+			I2b2Helper.parsePatientIdToFetchPDO(request, session, sbb,
+					resourceName, service);
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
-			
-			
-			
+
 			r = md.getParticularResource(c, id);
-			String mediaType = null;
+		
 			if (acceptHeader.contains("application/json")
 					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
@@ -305,6 +279,7 @@ public class I2b2FhirWS {
 								resourceName + " with id:" + id + " NOT found")
 						.header("session_id", session.getId()).build();
 			}
+			
 		} catch (Exception e) {
 			logger.error("", e);
 			return Response.noContent().header("xreason", e.getMessage())
@@ -384,6 +359,31 @@ public class I2b2FhirWS {
 
 		return Response.ok().type(mediaType).entity(msg).build();
 
+	}
+	
+	private boolean authenticateSession(HttpSession session, HttpHeaders headers)
+			throws XQueryUtilException, IOException, JAXBException,
+			InterruptedException {
+		List<String> authHeaderContentList = headers
+				.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
+		if (authHeaderContentList.size() == 0) {
+			logger.warn("No Authentication header present");
+			return false;
+		}
+		String authHeaderContent = authHeaderContentList.get(0);
+		boolean authenticationStatus = authService
+				.authenticate(authHeaderContent);
+		if (authenticationStatus == false) {
+			return false;
+		}
+
+		AccessToken tok = authService.getAccessTokenString(authHeaderContent);
+		session.setAttribute("i2b2domain", tok.getI2b2Project());
+		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
+		session.setAttribute("username", tok.getResourceUserId());
+		session.setAttribute("password", tok.getI2b2Token());
+
+		return true;
 	}
 
 }
