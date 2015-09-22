@@ -126,9 +126,9 @@ public class I2b2Helper {
 		return md;
 	}
 	
-	static void resetMetaResourceDb(HttpSession session, MetaResourceDb md,
+	static void resetMetaResourceDb(HttpSession session, 
 			SessionBundleBean sbb)  {
-			Bundle b = FhirUtil.getResourceBundle(md.getAll(), "basePath", "url");
+			Bundle b = new Bundle();
 			sbb.createSessionBundle(session.getId(), b);
 			logger.debug("reset session bundle");
 	}
