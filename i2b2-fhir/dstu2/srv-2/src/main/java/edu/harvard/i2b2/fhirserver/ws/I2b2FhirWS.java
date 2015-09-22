@@ -56,7 +56,6 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
 import edu.harvard.i2b2.fhirserver.ejb.PatientBundleService;
-import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 
 /*
@@ -74,9 +73,6 @@ public class I2b2FhirWS {
 
 	String i2b2SessionId;
 	// contains ids of patients already called.
-
-	@EJB
-	SessionBundleBean sbb;
 
 	@EJB
 	PatientBundleService service;
@@ -109,13 +105,13 @@ public class I2b2FhirWS {
 			@QueryParam("filterf") String filterf,
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpHeaders headers, @Context HttpServletRequest request,
-			@Context ServletContext servletContext) {
-		
+			@Context ServletContext servletContext) throws IOException {
+
 		HttpSession session = null;
 		String msg = null;
 		String mediaType = null;
-		MetaResourceDb md =null;
-		
+		MetaResourceDb md = new MetaResourceDb();
+
 		logger.debug("got request " + request.getPathInfo() + "?"
 				+ request.getQueryString());
 
@@ -123,44 +119,47 @@ public class I2b2FhirWS {
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
+			String head="";
 			for (String h : headers.getRequestHeaders().keySet()) {
-				logger.info("Header->" + h + ":" + headers.getRequestHeader(h));
+				head+="Header->" + h + ":" + headers.getRequestHeader(h);
 
 			}
+			logger.info(head);
 
-			//md = I2b2Helper.getMetaResourceDb(session, sbb);
+			// md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
 			session = request.getSession();
-			
-			
+
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			if (authenticateSession(session, headers) == false) {
+			if (authenticateOpenSession(session, headers) == false) {
 				return Response.status(Status.BAD_REQUEST)
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			I2b2Helper.resetMetaResourceDb(session,sbb);
+
+			//I2b2Helper.resetMetaResourceDb(session, sbb);
 			logger.debug("session id:" + session.getId());
 
-			I2b2Helper.parsePatientIdToFetchPDO(request, session, sbb,
+			s=I2b2Helper.parsePatientIdToFetchPDO(request, session, 
 					resourceName, service);
-			md = I2b2Helper.getMetaResourceDb(session, sbb);
+			md.addBundle(s);
+			//md = I2b2Helper.getMetaResourceDb(session, sbb);
 
-			Map<String, String[]> q = request.getParameterMap();
-			for (String k : q.keySet()) {
-				if (k.equals("_include"))
-					continue;
-			}
-			logger.info("running filter..." );
+			//Map<String, String[]> q = request.getParameterMap();
+			//for (String k : q.keySet()) {
+				//if (k.equals("_include"))
+					//continue;
+			//}
+			logger.info("running filter...");
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
 			logger.info("running sophisticated query for:"
 					+ request.getQueryString());
-		
+
 			if (request.getQueryString() != null) {
 				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
 						+ request.getQueryString());
@@ -209,8 +208,6 @@ public class I2b2FhirWS {
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
-	
-
 	@GET
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
@@ -228,23 +225,22 @@ public class I2b2FhirWS {
 		logger.debug("got request " + request.getPathInfo() + "?"
 				+ request.getQueryString());
 		HttpSession session = request.getSession();
-		
 
 		try {
-			if (authenticateSession(session, headers) == false) {
+			if (authenticateOpenSession(session, headers) == false) {
 				return Response.status(Status.BAD_REQUEST)
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			I2b2Helper.resetMetaResourceDb(session, sbb);
 			
-			//MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-			
-			MetaResourceDb md =null;
+			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
+
+			MetaResourceDb md = new MetaResourceDb();
 			String msg = null;
 			Resource r = null;
+			Bundle s=null;
 			String mediaType = null;
-			
+
 			logger.debug("session id:" + session.getId());
 			logger.info("searching particular resource:<" + resourceName
 					+ "> with id:<" + id + ">");
@@ -253,12 +249,12 @@ public class I2b2FhirWS {
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
 
-			I2b2Helper.parsePatientIdToFetchPDO(request, session, sbb,
+			s=I2b2Helper.parsePatientIdToFetchPDO(request, session,
 					resourceName, service);
-			md = I2b2Helper.getMetaResourceDb(session, sbb);
+			md.addBundle(s);;
 
 			r = md.getParticularResource(c, id);
-		
+
 			if (acceptHeader.contains("application/json")
 					|| acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
@@ -279,7 +275,7 @@ public class I2b2FhirWS {
 								resourceName + " with id:" + id + " NOT found")
 						.header("session_id", session.getId()).build();
 			}
-			
+
 		} catch (Exception e) {
 			logger.error("", e);
 			return Response.noContent().header("xreason", e.getMessage())
@@ -360,8 +356,8 @@ public class I2b2FhirWS {
 		return Response.ok().type(mediaType).entity(msg).build();
 
 	}
-	
-	private boolean authenticateSession(HttpSession session, HttpHeaders headers)
+
+	private boolean authenticateOpenSession(HttpSession session, HttpHeaders headers)
 			throws XQueryUtilException, IOException, JAXBException,
 			InterruptedException {
 		List<String> authHeaderContentList = headers

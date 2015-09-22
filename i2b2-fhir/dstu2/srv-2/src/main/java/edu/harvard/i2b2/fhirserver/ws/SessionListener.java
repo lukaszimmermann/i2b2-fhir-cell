@@ -19,14 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhirserver.ejb.ConfigBean;
-import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 
 public class SessionListener implements HttpSessionListener {
 	static Logger logger = LoggerFactory.getLogger(SessionListener.class);
 
   private static int totalActiveSessions;
-  @EJB
-  SessionBundleBean sbb;
   public static int getTotalActiveSession(){
 	return totalActiveSessions;
   }
