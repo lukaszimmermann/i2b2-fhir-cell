@@ -182,7 +182,7 @@ public class QueryEngine {
 			}
 			if(this.queryList.size()==0) matchF=false;
 			//if match is true on all queries include in result
-			logger.info("match res:"+matchF);
+			logger.debug("match res:"+matchF);
 			if (matchF == true){resultS.add(r);}
 		}
 		logger.debug("size after query:" + resultS.size());
