@@ -127,6 +127,7 @@ public class I2b2FhirWS {
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = new Bundle();
 			session = request.getSession();
+			
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
@@ -135,9 +136,11 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-
+			//I2b2Helper.resetMetaResourceDb(session,sbb);
 			logger.debug("session id:" + session.getId());
+			
 			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
+			
 
 			// filter if patientId is mentioned in query string
 			HashMap<String, String> filter = new HashMap<String, String>();
@@ -262,14 +265,13 @@ public class I2b2FhirWS {
 						.type(MediaType.APPLICATION_XML).entity("login first")
 						.build();
 			}
-			// I2b2Helper.getSessionLock(session);
-			// MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
+				MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 			logger.debug("session id:" + session.getId());
 
 			String msg = null;
 			Resource r = null;
-			logger.info("searhcing particular resource2:<" + resourceName
+			//I2b2Helper.resetMetaResourceDb(session, sbb);
+			logger.info("searching particular resource:<" + resourceName
 					+ "> with id:<" + id + ">");
 			Class c = FhirUtil.getResourceClass(resourceName);
 			if (c == null)
@@ -277,9 +279,8 @@ public class I2b2FhirWS {
 						+ resourceName);
 
 			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName,service);
-			
-			
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
+			
 			
 			
 			r = md.getParticularResource(c, id);
