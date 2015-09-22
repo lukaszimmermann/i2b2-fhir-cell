@@ -44,7 +44,7 @@ public class PatientBundleService {
 
 		while (status.isProcessing(pid)) {
 			logger.info("waiting on complete status");
-			Thread.sleep(200);
+			Thread.sleep(1000);
 		}
 		return getPatientBundle(session, pid);
 	}
