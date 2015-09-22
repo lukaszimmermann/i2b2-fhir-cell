@@ -127,10 +127,9 @@ public class I2b2Helper {
 	}
 	
 	static void resetMetaResourceDb(HttpSession session, 
-			SessionBundleBean sbb)  {
-			Bundle b = new Bundle();
-			sbb.createSessionBundle(session.getId(), b);
-			logger.debug("reset session bundle");
+			SessionBundleBean sbb) throws JAXBException, IOException  {
+		saveMetaResourceDb(session, new MetaResourceDb(),
+				sbb);
 	}
 
 	static void saveMetaResourceDb(HttpSession session, MetaResourceDb md,
