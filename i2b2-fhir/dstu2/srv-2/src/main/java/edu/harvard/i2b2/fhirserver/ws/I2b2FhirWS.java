@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.ServletContext;
@@ -53,11 +52,12 @@ import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
-	
+
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.fhirserver.ejb.AccessTokenBean;
 import edu.harvard.i2b2.fhirserver.ejb.AuthenticationService;
+import edu.harvard.i2b2.fhirserver.ejb.PatientBundleService;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 import edu.harvard.i2b2.fhirserver.entity.AccessToken;
 
@@ -79,6 +79,9 @@ public class I2b2FhirWS {
 
 	@EJB
 	SessionBundleBean sbb;
+	
+	@EJB
+	PatientBundleService service;
 
 	@javax.ws.rs.core.Context
 	ServletContext context;
@@ -139,7 +142,7 @@ public class I2b2FhirWS {
 			// filter if patientId is mentioned in query string
 			HashMap<String, String> filter = new HashMap<String, String>();
 
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName);
+			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName,service);
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			Map<String, String[]> q = request.getParameterMap();
@@ -273,7 +276,9 @@ public class I2b2FhirWS {
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
 
-			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName);
+			I2b2Helper.parsePatientIdToFetchPDO( request, session, sbb,resourceName,service);
+			
+			
 			md = I2b2Helper.getMetaResourceDb(session, sbb);
 			
 			
@@ -290,11 +295,9 @@ public class I2b2FhirWS {
 
 			msg = I2b2Helper.removeSpace(msg);
 			if (r != null) {
-				I2b2Helper.releaseSessionLock(session);
 				return Response.ok(msg).header("session_id", session.getId())
 						.type(mediaType).build();
 			} else {
-				I2b2Helper.releaseSessionLock(session);
 				return Response
 						.noContent()
 						.header("xreason",
@@ -302,7 +305,6 @@ public class I2b2FhirWS {
 						.header("session_id", session.getId()).build();
 			}
 		} catch (Exception e) {
-			I2b2Helper.releaseSessionLock(session);
 			logger.error("", e);
 			return Response.noContent().header("xreason", e.getMessage())
 					.header("session_id", session.getId()).build();

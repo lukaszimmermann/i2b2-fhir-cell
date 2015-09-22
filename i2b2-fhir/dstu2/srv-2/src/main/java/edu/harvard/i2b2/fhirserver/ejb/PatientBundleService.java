@@ -1,6 +1,5 @@
 package edu.harvard.i2b2.fhirserver.ejb;
 
-
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.servlet.http.HttpSession;
@@ -24,46 +23,47 @@ public class PatientBundleService {
 
 	@EJB
 	PatientBundleManager mgr;
-	
+
 	@EJB
 	PatientBundleStatus status;
-	
+
 	// public getPDO(String pid)
 
 	// putPDO(String pid)
 
 	public Bundle getPatientBundle(HttpSession session, String pid)
 			throws InterruptedException {
+
 		if (status.isComplete(pid)) {
 			return getPatientBundleLocking(pid);
-		} else {
-			if (status.isProcessing(pid)) {
-				Thread.sleep(500);
-			} else {
-				fetchPatientBundle(session, pid);
-			}
-			return getPatientBundle(session, pid);
-
 		}
 
+		if (!(status.isProcessing(pid) || status.isComplete(pid))) {
+			fetchPatientBundle(session, pid);
+		}
+
+		while (status.isProcessing(pid)) {
+			Thread.sleep(50);
+		}
+		return getPatientBundle(session, pid);
 	}
 
 	private void fetchPatientBundle(HttpSession session, String pid) {
 		status.markProcessing(pid);
-		
+
 		String xml = getPdo(session, pid);
-		mgr.put(pid,xml);
+		mgr.put(pid, xml);
 		// fetch PDO from i2b2
 		// translate to FhirResource
 		// put in db
 		status.markComplete(pid);
 	}
 
-	private Bundle getPatientBundleLocking(String pid)  {
+	private Bundle getPatientBundleLocking(String pid) {
 		try {
-			return JAXBUtil.fromXml(mgr.get(pid),Bundle.class);
+			return JAXBUtil.fromXml(mgr.get(pid), Bundle.class);
 		} catch (JAXBException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 			return null;
 		}
 	}

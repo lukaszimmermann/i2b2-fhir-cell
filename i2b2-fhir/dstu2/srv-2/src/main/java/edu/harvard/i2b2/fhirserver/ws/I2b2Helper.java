@@ -17,7 +17,9 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
@@ -41,12 +43,16 @@ import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhirserver.ejb.PatientBundleService;
 import edu.harvard.i2b2.fhirserver.ejb.SessionBundleBean;
 import edu.harvard.i2b2.fhirserver.entity.SessionBundle;
 
 public class I2b2Helper {
 
 	static Logger logger = LoggerFactory.getLogger(I2b2Helper.class);
+	
+	@Resource
+	PatientBundleService service;
 
 	static void initAllPatients(HttpSession session, SessionBundleBean sbb)
 			throws AuthenticationFailure, FhirServerException,
@@ -54,9 +60,10 @@ public class I2b2Helper {
 		if (session == null) {
 			return;
 		}
-		//avoid redundant run
-		if(session.getAttribute("INIT_ALL_PATIENTS")!=null) return;
-		
+		// avoid redundant run
+		if (session.getAttribute("INIT_ALL_PATIENTS") != null)
+			return;
+
 		MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 		Bundle b = null;
@@ -71,62 +78,25 @@ public class I2b2Helper {
 		md.addBundle(b);
 		I2b2Helper.saveMetaResourceDb(session, md, sbb);
 
-		session.setAttribute("INIT_ALL_PATIENTS","TRUE");
+		session.setAttribute("INIT_ALL_PATIENTS", "TRUE");
 	}
 
 	private static void getPdo(HttpSession session, String patientId,
-			SessionBundleBean sbb) throws XQueryUtilException, JAXBException,
-			IOException {
-
-		ArrayList<String> PDOcallHistory = (ArrayList<String>) session
-				.getAttribute("PDOcallHistory");
-		if (PDOcallHistory == null) {
-			PDOcallHistory = new ArrayList<String>();
-			session.setAttribute("PDOcallHistory", PDOcallHistory);
-		}
-		if (PDOcallHistory.contains(patientId)) {
-			logger.info("patient already present:" + patientId);
-			return;// avoid recall on historical patient
-		}
-		PDOcallHistory.add(patientId);
-
-		// MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
-		MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-
-		String requestStr = IOUtils
-				.toString(I2b2Helper.class
-						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
-		// ("i2b2query/i2b2RequestAllDataForAPatient.xml");
-		requestStr = I2b2Util.insertSessionParametersInXml(requestStr, session);
-
-		if (patientId != null)
-			requestStr = requestStr.replaceAll("PATIENTID", patientId);
-
-		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
-
-		logger.info("fetching from i2b2host...");
-		String i2b2XmlResponse = WebServiceCall.run(i2b2Url
-				+ "/services/QueryToolService/pdorequest", requestStr);
-		logger.trace("got i2b2 response:" + i2b2XmlResponse);
-		logger.info("running transformation...");
-		// String xQueryResultString = I2b2Helper.processXquery(query, oStr);
-		// logger.trace("xQueryResultString1:" + xQueryResultString);
+			SessionBundleBean sbb,PatientBundleService service) {
 
 		try {
-			// Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
-			Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(i2b2XmlResponse);
-			FhirEnrich.enrich(b);
-			logger.trace("bundle:" + JAXBUtil.toXml(b));
-			logger.trace("list size:" + b.getEntry().size());
-			logger.info("adding to memory...");
+
+			// MetaResourceDb md = (MetaResourceDb) session.getAttribute("md");
+			MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
+
+			Bundle b = service.getPatientBundle(session, patientId);
+
 			md.addBundle(b);
 			I2b2Helper.saveMetaResourceDb(session, md, sbb);
 
 		} catch (Exception e) {
-			// logger.trace("xQueryResultString1:" + xQueryResultString);
 
 			logger.error("ERROR MSG:" + e.getMessage(), e);
-			// e.printStackTrace();
 
 		}
 	}
@@ -137,26 +107,7 @@ public class I2b2Helper {
 		return XQueryUtil.processXQuery(query, input);
 	}
 
-	static void getSessionLock(HttpSession session) throws InterruptedException {
-		/*
-		 * while (session.getAttribute("SESSION_LOCK") != null &&
-		 * session.getAttribute("SESSION_LOCK").equals(true)) {
-		 * Thread.sleep(100);
-		 * logger.trace("Session locked. Hence sleeping.. for session id:" +
-		 * session.getId()); } logger.trace("setting session Lock:" +
-		 * session.getId()); session.setAttribute("SESSION_LOCK", true);
-		 */
-		return;
-
-	}
-
-	static void releaseSessionLock(HttpSession session) {
-		/*
-		 * logger.trace("releasing session Lock:" + session.getId());
-		 * session.setAttribute("SESSION_LOCK", false);
-		 */
-	}
-
+	
 	static String removeSpace(String input)
 			throws ParserConfigurationException, SAXException, IOException {
 		// return Utils.getStringFromDocument(Utils.xmltoDOM(input.replaceAll(
@@ -174,6 +125,13 @@ public class I2b2Helper {
 		md.addBundle(b);
 		return md;
 	}
+	
+	static void resetMetaResourceDb(HttpSession session, MetaResourceDb md,
+			SessionBundleBean sbb)  {
+			Bundle b = FhirUtil.getResourceBundle(md.getAll(), "basePath", "url");
+			sbb.createSessionBundle(session.getId(), b);
+			logger.debug("reset session bundle");
+	}
 
 	static void saveMetaResourceDb(HttpSession session, MetaResourceDb md,
 			SessionBundleBean sbb) throws JAXBException {
@@ -190,7 +148,7 @@ public class I2b2Helper {
 	}
 
 	static void parsePatientIdToFetchPDO(HttpServletRequest request,
-			HttpSession session, SessionBundleBean sbb, String resourceName)
+			HttpSession session, SessionBundleBean sbb, String resourceName,PatientBundleService service)
 			throws XQueryUtilException, JAXBException, IOException,
 			AuthenticationFailure, FhirServerException {
 		String patientId = I2b2Helper
@@ -201,7 +159,7 @@ public class I2b2Helper {
 		logger.info("PatientId:" + patientId);
 		if (patientId != null) {
 			// filter.put("Patient", "Patient/" + patientId);
-			I2b2Helper.getPdo(session, patientId, sbb);
+			I2b2Helper.getPdo(session, patientId, sbb,service);
 		} else {
 			if (resourceName.equals("Patient"))
 				I2b2Helper.initAllPatients(session, sbb);
@@ -214,7 +172,7 @@ public class I2b2Helper {
 			return null;
 		String id = null;
 		Pattern p = Pattern
-				.compile("[Subject:subject|Patient|patient]=([a-zA-Z0-9]+)");
+				.compile("[Subject:subject|Patient|patient|_id]=([a-zA-Z0-9]+)");
 		Matcher m = p.matcher(input);
 
 		if (m.find()) {
