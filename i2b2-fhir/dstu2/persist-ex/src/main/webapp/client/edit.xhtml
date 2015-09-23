@@ -22,13 +22,22 @@
 			requiredMessage="Error: ClientDescription is required."
 			maxlength="250" />
 		<p></p>
-		EmailContact:<h:inputText id="clientEmailContant" title="ClientEmailContant is: "
+		Developer's Email:<h:inputText id="clientEmailContant" title="ClientEmailContant is: "
 			value="#{clientManager.client.contactEmail}" required="true"
 			requiredMessage="Error: ClientEmailContant is required."
 			validatorMessage="Invalid email format"
 			maxlength="70">
 			<f:validateRegex
 				pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+			</h:inputText>
+		<p></p>
+		Developer's Password:<h:inputText id="ContantPassword" title="Contant Password is: "
+			value="#{clientManager.client.contactPassword}" required="true"
+			requiredMessage="Error: Contant Password is required."
+			validatorMessage="Password should be alpha numeric with 8-16 characters"
+			maxlength="16">
+			<f:validateRegex
+				pattern="^([A-Za-z0-9]{8,16})$" />
 			</h:inputText>
 		<p></p>
 		RedirectUrl:<h:inputText id="clientRedirectUrl" title="ClientRedirectUrlis: "

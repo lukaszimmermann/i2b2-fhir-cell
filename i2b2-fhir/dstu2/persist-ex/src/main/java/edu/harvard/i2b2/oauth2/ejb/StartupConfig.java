@@ -21,10 +21,13 @@ import javax.ejb.Startup;
 
 public class StartupConfig {
 	@EJB
-	ClientService service;
+	ClientService clientService;
+	@EJB
+	UserService userService;
 	
 	@PostConstruct
 	public void init(){
-		//service.setup();
+		clientService.setup();
+		userService.setup();
 	}
 }
