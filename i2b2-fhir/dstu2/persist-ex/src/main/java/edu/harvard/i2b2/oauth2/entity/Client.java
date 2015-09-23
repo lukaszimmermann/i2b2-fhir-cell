@@ -16,6 +16,10 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +37,7 @@ public class Client implements Serializable{
 	
 	private String clientSecret;
 
-	private boolean approved;
+	private boolean approved; //by user
 	
 	private Date registeredOn;
 	
@@ -41,11 +45,11 @@ public class Client implements Serializable{
 
 	private Date lastAccess;
 
-	private String contactName;
-	
-	private String contactEmail;
-	
 	private String description;
+	
+	/*@MapsId @ManyToOne
+	@JoinColumn*/
+	private User user;
 
 	public String getClientId() {
 		return clientId;
@@ -103,22 +107,6 @@ public class Client implements Serializable{
 		this.lastAccess = lastAccess;
 	}
 
-	public String getContactName() {
-		return contactName;
-	}
-
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
-	}
-
-	public String getContactEmail() {
-		return contactEmail;
-	}
-
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -127,15 +115,24 @@ public class Client implements Serializable{
 		this.description = description;
 	}
 
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	@Override
 	public String toString() {
 		return "Client [clientId=" + clientId + ", redirectUrl=" + redirectUrl
 				+ ", clientSecret=" + clientSecret + ", approved=" + approved
 				+ ", registeredOn=" + registeredOn + ", approvedOn="
-				+ approvedOn + ", lastAccess=" + lastAccess + ", contactName="
-				+ contactName + ", contactEmail=" + contactEmail
-				+ ", description=" + description + "]";
+				+ approvedOn + ", lastAccess=" + lastAccess + ", description="
+				+ description + ", user=" + user + "]";
 	}
+
+
 
 	
 }

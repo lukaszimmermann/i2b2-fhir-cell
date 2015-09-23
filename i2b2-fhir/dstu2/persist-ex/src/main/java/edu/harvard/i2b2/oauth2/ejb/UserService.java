@@ -27,10 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.oauth2.entity.Client;
+import edu.harvard.i2b2.oauth2.entity.User;
 
 @Stateless
-public class ClientService {
-	static Logger logger = LoggerFactory.getLogger(ClientService.class);
+public class UserService {
+	static Logger logger = LoggerFactory.getLogger(UserService.class);
 
 	@PersistenceContext
 	EntityManager em;
@@ -38,29 +39,28 @@ public class ClientService {
 	public void setup() {
 		createBlank();
 		list();
-		find("client1");
+		find(0);
 		// remove("client1");
-		find("client1");
+		//find("client1");
 	}
 
 
 	public void createBlank() {
-		Client c = new Client();
-		c.setClientId("client1");
-		c.setClientSecret("secret1");
-		c.setRedirectUrl("http://google.com");
-		create(c);
+		User u=new User();
+		u.setEmail("email1");
+		u.setPassword("password1");
+		create(u);
 	}
 
-	public void create(Client client) {
-		logger.info("persisting:" + client.toString());
-		client.setRegisteredOn(new Date());
-		em.persist(client);
-		logger.info("persisted:" + client.toString());
+	public void create(User u) {
+		logger.info("persisting:" + u.toString());
+		u.setRegisteredOn(new Date());
+		em.persist(u);
+		logger.info("persisted:" + u.toString());
 	}
 
-	public List<Client> list() {
-		List<Client> list = em.createQuery(" SELECT s FROM Client s")
+	public List<User> list() {
+		List<User> list = em.createQuery(" SELECT s FROM User s")
 				.getResultList();
 		String msg = "";
 		for (Object x : list) {
@@ -70,33 +70,33 @@ public class ClientService {
 		return list;
 	}
 
-	public Client find(String id) {
-		Client c = em.find(Client.class, id);
-		if (c != null) {
-			logger.info("found:" + c.toString());
+	public User find(int i) {
+		User u = em.find(User.class, i);
+		if (u != null) {
+			logger.info("found:" + u.toString());
 		} else {
-			logger.info("no client with id:" + id);
+			logger.info("no user with id:" + i);
 		}
-		return c;
+		return u;
 	}
 
-	public void delete(Client client) {
-		em.remove(em.contains(client) ? client : em.merge(client));
+	public void delete(User u) {
+		em.remove(em.contains(u) ? u : em.merge(u));
 		logger.info("removed client");
 	}
 
-	public void update(Client client) {
-		em.merge(client);
-		logger.trace("updated:" + client);
+	public void update(User u) {
+		em.merge(u);
+		logger.trace("updated:" + u);
 	}
 
-	public void save(Client client) {
-		if (em.contains(client)) {
-			update(client);
+	public void save(User u) {
+		if (em.contains(u)) {
+			update(u);
 		} else {
-			create(client);
+			create(u);
 		}
-		logger.trace("updated:" + client);
+		logger.trace("updated:" + u);
 
 	}
 
