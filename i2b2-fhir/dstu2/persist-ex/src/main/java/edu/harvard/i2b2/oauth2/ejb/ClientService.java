@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
@@ -34,22 +35,41 @@ public class ClientService {
 
 	@PersistenceContext
 	EntityManager em;
+	
+	@EJB
+	UserService userService;
 
 	public void setup() {
 		createBlank();
 		list();
-		find("client1");
+		find("client0");
 		// remove("client1");
-		find("client1");
+		find("client0");
 	}
 
 
 	public void createBlank() {
 		Client c = new Client();
+		c.setClientId("client0");
+		c.setClientSecret("secret0");
+		c.setRedirectUrl("http://google.com");
+		c.setUser(userService.find(1));
+		save(c);
+		
+		
+		c = new Client();
 		c.setClientId("client1");
 		c.setClientSecret("secret1");
-		c.setRedirectUrl("http://google.com");
-		create(c);
+		c.setRedirectUrl("http://localhost:8080");
+		c.setUser(userService.find(1));
+		save(c);
+		
+		c = new Client();
+		c.setClientId("client2");
+		c.setClientSecret("secret2");
+		c.setRedirectUrl("http://yahoo.com");
+		c.setUser(userService.find(2));
+		save(c);
 	}
 
 	public void create(Client client) {

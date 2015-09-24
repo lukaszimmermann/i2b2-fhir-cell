@@ -12,6 +12,7 @@
 package edu.harvard.i2b2.oauth2.ejb;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -28,39 +29,39 @@ import edu.harvard.i2b2.oauth2.entity.Client;
 import edu.harvard.i2b2.oauth2.entity.User;
 
 @Named
-@RequestScoped 
+@RequestScoped
 public class UserManager {
-	
+
 	private User user;
-	
+
 	@EJB
 	UserService service;
-	
+
 	@PostConstruct
-	public void init(){
-		user=new User();
+	public void init() {
+		user = new User();
 		user.setEmail("email1");
 		user.setPassword("pass1");
 	}
-	
-	public void save(){
-		if(service.find(user.getId())!=null){
+
+	public void save() {
+		if (service.find(user.getId()) != null) {
 			service.update(user);
-		}else{
+		} else {
 			service.create(user);
 		}
-		
+
 	}
-	
-	public void update(){
+
+	public void update() {
 		service.update(this.user);
 	}
-	
-	public void delete(){
+
+	public void delete() {
 		service.delete(user);
 	}
 
-	public List<User> list(){
+	public List<User> list() {
 		return service.list();
 	}
 
@@ -71,13 +72,37 @@ public class UserManager {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	
-	public String login(){
-		 FacesContext context = FacesContext.getCurrentInstance();
-		context.addMessage(null, new FacesMessage("Login failed."));
-		return "failedlogin";
-		 
+
+	public String login() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (service.authenticate(user.getEmail(), user.getPassword())) {
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_INFO, "Login successful!", null));
+			User authorizedUser=service.findByEmail(user.getEmail());
+			context.getExternalContext().getSessionMap()
+					.put("authenticatedUser", authorizedUser);
+			return "successlogin";
+		}
+		{
+
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "Login failed.", null));
+			return "failedlogin";
+		}
 	}
-	
+
+	public String printSession() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, Object> s = context.getExternalContext().getSessionMap();
+		return s.toString();
+	}
+
+	public String logout() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		user = new User();
+		context.addMessage(null, new FacesMessage("Logout successful!"));
+		return "login";
+
+	}
+
 }

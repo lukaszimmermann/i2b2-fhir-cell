@@ -27,7 +27,7 @@ public class StartupConfig {
 	
 	@PostConstruct
 	public void init(){
-		clientService.setup();
 		userService.setup();
+		clientService.setup();
 	}
 }

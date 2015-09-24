@@ -11,6 +11,7 @@
 
 <h:dataTable value="#{clientManager.list()}" var="c">
     <h:column>#{c.clientId}</h:column>   
+    <h:column>#{c}</h:column>   
 		</h:dataTable>
 		
 		<h:commandButton id="submit" value="Submit" action="register">
