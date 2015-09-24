@@ -26,7 +26,9 @@ public class I2b2UtilTest {
 	public void getProjectsTest() throws  XQueryUtilException {
 		String pmResponseXml=Utils.getFile("pmResponse.xml");
 		//logger.info(pmResponseXml);
-		logger.info("::"+I2b2Util.getUserProjects(pmResponseXml));
+		//logger.info("::"+I2b2Util.getUserProjects(pmResponseXml));
+		I2b2Util.getUserProjectMap(pmResponseXml);
+		//logger.info("::"+I2b2Util.getUserProjectMap(pmResponseXml));
 	}
 
 }
