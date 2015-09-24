@@ -24,7 +24,9 @@ package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
@@ -33,6 +35,8 @@ import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.harvard.i2b2.fhir.core.Project;
 
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
@@ -131,6 +135,35 @@ public class I2b2Util {
 		return projects;
 
 	}
+	
+	/*
+	 * project id->project Name
+	 */
+	public static List<Project> getUserProjectMap(String pmResponseXml)
+			throws XQueryUtilException {
+		logger.trace("got xml" + pmResponseXml);
+		
+		List<Project> list= new ArrayList<Project>();
+		ArrayList<String> projectsXml =	XQueryUtil.getStringSequence(
+			
+				"//user/project", pmResponseXml);
+		for(String xml:projectsXml){
+			String projId=XQueryUtil.processXQuery("//@id/string()", xml);
+			String projName=XQueryUtil.processXQuery("//name/text()", xml);
+			Project p = new Project();
+			p.setId(projId);
+			p.setName(projName);
+			list.add(p);
+			
+			logger.trace("added proj:"+p);
+		    
+		}
+
+		logger.trace("returning projects:" + list.toString());
+		return list;
+
+	}
+
 
 	static public String insertSessionParametersInXml(String xml,
 			HttpSession session) throws XQueryUtilException {
