@@ -13,12 +13,19 @@ package edu.harvard.i2b2.oauth2.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import edu.harvard.i2b2.oauth2.entity.UserType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +37,7 @@ public class User implements Serializable {
 	static Logger logger = LoggerFactory.getLogger(User.class);
 
 	@Id
+	@GeneratedValue
 	private int Id;
 
 	private UserType userType;
@@ -38,6 +46,7 @@ public class User implements Serializable {
 	
 	private String lastName;
 
+	@Column(unique=true)
 	private String email;
 
 	private String password;
@@ -56,10 +65,8 @@ public class User implements Serializable {
 
 	private Date lastAccess;
 
-	/*@MapsId
-	@OneToMany
-	@JoinColumn*/
-	Client client;
+	@OneToMany(mappedBy="user")
+	List<Client> clientList;
 
 	public int getId() {
 		return Id;
@@ -165,26 +172,27 @@ public class User implements Serializable {
 		this.lastAccess = lastAccess;
 	}
 
-	public Client getClient() {
-		return client;
+	
+
+	public List<Client> getClientList() {
+		return clientList;
 	}
 
-	public void setClient(Client client) {
-		this.client = client;
+	public void setClientList(List<Client> clientList) {
+		this.clientList = clientList;
 	}
 
 	@Override
 	public String toString() {
-		return "User [Id=" + Id + ", userType=" + userType
-				+ ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + ", password=" + password
-				+ ", emailConfirmed=" + emailConfirmed + ", approved="
-				+ approved + ", emailConfirmationUrl=" + emailConfirmationUrl
-				+ ", notes=" + notes + ", registeredOn=" + registeredOn
-				+ ", approvedOn=" + approvedOn + ", lastAccess=" + lastAccess
-				+ ", client=" + client + "]";
+		return "User [Id=" + Id + ", userType=" + userType + ", firstName="
+				+ firstName + ", lastName=" + lastName + ", email=" + email
+				+ ", password=" + password + ", emailConfirmed="
+				+ emailConfirmed + ", approved=" + approved
+				+ ", emailConfirmationUrl=" + emailConfirmationUrl + ", notes="
+				+ notes + ", registeredOn=" + registeredOn + ", approvedOn="
+				+ approvedOn + ", lastAccess=" + lastAccess + "]";
 	}
-	
+
 	
 
 	

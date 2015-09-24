@@ -12,9 +12,11 @@
 package edu.harvard.i2b2.oauth2.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,6 +32,7 @@ public class Client implements Serializable{
 
 	static Logger logger = LoggerFactory.getLogger(Client.class);
 
+	static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	@Id 
 	private String clientId;
 	
@@ -47,8 +50,9 @@ public class Client implements Serializable{
 
 	private String description;
 	
-	/*@MapsId @ManyToOne
-	@JoinColumn*/
+	
+	@ManyToOne
+	@JoinColumn(name="USER_ID")
 	private User user;
 
 	public String getClientId() {
@@ -132,6 +136,7 @@ public class Client implements Serializable{
 				+ description + ", user=" + user + "]";
 	}
 
+	
 
 
 	

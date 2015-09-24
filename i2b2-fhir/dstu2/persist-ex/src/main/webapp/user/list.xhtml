@@ -9,8 +9,11 @@
 	<h:form>
 		<h2>List Users</h2>
 
+
 <h:dataTable value="#{userManager.list()}" var="u">
-    <h:column>#{u.id}</h:column>   
+    <h:column>#{u.id}</h:column>  
+    <h:column>#{u.email}</h:column>  
+    <h:column>#{u.password}</h:column>   
 		</h:dataTable>
 		
 		<h:commandButton id="submit" value="Submit" action="register">

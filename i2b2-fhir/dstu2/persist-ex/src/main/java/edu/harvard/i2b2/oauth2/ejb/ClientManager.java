@@ -11,23 +11,31 @@
 
 package edu.harvard.i2b2.oauth2.ejb;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.oauth2.entity.Client;
+import edu.harvard.i2b2.oauth2.entity.User;
 
 @Named
 @RequestScoped 
 public class ClientManager {
-	
+	static Logger logger = LoggerFactory.getLogger(ClientManager.class);
+
 	private Client client;
 	
 	
@@ -60,7 +68,23 @@ public class ClientManager {
 	}
 
 	public List<Client> list(){
-		return service.list();
+		List<Client> subList= new ArrayList<Client>();
+		List<Client> fullList=new ArrayList<Client>();
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, Object> sessionMap = context.getExternalContext().getSessionMap();
+		if(sessionMap.containsKey("authenticatedUser")){
+			User authorizedUser=(User) sessionMap.get("authenticatedUser");
+			logger.debug("Found authenticatedUser: "+authorizedUser);
+			fullList= service.list();
+			
+			for(Client c:fullList){
+				if (c.getUser().getId()==authorizedUser.getId()){
+					subList.add(c);
+				}
+			}
+		}
+		logger.debug("fullList:"+fullList+"\nsubList:"+subList.toString());
+		return subList;
 	}
 
 	public Client getClient() {

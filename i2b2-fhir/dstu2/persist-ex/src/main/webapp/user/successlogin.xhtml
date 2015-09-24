@@ -6,7 +6,17 @@
 	<title>Login</title>
 </h:head>
 <h:body>
-failed
+<h:form>
+<p>
+<h:outputText value="#{authenticatedUser.toString()}"/>
+</p><p>
+<h:outputText value="#{userManager.printSession()}"/>
+</p><p>
+<h:outputText value="#{clientManager.client}"/>
+</p>
+<h:commandLink value="Logout" action="#{userManager.logout()}" />
+<h:commandLink value="Create Client" action="/client/edit" />
+</h:form>
 </h:body>
 </html>
 
