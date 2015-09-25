@@ -9,21 +9,26 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.oauth2.ejb;
-import java.util.ArrayList;
-import java.util.List;
+package edu.harvard.i2b2.oauth2.register.ejb;
 
 import javax.ejb.Stateless;
+import javax.faces.bean.RequestScoped;
 import javax.inject.Named;
 
-@Stateless 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Named 
-public class CustomerSessionBean { 
-	public List<String> getCustomerNames() {
-		ArrayList<String> list= new ArrayList<String>();
-		list.add("1 one");
-		list.add("2 two");
-		return list;
-		
+@RequestScoped 
+@Stateless
+public class Name { 
+	static Logger logger = LoggerFactory.getLogger(Name.class);
+	
+	public String getValue() {
+		logger.info("called getValue()");
+		return "hmm";
 	}
+
+		
 }
+

@@ -9,7 +9,7 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.oauth2.entity;
+package edu.harvard.i2b2.oauth2.register.entity;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

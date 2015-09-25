@@ -9,7 +9,7 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.oauth2.ejb;
+package edu.harvard.i2b2.oauth2.register.ejb;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +25,8 @@ import javax.inject.Named;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import edu.harvard.i2b2.oauth2.entity.Client;
-import edu.harvard.i2b2.oauth2.entity.User;
+import edu.harvard.i2b2.oauth2.register.entity.Client;
+import edu.harvard.i2b2.oauth2.register.entity.User;
 
 @Named
 @RequestScoped
