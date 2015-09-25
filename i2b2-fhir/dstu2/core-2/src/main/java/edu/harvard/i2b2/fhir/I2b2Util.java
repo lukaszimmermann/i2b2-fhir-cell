@@ -41,20 +41,19 @@ import edu.harvard.i2b2.fhir.core.Project;
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
 
-	
 	public static String insertI2b2ParametersInXml(String xml, String username,
-			String password, String i2b2domainUrl, String i2b2domain,String project)
-			throws XQueryUtilException {
+			String password, String i2b2Url, String i2b2domain,
+			String project) throws XQueryUtilException {
 
-		xml = insertI2b2ParametersInXml(xml,  username, password, i2b2domainUrl, i2b2domain);
-		xml = replaceXMLString(xml, "//security/??", project);
+		xml = insertI2b2ParametersInXml(xml, username, password, i2b2Url,
+				i2b2domain);
+		xml = replaceXMLString(xml, "//project_id", project);
 		return xml;
 	}
-	
 
-	public static String insertI2b2ParametersInXml(String xml,
-			String username, String authToken,String i2b2domainUrl, String i2b2domain
-			) throws XQueryUtilException {
+	public static String insertI2b2ParametersInXml(String xml, String username,
+			String authToken, String i2b2domainUrl, String i2b2domain)
+			throws XQueryUtilException {
 		xml = replaceXMLString(xml, "//security/username", username);
 		xml = replaceXMLString(xml, "//security/password", authToken);
 		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
@@ -62,11 +61,17 @@ public class I2b2Util {
 				+ "/services/QueryToolService/pdorequest");
 		// logger.info("returning xml:"+xml);
 
+		/*
+		 * is_token=\"false attribute of password does not make a difference if
+		 * set to false. Both token and password can be used.if session key: is
+		 * appended to token
+		 */
 		// if password is token then indicate so
-		if (authToken.contains("SessionKey:")) {
-		} else {
-			xml = xml.replace("<password>", "<password is_token=\"true\">");
-		}
+		/*
+		 * if (authToken.contains("SessionKey:")) { } else { xml =
+		 * xml.replaceAll("<password is_token=\"false\">",
+		 * "<password is_token=\"true\">"); }
+		 */
 		return xml;
 	}
 
@@ -104,8 +109,8 @@ public class I2b2Util {
 			throws XQueryUtilException, IOException {
 		String requestStr = IOUtils.toString(I2b2Util.class
 				.getResourceAsStream("/i2b2query/getServices.xml"));
-		requestStr = insertI2b2ParametersInXml(requestStr, username,
-				authToken, i2b2domain, i2b2domainUrl);
+		requestStr = insertI2b2ParametersInXml(requestStr, username, authToken,
+				i2b2domain, i2b2domainUrl);
 		logger.trace("requestStr:" + requestStr);
 		String oStr = WebServiceCall.run(i2b2domainUrl
 				+ "/services/PMService/getServices", requestStr);
@@ -123,17 +128,6 @@ public class I2b2Util {
 
 	}
 
-	public static List<String> getUserProjects(String pmResponseXml)
-			throws XQueryUtilException {
-		logger.trace("got xml" + pmResponseXml);
-		List<String> projects = XQueryUtil.getStringSequence(
-				"//user/domain/text()", pmResponseXml);
-
-		logger.trace("returning projects:" + projects.toString());
-		return projects;
-
-	}
-
 	/*
 	 * project id->project Name
 	 */
@@ -146,8 +140,11 @@ public class I2b2Util {
 
 		"//user/project", pmResponseXml);
 		for (String xml : projectsXml) {
-			String projId = XQueryUtil.processXQuery("//@id/string()", xml);
-			String projName = XQueryUtil.processXQuery("//name/text()", xml);
+			logger.debug("xml:" + xml);
+			String projId = XQueryUtil.processXQuery(".//project/@id/string()",
+					xml);
+			String projName = XQueryUtil.processXQuery(
+					".//project/name/text()", xml);
 			Project p = new Project();
 			p.setId(projId);
 			p.setName(projName);
@@ -193,14 +190,14 @@ public class I2b2Util {
 		return JAXBUtil.fromXml(bundleXml, Bundle.class);
 	}
 
-	public static String getPDO(String i2b2User, String i2b2Token,
-			String i2b2Url, String i2b2Domain,String project) throws XQueryUtilException,
-			JAXBException, IOException, AuthenticationFailure {
+	public static String getAllPatients(String i2b2User, String i2b2Token,
+			String i2b2Url, String i2b2Domain, String project)
+			throws XQueryUtilException, IOException {
 
 		String requestXml = IOUtils.toString(FhirUtil.class
 				.getResourceAsStream("/i2b2query/getAllPatients.xml"));
 		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
-				i2b2Token, i2b2Url, i2b2Domain,project);
+				i2b2Token, i2b2Url, i2b2Domain, project);
 
 		String pdo = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
@@ -209,9 +206,36 @@ public class I2b2Util {
 		logger.trace("ERROR?:<" + loginError + ">");
 
 		if (loginError.equals("ERROR"))
-			throw new AuthenticationFailure();
+			throw new IllegalArgumentException();
 
 		return pdo;
+	}
+
+	public static Bundle getAllDataForAPatientAsFhirBundle(String pdoXml)
+			throws JAXBException, IOException, XQueryUtilException {
+		Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(pdoXml);
+		FhirEnrich.enrich(b);
+		logger.trace("bundle:" + JAXBUtil.toXml(b));
+		logger.trace("list size:" + b.getEntry().size());
+		logger.info("adding to memory...");
+		return b;
+	}
+
+	public static String getAllDataForAPatient(String i2b2User,
+			String i2b2Token, String i2b2Url, String i2b2Domain,
+			String project, String patientId) throws IOException,
+			XQueryUtilException {
+		String requestXml = IOUtils
+				.toString(I2b2Util.class
+						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml,i2b2User, i2b2Token,
+				i2b2Url, i2b2Domain, project);
+
+		if (patientId != null)
+			requestXml = requestXml.replaceAll("PATIENTID", patientId);
+
+		return WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestXml);
 	}
 
 	static boolean validateI2b2UserNamePasswordPair(String pmResponse)

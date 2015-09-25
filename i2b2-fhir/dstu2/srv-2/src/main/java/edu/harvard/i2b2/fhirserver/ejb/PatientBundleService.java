@@ -69,7 +69,7 @@ public class PatientBundleService {
 		}
 	}
 
-	private static String getPdo(HttpSession session, String patientId) {
+	/*private static String getPdo(HttpSession session, String patientId) {
 		try {
 			String requestStr = IOUtils
 					.toString(I2b2Helper.class
@@ -100,5 +100,5 @@ public class PatientBundleService {
 			logger.error("ERROR MSG:" + e.getMessage(), e);
 		}
 		return null;
-	}
+	}*/
 }
