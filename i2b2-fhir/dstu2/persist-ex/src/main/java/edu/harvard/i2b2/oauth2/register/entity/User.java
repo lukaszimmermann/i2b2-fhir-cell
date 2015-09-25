@@ -9,7 +9,7 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.oauth2.entity;
+package edu.harvard.i2b2.oauth2.register.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -25,7 +25,7 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-import edu.harvard.i2b2.oauth2.entity.UserType;
+import edu.harvard.i2b2.oauth2.register.entity.UserType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

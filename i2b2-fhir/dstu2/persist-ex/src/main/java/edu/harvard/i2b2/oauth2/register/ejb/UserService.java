@@ -9,7 +9,7 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.oauth2.ejb;
+package edu.harvard.i2b2.oauth2.register.ejb;
 
 import java.util.Date;
 import java.util.List;
@@ -27,8 +27,8 @@ import javax.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.oauth2.entity.Client;
-import edu.harvard.i2b2.oauth2.entity.User;
+import edu.harvard.i2b2.oauth2.register.entity.Client;
+import edu.harvard.i2b2.oauth2.register.entity.User;
 
 @Stateless
 public class UserService {
