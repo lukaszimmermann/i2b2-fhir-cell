@@ -212,7 +212,7 @@ public class OAuth2AuthzEndpoint {
 		logger.trace("sessionid:" + session.getId());
 
 		String pmResponseXml = I2b2Util.getPmResponseXml(username, password,
-				Config.i2b2Domain, Config.i2b2Url);
+				 Config.i2b2Url,Config.i2b2Domain);
 		logger.trace("got pmResponseXml:" + pmResponseXml);
 		if (I2b2Util.authenticateUser(pmResponseXml)) {
 			// logger.trace("got pmResponseXml:" + pmResponseXml);

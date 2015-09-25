@@ -57,7 +57,7 @@ public class AccessTokenBean {
 			Random r = new Random();
 			// createAccessToken("clientId232" + r.nextInt());
 			// deleteAllAccessTokens();
-			if (Config.demoAccessToken != null) {
+			if (Config.openAccessToken != null) {
 				createIfNotExistsDemoAccessToken();
 			}
 		} catch (Exception ex) {
@@ -111,13 +111,13 @@ public class AccessTokenBean {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
 			em.getTransaction().begin();
-			tok = em.find(AccessToken.class, Config.demoAccessToken);
+			tok = em.find(AccessToken.class, Config.openAccessToken);
 			em.getTransaction().commit();
 
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(Config.demoAccessToken);
+				tok.setTokenString(Config.openAccessToken);
 				tok.setResourceUserId("demo");
 				tok.setI2b2Token("demouser");
 				tok.setI2b2Project("i2b2demo");

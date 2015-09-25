@@ -19,8 +19,12 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
 	static public String i2b2Url ;
-	static public String demoAccessToken;
+	static public String openAccessToken;
 	static public boolean openAccess;
+	static public String openI2b2User;
+	static public String openI2b2Password;
+	static public String openI2b2Project;
+	static public String openClientId; 
 
 	static Logger logger = LoggerFactory.getLogger(Config.class);
 	
@@ -32,11 +36,15 @@ public class Config {
 					"application.properties"));
 			
 			i2b2Url =config.getString("i2b2Url");
-			demoAccessToken =config.getString("demoAccessToken");
+			openAccessToken =config.getString("openAccessToken");
 			openAccess=Boolean.parseBoolean(config.getString("openAccess"));
+			openI2b2User =config.getString("openI2b2User");
+			openI2b2Password =config.getString("openI2b2Password");
+			openI2b2Project =config.getString("openI2b2Project");
+			openClientId =config.getString("openClientId");
 			
 			logger.info("initialized:"+"\ni2b2Url:"+i2b2Url
-					+"\ndemoAccessToken:"+demoAccessToken+"\n openAccess:"+openAccess);
+					+"\ndemoAccessToken:"+openAccessToken+"\n openAccess:"+openAccess);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
