@@ -40,6 +40,10 @@ public class AccessToken {
 
 	private String i2b2Project;
 	
+	private String i2b2Url;
+	
+	private String i2b2Domain;
+	
 	private String scope;
 	
 	private Date createdDate;
@@ -110,16 +114,32 @@ public class AccessToken {
 		this.expiryDate = expiryDate;
 	}
 
+	public String getI2b2Url() {
+		return i2b2Url;
+	}
+
+	public void setI2b2Url(String i2b2Url) {
+		this.i2b2Url = i2b2Url;
+	}
+
+	public String getI2b2Domain() {
+		return i2b2Domain;
+	}
+
+	public void setI2b2Domain(String i2b2Domain) {
+		this.i2b2Domain = i2b2Domain;
+	}
+
 	@Override
 	public String toString() {
-		return "AccessToken [tokenString=" + tokenString
-				+ ", clientId="
+		return "AccessToken [tokenString=" + tokenString + ", clientId="
 				+ clientId + ", resourceUserId=" + resourceUserId
 				+ ", i2b2Token=" + i2b2Token + ", i2b2Project=" + i2b2Project
+				+ ", i2b2Url=" + i2b2Url + ", i2b2Domain=" + i2b2Domain
 				+ ", scope=" + scope + ", createdDate=" + createdDate
 				+ ", expiryDate=" + expiryDate + "]";
 	}
-	
+
 	
 	
 }

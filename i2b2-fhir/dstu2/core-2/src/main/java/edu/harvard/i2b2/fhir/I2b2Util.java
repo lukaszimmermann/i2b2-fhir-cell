@@ -24,13 +24,8 @@ package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
@@ -94,14 +89,15 @@ public class I2b2Util {
 	public static String getPmResponseXml(String username, String password,
 			String i2b2domainUrl, String i2b2domain)
 			throws XQueryUtilException, IOException {
-		String requestStr = IOUtils.toString(I2b2Util.class
+		logger.trace("got request");
+		String requestXml = IOUtils.toString(I2b2Util.class
 				.getResourceAsStream("/i2b2query/getServices.xml"));
-		requestStr = insertI2b2ParametersInXml(requestStr, username, password,
+		requestXml = insertI2b2ParametersInXml(requestXml, username, password,
 				i2b2domainUrl, i2b2domain);
-		logger.trace("requestStr:" + requestStr);
-		String oStr = WebServiceCall.run(i2b2domainUrl
-				+ "/services/PMService/getServices", requestStr);
-		return oStr;
+		logger.trace("requestXml:" + requestXml);
+		String response = WebServiceCall.run(i2b2domainUrl
+				+ "/services/PMService/getServices", requestXml);
+		return response;
 	}
 
 	public static String getPmResponseXmlWithAuthToken(String username,
