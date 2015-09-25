@@ -51,7 +51,7 @@ public class AccessTokenService {
 	public void setup() {
 		try {
 			Random r = new Random();
-			if (Config.demoAccessToken != null) {
+			if (Config.openAccessToken != null) {
 				createIfNotExistsDemoAccessToken();
 			}
 		} catch (Exception ex) {
@@ -97,20 +97,22 @@ public class AccessTokenService {
 		try {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
-			tok = em.find(AccessToken.class, Config.demoAccessToken);
+			tok = em.find(AccessToken.class, Config.openAccessToken);
 		
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(Config.demoAccessToken);
-				tok.setResourceUserId("demo");
-				tok.setI2b2Token("demouser");
-				tok.setI2b2Project("i2b2demo");
-				tok.setClientId("fcclient1");
+				tok.setTokenString(Config.openAccessToken);
+				tok.setResourceUserId(Config.openI2b2User);
+				tok.setI2b2Token(Config.openI2b2Password);
+				tok.setClientId(Config.openClientId);
 				tok.setScope("user *.read");
+				tok.setI2b2Url(Config.i2b2Url);
+				tok.setI2b2Project(Config.openI2b2Project);
+				tok.setI2b2Domain(Config.i2b2Domain);
 				tok.setCreatedDate(new Date());
 				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
-
+			
 				logger.info("Demo token does not exist; Hence creating .."
 						+ tok.toString());
 				em.persist(tok);
@@ -140,9 +142,10 @@ public class AccessTokenService {
 			tok.setScope(scope);
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
-
+			
+			
 			logger.info("Created .." + tok.toString());
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			em.persist(tok);
 
 			AuthToken authTok = em.find(AuthToken.class, authCode);
@@ -150,7 +153,7 @@ public class AccessTokenService {
 			logger.info("Removing authTok " );
 			em.remove(authTok);
 			
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			
 			logger.info("Persisted " + tok.toString());
 			return tok;
