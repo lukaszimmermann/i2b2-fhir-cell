@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class Config {
 	static public String i2b2Url ;
+	public static String i2b2Domain;
 	static public String demoAccessToken;
 	static public boolean openAccess;
 
@@ -32,6 +33,7 @@ public class Config {
 					"application.properties"));
 			
 			i2b2Url =config.getString("i2b2Url");
+			i2b2Url =config.getString("i2b2Domain");
 			demoAccessToken =config.getString("demoAccessToken");
 			openAccess=Boolean.parseBoolean(config.getString("openAccess"));
 			

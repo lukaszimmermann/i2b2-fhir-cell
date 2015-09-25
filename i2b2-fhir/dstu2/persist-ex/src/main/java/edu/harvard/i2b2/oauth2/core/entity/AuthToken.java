@@ -51,6 +51,10 @@ public class AuthToken {
 	
 	private String i2b2Project;
 	
+	private String i2b2Url;
+	
+	private String i2b2Domain;
+	
 	private Date createdDate;
 	
 	private Date expiryDate;
@@ -134,6 +138,24 @@ public class AuthToken {
 	public void setI2b2Project(String i2b2Project) {
 		this.i2b2Project = i2b2Project;
 	}
+	
+	
+
+	public String getI2b2Url() {
+		return i2b2Url;
+	}
+
+	public void setI2b2Url(String i2b2Url) {
+		this.i2b2Url = i2b2Url;
+	}
+
+	public String getI2b2Domain() {
+		return i2b2Domain;
+	}
+
+	public void setI2b2Domain(String i2b2Domain) {
+		this.i2b2Domain = i2b2Domain;
+	}
 
 	@Override
 	public String toString() {
@@ -141,11 +163,11 @@ public class AuthToken {
 				+ state + ", clientId=" + clientId + ", clientRedirectUri="
 				+ clientRedirectUri + ", resourceUserId=" + resourceUserId
 				+ ", i2b2Token=" + i2b2Token + ", scope=" + scope
-				+ ", i2b2Project=" + i2b2Project + ", createdDate="
-				+ createdDate + ", expiryDate=" + expiryDate + "]";
+				+ ", i2b2Project=" + i2b2Project + ", i2b2Url=" + i2b2Url
+				+ ", i2b2Domain=" + i2b2Domain + ", createdDate=" + createdDate
+				+ ", expiryDate=" + expiryDate + "]";
 	}
 
 	
-
 	
 }

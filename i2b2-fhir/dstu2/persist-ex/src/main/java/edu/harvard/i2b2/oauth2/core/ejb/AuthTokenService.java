@@ -11,26 +11,15 @@
 
 package edu.harvard.i2b2.oauth2.core.ejb;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.EJBException;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,42 +68,42 @@ public class AuthTokenService {
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
 
 			logger.info("Created authToken.." + tok.toString());
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			em.persist(tok);
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			logger.info("Persisted authToken" + tok.toString());
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 	}
 
 	public List<AuthToken> getAuthTokens() {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			List<AuthToken> tokens = em.createQuery("from AuthToken")
 					.getResultList();
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			return tokens;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 	}
 
 	public void removeAuthToken(AuthToken authToken) {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			logger.info("deleting from db:" + authToken);
 			em.remove(authToken);
 
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 	}
@@ -122,17 +111,17 @@ public class AuthTokenService {
 	public AuthToken find(String authCode) {
 		try {
 			if (authCode==null) throw new IllegalArgumentException("search parameter:auth code is null");
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			AuthToken tok = em.find(AuthToken.class, authCode);
 			// .createQuery(
 			// "select a from AuthToken a where AuthorizationCode = :ac ")
 			// .setParameter("ac", authCode).getResultList();
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			logger.info("found token:" + tok);
 			return tok;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 
@@ -140,7 +129,7 @@ public class AuthTokenService {
 
 	public void listAuthTokens() {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			@SuppressWarnings("unchecked")
 			List<AuthToken> list = em.createQuery("from AuthToken")
 					.getResultList();
@@ -149,10 +138,10 @@ public class AuthTokenService {
 				AuthToken a = (AuthToken) iterator.next();
 				logger.info(a.toString());
 			}
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 		}
 	}
 
@@ -165,18 +154,18 @@ public class AuthTokenService {
 	public AuthToken findByClientId(String clientId) {
 		try {
 			AuthToken tok = null;
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			List<AuthToken> list = em
 					.createQuery(
 							"select a from AuthToken a where clientId = :ac ")
 					.setParameter("ac", clientId).getResultList();
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			if (list.size() > 0)
 				tok = list.get(0);
 			return tok;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 
@@ -189,7 +178,7 @@ public class AuthTokenService {
 			em.createQuery("SHUTDOWN").executeUpdate();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(e.getMessage());
 		}
 
