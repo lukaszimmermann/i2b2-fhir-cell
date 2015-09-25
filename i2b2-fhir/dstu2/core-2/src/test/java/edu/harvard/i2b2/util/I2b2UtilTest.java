@@ -11,6 +11,9 @@
 
 package edu.harvard.i2b2.util;
 
+import java.io.IOException;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +24,30 @@ import edu.harvard.i2b2.fhir.XQueryUtilException;
 
 public class I2b2UtilTest {
 	Logger logger = LoggerFactory.getLogger(I2b2UtilTest.class);
+	String i2b2User;
+	String i2b2Password;
+	String i2b2Url;
+	String i2b2domain;
+
+	@Before
+	public void init() {
+		i2b2User = "demo";
+		i2b2Password = "demouser";
+		i2b2Url = "http://services.i2b2.org:9090/i2b2";
+		i2b2domain = "i2b2demo";
+	}
 
 	@Test
-	public void getProjectsTest() throws  XQueryUtilException {
-		String pmResponseXml=Utils.getFile("pmResponse.xml");
-		//logger.info(pmResponseXml);
-		//logger.info("::"+I2b2Util.getUserProjects(pmResponseXml));
+	public void validateUser() throws XQueryUtilException, IOException {
+		String pmResponse=I2b2Util.getPmResponseXml(i2b2User, i2b2Password, i2b2Url, i2b2domain);
+		logger.info(pmResponse);
+	}
+
+	// @Test
+	public void getProjectsTest() throws XQueryUtilException {
+		String pmResponseXml = Utils.getFile("pmResponse.xml");
 		I2b2Util.getUserProjectMap(pmResponseXml);
-		//logger.info("::"+I2b2Util.getUserProjectMap(pmResponseXml));
+		// logger.info("::"+I2b2Util.getUserProjectMap(pmResponseXml));
 	}
 
 }

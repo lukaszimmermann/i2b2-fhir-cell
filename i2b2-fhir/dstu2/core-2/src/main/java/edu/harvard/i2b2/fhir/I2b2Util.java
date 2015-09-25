@@ -41,22 +41,20 @@ import edu.harvard.i2b2.fhir.core.Project;
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
 
+	
 	public static String insertI2b2ParametersInXml(String xml, String username,
-			String password, String i2b2domain, String i2b2domainUrl)
+			String password, String i2b2domainUrl, String i2b2domain,String project)
 			throws XQueryUtilException {
 
-		xml = replaceXMLString(xml, "//security/username", username);
-		xml = replaceXMLString(xml, "//security/password", password);
-		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
-		xml = replaceXMLString(xml, "//proxy/redirect_url", i2b2domainUrl
-				+ "/services/QueryToolService/pdorequest");
-		// logger.info("returning xml:"+xml);
+		xml = insertI2b2ParametersInXml(xml,  username, password, i2b2domainUrl, i2b2domain);
+		xml = replaceXMLString(xml, "//security/??", project);
 		return xml;
 	}
+	
 
-	public static String insertI2b2ParametersAuthTokenInXml(String xml,
-			String username, String authToken, String i2b2domain,
-			String i2b2domainUrl) throws XQueryUtilException {
+	public static String insertI2b2ParametersInXml(String xml,
+			String username, String authToken,String i2b2domainUrl, String i2b2domain
+			) throws XQueryUtilException {
 		xml = replaceXMLString(xml, "//security/username", username);
 		xml = replaceXMLString(xml, "//security/password", authToken);
 		xml = replaceXMLString(xml, "//security/domain", i2b2domain);
@@ -89,12 +87,12 @@ public class I2b2Util {
 	}
 
 	public static String getPmResponseXml(String username, String password,
-			String i2b2domain, String i2b2domainUrl)
+			String i2b2domainUrl, String i2b2domain)
 			throws XQueryUtilException, IOException {
 		String requestStr = IOUtils.toString(I2b2Util.class
 				.getResourceAsStream("/i2b2query/getServices.xml"));
 		requestStr = insertI2b2ParametersInXml(requestStr, username, password,
-				i2b2domain, i2b2domainUrl);
+				i2b2domainUrl, i2b2domain);
 		logger.trace("requestStr:" + requestStr);
 		String oStr = WebServiceCall.run(i2b2domainUrl
 				+ "/services/PMService/getServices", requestStr);
@@ -102,11 +100,11 @@ public class I2b2Util {
 	}
 
 	public static String getPmResponseXmlWithAuthToken(String username,
-			String authToken, String i2b2domain, String i2b2domainUrl)
+			String authToken, String i2b2domainUrl, String i2b2domain)
 			throws XQueryUtilException, IOException {
 		String requestStr = IOUtils.toString(I2b2Util.class
 				.getResourceAsStream("/i2b2query/getServices.xml"));
-		requestStr = insertI2b2ParametersAuthTokenInXml(requestStr, username,
+		requestStr = insertI2b2ParametersInXml(requestStr, username,
 				authToken, i2b2domain, i2b2domainUrl);
 		logger.trace("requestStr:" + requestStr);
 		String oStr = WebServiceCall.run(i2b2domainUrl
@@ -135,28 +133,28 @@ public class I2b2Util {
 		return projects;
 
 	}
-	
+
 	/*
 	 * project id->project Name
 	 */
 	public static List<Project> getUserProjectMap(String pmResponseXml)
 			throws XQueryUtilException {
 		logger.trace("got xml" + pmResponseXml);
-		
-		List<Project> list= new ArrayList<Project>();
-		ArrayList<String> projectsXml =	XQueryUtil.getStringSequence(
-			
-				"//user/project", pmResponseXml);
-		for(String xml:projectsXml){
-			String projId=XQueryUtil.processXQuery("//@id/string()", xml);
-			String projName=XQueryUtil.processXQuery("//name/text()", xml);
+
+		List<Project> list = new ArrayList<Project>();
+		ArrayList<String> projectsXml = XQueryUtil.getStringSequence(
+
+		"//user/project", pmResponseXml);
+		for (String xml : projectsXml) {
+			String projId = XQueryUtil.processXQuery("//@id/string()", xml);
+			String projName = XQueryUtil.processXQuery("//name/text()", xml);
 			Project p = new Project();
 			p.setId(projId);
 			p.setName(projName);
 			list.add(p);
-			
-			logger.trace("added proj:"+p);
-		    
+
+			logger.trace("added proj:" + p);
+
 		}
 
 		logger.trace("returning projects:" + list.toString());
@@ -164,63 +162,65 @@ public class I2b2Util {
 
 	}
 
+	/*
+	 * static public String insertSessionParametersInXml(String xml, HttpSession
+	 * session) throws XQueryUtilException { String username = (String)
+	 * session.getAttribute("username"); String password = (String)
+	 * session.getAttribute("password"); String i2b2domain = (String)
+	 * session.getAttribute("i2b2domain"); String i2b2domainUrl = (String)
+	 * session.getAttribute("i2b2domainUrl");
+	 * 
+	 * return I2b2Util.insertI2b2ParametersInXml(xml, username, password,
+	 * i2b2domainUrl,i2b2domain); }
+	 * 
+	 * public static Bundle getAllPatientsAsFhirBundle(HttpSession session)
+	 * throws XQueryUtilException, JAXBException, IOException,
+	 * AuthenticationFailure{ return
+	 * getAllPatientsAsFhirBundle((String)session.getAttribute
+	 * ("i2b2User"),(String
+	 * )session.getAttribute("i2b2Token"),(String)session.getAttribute
+	 * ("i2b2Url"),(String)session.getAttribute("i2b2Domain")); }
+	 */
 
-	static public String insertSessionParametersInXml(String xml,
-			HttpSession session) throws XQueryUtilException {
-		String username = (String) session.getAttribute("username");
-		String password = (String) session.getAttribute("password");
-		String i2b2domain = (String) session.getAttribute("i2b2domain");
-		String i2b2domainUrl = (String) session.getAttribute("i2b2domainUrl");
-
-		return I2b2Util.insertI2b2ParametersInXml(xml, username, password,
-				i2b2domain, i2b2domainUrl);
-	}
-
-	public static Bundle getAllPatientsAsFhirBundle(HttpSession session)
+	public static Bundle getAllPatientsAsFhirBundle(String pdo)
 			throws XQueryUtilException, JAXBException, IOException,
 			AuthenticationFailure {
 
+		String query = IOUtils
+				.toString(FhirUtil.class
+						.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
+		String bundleXml = XQueryUtil.processXQuery(query, pdo).toString();
+		return JAXBUtil.fromXml(bundleXml, Bundle.class);
+	}
+
+	public static String getPDO(String i2b2User, String i2b2Token,
+			String i2b2Url, String i2b2Domain,String project) throws XQueryUtilException,
+			JAXBException, IOException, AuthenticationFailure {
+
 		String requestXml = IOUtils.toString(FhirUtil.class
 				.getResourceAsStream("/i2b2query/getAllPatients.xml"));
-		requestXml = I2b2Util.insertSessionParametersInXml(requestXml, session);
-		String i2b2Url = (String) session.getAttribute("i2b2domainUrl");
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Token, i2b2Url, i2b2Domain,project);
 
-		String i2b2Response = WebServiceCall.run(i2b2Url
+		String pdo = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
-		String loginError = XQueryUtil.processXQuery(loginStatusquery,
-				i2b2Response);
+		String loginError = XQueryUtil.processXQuery(loginStatusquery, pdo);
 		logger.trace("ERROR?:<" + loginError + ">");
 
 		if (loginError.equals("ERROR"))
 			throw new AuthenticationFailure();
 
-		String query = IOUtils
-				.toString(FhirUtil.class
-						.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
-		String bundleXml = XQueryUtil.processXQuery(query, i2b2Response)
-				.toString();
-		return JAXBUtil.fromXml(bundleXml, Bundle.class);
+		return pdo;
 	}
 
-	static boolean validateI2b2UserNamePasswordPair(String userName,
-			String password, String domain, String i2b2Url)
+	static boolean validateI2b2UserNamePasswordPair(String pmResponse)
 			throws XQueryUtilException, IOException {
 		logger.trace("validating username and password");
-		String requestXml = IOUtils.toString(I2b2Util.class
-				.getResourceAsStream("i2b2query/getServices.xml"));
-		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, userName,
-				password, domain, i2b2Url);
-		logger.debug("Webservice Request:" + requestXml);
-
-		String i2b2Response = WebServiceCall.run(i2b2Url
-				+ "/services/PMService/getServices", requestXml);
-
-		logger.debug("got Response:" + i2b2Response);
 
 		String loginStatusQuery = "//response_header/result_status/status/@type/string()";
 		String loginError = XQueryUtil.processXQuery(loginStatusQuery,
-				i2b2Response);
+				pmResponse);
 		logger.trace("ERROR?:<" + loginError + ">");
 
 		if (loginError.equals("ERROR")) {
