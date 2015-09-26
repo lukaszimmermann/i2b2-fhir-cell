@@ -41,8 +41,9 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenManager;
+import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
+import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
 @Path("token")
@@ -52,7 +53,7 @@ public class OAuth2TokenEndpoint {
 	@EJB
 	AuthTokenService authTokenBean;
 	@EJB
-	AccessTokenManager accessTokenBean;
+	AccessTokenService accessTokenBean;
 
 	/*
 	 * currently only checking for auth code and client id as stored in authcode
@@ -117,21 +118,16 @@ public class OAuth2TokenEndpoint {
 				//buildAccessTokenNotSupportedResponse();
 			}
 
-			final String accessTokenString = oauthIssuerImpl.accessToken();
-			// database.addToken(accessToken);
-			String resourceUserId=authToken.getResourceUserId();
-			String i2b2Token=authToken.getI2b2Token();
-			String i2b2Project=authToken.getI2b2Project();
-			String clientId=authToken.getClientId();
-			String scope=authToken.getScope();
 			
 			
-			accessTokenBean.createAccessTokenAndDeleteAuthToken(authCode,accessTokenString, resourceUserId, i2b2Token, i2b2Project, clientId, scope);
+			
+			
+			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
 			
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
-					.setAccessToken(accessTokenString).setExpiresIn("3600")
+					.setAccessToken(accessToken.getTokenString()).setExpiresIn("3600")
 					.buildJSONMessage();
 			logger.info("returning res:" + response.getBody());
 
