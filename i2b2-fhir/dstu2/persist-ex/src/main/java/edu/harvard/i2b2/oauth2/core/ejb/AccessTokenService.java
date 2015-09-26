@@ -32,6 +32,9 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,37 +132,40 @@ public class AccessTokenService {
 	/*
 	 * creates accessToken and deleted the corresponding authToken
 	 */
-	public AccessToken createAccessTokenAndDeleteAuthToken(String authCode,
-			String accessCode, String resourceUserId, String i2b2Token,
-			String i2b2Project, String clientId, String scope) {
+	public AccessToken createAccessTokenAndDeleteAuthToken(AuthToken authToken) {
 		try {
+			OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(
+					new MD5Generator());
+			final String accessTokenCode = oauthIssuerImpl.accessToken();
+			
 			AccessToken tok = new AccessToken();
-			tok.setTokenString(accessCode);
-			tok.setResourceUserId(resourceUserId);
-			tok.setI2b2Token(i2b2Token);
-			tok.setI2b2Project(i2b2Project);
-			tok.setClientId(clientId);
-			tok.setScope(scope);
+			tok.setTokenString(accessTokenCode);
+			tok.setResourceUserId(authToken.getResourceUserId());
+			tok.setI2b2Token(authToken.getI2b2Token());
+			tok.setI2b2Project(authToken.getI2b2Project());
+			tok.setClientId(authToken.getClientId());
+			tok.setScope(authToken.getScope());
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
-			
+			tok.setI2b2Url(authToken.getI2b2Url());
+			tok.setI2b2Domain(authToken.getI2b2Domain());
 			
 			logger.info("Created .." + tok.toString());
-			//em.getTransaction().begin();
+			////em.getTransaction().begin();
 			em.persist(tok);
 
-			AuthToken authTok = em.find(AuthToken.class, authCode);
+			AuthToken authTok = em.find(AuthToken.class, authToken.getAuthorizationCode());
 			if (authTok==null) throw new RuntimeException("auth Tok was not found");
 			logger.info("Removing authTok " );
 			em.remove(authTok);
 			
-			//em.getTransaction().commit();
+			////em.getTransaction().commit();
 			
 			logger.info("Persisted " + tok.toString());
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 	}
@@ -168,7 +174,7 @@ public class AccessTokenService {
 		try {
 			List<AccessToken> tokens = em.createQuery("from AccessToken")
 					.getResultList();
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			return tokens;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -178,11 +184,11 @@ public class AccessTokenService {
 
 	public void removeAccessToken(AccessToken authToken) {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			em.remove(authToken);
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 		} catch (Exception ex) {
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			logger.error(ex.getMessage(), ex);
 			throw new EJBException(ex.getMessage());
 		}
@@ -190,7 +196,7 @@ public class AccessTokenService {
 
 	public AccessToken find(String accessCode) {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			logger.trace("find accesstok with id:"+accessCode);
 			AccessToken tok = em.find(AccessToken.class, accessCode);
 			if (tok != null) {
@@ -198,11 +204,11 @@ public class AccessTokenService {
 			} else {
 				logger.info("NOT found");
 			}
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 
@@ -210,7 +216,7 @@ public class AccessTokenService {
 
 	public void listAccessTokens() {
 		try {
-			em.getTransaction().begin();
+			//em.getTransaction().begin();
 			@SuppressWarnings("unchecked")
 			List<AccessToken> list = em.createQuery("from AccessToken")
 					.getResultList();
@@ -219,10 +225,10 @@ public class AccessTokenService {
 				AccessToken a = (AccessToken) iterator.next();
 				logger.info(a.toString());
 			}
-			em.getTransaction().commit();
+			//em.getTransaction().commit();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			em.getTransaction().rollback();
+			//em.getTransaction().rollback();
 		}
 	}
 
