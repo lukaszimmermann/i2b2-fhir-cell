@@ -27,8 +27,10 @@ public class Config {
 	static public String openI2b2Password;
 	static public String openI2b2Project;
 	static public String openClientId; 
+	public static String demoPatientId;
 
 	static Logger logger = LoggerFactory.getLogger(Config.class);
+	
 	
 	static {
 		try {
@@ -45,6 +47,7 @@ public class Config {
 			openI2b2Password =config.getString("openI2b2Password");
 			openI2b2Project =config.getString("openI2b2Project");
 			openClientId =config.getString("openClientId");
+			demoPatientId =config.getString("demoPatientId");
 			
 			logger.info("initialized:"+"\ni2b2Url:"+i2b2Url
 					+"\ndemoAccessToken:"+openAccessToken+"\n openAccess:"+openAccess);
@@ -52,5 +55,8 @@ public class Config {
 			logger.error(e.getMessage(), e);
 		}
 	}
+
+	
+	
 	
 }

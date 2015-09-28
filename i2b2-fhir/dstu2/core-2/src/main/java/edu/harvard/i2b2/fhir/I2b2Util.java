@@ -231,8 +231,10 @@ public class I2b2Util {
 		if (patientId != null)
 			requestXml = requestXml.replaceAll("PATIENTID", patientId);
 
-		return WebServiceCall.run(i2b2Url
+		String responseXml=WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
+		logger.trace("got response:"+responseXml);
+		return responseXml;
 	}
 
 	static boolean validateI2b2UserNamePasswordPair(String pmResponse)

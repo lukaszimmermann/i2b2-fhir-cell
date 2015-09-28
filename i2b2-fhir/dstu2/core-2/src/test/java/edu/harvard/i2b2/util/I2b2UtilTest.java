@@ -64,10 +64,19 @@ public class I2b2UtilTest {
 		String pdoXml=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId);
 		Bundle b = I2b2Util.getAllDataForAPatientAsFhirBundle(pdoXml);
 		logger.info("projMap:"+projMap.toString());
-		logger.info("pdoAllPtDataXml:"+pdoXml);
+		//logger.info("pdoAllPtDataXml:"+pdoXml);
 		logger.info("Patient Bundle size:"+b.getEntry().size());
 	}
 
+	
+
+	@Test
+	public void getPDO() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure {
+		String pdoResponse=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId);
+		
+		logger.info("responseXml:"+pdoResponse);
+	}
+	
 	// @Test
 	public void getProjectsTest() throws XQueryUtilException {
 		String pmResponseXml = Utils.getFile("pmResponse.xml");
