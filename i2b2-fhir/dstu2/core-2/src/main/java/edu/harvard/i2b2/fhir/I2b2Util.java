@@ -25,7 +25,9 @@ package edu.harvard.i2b2.fhir;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.JAXBException;
+
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
@@ -228,7 +230,7 @@ public class I2b2Util {
 				.toString(I2b2Util.class
 						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
 
-		String panelXml = null;
+		String panelXml = "";
 		int count=0;
 		for (String item : items) {
 			count++;
@@ -241,6 +243,7 @@ public class I2b2Util {
 					"//panel/panel_number", Integer.toString(count));
 			
 			panelXml+=singlePanelXml;
+			logger.trace("panelXml:"+panelXml);
 		}
 		
 		requestXml = replaceXMLString(requestXml,
@@ -255,6 +258,7 @@ public class I2b2Util {
 		String responseXml = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
 		logger.trace("got response:" + responseXml);
+		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
 		return responseXml;
 	}
 

@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,6 +28,8 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.AuthenticationFailure;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.WebServiceCall;
+import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.Project;
 
@@ -87,5 +90,28 @@ public class I2b2UtilTest {
 		I2b2Util.getUserProjectMap(pmResponseXml);
 		// logger.info("::"+I2b2Util.getUserProjectMap(pmResponseXml));
 	}
+	
+	
+	@Test
+	public void getDataForAPatient()
+			throws IOException, XQueryUtilException {
+		String requestXml = IOUtils
+				.toString(I2b2Util.class
+						.getResourceAsStream("/i2b2query/i2b2RequestNullForAPatient.xml"));
+
+		
+		
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Password, i2b2Url, i2b2Domain);
+
+		if (patientId != null)
+			requestXml = requestXml.replaceAll("PATIENTID", patientId);
+
+		String responseXml = WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestXml);
+		logger.trace("got response:" + responseXml);
+		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
+	}
+	
 
 }

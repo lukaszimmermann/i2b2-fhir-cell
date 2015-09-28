@@ -58,6 +58,7 @@ import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
+import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
 //import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
@@ -90,6 +91,8 @@ public class OAuth2AuthzEndpoint {
 	@EJB
 	AuthTokenService authTokenBean;
 
+	@EJB 
+	AuthenticationService service;
 	
 	// http://localhost:8080/srv-dstu2-0.2/api/authz/authorize?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=fcclient1
 	@GET
@@ -199,6 +202,7 @@ public class OAuth2AuthzEndpoint {
 	}
 
 	// TODO domain and URL
+	/*
 	@Path("processi2b2login")
 	@POST
 	public Response processResourceOwnerLogin(
@@ -243,6 +247,7 @@ public class OAuth2AuthzEndpoint {
 			return Response.serverError().header("xreason", e.getMessage()).build();
 		}
 	}
+	*/
 
 	// @Path("scope")
 	// @GET

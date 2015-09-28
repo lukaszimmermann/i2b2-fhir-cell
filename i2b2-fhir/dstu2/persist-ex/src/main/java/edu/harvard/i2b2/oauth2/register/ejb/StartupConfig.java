@@ -49,7 +49,7 @@ public class StartupConfig {
 		clientService.setup();
 		accessTokenService.setup();
 		try{
-		patientBundleService.getPatientBundle(accessTokenService.find(Config.openAccessToken), (String)Config.demoPatientId);
+		//patientBundleService.getPatientBundle(accessTokenService.find(Config.openAccessToken), (String)Config.demoPatientId);
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 		}
