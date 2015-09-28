@@ -1,6 +1,8 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +36,20 @@ public class I2b2AuthenticationManager {
 	private boolean userValid;
 	private String i2b2Token;
 	private String pmResponseXml;
-	
+
 	private List<Project> i2b2ProjectList;
 	private Project selectedI2b2Project;
 	private String selectedI2b2PatientId;
-	
+
 	private String redirect_url;
-	private String scope;
-	private String clientId;
-	
+	private HashSet<String> scope;
+	private String client_id;
+
 	@PostConstruct
-	public void init(){
+	public void init() {
 		this.setI2b2User("demo");
 		this.setI2b2Password("demouser");
+		
 	}
 
 	public String getI2b2User() {
@@ -111,7 +115,7 @@ public class I2b2AuthenticationManager {
 	public void setI2b2Token(String i2b2Token) {
 		this.i2b2Token = i2b2Token;
 	}
-	
+
 	public String getRedirect_url() {
 		return redirect_url;
 	}
@@ -120,20 +124,43 @@ public class I2b2AuthenticationManager {
 		this.redirect_url = redirect_url;
 	}
 
-	public String getScope() {
+	
+
+	
+
+	public HashSet<String> getScope() {
 		return scope;
 	}
 
-	public void setScope(String scope) {
+	public void setScope(HashSet<String> scope) {
 		this.scope = scope;
 	}
 
-	public String getClientId() {
-		return clientId;
+	public String getClient_id() {
+		return client_id;
 	}
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
+	public void setClient_id(String client_id) {
+		this.client_id = client_id;
+	}
+
+	public String processAuthUrl() {
+		if (scope == null) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			Map<String, Object> session = context.getExternalContext()
+					.getSessionMap();
+			logger.trace("session:"+session.toString());
+			this.setScope((HashSet<String>)session.get("scope"));
+			this.setClient_id((String)session.get("clientId"));
+			this.setRedirect_url((String)session.get("redirectUri"));
+		}
+		if(scope==null){
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage(
+					FacesMessage.SEVERITY_ERROR, "scope parameter is missing!", null));
+		}
+
+		return "processed";
 	}
 
 	public String navigate() {

@@ -132,7 +132,7 @@ public class OAuth2AuthzEndpoint {
 			String clientId = (String) oauthRequest.getClientId();
 			if (isClientIdValid(clientId) == true) {
 				
-				String uri = HttpHelper.getBasePath(request).toString() + "i2b2login";
+				String uri = HttpHelper.getBasePath(request).toString() + "../i2b2/login.xhtml";
 				logger.trace("redirecting to:" + uri);
 				return Response.status(Status.MOVED_PERMANENTLY)
 						.location(new URI(uri))
