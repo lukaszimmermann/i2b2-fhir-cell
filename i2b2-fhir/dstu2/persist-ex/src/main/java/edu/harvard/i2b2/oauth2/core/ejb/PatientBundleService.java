@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ranges.RangeException;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
@@ -25,12 +26,7 @@ public class PatientBundleService {
 	@EJB
 	PatientBundleStatus status;
 
-	// public getPDO(String pid)
-
-	// putPDO(String pid)
-
-	public Bundle getPatientBundle(AccessToken tok, String pid)
-			throws InterruptedException {
+	public Bundle getPatientBundle(AccessToken tok, String pid) {
 
 		if (status.isComplete(pid)) {
 			return getPatientBundleLocking(pid);
@@ -42,7 +38,11 @@ public class PatientBundleService {
 
 		while (status.isProcessing(pid)) {
 			logger.info("waiting on complete status");
-			Thread.sleep(1000);
+			try{
+				Thread.sleep(1000);
+			}catch(InterruptedException e){
+				logger.error(e.getMessage(),e);
+			}
 		}
 		return getPatientBundle(tok, pid);
 	}
@@ -50,6 +50,7 @@ public class PatientBundleService {
 	private void fetchPatientBundle(AccessToken tok, String pid) {
 		status.markProcessing(pid);
 		try{
+			logger.trace("fetching PDO for pid:"+pid);
 			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid);
 			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			mgr.put(pid, b);
@@ -60,7 +61,13 @@ public class PatientBundleService {
 	}
 
 	private Bundle getPatientBundleLocking(String pid) {
-			return mgr.get(pid);
+			Bundle b=mgr.get(pid);
+			try{
+				logger.trace("returning Bundle:"+JAXBUtil.toXml(b));
+			}catch(JAXBException e){
+				logger.error(e.getMessage(),e);
+			}
+			return b;
 	}
 
 	

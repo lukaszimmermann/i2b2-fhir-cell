@@ -118,10 +118,6 @@ public class OAuth2TokenEndpoint {
 				//buildAccessTokenNotSupportedResponse();
 			}
 
-			
-			
-			
-			
 			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
 			

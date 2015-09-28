@@ -16,13 +16,21 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import edu.harvard.i2b2.fhir.Config;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
+import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleService;
 
 @Startup
 @Singleton
 
 public class StartupConfig {
+	static Logger logger = LoggerFactory.getLogger( StartupConfig.class);
+
+	
 	@EJB
 	ClientService clientService;
 	@EJB
@@ -31,11 +39,19 @@ public class StartupConfig {
 	@EJB
 	AccessTokenService accessTokenService;
 	
+	@EJB
+	PatientBundleService patientBundleService;
+	
 	
 	@PostConstruct
 	public void init(){
 		userService.setup();
 		clientService.setup();
 		accessTokenService.setup();
-	}
+		try{
+		patientBundleService.getPatientBundle(accessTokenService.find(Config.openAccessToken), (String)Config.demoPatientId);
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		}
 }
