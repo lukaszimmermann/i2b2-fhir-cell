@@ -54,8 +54,8 @@ public class PatientBundleService {
 		try{
 			logger.trace("fetching PDO for pid:"+pid);
 			ArrayList<String>items=new ArrayList<String>();
-			items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
-			//items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
+			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
+			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
 			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
 			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			mgr.put(pid, b);

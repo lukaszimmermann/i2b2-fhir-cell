@@ -62,10 +62,5 @@ public class AuthenticationService {
 		return result;
 	}
 	
-	public boolean hasAccessToPateint(AccessToken accessToken,String pid) {
-		//XXX
-		return false;
-	}
-
-
+	
 }
