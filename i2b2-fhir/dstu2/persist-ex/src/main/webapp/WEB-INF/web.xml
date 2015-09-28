@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
-	
+	<listener>
+		<listener-class>edu.harvard.i2b2.fhir.oauth2.ws.SessionListener</listener-class>
+	</listener>
 	<context-param>
 	<param-name>javax.faces.PROJECT_STAGE</param-name>
 	<param-value>Development</param-value>
@@ -17,4 +19,8 @@
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+	<session-config>
+		<session-timeout>600</session-timeout>
+	</session-config>
 </web-app>
+
