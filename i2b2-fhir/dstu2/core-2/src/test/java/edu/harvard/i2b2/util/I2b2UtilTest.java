@@ -12,6 +12,7 @@
 package edu.harvard.i2b2.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -37,6 +38,7 @@ public class I2b2UtilTest {
 	String i2b2Domain;
 	String projectId;
 	String patientId;
+	List<String> items;
 
 	@Before
 	public void init() {
@@ -46,6 +48,8 @@ public class I2b2UtilTest {
 		i2b2Domain = "i2b2demo";
 		projectId="Demo";//"pcori";
 		patientId="1000000005";
+		items=new ArrayList<String>();
+		items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
 	}
 
 	@Test
@@ -61,7 +65,7 @@ public class I2b2UtilTest {
 		//logger.info(pmResponse);
 		//logger.info("i2b2Token:"+i2b2Token);
 		I2b2Util.getAllPatients(i2b2User, i2b2Token, i2b2Url, i2b2Domain, projMap.get(0).getId());
-		String pdoXml=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId);
+		String pdoXml=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
 		Bundle b = I2b2Util.getAllDataForAPatientAsFhirBundle(pdoXml);
 		logger.info("projMap:"+projMap.toString());
 		//logger.info("pdoAllPtDataXml:"+pdoXml);
@@ -72,9 +76,9 @@ public class I2b2UtilTest {
 
 	@Test
 	public void getPDO() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure {
-		String pdoResponse=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId);
+		String pdoResponse=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
 		
-		logger.info("responseXml:"+pdoResponse);
+		//logger.info("responseXml:"+pdoResponse);
 	}
 	
 	// @Test

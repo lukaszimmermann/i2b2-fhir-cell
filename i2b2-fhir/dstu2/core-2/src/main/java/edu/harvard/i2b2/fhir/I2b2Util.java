@@ -37,8 +37,8 @@ public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
 
 	public static String insertI2b2ParametersInXml(String xml, String username,
-			String password, String i2b2Url, String I2b2Domain,
-			String project) throws XQueryUtilException {
+			String password, String i2b2Url, String I2b2Domain, String project)
+			throws XQueryUtilException {
 
 		xml = insertI2b2ParametersInXml(xml, username, password, i2b2Url,
 				I2b2Domain);
@@ -87,14 +87,16 @@ public class I2b2Util {
 	}
 
 	public static String getPmResponseXml(String username, String password,
-			String i2b2Url, String I2b2Domain)
-			throws XQueryUtilException, IOException {
+			String i2b2Url, String I2b2Domain) throws XQueryUtilException,
+			IOException {
 		logger.trace("got request");
 		String requestXml = IOUtils.toString(I2b2Util.class
 				.getResourceAsStream("/i2b2query/getServices.xml"));
 		requestXml = insertI2b2ParametersInXml(requestXml, username, password,
 				i2b2Url, I2b2Domain);
-		if(requestXml==null) {logger.error("requestXml is null");}
+		if (requestXml == null) {
+			logger.error("requestXml is null");
+		}
 		logger.trace("requestXml:" + requestXml);
 		String response = WebServiceCall.run(i2b2Url
 				+ "/services/PMService/getServices", requestXml);
@@ -220,20 +222,39 @@ public class I2b2Util {
 
 	public static String getAllDataForAPatient(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
-			String project, String patientId) throws IOException,
-			XQueryUtilException {
+			String project, String patientId, List<String> items)
+			throws IOException, XQueryUtilException {
 		String requestXml = IOUtils
 				.toString(I2b2Util.class
 						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
-		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml,i2b2User, i2b2Token,
-				i2b2Url, I2b2Domain, project);
+
+		String panelXml = null;
+		int count=0;
+		for (String item : items) {
+			count++;
+			String singlePanelXml = IOUtils.toString(I2b2Util.class
+					.getResourceAsStream("/i2b2query/panel.xml"));
+
+			singlePanelXml = replaceXMLString(singlePanelXml,
+					"//panel/item/item_key", item);
+			singlePanelXml = replaceXMLString(singlePanelXml,
+					"//panel/panel_number", Integer.toString(count));
+			
+			panelXml+=singlePanelXml;
+		}
+		
+		requestXml = replaceXMLString(requestXml,
+				"//filter_list", panelXml);
+		
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Token, i2b2Url, I2b2Domain, project);
 
 		if (patientId != null)
 			requestXml = requestXml.replaceAll("PATIENTID", patientId);
 
-		String responseXml=WebServiceCall.run(i2b2Url
+		String responseXml = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
-		logger.trace("got response:"+responseXml);
+		logger.trace("got response:" + responseXml);
 		return responseXml;
 	}
 

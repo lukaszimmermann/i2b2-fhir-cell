@@ -148,7 +148,7 @@ public class RxNormAdapter {
 		c.setSystem(uri);
 
 		Code cd = new Code();
-
+		logger.trace("rxCui:"+rxCui);
 		cd.setValue(rxCui);
 		c.setCode(cd);
 		org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
