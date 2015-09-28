@@ -1,5 +1,7 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
+import java.util.ArrayList;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.servlet.http.HttpSession;
@@ -51,7 +53,10 @@ public class PatientBundleService {
 		status.markProcessing(pid);
 		try{
 			logger.trace("fetching PDO for pid:"+pid);
-			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid);
+			ArrayList<String>items=new ArrayList<String>();
+			items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
+			//items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
+			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
 			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			mgr.put(pid, b);
 		}catch(Exception e){
