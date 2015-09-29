@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 
 @Singleton
 @Startup
-public class PatientBundleStatus {
-	static Logger logger = LoggerFactory.getLogger(PatientBundleStatus.class);
-	static HashMap<String, PatientBundleStatusLevel> statusHM = new HashMap<String, PatientBundleStatusLevel>();
+public class BundleStatus {
+	static Logger logger = LoggerFactory.getLogger(BundleStatus.class);
+	static HashMap<String, BundleStatusLevel> statusHM = new HashMap<String, BundleStatusLevel>();
 
 	@Lock( LockType.READ)
 	public static boolean isComplete(String pid) {
 		if (statusHM.containsKey(pid)
-				&& statusHM.get(pid).equals(PatientBundleStatusLevel.COMPLETE)) {
+				&& statusHM.get(pid).equals(BundleStatusLevel.COMPLETE)) {
 			return true;
 		} else {
 			return false;
@@ -29,7 +29,7 @@ public class PatientBundleStatus {
 	@Lock( LockType.READ)
 	public static boolean isProcessing(String pid) {
 		if (statusHM.containsKey(pid)
-				&& statusHM.get(pid).equals(PatientBundleStatusLevel.PROCESSING)) {
+				&& statusHM.get(pid).equals(BundleStatusLevel.PROCESSING)) {
 			return true;
 		} else {
 			return false;
@@ -40,13 +40,13 @@ public class PatientBundleStatus {
 	public static void markProcessing(String pid) {
 		logger.debug("Marking as Processing:" + pid);
 		if (statusHM.containsKey(pid)
-				&& statusHM.get(pid).equals(PatientBundleStatusLevel.PROCESSING)) {
+				&& statusHM.get(pid).equals(BundleStatusLevel.PROCESSING)) {
 			logger.error("is already Complete . Should not be Processing it again:"
 					+ pid);
 		}
 
 		if (!statusHM.containsKey(pid)) {
-			statusHM.put(pid, PatientBundleStatusLevel.PROCESSING);
+			statusHM.put(pid, BundleStatusLevel.PROCESSING);
 			logger.debug("Marked as Processing:" + pid);
 		}
 	}
@@ -60,7 +60,7 @@ public class PatientBundleStatus {
 		
 		if (statusHM.containsKey(pid)) {
 			statusHM.remove(pid);
-			statusHM.put(pid, PatientBundleStatusLevel.COMPLETE);
+			statusHM.put(pid, BundleStatusLevel.COMPLETE);
 		}
 	}
 
