@@ -49,7 +49,7 @@ public class I2b2AuthenticationManager {
 	public void init() {
 		this.setI2b2User("demo");
 		this.setI2b2Password("demouser");
-		
+
 	}
 
 	public String getI2b2User() {
@@ -124,10 +124,6 @@ public class I2b2AuthenticationManager {
 		this.redirect_url = redirect_url;
 	}
 
-	
-
-	
-
 	public HashSet<String> getScope() {
 		return scope;
 	}
@@ -144,23 +140,23 @@ public class I2b2AuthenticationManager {
 		this.client_id = client_id;
 	}
 
-	public String processAuthUrl() {
+	public void processAuthUrl() {
 		if (scope == null) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			Map<String, Object> session = context.getExternalContext()
 					.getSessionMap();
-			logger.trace("session:"+session.toString());
-			this.setScope((HashSet<String>)session.get("scope"));
-			this.setClient_id((String)session.get("clientId"));
-			this.setRedirect_url((String)session.get("redirectUri"));
+			logger.trace("session:" + session.toString());
+			this.setScope((HashSet<String>) session.get("scope"));
+			this.setClient_id((String) session.get("clientId"));
+			this.setRedirect_url((String) session.get("redirectUri"));
 		}
-		if(scope==null){
+		if (scope == null) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			context.addMessage(null, new FacesMessage(
-					FacesMessage.SEVERITY_ERROR, "scope parameter is missing!", null));
+					FacesMessage.SEVERITY_ERROR, "scope parameter is missing!",
+					null));
 		}
 
-		return "processed";
 	}
 
 	public String navigate() {
@@ -176,9 +172,7 @@ public class I2b2AuthenticationManager {
 		if (session.get("selectedI2b2Patient") == null)
 			return "patient_select";
 
-		if (this.userValid) {
-			return "resourceOwnerLogin";
-		}
+		
 		/*
 		 * if(this.getPmResponseXml()==null)
 		 * {setPmResponseXml(I2b2Util.getPmResponseXml
@@ -189,6 +183,14 @@ public class I2b2AuthenticationManager {
 
 		return "ERROR";
 
+	}
+
+	public Map getProjectListMap() {
+		HashMap projectListMap = new HashMap();
+		for (Project p : this.getI2b2ProjectList()) {
+			projectListMap.put(p.getName(), p.getId());
+		}
+		return projectListMap;
 	}
 
 	public boolean validate() {
@@ -210,8 +212,7 @@ public class I2b2AuthenticationManager {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
-				session.put("selectedI2b2Project",
-						this.getSelectedI2b2Project());
+
 				return true;
 
 			} else {
@@ -226,4 +227,12 @@ public class I2b2AuthenticationManager {
 
 	}
 
+	public void selectProject() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, Object> session = context.getExternalContext()
+				.getSessionMap();
+
+		session.put("selectedI2b2Project", this.getSelectedI2b2Project());
+
+	}
 }
