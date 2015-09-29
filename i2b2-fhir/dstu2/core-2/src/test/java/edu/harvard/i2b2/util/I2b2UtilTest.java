@@ -84,6 +84,17 @@ public class I2b2UtilTest {
 		//logger.info("responseXml:"+pdoResponse);
 	}
 	
+	@Test
+	public void getPatientListForAProject() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure {
+		String i2b2ResponseXml=I2b2Util.getAllPatients(i2b2User, i2b2Password, i2b2Url, i2b2Domain,projectId);
+		
+		logger.info("i2b2ResponseXm:"+i2b2ResponseXml);
+		ArrayList<String> list = I2b2Util.getAllPatientsAsList(i2b2ResponseXml);
+		
+		logger.info("list:"+list.toString());
+	}
+	
+	
 	// @Test
 	public void getProjectsTest() throws XQueryUtilException {
 		String pmResponseXml = Utils.getFile("pmResponse.xml");
