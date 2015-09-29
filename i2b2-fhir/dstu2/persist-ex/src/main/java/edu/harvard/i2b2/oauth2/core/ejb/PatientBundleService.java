@@ -1,79 +1,84 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
-import java.util.ArrayList;
-
-import javax.ejb.EJB;
-import javax.ejb.Stateful;
-import javax.servlet.http.HttpSession;
+import javax.annotation.PostConstruct;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Remove;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.ranges.RangeException;
 
-import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
-import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
+import edu.harvard.i2b2.oauth2.core.entity.PatientBundleRecord;
 
-
-@Stateful
+@Singleton
+@Startup
 public class PatientBundleService {
 	static Logger logger = LoggerFactory.getLogger(PatientBundleService.class);
+	// static HashMap<String,Bundle> patientBundleHm=new
+	// HashMap<String,Bundle>();
 
-	@EJB
-	PatientBundleLock mgr;
+	@PersistenceContext
+	EntityManager em;
 
-	@EJB
-	BundleStatus status;
-
-	public Bundle getPatientBundle(AccessToken tok, String pid) {
-
-		if (status.isComplete(pid)) {
-			return getPatientBundleLocking(pid);
-		}
-
-		if (!(status.isProcessing(pid) || status.isComplete(pid))) {
-			fetchPatientBundle(tok, pid);
-		}
-
-		while (status.isProcessing(pid)) {
-			logger.info("waiting on complete status");
-			try{
-				Thread.sleep(1000);
-			}catch(InterruptedException e){
-				logger.error(e.getMessage(),e);
-			}
-		}
-		return getPatientBundle(tok, pid);
+	@PostConstruct
+	public void init() {
+		// patientBundleHm=new HashMap<String,Bundle>();
 	}
 
-	private void fetchPatientBundle(AccessToken tok, String pid) {
-		status.markProcessing(pid);
-		try{
-			logger.trace("fetching PDO for pid:"+pid);
-			ArrayList<String>items=new ArrayList<String>();
-			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
-			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
-			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
-			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
-			mgr.put(pid, b);
-		}catch(Exception e){
+	@Lock(LockType.READ)
+	public Bundle get(String patientId) {
+		logger.info("getting: bundle for pid:" + patientId);
+
+		// return patientBundleHm.get(id);
+		return find(patientId);
+	}
+
+	private Bundle find(String patientId) {
+		PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
+		if(r==null) return null;
+		String bundleXml = r.getBundleXml();
+		Bundle b = null;
+		try {
+			b = JAXBUtil.fromXml(bundleXml, Bundle.class);
+		} catch (JAXBException e) {
+			logger.error(e.getMessage(), e);
+		}
+		logger.trace("found PatientBundleRecord:" + r.toString());
+		return b;
+	}
+
+	@Lock(LockType.WRITE)
+	public void put(String patientId, Bundle b) {
+		logger.info("putting:" + patientId + "=>" + b);
+		createPatientRecord(patientId, b);
+		// patientBundleHm.put(id,b);
+
+	}
+	
+	@Remove
+	public void remove(){
+		 //patientBundleHm=null;
+	}
+
+	private PatientBundleRecord createPatientRecord(String patientId, Bundle b){
+			
+		PatientBundleRecord r = new PatientBundleRecord();
+		r.setPatientId(patientId);
+		try {
+			r.setBundleXml(JAXBUtil.toXml(b));
+		} catch (JAXBException e) {
 			logger.error(e.getMessage(),e);
 		}
-		status.markComplete(pid);
+		em.persist(r);
+		logger.trace("created PatientBundleRecord:" + r.toString());
+		return r;
 	}
 
-	private Bundle getPatientBundleLocking(String pid) {
-			Bundle b=mgr.get(pid);
-			try{
-				logger.trace("returning Bundle:"+JAXBUtil.toXml(b));
-			}catch(JAXBException e){
-				logger.error(e.getMessage(),e);
-			}
-			return b;
-	}
-
-	
 }

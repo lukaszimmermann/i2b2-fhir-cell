@@ -1,18 +1,21 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateful;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,12 +33,18 @@ import edu.harvard.i2b2.fhir.oauth2.ws.OAuth2AuthzEndpoint;
 public class I2b2AuthenticationManager {
 	static Logger logger = LoggerFactory
 			.getLogger(I2b2AuthenticationManager.class);
+	
+	@EJB
+	ProjectPatientMapManager projectPatientMapManager;
+
 
 	private String i2b2User;
 	private String i2b2Password;
 	private boolean userValid;
 	private String i2b2Token;
 	private String pmResponseXml;
+	
+	private SelectItem selectedItem;
 
 	private List<Project> i2b2ProjectList;
 	private Project selectedI2b2Project;
@@ -160,17 +169,18 @@ public class I2b2AuthenticationManager {
 	}
 
 	public String navigate() {
+		String target="/api/authz/processScope";
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, Object> session = context.getExternalContext()
 				.getSessionMap();
 		if (session.get("pmResponse") == null) {
-			return validate() ? "/i2b2/project_select" : "/i2b2/login";
-		}
-		if (session.get("selectedI2b2Project") == null)
-			return "project_select";
-
-		if (session.get("selectedI2b2Patient") == null)
-			return "patient_select";
+			target= validate() ? "/i2b2/project_select" : "/i2b2/login";
+		}else if (this.getSelectedItem() == null){
+			target="project_select";
+		}else{
+			selectProject();
+		}//if (session.get("selectedI2b2Patient") == null)
+			//return "patient_select";
 
 		
 		/*
@@ -181,16 +191,18 @@ public class I2b2AuthenticationManager {
 		 * if(this.getI2b2ProjectList()==null){ return "selectProject"; }
 		 */
 
-		return "ERROR";
+		logger.info("navigate to:"+target);
+		return target;
 
 	}
 
-	public Map getProjectListMap() {
-		HashMap projectListMap = new HashMap();
-		for (Project p : this.getI2b2ProjectList()) {
-			projectListMap.put(p.getName(), p.getId());
-		}
-		return projectListMap;
+	
+	public SelectItem getSelectedItem() {
+		return selectedItem;
+	}
+
+	public void setSelectedItem(SelectItem selectedItem) {
+		this.selectedItem = selectedItem;
 	}
 
 	public boolean validate() {
@@ -212,7 +224,7 @@ public class I2b2AuthenticationManager {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
-
+				
 				return true;
 
 			} else {
@@ -226,13 +238,32 @@ public class I2b2AuthenticationManager {
 		}
 
 	}
+	
+	public List getSelectList(){
+		List selectList = new ArrayList();
+		 for(Project p:this.getI2b2ProjectList()){
+			 	SelectItem i=new SelectItem(p.getId());
+			 	i.setLabel(p.getName());
+		        selectList.add(i);
+		 }
+		 return selectList;
+	}
+	
 
 	public void selectProject() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, Object> session = context.getExternalContext()
 				.getSessionMap();
-
+		for(Project p:this.getI2b2ProjectList()){
+			if(this.getSelectedItem().getValue().equals(p.getId())){
+				this.setSelectedI2b2Project(p);
+			}
+		}
+		projectPatientMapManager.getProjectPatientList((String)session.get("I2b2User"),
+				(String)session.get("I2b2Token"), Config.i2b2Url, Config.i2b2Domain,
+				this.getSelectedI2b2Project().getId());
 		session.put("selectedI2b2Project", this.getSelectedI2b2Project());
+		logger.debug("put selected project into session");
 
 	}
 }

@@ -19,11 +19,11 @@ import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
 
 @Stateful
-public class ProjectBundleService {
-	static Logger logger = LoggerFactory.getLogger(PatientBundleService.class);
+public class PatientBundleManager {
+	static Logger logger = LoggerFactory.getLogger(PatientBundleManager.class);
 
 	@EJB
-	ProjectBundleLock mgr;
+	PatientBundleService service;
 
 	@EJB
 	BundleStatus status;
@@ -49,21 +49,24 @@ public class ProjectBundleService {
 		return getPatientBundle(tok, pid);
 	}
 
-	private void fetchPatientBundle(AccessToken tok, String projectId) {
-		status.markProcessing(projectId);
+	private void fetchPatientBundle(AccessToken tok, String pid) {
+		status.markProcessing(pid);
 		try{
-			logger.trace("fetching PDO for pid:"+projectId);
-			String i2b2Xml = I2b2Util.getAllPatients(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project());
-			Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
-			mgr.put(projectId, b);
+			logger.trace("fetching PDO for pid:"+pid);
+			ArrayList<String>items=new ArrayList<String>();
+			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
+			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
+			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
+			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
+			service.put(pid, b);
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 		}
-		status.markComplete(projectId);
+		status.markComplete(pid);
 	}
 
 	private Bundle getPatientBundleLocking(String pid) {
-			Bundle b=mgr.get(pid);
+			Bundle b=service.get(pid);
 			try{
 				logger.trace("returning Bundle:"+JAXBUtil.toXml(b));
 			}catch(JAXBException e){

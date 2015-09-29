@@ -22,36 +22,44 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.Config;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
+import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleService;
+import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
+import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapService;
 
 @Startup
 @Singleton
-
 public class StartupConfig {
-	static Logger logger = LoggerFactory.getLogger( StartupConfig.class);
+	static Logger logger = LoggerFactory.getLogger(StartupConfig.class);
 
-	
 	@EJB
 	ClientService clientService;
 	@EJB
 	UserService userService;
-	
+
 	@EJB
 	AccessTokenService accessTokenService;
-	
+
 	@EJB
-	PatientBundleService patientBundleService;
-	
-	
+	PatientBundleManager patientBundleManager;
+
+	@EJB
+	ProjectPatientMapManager projectPatientMapManager;
+
 	@PostConstruct
-	public void init(){
+	public void init() {
 		userService.setup();
 		clientService.setup();
 		accessTokenService.setup();
-		try{
-		//patientBundleService.getPatientBundle(accessTokenService.find(Config.openAccessToken), (String)Config.demoPatientId);
-		}catch(Exception e){
-			logger.error(e.getMessage(),e);
+		try {
+			//patientBundleManager.getPatientBundle(
+				//	accessTokenService.find(Config.openAccessToken),
+					//(String) Config.demoPatientId);
+			//projectPatientMapManager.getProjectPatientList(Config.openI2b2User,
+				//	Config.openI2b2Password, Config.i2b2Url, Config.i2b2Domain,
+					//Config.openI2b2Project);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
-		}
+	}
 }

@@ -279,4 +279,13 @@ public class I2b2Util {
 
 	}
 
+	public static ArrayList<String> getAllPatientsAsList(String allPatientI2b2Xml) {
+		try {
+			return XQueryUtil.getStringSequence("//patient/patient_id/text()", allPatientI2b2Xml);
+		} catch (XQueryUtilException e) {
+			logger.error(e.getMessage(),e);
+		}
+		return null;
+	}
+
 }
