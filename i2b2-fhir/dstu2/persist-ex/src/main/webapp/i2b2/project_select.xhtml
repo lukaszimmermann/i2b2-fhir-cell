@@ -8,19 +8,25 @@
 </h:head>
 <h:body>
 	<h:form>
-<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
+		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
 		<h2>Select Project</h2>
 		<li><h:outputText
 				value="proj:#{i2b2AuthenticationManager.getI2b2ProjectList().toString()}" /></li>
+
+
+
 		<h:selectOneRadio
-			value="#{i2b2AuthenticationManager.selectedI2b2Project}">
-			<f:selectItems value="#{i2b2AuthenticationManager.getSelectList()}"/>
+			value="#{i2b2AuthenticationManager.selectedTutorial}">
+			<f:selectItems var="tutorial"
+				value="#{i2b2AuthenticationManager.tutorials}"
+				itemValue="#{tutorial.tutorialId}"
+				itemLabel="#{tutorial.tutorialDescription}" />
 		</h:selectOneRadio>
 
 
-		<h:commandButton id="submit" value="Submit"
-			action="#{i2b2AuthenticationManager.navigate()}">
+		<h:commandButton id="submit" value="Submit" action="/i2b2/success">
 		</h:commandButton>
+	
 		<h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
 	</h:form>
