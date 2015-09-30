@@ -11,16 +11,16 @@
 		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
 		<h2>Select Project</h2>
 		<li><h:outputText
-				value="proj:#{i2b2AuthenticationManager.getI2b2ProjectList().toString()}" /></li>
+				value="proj:#{i2b2AuthenticationManager.i2b2ProjectList}" /></li>
 
 
 
 		<h:selectOneRadio
-			value="#{i2b2AuthenticationManager.selectedTutorial}">
+			value="#{i2b2AuthenticationManager.selectedI2b2ProjectId}">
 			<f:selectItems var="tutorial"
-				value="#{i2b2AuthenticationManager.tutorials}"
-				itemValue="#{tutorial.tutorialId}"
-				itemLabel="#{tutorial.tutorialDescription}" />
+				value="#{i2b2AuthenticationManager.i2b2ProjectList}"
+				itemValue="#{tutorial.intId}"
+				itemLabel="#{tutorial.name}" />
 		</h:selectOneRadio>
 
 
