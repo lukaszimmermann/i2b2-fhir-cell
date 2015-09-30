@@ -44,7 +44,10 @@ public class I2b2AuthenticationManager {
 	private String i2b2Token;
 	private String pmResponseXml;
 
-	private List<Project> i2b2ProjectList;
+	List<Project> i2b2ProjectList = new ArrayList<Project>();
+	List<Tutorial> tutorials = new ArrayList<Tutorial>();
+
+	
 	private String selectedI2b2ProjectId;
 	private String selectedI2b2PatientId;
 
@@ -56,11 +59,15 @@ public class I2b2AuthenticationManager {
 	public void init() {
 		this.setI2b2User("demo");
 		this.setI2b2Password("demouser");
+
+		tutorials.add(new Tutorial(1, "JSF 2"));
+		tutorials.add(new Tutorial(2, "EclipseLink"));
+		tutorials.add(new Tutorial(3, "HTML 5"));
+		tutorials.add(new Tutorial(4, "Spring"));
 		
-		tutorials.add(new Tutorial(1,"JSF 2"));
-		tutorials.add(new Tutorial(2,"EclipseLink"));
-		tutorials.add(new Tutorial(3,"HTML 5"));
-		tutorials.add(new Tutorial(4,"Spring"));
+		Project p=new Project();
+		p.setId("proj1");p.setIntId(12);p.setName("proj1name");
+		i2b2ProjectList.add(p);
 
 	}
 
@@ -85,10 +92,16 @@ public class I2b2AuthenticationManager {
 	}
 
 	public void setI2b2ProjectList(List<Project> i2b2ProjectList) {
+		
 		this.i2b2ProjectList = i2b2ProjectList;
+		int count = 0;
+		for (Project p : this.i2b2ProjectList) {
+			count++;
+			p.setIntId(count++);
+		}
+		logger.trace("r:"+this.i2b2ProjectList.toString());
+		
 	}
-
-	
 
 	public String getSelectedI2b2ProjectId() {
 		return selectedI2b2ProjectId;
@@ -185,19 +198,16 @@ public class I2b2AuthenticationManager {
 		Map<String, Object> session = context.getExternalContext()
 				.getSessionMap();
 		logger.trace("selectedI2b2ProjectId:" + getSelectedI2b2ProjectId());
-/*
-		for (Project p : this.getI2b2ProjectList()) {
-			if (getSelectedItem().equals(p.getName())) {
-				setSelectedI2b2Project(p);
-			}
-		}
-		projectPatientMapManager.getProjectPatientList(
-				(String) session.get("I2b2User"),
-				(String) session.get("I2b2Token"), Config.i2b2Url,
-				Config.i2b2Domain, this.getSelectedI2b2Project().getId());
-		session.put("selectedI2b2Project", this.getSelectedI2b2Project());
-		logger.debug("put selected project into session");
-*/
+		/*
+		 * for (Project p : this.getI2b2ProjectList()) { if
+		 * (getSelectedItem().equals(p.getName())) { setSelectedI2b2Project(p);
+		 * } } projectPatientMapManager.getProjectPatientList( (String)
+		 * session.get("I2b2User"), (String) session.get("I2b2Token"),
+		 * Config.i2b2Url, Config.i2b2Domain,
+		 * this.getSelectedI2b2Project().getId());
+		 * session.put("selectedI2b2Project", this.getSelectedI2b2Project());
+		 * logger.debug("put selected project into session");
+		 */
 		return "/i2b2/success";
 	}
 
@@ -208,8 +218,8 @@ public class I2b2AuthenticationManager {
 				.getSessionMap();
 		if (session.get("pmResponse") == null) {
 			target = validate() ? "/i2b2/project_select" : "/i2b2/login";
-		//} else if (this.getSelectedItem() == null) {
-			//target = "project_select";
+			// } else if (this.getSelectedItem() == null) {
+			// target = "project_select";
 		} else {
 			// selectProject();
 		}// if (session.get("selectedI2b2Patient") == null)
@@ -242,8 +252,12 @@ public class I2b2AuthenticationManager {
 						FacesMessage.SEVERITY_INFO, "Login Sucessful!", null));
 				this.setPmResponseXml(pmResponseXml);
 				this.setI2b2Token(I2b2Util.getToken(pmResponseXml));
-				this.setI2b2ProjectList(I2b2Util
-						.getUserProjectMap(pmResponseXml));
+				int count=1;
+				for(Project p:I2b2Util
+						.getUserProjectMap(pmResponseXml)){
+					p.setIntId(count++);
+					this.i2b2ProjectList.add(p);
+				}
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
@@ -263,7 +277,6 @@ public class I2b2AuthenticationManager {
 	}
 
 	private String selectedTutorial = new String();
-	
 
 	public String getSelectedTutorial() {
 		return selectedTutorial;
@@ -273,8 +286,6 @@ public class I2b2AuthenticationManager {
 		this.selectedTutorial = selectedTutorial;
 	}
 
-	List<Tutorial> tutorials = new ArrayList<Tutorial>();
-	
 	public List<Tutorial> getTutorials() {
 		return tutorials;
 	}
@@ -282,8 +293,5 @@ public class I2b2AuthenticationManager {
 	public void setTutorials(List<Tutorial> tutorials) {
 		this.tutorials = tutorials;
 	}
-
-	
-	
 
 }
