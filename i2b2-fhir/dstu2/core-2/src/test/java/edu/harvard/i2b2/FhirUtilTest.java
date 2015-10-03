@@ -19,7 +19,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Medication;
-import org.hl7.fhir.MedicationPrescription;
+import org.hl7.fhir.MedicationOrder;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,10 @@ public class FhirUtilTest {
 	public void contain() throws JAXBException, IOException {
 		// URL path=FhirUtil.class.getResource("validation.zip");
 		// System.out.println(FhirUtil.isValid(Utils.getFile("example/fhir/singlePatient.xml")));
-		String mpXml=IOUtils.toString(FhirUtilTest.class.getResourceAsStream("/example/fhir/DSTU2/singleMedicationPrescription.xml"));
+		String mpXml=IOUtils.toString(FhirUtilTest.class.getResourceAsStream("/example/fhir/DSTU2/singleMedicationOrder.xml"));
 		String mXml=IOUtils.toString(FhirUtilTest.class.getResourceAsStream("/example/fhir/DSTU2/singleMedication.xml"));
 		
-		MedicationPrescription mp= JAXBUtil.fromXml(mpXml,MedicationPrescription.class);
+		MedicationOrder mp= JAXBUtil.fromXml(mpXml,MedicationOrder.class);
 		Medication m= JAXBUtil.fromXml(mXml,Medication.class);
 		
 		//logger.info("MP:"+JAXBUtil.toXml(mp));
