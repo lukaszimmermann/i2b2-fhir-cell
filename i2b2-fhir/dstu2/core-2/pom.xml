@@ -51,7 +51,7 @@
 			<artifactId>xquery</artifactId>
 			<version>${my-project-version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>edu.harvard.i2b2.fhir</groupId>
 			<artifactId>ndcToRxNormMapper</artifactId>
@@ -95,7 +95,8 @@
 			<groupId>org.hl7.fhir.tools</groupId>
 			<artifactId>validator</artifactId>
 			<version>1.0</version>
-			<scope>system</scope> <systemPath>${project.basedir}/lib/validator-1.0.jar</systemPath> 
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/validator-1.0.jar</systemPath>
 		</dependency>
 
 
@@ -105,7 +106,12 @@
 			<version>${my-project-version}</version>
 		</dependency>
 
-
+		
+<dependency>
+	<groupId>org.javassist</groupId>
+	<artifactId>javassist</artifactId>
+	<version>3.20.0-GA</version>
+</dependency>
 
 
 
