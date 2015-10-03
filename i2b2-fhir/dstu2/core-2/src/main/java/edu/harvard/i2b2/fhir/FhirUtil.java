@@ -83,7 +83,7 @@ import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Medication;
-import org.hl7.fhir.MedicationPrescription;
+import org.hl7.fhir.MedicationOrder;
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Observation;
 import org.hl7.fhir.Patient;
@@ -117,7 +117,7 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationPrescription|Observation|Patient)";
+	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationOrder|Observation|Patient)";
 	public static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
@@ -487,7 +487,7 @@ public class FhirUtil {
 
 		Uri u = new Uri();
 		u.setValue(basePath);
-		b.setBase(u);
+		//b.setBase(u);
 		return b;
 	}
 
@@ -511,8 +511,8 @@ public class FhirUtil {
 		case "MedicationStatement":
 			rc.setMedicationStatement((MedicationStatement) r);
 			break;
-		case "MedicationPrescription":
-			rc.setMedicationPrescription((MedicationPrescription) r);
+		case "MedicationOrder":
+			rc.setMedicationOrder((MedicationOrder) r);
 			break;
 		case "Condition":
 			rc.setCondition((Condition) r);
@@ -546,8 +546,8 @@ public class FhirUtil {
 			return rc.getMedication();
 		if (rc.getMedicationStatement() != null)
 			return rc.getMedicationStatement();
-		if (rc.getMedicationPrescription() != null)
-			return rc.getMedicationPrescription();
+		if (rc.getMedicationOrder() != null)
+			return rc.getMedicationOrder();
 		if (rc.getCondition() != null)
 			return rc.getCondition();
 		if (rc.getObservation() != null)

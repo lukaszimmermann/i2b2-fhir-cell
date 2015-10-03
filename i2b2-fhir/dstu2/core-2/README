@@ -1,4 +1,16 @@
+rm -rf src/main/java/org/;xjc ~/Downloads/fhir-spec/site/fhir-base.xsd -d src/main/java
+
+comment out lang in ~/Downloads/fhir-spec/site/fhir-xhtml.xsd 
+<!--                    <xs:attribute name="lang" type="LanguageCode"/>^M
+                -->
+
+
+
+
 mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=lib/validator-1.0.jar -Dversion=1.0 -Dpackaging=jar
+
+
+
 
 Afet changing schema
 rm -rf ../src/main/java/org/;xjc FhirResourceWithMetaData.xsd -d ../src/main/java
