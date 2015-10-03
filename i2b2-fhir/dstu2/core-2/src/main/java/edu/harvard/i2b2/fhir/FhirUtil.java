@@ -106,7 +106,7 @@ public class FhirUtil {
 
 	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";";
 
-	
+	//http://jboss-javassist.github.io/javassist/tutorial/tutorial.html#load
 	public static void addJAXBAnnotationsToClasses() {
 		try {
 			String className = "org.hl7.fhir.Observation";// Observation.class.getName();
