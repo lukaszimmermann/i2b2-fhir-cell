@@ -16,18 +16,20 @@
 
 
 		<h:selectOneRadio
-			value="#{i2b2AuthenticationManager.selectedI2b2ProjectId}">
+			value="#{i2b2AuthenticationManager.selectedI2b2Project}">
 			<f:selectItems var="tutorial"
 				value="#{i2b2AuthenticationManager.i2b2ProjectList}"
-				itemValue="#{tutorial.intId}"
-				itemLabel="#{tutorial.name}" />
+				itemValue="#{project}"
+				itemLabel="#{project.name}" />
+				<f:converter converterId = "pc"/>  
 		</h:selectOneRadio>
+
 
 
 		<h:commandButton id="submit" value="Submit" action="/i2b2/success">
 		</h:commandButton>
 	
-		<h:commandButton id="reset" value="Reset" type="reset">
+<h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
 	</h:form>
 </h:body>

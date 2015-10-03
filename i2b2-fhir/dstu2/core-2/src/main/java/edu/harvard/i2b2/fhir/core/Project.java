@@ -25,6 +25,9 @@ public class Project {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public boolean equals(Project b){
+		return (this.getId().equals(b.getId())&& this.getName().equals(b.getName()))?true:false;
+	}
 	@Override
 	public String toString() {
 		return "Project [id=" + id + ", name=" + name + ", intId=" + intId
