@@ -30,7 +30,7 @@
         </coding>
     </reasonCodeableConcept>
     <medicationReference> <!--    Linked to a RESOURCE Medication    -->
-        <reference value="Medication/1000000005-1"/>
+        <reference value="1000000005-1"/>
         <display value="prescribed medication"/>
     </medicationReference> 
     <dosageInstruction>

@@ -156,7 +156,7 @@ public class RxNormAdapter {
 		c.setDisplay(displayValue);
 		m.getCode().getCoding().add(c);
 
-		m.getName().setValue(rxCuiName);
+		m.getCode().getText().setValue(rxCuiName);
 		// logger.trace(JAXBUtil.toXml(m));
 	}
 
