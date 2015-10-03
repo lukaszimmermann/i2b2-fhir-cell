@@ -107,6 +107,7 @@ import ca.uhn.fhir.model.primitive.StringDt;
 import wrapperHapi.WrapperHapi;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.MetaData;
+import edu.harvard.i2b2.fhir.query.SearchParameterMap;
 
 public class FhirUtil {
 	// public static boolean validateFhirResourceBeforeAddingFlag=false;
@@ -642,9 +643,17 @@ public class FhirUtil {
 			String childReference = c.getId().getValue();
 			//xml = xml.replace(childReference, "#-" + childReference);
 			//p = JAXBUtil.fromXml(xml, parentClass);
-
-			Reference childRef=(Reference) FhirUtil.getChild(p, childClass.getSimpleName());
+			String path=new SearchParameterMap().getParameterPath(
+					parentClass, childClass.getSimpleName().toLowerCase());
+			logger.trace("SEARCH PATH:"+path);
+			String childPath=path.replaceAll("^"+parentClass.getSimpleName()+"/", "");
+			logger.trace("MchildPath:"+childPath);
+			
+			
+			Reference childRef=(Reference) FhirUtil.getChild(p, childPath);
 			String childId=childRef.getReference().getValue();
+			
+			
 			childRef.getReference().setValue("#"+childClass.getSimpleName()+"-"+childId);
 			
 			
@@ -667,7 +676,7 @@ public class FhirUtil {
 
 		} catch (NoSuchMethodException | SecurityException
 				| IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+				| InvocationTargetException | FhirCoreException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
 		}
