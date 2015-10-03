@@ -31,27 +31,27 @@
  */
 package edu.harvard.i2b2.fhir;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
-import java.net.URI;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javassist.CannotCompileException;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.ConstPool;
+import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.StringMemberValue;
+
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -59,25 +59,9 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 import javax.tools.JavaFileManager.Location;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.namespace.QName;
 
-import org.apache.abdera.Abdera;
-import org.apache.abdera.ext.opensearch.model.Url;
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
-import org.apache.abdera.parser.ParseException;
-import org.apache.abdera.parser.Parser;
-import org.apache.abdera.writer.Writer;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
@@ -90,11 +74,9 @@ import org.hl7.fhir.Patient;
 import org.hl7.fhir.Condition;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.Reference;
 import org.hl7.fhir.ResourceContainer;
 import org.hl7.fhir.UnsignedInt;
 import org.hl7.fhir.Uri;
-import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.validation.Validator;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -106,7 +88,6 @@ import ca.uhn.fhir.model.primitive.InstantDt;
 import ca.uhn.fhir.model.primitive.StringDt;
 import wrapperHapi.WrapperHapi;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
-import edu.harvard.i2b2.fhir.core.MetaData;
 import edu.harvard.i2b2.fhir.query.SearchParameterMap;
 
 public class FhirUtil {
@@ -119,18 +100,64 @@ public class FhirUtil {
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
 	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationOrder|Observation|Patient)";
-	public static ArrayList<Class> resourceClassList = null;
+	private static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
 
 	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";";
 
-	static {
-		initResourceClassList();
+	
+	public static void addJAXBAnnotationsToClasses() {
+		try {
+			String className = "org.hl7.fhir.Observation";// Observation.class.getName();
+			ClassPool pool = ClassPool.getDefault();
+			// extracting the class
+			CtClass cc = pool.get(className);
+			ClassFile cf = cc.getClassFile();
+			ConstPool cp = cf.getConstPool();
+			AnnotationsAttribute attr = new AnnotationsAttribute(cp,
+					AnnotationsAttribute.visibleTag);
+
+			Annotation a = new Annotation(
+					"javax.xml.bind.annotation.XmlRootElement", cp);
+			a.addMemberValue("name", new StringMemberValue(className.substring(className.lastIndexOf(".")+1), cp));
+			attr.setAnnotation(a);
+			cf.addAttribute(attr);
+			// cf.setVersionToJava5();
+
+			// myClassReloadingFactory.newInstance("com.jenkov.MyObject");
+			// print classAnnotations
+			Class aClass = cc.toClass();
+			/*
+			 * java.lang.annotation.Annotation[] annotations =
+			 * aClass.getAnnotations();
+			 * 
+			 * for(java.lang.annotation.Annotation annotation : annotations){
+			 * //if(annotation instanceof MyAnnotation){ logger.trace("annot: "
+			 * + annotation); //} }
+			 */
+
+		} catch (CannotCompileException |
+		// | IOException | IllegalConnectorArgumentsException|
+				NotFoundException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 
 	private static ArrayList<Class> getResourceClassList() {
-		initResourceClassList();
+		if (resourceClassList == null) {
+			resourceClassList = new ArrayList<Class>();
+			try {
+				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
+
+					// logger.trace(c.getSimpleName());
+					resourceClassList.add(c);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return resourceClassList;
 	}
 
@@ -175,8 +202,7 @@ public class FhirUtil {
 			// logger.trace(v.getDefinitions());
 			// logger.trace("ready");
 		}
-		if (resourceClassList == null)
-			initResourceClassList();
+
 	}
 
 	public List<Class> getResourceClasses() {
@@ -188,23 +214,6 @@ public class FhirUtil {
 				classList.add(y);
 		}
 		return classList;
-
-	}
-
-	public static void initResourceClassList() {
-		if (resourceClassList == null) {
-			resourceClassList = new ArrayList<Class>();
-			try {
-				for (Class c : getAllFhirResourceClasses("org.hl7.fhir")) {
-
-					// logger.trace(c.getSimpleName());
-					resourceClassList.add(c);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 
 	}
 
@@ -250,9 +259,7 @@ public class FhirUtil {
 	}
 
 	public static Class getResourceClass(String resourceName) {
-		if (resourceClassList == null)
-			initResourceClassList();
-		for (Class c : resourceClassList) {
+		for (Class c : getResourceClassList()) {
 			if (c.getSimpleName().toLowerCase()
 					.equals(resourceName.toLowerCase()))
 				return c;
@@ -263,9 +270,7 @@ public class FhirUtil {
 	}
 
 	public static Class getResourceClass(Resource resource) {
-		if (resourceClassList == null)
-			initResourceClassList();
-		for (Class c : resourceClassList) {
+		for (Class c : getResourceClassList()) {
 			if (c.isInstance(resource))
 				return c;
 		}
@@ -455,7 +460,7 @@ public class FhirUtil {
 	public static Resource setId(Resource r, String idStr) {
 		Id id = new Id();
 		id.setValue(idStr);
-		
+
 		r.setId(id);
 		return r;
 	}
@@ -488,12 +493,12 @@ public class FhirUtil {
 
 		Uri u = new Uri();
 		u.setValue(basePath);
-		//b.setBase(u);
+		// b.setBase(u);
 		return b;
 	}
 
 	private static BundleEntry newBundleEntryForResource(Resource r) {
-		BundleEntry be=new BundleEntry();
+		BundleEntry be = new BundleEntry();
 		ResourceContainer rc = FhirUtil.getResourceContainer(r);
 		be.setResource(rc);
 		return be;
@@ -641,25 +646,23 @@ public class FhirUtil {
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
 			String childReference = c.getId().getValue();
-			//xml = xml.replace(childReference, "#-" + childReference);
-			//p = JAXBUtil.fromXml(xml, parentClass);
-			String path=new SearchParameterMap().getParameterPath(
+			// xml = xml.replace(childReference, "#-" + childReference);
+			// p = JAXBUtil.fromXml(xml, parentClass);
+			String path = new SearchParameterMap().getParameterPath(
 					parentClass, childClass.getSimpleName().toLowerCase());
-			logger.trace("SEARCH PATH:"+path);
-			String childPath=path.replaceAll("^"+parentClass.getSimpleName()+"/", "");
-			logger.trace("MchildPath:"+childPath);
-			
-			
-			Reference childRef=(Reference) FhirUtil.getChild(p, childPath);
-			String childId=childRef.getReference().getValue();
-			
-			
-			childRef.getReference().setValue("#"+childClass.getSimpleName()+"-"+childId);
-			
-			
+			logger.trace("SEARCH PATH:" + path);
+			String childPath = path.replaceAll(
+					"^" + parentClass.getSimpleName() + "/", "");
+			logger.trace("MchildPath:" + childPath);
+
+			Reference childRef = (Reference) FhirUtil.getChild(p, childPath);
+			String childId = childRef.getReference().getValue();
+
+			childRef.getReference().setValue(
+					"#" + childClass.getSimpleName() + "-" + childId);
+
 			Id cId = c.getId();
-			cId.setValue(childClass.getSimpleName() + "-"
-					+ cId.getValue());
+			cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
 			c.setId(cId);
 			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
 
@@ -688,26 +691,31 @@ public class FhirUtil {
 			JAXBException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(s));
 	}
-	
-	public static Patient getPatientResource(String inputXml) throws XQueryUtilException, JAXBException, IOException {
-		String query = IOUtils.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
-		String bundleXml=XQueryUtil.processXQuery( query,inputXml).toString();
-		Bundle b=JAXBUtil.fromXml(bundleXml,Bundle.class);
-		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0).getResource());
+
+	public static Patient getPatientResource(String inputXml)
+			throws XQueryUtilException, JAXBException, IOException {
+		String query = IOUtils
+				.toString(FhirUtil.class
+						.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
+		String bundleXml = XQueryUtil.processXQuery(query, inputXml).toString();
+		Bundle b = JAXBUtil.fromXml(bundleXml, Bundle.class);
+		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0)
+				.getResource());
 	}
-	
-	public static Bundle convertI2b2ToFhirForAParticularPatient(String i2b2Xml) throws IOException, XQueryUtilException, JAXBException{
-		
-		String query = IOUtils.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
-		
-		String xQueryResultString = XQueryUtil.processXQuery(query, i2b2Xml).toString();
-		Bundle b= JAXBUtil.fromXml(xQueryResultString, Bundle.class);
-		Patient p=getPatientResource( i2b2Xml) ;
+
+	public static Bundle convertI2b2ToFhirForAParticularPatient(String i2b2Xml)
+			throws IOException, XQueryUtilException, JAXBException {
+
+		String query = IOUtils
+				.toString(FhirUtil.class
+						.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
+
+		String xQueryResultString = XQueryUtil.processXQuery(query, i2b2Xml)
+				.toString();
+		Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
+		Patient p = getPatientResource(i2b2Xml);
 		b.getEntry().add(newBundleEntryForResource(p));
 		return b;
 	}
-	
-	
-	
 
 }

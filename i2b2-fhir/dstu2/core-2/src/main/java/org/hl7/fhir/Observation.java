@@ -105,7 +105,7 @@ import javax.xml.bind.annotation.XmlType;
     "related",
     "component"
 })
-@XmlRootElement(name="Observation")
+//@XmlRootElement(name="Observation")
 public class Observation
     extends DomainResource
 {
