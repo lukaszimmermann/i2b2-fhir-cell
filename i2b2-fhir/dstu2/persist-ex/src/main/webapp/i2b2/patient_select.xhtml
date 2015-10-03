@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title>proj select</title>
+</h:head>
+<h:body><h:form>
+		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
+		<h2>Select Project</h2>
+		<li><h:outputText
+				value="proj:#{i2b2AuthenticationManager.i2b2ProjectList}" /></li>
+
+
+
+		<h:selectOneListbox
+			value="#{i2b2AuthenticationManager.selectedI2b2PatientId}"
+			required="true"
+				requiredMessage="Error: one patient is required.">
+			<f:selectItems var="p"
+				value="#{i2b2AuthenticationManager.i2b2PatientList}"
+				itemValue="#{p}"
+				itemLabel="#{p}" />
+			 
+		</h:selectOneListbox>
+
+
+
+		<h:commandButton id="submit" value="Submit" action="#{i2b2AuthenticationManager.selectPatient()}">
+		</h:commandButton>
+	
+<h:commandButton id="reset" value="Reset" type="reset">
+		</h:commandButton>
+	</h:form>
+<p>
+					<h:outputText value="#{i2b2AuthenticationManager.scope}" />
+				</p>
+				<p>
+					<h:outputText value="#{i2b2AuthenticationManager.redirect_url}" />
+				</p>
+				<p>
+					<h:outputText value="#{i2b2AuthenticationManager.client_id}" />
+				</p>
+				</h:body>
+</html>

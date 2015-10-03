@@ -2,6 +2,7 @@ package edu.harvard.i2b2.oauth2.core.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class ProjectPatientMap {
@@ -10,6 +11,7 @@ public class ProjectPatientMap {
 	String i2b2Url;
 	String i2b2Domain;
 	
+	@Lob
 	String patientIdList;//comma seperated list of ids
 
 	public String getProjectId() {

@@ -39,6 +39,8 @@ public class I2b2AuthenticationManager implements Serializable {
 
 	@EJB
 	ProjectPatientMapManager projectPatientMapManager;
+	
+	
 
 	private String i2b2User;
 	private String i2b2Password;
@@ -47,16 +49,16 @@ public class I2b2AuthenticationManager implements Serializable {
 	private String pmResponseXml;
 
 	List<Project> i2b2ProjectList = new ArrayList<Project>();
+	List<String> i2b2PatientList = new ArrayList<String>();
 	List<Tutorial> tutorials = new ArrayList<Tutorial>();
 
-	
-	private String selectedI2b2ProjectId;
+	private String client_id;
 	private Project selectedI2b2Project;
 	private String selectedI2b2PatientId;
 
 	private String redirect_url;
 	private HashSet<String> scope;
-	private String client_id;
+	
 
 	@PostConstruct
 	public void init() {
@@ -111,14 +113,7 @@ public class I2b2AuthenticationManager implements Serializable {
 		this.i2b2ProjectList=i2b2ProjectList;
 	}
 
-	public String getSelectedI2b2ProjectId() {
-		return selectedI2b2ProjectId;
-	}
-
-	public void setSelectedI2b2ProjectId(String selectedI2b2ProjectId) {
-		this.selectedI2b2ProjectId = selectedI2b2ProjectId;
-	}
-
+	
 	public String getSelectedI2b2PatientId() {
 		return selectedI2b2PatientId;
 	}
@@ -207,18 +202,33 @@ public class I2b2AuthenticationManager implements Serializable {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, Object> session = context.getExternalContext()
 				.getSessionMap();
-		logger.trace("selectedI2b2ProjectId:" + getSelectedI2b2ProjectId());
-		/*
-		 * for (Project p : this.getI2b2ProjectList()) { if
-		 * (getSelectedItem().equals(p.getName())) { setSelectedI2b2Project(p);
-		 * } } projectPatientMapManager.getProjectPatientList( (String)
-		 * session.get("I2b2User"), (String) session.get("I2b2Token"),
-		 * Config.i2b2Url, Config.i2b2Domain,
-		 * this.getSelectedI2b2Project().getId());
-		 * session.put("selectedI2b2Project", this.getSelectedI2b2Project());
-		 * logger.debug("put selected project into session");
-		 */
-		return "/i2b2/success";
+		if(getSelectedI2b2Project()==null) {return "/i2b2/project_select";}
+		logger.trace("selectedI2b2ProjectId:" + getSelectedI2b2Project().getId());
+		logger.trace("selectedI2b2ProjectId:" + getSelectedI2b2Project().getId());
+		session.put("selectedI2b2ProjectId:", getSelectedI2b2Project().getId());
+		
+		if(this.scope.contains("launch/patient")){
+			this.setI2b2PatientList( this.projectPatientMapManager.getProjectPatientList((String)session.get("i2b2User"), (String)session.get("i2b2Token"),(String)session.get("i2b2Url"), (String)session.get("i2b2Domain"), this.getSelectedI2b2Project().getId()));
+			return "/i2b2/patient_select";
+		}
+		if(getSelectedI2b2Project().getId()!=null){
+			return "/i2b2/success";
+		}else{
+			return "error";
+		}
+	}
+
+	public String selectPatient() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, Object> session = context.getExternalContext()
+				.getSessionMap();
+		if(getSelectedI2b2PatientId()==null) {return "/i2b2/patient_select";}
+		
+		if(getSelectedI2b2PatientId()!=null){
+			return "/i2b2/success";
+		}else{
+			return "error";
+		}
 	}
 
 	public String navigate() {
@@ -268,7 +278,10 @@ public class I2b2AuthenticationManager implements Serializable {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
+				session.put("i2b2Url", Config.i2b2Url);
+				session.put("i2b2Domain", Config.i2b2Domain);
 				session.put("i2b2ProjectList",this.getI2b2ProjectList());
+				session.put("scope",this.scope);
 
 				return true;
 
@@ -301,5 +314,17 @@ public class I2b2AuthenticationManager implements Serializable {
 	public void setTutorials(List<Tutorial> tutorials) {
 		this.tutorials = tutorials;
 	}
+
+
+	public List<String> getI2b2PatientList() {
+		return i2b2PatientList;
+	}
+
+
+	public void setI2b2PatientList(List<String> i2b2PatientList) {
+		this.i2b2PatientList = i2b2PatientList;
+	}
+	
+	
 
 }
