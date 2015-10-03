@@ -63,6 +63,7 @@ public class WebServiceCall {
 	    		.entity(requestXml, "application/xml")
 	            .post(String.class);
 	   // System.out.println(response);
+	    logger.trace("response:"+response);
 		return response;
 	}
 
