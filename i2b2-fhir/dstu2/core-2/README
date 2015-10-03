@@ -1,3 +1,4 @@
+http://stackoverflow.com/questions/2944896/dynamically-add-annotation-to-an-existing-class
 rm -rf src/main/java/org/;xjc ~/Downloads/fhir-spec/site/fhir-base.xsd -d src/main/java
 
 comment out lang in ~/Downloads/fhir-spec/site/fhir-xhtml.xsd 
