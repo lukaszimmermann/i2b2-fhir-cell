@@ -52,12 +52,10 @@ public class I2b2Helper {
 
 	static Bundle allPatients = null;
 
-	static Bundle initAllPatients(HttpSession session)
+	static Bundle initAllPatients(AccessToken tok)
 			throws AuthenticationFailure, FhirServerException,
 			XQueryUtilException, JAXBException, IOException {
-		if (session == null) {
-			return null;
-		}
+		
 		if (allPatients == null) {// avoid redundant run
 			// if (session.getAttribute("INIT_ALL_PATIENTS") != null)
 			// return;
@@ -72,9 +70,9 @@ public class I2b2Helper {
 		return allPatients;
 	}
 
-	private static Bundle getPdo(HttpSession session, String patientId,
+	private static Bundle getPdo(AccessToken accessTok, String patientId,
 			 PatientBundleManager service) throws InterruptedException {
-			return service.getPatientBundle((AccessToken)session.getAttribute("accessToken"), patientId);
+			return service.getPatientBundle(accessTok, patientId);
 	}
 
 	static String processXquery(String query, String input)
@@ -91,8 +89,7 @@ public class I2b2Helper {
 		// return input;
 	}
 
-	static Bundle parsePatientIdToFetchPDO(HttpServletRequest request,
-			HttpSession session,  String resourceName,
+	static Bundle parsePatientIdToFetchPDO(AccessToken tok, HttpServletRequest request, String resourceName,
 			PatientBundleManager service) throws XQueryUtilException,
 			JAXBException, IOException, AuthenticationFailure,
 			FhirServerException, InterruptedException {
@@ -104,10 +101,10 @@ public class I2b2Helper {
 		logger.info("PatientId:" + patientId);
 		if (patientId != null) {
 			// filter.put("Patient", "Patient/" + patientId);
-			return I2b2Helper.getPdo(session, patientId, service);
+			return I2b2Helper.getPdo(tok, patientId, service);
 		} else {
 			if (resourceName.equals("Patient"))
-				 return I2b2Helper.initAllPatients(session);
+				 return I2b2Helper.initAllPatients(tok);
 
 		}
 		return null;

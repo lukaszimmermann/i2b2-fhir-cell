@@ -146,8 +146,11 @@ public class I2b2FhirWS {
 			//I2b2Helper.resetMetaResourceDb(session, sbb);
 			logger.debug("session id:" + session.getId());
 
-			s=I2b2Helper.parsePatientIdToFetchPDO(request, session, 
-					resourceName, service);
+			AccessToken tok = accessTokenBean.find(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0));
+			
+			s=I2b2Helper.parsePatientIdToFetchPDO(tok,  request,c.getSimpleName(),
+			service); 
+					;
 			md.addBundle(s);
 			//md = I2b2Helper.getMetaResourceDb(session, sbb);
 
@@ -218,7 +221,8 @@ public class I2b2FhirWS {
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader,
-			@Context HttpHeaders headers, @Context HttpServletRequest request)
+			@Context HttpHeaders headers, @Context HttpServletRequest request,
+			@HeaderParam(AuthenticationFilter.AUTHENTICATION_HEADER) String tokString)
 			throws DatatypeConfigurationException,
 			ParserConfigurationException, SAXException, IOException,
 			JAXBException, JSONException, XQueryUtilException,
@@ -250,8 +254,9 @@ public class I2b2FhirWS {
 			if (c == null)
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
-
-			s=I2b2Helper.parsePatientIdToFetchPDO(request, session,
+			AccessToken tok = accessTokenBean.find(tokString);
+			
+			s=I2b2Helper.parsePatientIdToFetchPDO(tok,request,
 					resourceName, service);
 			md.addBundle(s);;
 

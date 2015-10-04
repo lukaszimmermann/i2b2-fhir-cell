@@ -297,7 +297,7 @@ public class OAuth2AuthzEndpoint {
 				throw new RuntimeException("PMRESPONSE NOT FOUND");
 
 			String resourceUserId = (String) session
-					.getAttribute("resourceUserId");
+					.getAttribute("i2b2User");
 			String i2b2Token = (String) I2b2Util.getToken(pmResponseXml);
 			String authorizationCode = (String) session
 					.getAttribute("authorizationCode");

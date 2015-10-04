@@ -203,15 +203,15 @@ public class I2b2AuthenticationManager implements Serializable {
 				+ getSelectedI2b2Project().getId());
 		logger.trace("selectedI2b2ProjectId:"
 				+ getSelectedI2b2Project().getId());
-		session.put("selectedI2b2ProjectId:", getSelectedI2b2Project().getId());
-
+		session.put("i2b2Project", getSelectedI2b2Project().getId());
+		this.setI2b2PatientList(this.projectPatientMapManager
+				.getProjectPatientList((String) session.get("i2b2User"),
+						(String) session.get("i2b2Token"), (String) session
+								.get("i2b2Url"), (String) session
+								.get("i2b2Domain"), this
+								.getSelectedI2b2Project().getId()));
+		
 		if (this.scope.contains("launch/patient")) {
-			this.setI2b2PatientList(this.projectPatientMapManager
-					.getProjectPatientList((String) session.get("i2b2User"),
-							(String) session.get("i2b2Token"), (String) session
-									.get("i2b2Url"), (String) session
-									.get("i2b2Domain"), this
-									.getSelectedI2b2Project().getId()));
 			return "/i2b2/patient_select";
 		}
 		if (getSelectedI2b2Project().getId() != null) {
@@ -233,7 +233,7 @@ public class I2b2AuthenticationManager implements Serializable {
 		}
 
 		if (getSelectedI2b2PatientId() != null) {
-
+			session.put("patientId", getSelectedI2b2PatientId());
 			ExternalContext c = FacesContext.getCurrentInstance()
 					.getExternalContext();
 			c.redirect("../api/authz/processScope");
