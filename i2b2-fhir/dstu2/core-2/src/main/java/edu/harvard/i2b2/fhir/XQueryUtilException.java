@@ -39,4 +39,8 @@ public class XQueryUtilException extends Exception {
 		super(e);
 	}
 
+	public XQueryUtilException(String string) {
+		super(string);
+	}
+
 }

@@ -113,6 +113,8 @@ public final class  XQueryUtil{
 			throws XQueryUtilException {
 		String result = null;
 		Context context = new Context();
+		if(query==null ) throw new XQueryUtilException("query is null");
+		if(input==null ) throw new XQueryUtilException("input is null");
 
 		// Create a database from a remote XML document
 		// System.out.println("\n* Create a database from a file via http.");
@@ -145,7 +147,7 @@ public final class  XQueryUtil{
 			}
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
-			logger.error("",e1);
+			logger.error(e1.getMessage(),e1);
 			throw new XQueryUtilException(e1);
 
 		}

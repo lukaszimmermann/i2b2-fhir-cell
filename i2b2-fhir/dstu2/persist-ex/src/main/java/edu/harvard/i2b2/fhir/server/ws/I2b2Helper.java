@@ -89,10 +89,11 @@ public class I2b2Helper {
 		// return input;
 	}
 
-	static Bundle parsePatientIdToFetchPDO(AccessToken tok, HttpServletRequest request, String resourceName,
+	static Bundle parsePatientIdToFetchPDO(HttpSession session, HttpServletRequest request, String resourceName,
 			PatientBundleManager service) throws XQueryUtilException,
 			JAXBException, IOException, AuthenticationFailure,
 			FhirServerException, InterruptedException {
+		AccessToken tok=(AccessToken) session.getAttribute("accessToken");
 		String patientId = I2b2Helper
 				.extractPatientId(request.getQueryString());
 		if (patientId == null)

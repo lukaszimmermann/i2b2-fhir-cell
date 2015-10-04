@@ -70,9 +70,6 @@ public class I2b2FhirWS {
 	@EJB
 	AuthenticationService authService;
 
-	@EJB
-	AccessTokenService accessTokenBean;
-
 	String i2b2SessionId;
 	// contains ids of patients already called.
 
@@ -137,28 +134,18 @@ public class I2b2FhirWS {
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			if (authenticateOpenSession(session, headers) == false) {
-				return Response.status(Status.BAD_REQUEST)
-						.type(MediaType.APPLICATION_XML).entity("login first")
-						.build();
-			}
+			
 
 			//I2b2Helper.resetMetaResourceDb(session, sbb);
 			logger.debug("session id:" + session.getId());
-
-			AccessToken tok = accessTokenBean.find(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0));
 			
-			s=I2b2Helper.parsePatientIdToFetchPDO(tok,  request,c.getSimpleName(),
+			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
+			
+			s=I2b2Helper.parsePatientIdToFetchPDO(session,  request,c.getSimpleName(),
 			service); 
-					;
+					
 			md.addBundle(s);
-			//md = I2b2Helper.getMetaResourceDb(session, sbb);
-
-			//Map<String, String[]> q = request.getParameterMap();
-			//for (String k : q.keySet()) {
-				//if (k.equals("_include"))
-					//continue;
-			//}
+			
 			logger.info("running filter...");
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
@@ -233,11 +220,7 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 
 		try {
-			if (authenticateOpenSession(session, headers) == false) {
-				return Response.status(Status.BAD_REQUEST)
-						.type(MediaType.APPLICATION_XML).entity("login first")
-						.build();
-			}
+			
 			
 			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
@@ -254,9 +237,8 @@ public class I2b2FhirWS {
 			if (c == null)
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
-			AccessToken tok = accessTokenBean.find(tokString);
-			
-			s=I2b2Helper.parsePatientIdToFetchPDO(tok,request,
+			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
+			s=I2b2Helper.parsePatientIdToFetchPDO(session,request,
 					resourceName, service);
 			md.addBundle(s);;
 
@@ -363,7 +345,7 @@ public class I2b2FhirWS {
 		return Response.ok().type(mediaType).entity(msg).build();
 
 	}
-
+/*
 	private boolean authenticateOpenSession(HttpSession session, HttpHeaders headers)
 			throws XQueryUtilException, IOException, JAXBException,
 			InterruptedException {
@@ -380,7 +362,7 @@ public class I2b2FhirWS {
 			return false;
 		}
 
-		AccessToken tok = authService.getAccessTokenString(authHeaderContent);
+		AccessToken tok = authService.getHttpAccessTokenString(authHeaderContent);
 		session.setAttribute("i2b2domain", tok.getI2b2Project());
 		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
 		session.setAttribute("username", tok.getResourceUserId());
@@ -388,5 +370,5 @@ public class I2b2FhirWS {
 
 		return true;
 	}
-
+*/
 }
