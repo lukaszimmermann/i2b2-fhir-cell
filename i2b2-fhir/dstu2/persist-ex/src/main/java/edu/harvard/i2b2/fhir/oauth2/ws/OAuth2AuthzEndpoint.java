@@ -269,12 +269,11 @@ public class OAuth2AuthzEndpoint {
 
 	// if submit yes then redirect to client url, along with AuthToken
 	@Path("processScope")
-	@POST
+	@GET
 	public Response processResourceOwnerScopeChoice(
-			@FormParam("project") String i2b2Project,
 			@Context HttpServletRequest request) {
 		try {
-			logger.trace("processing scope:" + i2b2Project + " sessionid:"
+			logger.trace("processing scope: sessionid:"
 					+ request.getSession().getId());
 			// save scope to session and
 			// redirect to client uri
@@ -305,6 +304,7 @@ public class OAuth2AuthzEndpoint {
 			String clientRedirectUri = (String) session
 					.getAttribute("redirectUri");
 			String clientId = (String) session.getAttribute("clientId");
+			String i2b2Project = (String) session.getAttribute("i2b2Project");
 			String state = (String) session.getAttribute("state");
 			String scope = "user/*.*";// HashSet<String>
 										// session.getAttribute("scope");
@@ -327,7 +327,7 @@ public class OAuth2AuthzEndpoint {
 	// establishing approval via other means).
 	
 
-	String successfulResponse(HttpServletRequest request)
+	 String successfulResponse(HttpServletRequest request)
 			throws OAuthSystemException, URISyntaxException,
 			OAuthProblemException {
 		OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
