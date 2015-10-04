@@ -224,42 +224,49 @@ public class I2b2Util {
 
 	public static String getAllDataForAPatient(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
-			String project, String patientId, List<String> items)
-			throws IOException, XQueryUtilException {
-		String requestXml = IOUtils
-				.toString(I2b2Util.class
-						.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
+			String project, String patientId, List<String> items) {
+		try {
+			logger.trace("got params:"+i2b2User+"-"+
+			 i2b2Token+"-"+ i2b2Url+"-"+ I2b2Domain+"-"+ project+"-"+ patientId+"-"+ items);
+			String requestXml = IOUtils
+					.toString(I2b2Util.class
+							.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
 
-		String panelXml = "";
-		int count=0;
-		for (String item : items) {
-			count++;
-			String singlePanelXml = IOUtils.toString(I2b2Util.class
-					.getResourceAsStream("/i2b2query/panel.xml"));
+			String panelXml = "";
+			int count = 0;
+			for (String item : items) {
+				count++;
+				String singlePanelXml = IOUtils.toString(I2b2Util.class
+						.getResourceAsStream("/i2b2query/panel.xml"));
 
-			singlePanelXml = replaceXMLString(singlePanelXml,
-					"//panel/item/item_key", item);
-			singlePanelXml = replaceXMLString(singlePanelXml,
-					"//panel/panel_number", Integer.toString(count));
-			
-			panelXml+=singlePanelXml;
-			logger.trace("panelXml:"+panelXml);
+				singlePanelXml = replaceXMLString(singlePanelXml,
+						"//panel/item/item_key", item);
+				singlePanelXml = replaceXMLString(singlePanelXml,
+						"//panel/panel_number", Integer.toString(count));
+
+				panelXml += singlePanelXml;
+				logger.trace("panelXml:" + panelXml);
+			}
+
+			requestXml = replaceXMLString(requestXml, "//filter_list", panelXml);
+
+			requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml,
+					i2b2User, i2b2Token, i2b2Url, I2b2Domain, project);
+
+			if (patientId != null)
+				requestXml = requestXml.replaceAll("PATIENTID", patientId);
+
+			String responseXml = WebServiceCall.run(i2b2Url
+					+ "/services/QueryToolService/pdorequest", requestXml);
+			logger.trace("got response:" + responseXml);
+			logger.trace(""
+					+ XQueryUtil
+							.getStringSequence("//observation", responseXml)
+							.size());
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
-		
-		requestXml = replaceXMLString(requestXml,
-				"//filter_list", panelXml);
-		
-		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
-				i2b2Token, i2b2Url, I2b2Domain, project);
-
-		if (patientId != null)
-			requestXml = requestXml.replaceAll("PATIENTID", patientId);
-
-		String responseXml = WebServiceCall.run(i2b2Url
-				+ "/services/QueryToolService/pdorequest", requestXml);
-		logger.trace("got response:" + responseXml);
-		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
-		return responseXml;
+		return null;
 	}
 
 	static boolean validateI2b2UserNamePasswordPair(String pmResponse)
@@ -279,11 +286,13 @@ public class I2b2Util {
 
 	}
 
-	public static ArrayList<String> getAllPatientsAsList(String allPatientI2b2Xml) {
+	public static ArrayList<String> getAllPatientsAsList(
+			String allPatientI2b2Xml) {
 		try {
-			return XQueryUtil.getStringSequence("//patient/patient_id/text()", allPatientI2b2Xml);
+			return XQueryUtil.getStringSequence("//patient/patient_id/text()",
+					allPatientI2b2Xml);
 		} catch (XQueryUtilException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}

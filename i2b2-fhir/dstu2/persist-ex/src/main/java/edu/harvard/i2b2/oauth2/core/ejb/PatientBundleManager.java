@@ -52,7 +52,8 @@ public class PatientBundleManager {
 	private void fetchPatientBundle(AccessToken tok, String pid) {
 		status.markProcessing(pid);
 		try{
-			logger.trace("fetching PDO for pid:"+pid);
+			if(tok==null) logger.error("AccessToken is null");
+			logger.trace("fetching PDO for pid:"+pid+" and tok"+tok);
 			ArrayList<String>items=new ArrayList<String>();
 			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
 			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
