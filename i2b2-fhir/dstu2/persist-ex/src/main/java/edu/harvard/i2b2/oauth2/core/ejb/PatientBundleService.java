@@ -32,17 +32,22 @@ public class PatientBundleService {
 		// patientBundleHm=new HashMap<String,Bundle>();
 	}
 
-	@Lock(LockType.READ)
+	@Lock
 	public Bundle get(String patientId) {
 		logger.info("getting: bundle for pid:" + patientId);
-
-		// return patientBundleHm.get(id);
-		return find(patientId);
+		Bundle b = find(patientId);
+		if (b == null) {
+			logger.info("returning NULL bundle ");
+		} else {
+			logger.info("returning bundle of size:" + b.getEntry().size());
+		}
+		return b;
 	}
 
 	private Bundle find(String patientId) {
 		PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
-		if(r==null) return null;
+		if (r == null)
+			return null;
 		String bundleXml = r.getBundleXml();
 		Bundle b = null;
 		try {
@@ -50,31 +55,32 @@ public class PatientBundleService {
 		} catch (JAXBException e) {
 			logger.error(e.getMessage(), e);
 		}
-		logger.trace("found PatientBundleRecord:" + r.toString());
+		logger.trace("found PatientBundleRecord:" + r.toString() + "\n"
+				+ b.getEntry().size());
 		return b;
 	}
 
-	@Lock(LockType.WRITE)
+	@Lock
 	public void put(String patientId, Bundle b) {
 		logger.info("putting:" + patientId + "=>" + b);
 		createPatientRecord(patientId, b);
-		// patientBundleHm.put(id,b);
 
 	}
-	
+
 	@Remove
-	public void remove(){
-		 //patientBundleHm=null;
+	public void remove() {
+		// patientBundleHm=null;
 	}
 
-	private PatientBundleRecord createPatientRecord(String patientId, Bundle b){
-			
+	@Lock
+	private PatientBundleRecord createPatientRecord(String patientId, Bundle b) {
+
 		PatientBundleRecord r = new PatientBundleRecord();
 		r.setPatientId(patientId);
 		try {
 			r.setBundleXml(JAXBUtil.toXml(b));
 		} catch (JAXBException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 		em.persist(r);
 		logger.trace("created PatientBundleRecord:" + r.toString());

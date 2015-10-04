@@ -64,10 +64,11 @@ public class PatientBundleManager {
 			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			logger.trace("fetched bundle of size:"+b.getEntry().size());
 			service.put(pid, b);
+			status.markComplete(pid);
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 		}
-		status.markComplete(pid);
+		
 	}
 
 	private Bundle getPatientBundleLocking(String pid) {
