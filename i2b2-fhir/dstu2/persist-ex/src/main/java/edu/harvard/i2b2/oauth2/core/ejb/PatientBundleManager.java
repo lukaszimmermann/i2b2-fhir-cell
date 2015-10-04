@@ -28,6 +28,9 @@ public class PatientBundleManager {
 	@EJB
 	BundleStatus status;
 
+	//TODO check of the tok has a project which has the given pid
+	//check if scope allows access to the patient
+	
 	public Bundle getPatientBundle(AccessToken tok, String pid) {
 
 		if (status.isComplete(pid)) {
@@ -59,6 +62,7 @@ public class PatientBundleManager {
 			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
 			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
 			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
+			logger.trace("fetched bundle of size:"+b.getEntry().size());
 			service.put(pid, b);
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);

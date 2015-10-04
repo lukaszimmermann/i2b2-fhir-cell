@@ -12,10 +12,13 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
@@ -39,14 +42,14 @@ public class AuthenticationService {
 		}
 
 		
-		AccessToken tok=getAccessTokenString(authHeaderContent);
+		AccessToken tok=getHttpAccessTokenString(authHeaderContent);
 		boolean res= (tok != null && (!isExpired(tok.getExpiryDate()))) ? true
 				: false;
 		logger.info("auth is"+res);
 		return res;
 	}
 	
-	public AccessToken getAccessTokenString(String authHeaderContent) {
+	public AccessToken getHttpAccessTokenString(String authHeaderContent) {
 		if (authHeaderContent == null) return null;
 		String accessTokenId= authHeaderContent.replaceAll("Bearer\\s*", "");
 
@@ -60,6 +63,12 @@ public class AuthenticationService {
 		logger.info("current Date:" + current.toGMTString() + "\ninputDate:"
 				+ inputDate.toGMTString() + "\nisExpired?:" + result);
 		return result;
+	}
+	
+	public void authenticateSession(String authHeaderContent,HttpSession session){
+		AccessToken tok=getHttpAccessTokenString(authHeaderContent);
+		logger.trace("inserting accessToken into Session:"+tok+"\nsession:"+session);
+		session.setAttribute("accessToken",tok);
 	}
 	
 	

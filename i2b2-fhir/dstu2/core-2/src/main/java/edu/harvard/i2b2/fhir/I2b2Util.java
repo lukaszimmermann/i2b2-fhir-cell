@@ -263,6 +263,7 @@ public class I2b2Util {
 					+ XQueryUtil
 							.getStringSequence("//observation", responseXml)
 							.size());
+			return responseXml;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
