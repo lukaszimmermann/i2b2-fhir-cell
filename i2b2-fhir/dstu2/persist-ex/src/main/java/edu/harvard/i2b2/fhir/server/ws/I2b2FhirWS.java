@@ -59,6 +59,7 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
+
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
@@ -78,8 +79,8 @@ public class I2b2FhirWS {
 	@EJB
 	PatientBundleManager service;
 	
-	@Inject
-	QueryService queryService;
+	@EJB
+	QueryService queryManager;
 
 	@javax.ws.rs.core.Context
 	ServletContext context;
@@ -159,7 +160,7 @@ public class I2b2FhirWS {
 			if (request.getQueryString() != null) {
 				String fhirQuery=c.getSimpleName() + "?"
 						+ request.getQueryString();
-				s=queryService.runQueryEngine(fhirQuery, s,basePath);
+				s=queryManager.runQueryEngine(fhirQuery, s,basePath);
 			}
 
 			logger.info("including...._include:" + includeResources.toString());

@@ -278,8 +278,8 @@ public class I2b2AuthenticationManager implements Serializable {
 					.getSessionMap();
 
 			String pmResponseXml = I2b2Util.getPmResponseXml(
-					this.getI2b2User(), this.getI2b2Password(), Config.i2b2Url,
-					Config.i2b2Domain);
+					this.getI2b2User(), this.getI2b2Password(), Config.getI2b2Url(),
+					Config.getI2b2Domain());
 			if (I2b2Util.authenticateUser(pmResponseXml)) {
 				context.addMessage(null, new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Login Sucessful!", null));
@@ -291,8 +291,8 @@ public class I2b2AuthenticationManager implements Serializable {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
-				session.put("i2b2Url", Config.i2b2Url);
-				session.put("i2b2Domain", Config.i2b2Domain);
+				session.put("i2b2Url", Config.getI2b2Url());
+				session.put("i2b2Domain", Config.getI2b2Domain());
 				session.put("i2b2ProjectList", this.getI2b2ProjectList());
 				session.put("scope", this.scope);
 
