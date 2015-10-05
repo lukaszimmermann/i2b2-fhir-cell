@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -58,6 +59,7 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
+import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
 /*
@@ -75,6 +77,9 @@ public class I2b2FhirWS {
 
 	@EJB
 	PatientBundleManager service;
+	
+	@Inject
+	QueryService queryService;
 
 	@javax.ws.rs.core.Context
 	ServletContext context;
@@ -130,7 +135,6 @@ public class I2b2FhirWS {
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
 			session = request.getSession();
-
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
@@ -153,14 +157,9 @@ public class I2b2FhirWS {
 					+ request.getQueryString());
 
 			if (request.getQueryString() != null) {
-				QueryEngine qe = new QueryEngine(c.getSimpleName() + "?"
-						+ request.getQueryString());
-				logger.info("created QE:" + qe);
-				logger.trace("will search on bundle:" + JAXBUtil.toXml(s));
-				List<Resource> list = FhirUtil.getResourceListFromBundle(s);
-				logger.trace("list size:" + list.size());
-				s = FhirUtil
-						.getResourceBundle(qe.search(list), basePath, "url");
+				String fhirQuery=c.getSimpleName() + "?"
+						+ request.getQueryString();
+				s=queryService.runQueryEngine(fhirQuery, s,basePath);
 			}
 
 			logger.info("including...._include:" + includeResources.toString());
