@@ -1,5 +1,6 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 
@@ -10,6 +11,11 @@ import org.slf4j.LoggerFactory;
 public class QueryCount {
 	static Logger logger = LoggerFactory.getLogger(QueryCount.class);
 	private int count;
+	
+	@PostConstruct
+	public void init(){
+		count=0;
+	}
 
 	@Lock
 	public int getCount() {
