@@ -50,12 +50,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 				+ context.getUriInfo().getPath().toString());
 
 		
-		if (Config.openAccessToken != null & Config.openAccess
+		if (Config.getOpenAccessToken() != null & Config.isOpenAccess()
 				& context.getUriInfo().getPath().toString().startsWith("/open")) {
 			logger.debug("for open connection adding demo access token to header");
 			context.getHeaders().add(
 					AuthenticationFilter.AUTHENTICATION_HEADER,
-					"Bearer " + Config.openAccessToken);
+					"Bearer " + Config.getOpenAccessToken());
 			return;
 
 		}

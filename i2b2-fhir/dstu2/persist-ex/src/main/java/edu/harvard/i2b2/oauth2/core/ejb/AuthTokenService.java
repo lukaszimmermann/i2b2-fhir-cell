@@ -68,8 +68,8 @@ public class AuthTokenService {
 			tok.setI2b2Project(i2b2Project);
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
-			tok.setI2b2Url(Config.i2b2Url);
-			tok.setI2b2Domain(Config.i2b2Domain);
+			tok.setI2b2Url(Config.getI2b2Url());
+			tok.setI2b2Domain(Config.getI2b2Domain());
 			logger.info("Created authToken.." + tok.toString());
 			//em.getTransaction().begin();
 			em.persist(tok);

@@ -52,13 +52,13 @@ public class StartupConfig {
 		clientService.setup();
 		accessTokenService.setup();
 		try {
+			/*patientBundleManager.getPatientBundle(
+					accessTokenService.find(Config.getOpenAccessToken()),
+					(String) Config.getDemoPatientId());
 			patientBundleManager.getPatientBundle(
-					accessTokenService.find(Config.openAccessToken),
-					(String) Config.demoPatientId);
-			patientBundleManager.getPatientBundle(
-					accessTokenService.find(Config.openAccessToken),
-					(String) Config.demoPatientId);
-			
+					accessTokenService.find(Config.getOpenAccessToken()),
+					(String) Config.getDemoPatientId());
+			*/
 			//projectPatientMapManager.getProjectPatientList(Config.openI2b2User,
 				//	Config.openI2b2Password, Config.i2b2Url, Config.i2b2Domain,
 					//Config.openI2b2Project);

@@ -54,7 +54,7 @@ public class AccessTokenService {
 	public void setup() {
 		try {
 			Random r = new Random();
-			if (Config.openAccessToken != null) {
+			if (Config.getOpenAccessToken() != null) {
 				createIfNotExistsDemoAccessToken();
 			}
 		} catch (Exception ex) {
@@ -100,19 +100,19 @@ public class AccessTokenService {
 		try {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
-			tok = em.find(AccessToken.class, Config.openAccessToken);
+			tok = em.find(AccessToken.class, Config.getOpenAccessToken());
 		
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(Config.openAccessToken);
-				tok.setResourceUserId(Config.openI2b2User);
-				tok.setI2b2Token(Config.openI2b2Password);
-				tok.setClientId(Config.openClientId);
+				tok.setTokenString(Config.getOpenAccessToken());
+				tok.setResourceUserId(Config.getOpenI2b2User());
+				tok.setI2b2Token(Config.getOpenI2b2Password());
+				tok.setClientId(Config.getOpenClientId());
 				tok.setScope("user *.read");
-				tok.setI2b2Url(Config.i2b2Url);
-				tok.setI2b2Project(Config.openI2b2Project);
-				tok.setI2b2Domain(Config.i2b2Domain);
+				tok.setI2b2Url(Config.getI2b2Url());
+				tok.setI2b2Project(Config.getOpenI2b2Project());
+				tok.setI2b2Domain(Config.getI2b2Domain());
 				tok.setCreatedDate(new Date());
 				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
 			
