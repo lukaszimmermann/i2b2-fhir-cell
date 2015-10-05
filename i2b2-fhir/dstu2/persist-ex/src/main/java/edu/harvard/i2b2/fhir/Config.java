@@ -49,9 +49,11 @@ public class Config {
 			openI2b2Project =config.getString("openI2b2Project");
 			openClientId =config.getString("openClientId");
 			demoPatientId =config.getString("demoPatientId");
+			maxQueryThreads =config.getInt("maxQueryThreads");
 			
 			logger.info("initialized:"+"\ni2b2Url:"+i2b2Url
-					+"\ndemoAccessToken:"+openAccessToken+"\n openAccess:"+openAccess);
+					+"\ndemoAccessToken:"+openAccessToken+"\n openAccess:"+openAccess
+					+"\nmaxQueryThreads"+ maxQueryThreads);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
