@@ -80,7 +80,7 @@ public class I2b2FhirWS {
 	PatientBundleManager service;
 	
 	@EJB
-	QueryManager queryManager;
+	QueryService queryManager;
 
 	@javax.ws.rs.core.Context
 	ServletContext context;

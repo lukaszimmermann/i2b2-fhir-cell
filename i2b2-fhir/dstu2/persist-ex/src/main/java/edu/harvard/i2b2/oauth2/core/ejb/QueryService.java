@@ -36,6 +36,14 @@ public class QueryService {
 	
 	@PostConstruct
 	public void init(){
+		while(qc.getCount()>=Config.getMaxQueryThreads()){
+			logger.trace("waiting as query count is "+qc.getCount());
+			try{
+				Thread.sleep(1000);
+			}catch(InterruptedException e){
+				logger.error(e.getMessage(),e);
+			}
+		}
 		qc.increaseCount();
 	}
 	
