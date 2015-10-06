@@ -54,6 +54,7 @@ public class PatientBundleManager {
 
 	private void fetchPatientBundle(AccessToken tok, String pid) {
 		status.markProcessing(pid);
+		Bundle b= new Bundle();
 		try{
 			if(tok==null) logger.error("AccessToken is null");
 			logger.trace("fetching PDO for pid:"+pid+" and tok"+tok);
@@ -61,14 +62,15 @@ public class PatientBundleManager {
 			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
 			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
 			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
-			Bundle b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
+			b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			logger.trace("fetched bundle of size:"+b.getEntry().size());
-			service.put(pid, b);
-			status.markComplete(pid);
+			
+			
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 		}
-		
+		service.put(pid, b);
+		status.markComplete(pid);
 	}
 
 	private Bundle getPatientBundleLocking(String pid) {

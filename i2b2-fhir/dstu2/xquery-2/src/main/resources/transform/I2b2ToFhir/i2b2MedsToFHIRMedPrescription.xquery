@@ -81,7 +81,6 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $
         <status value="generated"/>
         <ns2:div>{$cn}</ns2:div>
     </text>
-  <name value="{$cn}"/>
   <code>
     <coding>
       <system value="http://../NDC"/>
@@ -213,7 +212,7 @@ declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count 
 declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timingScheduleFhir as node()?, $routeFhir as node()?,$doseQuantityFhir as node()?, $medication_id as xs:string?,
         $sd as xs:string, $ed as xs:string, $pid as xs:string?,$instr as xs:string?) as node(){
  
-  <MedicationPrescription xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+  <MedicationOrder xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
  
   
@@ -239,9 +238,9 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
     <start value="{$sd}"/>
     <end value="{$ed}"/>
 -->
-  <medication>
+  <medicationReference>
     <reference value="{$medication_id}"/> 
-  </medication>
+  </medicationReference>
     
 
 
@@ -252,7 +251,7 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
     </dosageInstruction>
 
   
-</MedicationPrescription>
+</MedicationOrder>
  
 };
 

@@ -30,8 +30,8 @@ function updatePatientDisplay() {
 
 	FHIR.oauth2.ready(function(smart){
 		
-		
-		smart.api.Patient.where._id(patientIdInput).search().then(function(ptl){
+		smart.patient.api.search({type: 'Patient', query: {_id: patientIdInput}}).then(function(ptl){
+		//smart.api.Patient.where._id(patientIdInput).search().then(function(ptl){
 			var p=ptl[0];
 		
 			//document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
@@ -48,10 +48,10 @@ function updatePatientDisplay() {
 			});
 
 		
-		smart.api.MedicationPrescription.where// .status("active")
+	/*	smart.api.MedicationOrder.where// .status("active")
 		.patient(patientIdInput)
-		._include("MedicationPrescription.Medication")
-		._include("MedicationPrescription.patient")
+		._include("MedicationOrder.medicationReference")
+		._include("MedicationOrder.patient")
 		.search().then(
 			function(prescriptions) {
 				
@@ -76,7 +76,7 @@ function updatePatientDisplay() {
 					//document.getElementById("display").innerHTML=JSON.stringify(med,null,4);
 						
 				var name="-";
-					if(med.hasOwnProperty("name")) name=med.name;
+					//if(med.hasOwnProperty("name")) name=med.name;
 					var row = $("<tr>");
 					var di=rx.dosageInstruction[0];
 					//row.append( $("<td>").text(di.scheduledTiming.repeat.bounds.start));
@@ -92,6 +92,7 @@ function updatePatientDisplay() {
 			
 			
 		});
+		
 		
 		smart.api.Observation.where
 		.subject(patientIdInput)
@@ -162,13 +163,14 @@ function updatePatientDisplay() {
 			
 				}
 	);
-	
+	*/
 	
 	
 	
 	
 	
 	});
+	
 }
 	
 	

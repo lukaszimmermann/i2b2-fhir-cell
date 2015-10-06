@@ -36,7 +36,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Medication;
-import org.hl7.fhir.MedicationPrescription;
 import org.hl7.fhir.MedicationStatement;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
@@ -53,6 +52,7 @@ import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.abdera.parser.Parser;
+import org.apache.commons.io.IOUtils;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
@@ -88,9 +88,9 @@ public class PdoEGtoFhirBundle {
 		String input = Utils.getFile("example/fhir/mixedResource.xml");
 
 		List<String> xmlList = XQueryUtil.getStringSequence(input, query);
-		//List<Resource> resList = FhirUtil.fromXml(xmlList);
-		//System.out
-			//	.println(FhirUtil.getResourceBundle(resList, "uriInfoString"));
+		// List<Resource> resList = FhirUtil.fromXml(xmlList);
+		// System.out
+		// .println(FhirUtil.getResourceBundle(resList, "uriInfoString"));
 	}
 
 	// @Test
@@ -108,123 +108,122 @@ public class PdoEGtoFhirBundle {
 				msg);
 	}
 
-	
-	
 	// @Test
 	/*
-	public void search() {
-		ResourceDb resDb = new ResourceDb();
-		Resource r = FhirUtil.xmlToResource(Utils
-				.getFile("example/fhir/singlePatient.xml"));
-		// r.setId("1");
-		resDb.addResource(r, Patient.class);
-		resDb.addResource(r, Patient.class);
-		// System.out.println(FhirUtil.resourceToXml(r));
-		System.out.println(FhirUtil.resourceToXml(resDb.getResource("1",
-				Patient.class)));
-
-	}
-
-	// @Test
-	public void readBundle() throws ParseException, IOException {
-		ResourceDb resDb = new ResourceDb();
-
-		Abdera abdera = new Abdera();
-		Parser parser = abdera.getParser();
-
-		String path = Utils.getFilePath("example/fhir/PatientBundle.xml");
-		URL url = new URL("file://" + path);
-		Document<Feed> doc = parser.parse(url.openStream(), url.toString());
-		Feed feed = doc.getRoot();
-		System.out.println(feed.getTitle());
-		for (Entry entry : feed.getEntries()) {
-			System.out.println("\t" + entry.getTitle());
-			System.out.println();
-			// System.out.println("\t" + entry.getContent());
-			if (!FhirUtil.isValid(entry.getContent())) {
-				throw new RuntimeException(
-						"entry is not a valid Fhir Resource:"
-								+ entry.getId()
-								+ FhirUtil.getValidatorErrorMessage(entry
-										.getContent()));
-			}
-			Resource r = FhirUtil.xmlToResource(entry.getContent());
-			resDb.addResource(r, Patient.class);
-
-		}
-		// System.out.println (feed.getAuthor());
-
-	}
-
-	*/
+	 * public void search() { ResourceDb resDb = new ResourceDb(); Resource r =
+	 * FhirUtil.xmlToResource(Utils .getFile("example/fhir/singlePatient.xml"));
+	 * // r.setId("1"); resDb.addResource(r, Patient.class);
+	 * resDb.addResource(r, Patient.class); //
+	 * System.out.println(FhirUtil.resourceToXml(r));
+	 * System.out.println(FhirUtil.resourceToXml(resDb.getResource("1",
+	 * Patient.class)));
+	 * 
+	 * }
+	 * 
+	 * // @Test public void readBundle() throws ParseException, IOException {
+	 * ResourceDb resDb = new ResourceDb();
+	 * 
+	 * Abdera abdera = new Abdera(); Parser parser = abdera.getParser();
+	 * 
+	 * String path = Utils.getFilePath("example/fhir/PatientBundle.xml"); URL
+	 * url = new URL("file://" + path); Document<Feed> doc =
+	 * parser.parse(url.openStream(), url.toString()); Feed feed =
+	 * doc.getRoot(); System.out.println(feed.getTitle()); for (Entry entry :
+	 * feed.getEntries()) { System.out.println("\t" + entry.getTitle());
+	 * System.out.println(); // System.out.println("\t" + entry.getContent());
+	 * if (!FhirUtil.isValid(entry.getContent())) { throw new RuntimeException(
+	 * "entry is not a valid Fhir Resource:" + entry.getId() +
+	 * FhirUtil.getValidatorErrorMessage(entry .getContent())); } Resource r =
+	 * FhirUtil.xmlToResource(entry.getContent()); resDb.addResource(r,
+	 * Patient.class);
+	 * 
+	 * } // System.out.println (feed.getAuthor());
+	 * 
+	 * }
+	 */
 	@Test
-	public void TestPatient() throws XQueryUtilException{
-		
-		String patientBundle=getPatients();
-		logger.trace("getPatients:"+patientBundle);
+	public void TestPatient() throws XQueryUtilException {
+
+		String patientBundle = getPatients();
+		logger.trace("getPatients:" + patientBundle);
 		try {
-			Bundle b=JAXBUtil.fromXml(patientBundle, Bundle.class);
-			logger.trace(JAXBUtil.toXml(b.getEntry().get(0).getResource().getPatient()));
+			Bundle b = JAXBUtil.fromXml(patientBundle, Bundle.class);
+			logger.trace(JAXBUtil.toXml(b.getEntry().get(0).getResource()
+					.getPatient()));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	@Test
-	public void Test23() throws XQueryUtilException{
-		
-		String medsBundle=getMeds();
-		//logger.trace("getMEds:"+medsBundle);
+	public void Test23() throws XQueryUtilException {
+
+		String medsBundle =null;// getMeds();
+		// logger.trace("getMEds:"+medsBundle);
 		try {
-			Bundle b=JAXBUtil.fromXml(medsBundle, Bundle.class);
-			MedicationStatement ms=b.getEntry().get(1).getResource().getMedicationStatement();
+			Bundle b = JAXBUtil.fromXml(medsBundle, Bundle.class);
+			MedicationStatement ms = b.getEntry().get(1).getResource()
+					.getMedicationStatement();
 			logger.trace(JAXBUtil.toXml(ms));
 			logger.trace(ms.getPatient().getReference().getValue().toString());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public String  getPatients() throws XQueryUtilException {
+
+	public String getPatients() throws XQueryUtilException {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		String input = Utils.getFile("example/i2b2/AllPatients.xml");
 
-		return XQueryUtil.processXQuery( query,input).toString();
+		return XQueryUtil.processXQuery(query, input).toString();
 	}
-	
-	static public String getMeds() throws XQueryUtilException {
-		String query = Utils
-				.getFile("transform/I2b2ToFhir/i2b2MedsToFHIRMedStatement.xquery");
-		String input = Utils.getFile("example/i2b2/medicationsForAPatient.xml");
 
-		return XQueryUtil.processXQuery( query,input).toString();
-	}
-	
 	@Test
-	 public void readMedBundle() throws JAXBException{
-		String xmlString=Utils.getFile("example/fhir/DSTU2/PatientBundle.xml");
-		Bundle b=JAXBUtil.fromXml(xmlString,Bundle.class);
-		logger.info("b:"+JAXBUtil.toXml(b));
+	public void getMeds() {
+		try {
+
+			String query = IOUtils
+					.toString(PdoEGtoFhirBundle.class
+							.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
+			String input = Utils
+					.getFile("example/i2b2/medicationsForAPatient.xml");
+
+			String xml = XQueryUtil.processXQuery(query, input);
+			Bundle b = JAXBUtil.fromXml(xml, Bundle.class);
+			logger.trace("b:"+b.getEntry().size());
+			logger.trace("b:"+JAXBUtil.toXml(b));
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
-	
+
 	@Test
-	public void  getPatientResource() throws XQueryUtilException {
+	public void readMedBundle() throws JAXBException {
+		String xmlString = Utils
+				.getFile("example/fhir/DSTU2/PatientBundle.xml");
+		Bundle b = JAXBUtil.fromXml(xmlString, Bundle.class);
+		logger.info("b:" + JAXBUtil.toXml(b));
+	}
+
+	@Test
+	public void getPatientResource() throws XQueryUtilException {
 		String query = Utils
 				.getFile("transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery");
 		String input = Utils.getFile("example/i2b2/PDO1.xml");
 
-		logger.info(XQueryUtil.processXQuery( query,input).toString());
+		logger.info(XQueryUtil.processXQuery(query, input).toString());
 	}
-	
 
 	@Test
-	public void  getPatientResource2() throws XQueryUtilException, JAXBException, IOException {
-		Patient p=FhirUtil.getPatientResource(Utils.getFile("example/i2b2/PDO1.xml"));
-		logger.info(""+JAXBUtil.toXml(p));
+	public void getPatientResource2() throws XQueryUtilException,
+			JAXBException, IOException {
+		Patient p = FhirUtil.getPatientResource(Utils
+				.getFile("example/i2b2/PDO1.xml"));
+		logger.info("" + JAXBUtil.toXml(p));
 	}
-	
 
 }
