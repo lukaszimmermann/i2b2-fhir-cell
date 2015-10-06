@@ -59,7 +59,6 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
-import edu.harvard.i2b2.oauth2.core.ejb.QueryManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 

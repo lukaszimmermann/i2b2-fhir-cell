@@ -32,6 +32,7 @@
 package edu.harvard.i2b2.fhir.query;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +43,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.SearchParameter;
@@ -53,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
@@ -77,8 +80,13 @@ public class SearchParameterMap {
 		SearchParameter p = null;
 		if (list == null) {
 			list = new ArrayList<SearchParameter>();
-			String bundleString = Utils
-					.getFile("profiles/search-parameters.xml");
+			String bundleString=null;
+			try {
+				bundleString = IOUtils.toString(SearchParameter.class.getResourceAsStream(
+						"/profiles/search-parameters.xml"));
+			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
+			}
 			// logger.trace("bundleString:"+bundleString);
 			Bundle b = JAXBUtil.fromXml(bundleString, Bundle.class);
 			for (BundleEntry rc : b.getEntry()) {

@@ -132,7 +132,7 @@ public class RxNormAdapter {
 	}
 
 	public void addRxCui(Medication m) throws JAXBException {
-		String ndcString = getNDCCodeString(m);
+	String ndcString = getNDCCodeString(m);
 		String rxCui = getRxCui(ndcString);
 		String rxCuiName = getRxCuiName(rxCui);
 
@@ -156,8 +156,7 @@ public class RxNormAdapter {
 		c.setDisplay(displayValue);
 		m.getCode().getCoding().add(c);
 
-		m.getName().setValue(rxCuiName);
-		// logger.trace(JAXBUtil.toXml(m));
+		logger.trace(JAXBUtil.toXml(m));
 	}
 
 	public String getNDCCodeString(Medication m) throws JAXBException {
