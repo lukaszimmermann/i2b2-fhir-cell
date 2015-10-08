@@ -13,6 +13,10 @@ public class ProjectPatientMap {
 	
 	@Lob
 	String patientIdList;//comma seperated list of ids
+	
+	@Lob
+	String patientBundle;//comma seperated list of ids
+
 
 	public String getProjectId() {
 		return projectId;
@@ -46,12 +50,22 @@ public class ProjectPatientMap {
 		this.patientIdList = patientIdList;
 	}
 
+	
+	public String getPatientBundle() {
+		return patientBundle;
+	}
+
+	public void setPatientBundle(String patientBundle) {
+		this.patientBundle = patientBundle;
+	}
+
 	@Override
 	public String toString() {
 		return "ProjectPatientMap [projectId=" + projectId + ", i2b2Url="
 				+ i2b2Url + ", i2b2Domain=" + i2b2Domain + ", patientIdList="
-				+ patientIdList + "]";
+				+ patientIdList + ", patientBundle=" + patientBundle + "]";
 	}
+
 	
 	
 }
