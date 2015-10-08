@@ -724,7 +724,7 @@ public class FhirUtil {
 			return null;
 		String id = null;
 		Pattern p = Pattern
-				.compile("(Subject:subject|Patient|patient|_id)+=([^?&]+)");
+				.compile("(Subject:subject|subject|Patient|patient|_id)+=([^?&]+)");
 		Matcher m = p.matcher(input);
 
 		if (m.find()) {

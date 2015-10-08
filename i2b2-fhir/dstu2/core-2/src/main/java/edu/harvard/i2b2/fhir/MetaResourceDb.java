@@ -53,6 +53,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.query.SearchParameterMap;
 import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class MetaResourceDb {
@@ -285,13 +287,17 @@ public class MetaResourceDb {
 			List<Resource> inputSet, List<String> includeResources)
 			throws IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException, NoSuchMethodException,
-			SecurityException, JAXBException {
+			SecurityException, JAXBException, FhirCoreException {
 		// MetaResourceSet s = new MetaResourceSet();
 		List<Resource> outList = new ArrayList<Resource>();
 			// iterate through resources and add included dependencies
 
 		for (String ir : includeResources) {
-			String methodName = ir.split("\\.")[1];
+			String paramterPath =  new SearchParameterMap().getParameterPath(
+					c, ir);
+			logger.trace("paramterPath:" + paramterPath);
+			String[] set = paramterPath.split("/");
+			String methodName=set[set.length-1]; 
 			logger.trace("MethodName:" + methodName);
 
 			outList = new ArrayList<Resource>();
