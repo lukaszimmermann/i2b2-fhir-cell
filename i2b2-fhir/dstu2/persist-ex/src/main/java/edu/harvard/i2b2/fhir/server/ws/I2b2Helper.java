@@ -85,10 +85,9 @@ public class I2b2Helper {
 			JAXBException, IOException, AuthenticationFailure,
 			FhirServerException, InterruptedException {
 		AccessToken tok = (AccessToken) session.getAttribute("accessToken");
-		String patientId = I2b2Helper
-				.extractPatientId(request.getQueryString());
+		String patientId = FhirUtil.extractPatientId(request.getQueryString());
 		if (patientId == null)
-			patientId = I2b2Helper.extractPatientId2(request.getRequestURL()
+			patientId = FhirUtil.extractPatientIdFromRequestById(request.getRequestURL()
 					.toString(), resourceName);
 		logger.info("PatientId:" + patientId);
 		if (patientId != null) {
@@ -102,37 +101,6 @@ public class I2b2Helper {
 		return null;
 	}
 
-	static String extractPatientId(String input) {
-		if (input == null)
-			return null;
-		String id = null;
-		Pattern p = Pattern
-				.compile("[Subject:subject|Patient|patient|_id]=([a-zA-Z0-9]+)");
-		Matcher m = p.matcher(input);
-
-		if (m.find()) {
-			id = m.group(1);
-			logger.trace(id);
-		}
-		return id;
-	}
-
-	static String extractPatientId2(String string, String resourceName) {
-		logger.debug("requestUrl is:" + string);
-		if (string == null)
-			return null;
-		String id = null;
-
-		Pattern p = Pattern.compile(".*/([a-zA-Z0-9]+)[-]*.*$");
-		Matcher m = p.matcher(string);
-
-		if (m.find()) {
-			id = m.group(1);
-			logger.trace("id:" + id);
-		}
-		if (id.equals(resourceName))
-			id = null;
-		return id;
-	}
+	
 
 }

@@ -71,4 +71,21 @@ public class FhirUtilTest {
 			logger.error(e.getMessage(), e);
 		}
 	}
+	
+	@Test
+	public void extractPatientId(){
+		
+		String url="?Patient=123";
+		String id=FhirUtil.extractPatientId(url);
+		logger.info("id:"+id);
+		
+		url="?patient=1000000005&_include=medication";
+		id=FhirUtil.extractPatientId(url);
+		logger.info("id:"+id);
+		
+		url="?_include=medication&patient=1000000005";
+		id=FhirUtil.extractPatientId(url);
+		logger.info("id:"+id);
+	}
+	
 }

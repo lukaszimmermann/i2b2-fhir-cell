@@ -41,6 +41,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -52,7 +54,6 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
-
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -61,6 +62,7 @@ import javax.tools.ToolProvider;
 import javax.tools.JavaFileManager.Location;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
@@ -715,6 +717,39 @@ public class FhirUtil {
 		Patient p = getPatientResource(i2b2Xml);
 		b.getEntry().add(newBundleEntryForResource(p));
 		return b;
+	}
+	
+	static public String extractPatientId(String input) {
+		if (input == null)
+			return null;
+		String id = null;
+		Pattern p = Pattern
+				.compile("(Subject:subject|Patient|patient|_id)+=([^?&]+)");
+		Matcher m = p.matcher(input);
+
+		if (m.find()) {
+			id = m.group(2);
+			logger.trace(id);
+		}
+		return id;
+	}
+
+	static public String extractPatientIdFromRequestById(String string, String resourceName) {
+		logger.debug("requestUrl is:" + string);
+		if (string == null)
+			return null;
+		String id = null;
+
+		Pattern p = Pattern.compile(".*/([^?&]+)$");
+		Matcher m = p.matcher(string);
+
+		if (m.find()) {
+			id = m.group(1);
+			logger.trace("id:" + id);
+		}
+		if (id.equals(resourceName))
+			id = null;
+		return id;
 	}
 
 }
