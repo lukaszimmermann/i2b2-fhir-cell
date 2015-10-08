@@ -34,7 +34,7 @@ var smart = FHIR.client(demo);
             document.getElementById('name').innerHTML = name;
 
             patient.api
-            .search({type: "MedicationOrder",query: {_include:"MedicationOrder.medicationReference"}})
+            .search({type: "MedicationOrder",query: {_include:"medication"}})
             .then(function(prescriptions) {
 
               var med_list = document.getElementById('med_list');
