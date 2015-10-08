@@ -59,6 +59,7 @@ import edu.harvard.i2b2.fhir.query.QueryEngine;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
+import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
@@ -77,6 +78,10 @@ public class I2b2FhirWS {
 
 	@EJB
 	PatientBundleManager service;
+	
+	@EJB
+	ProjectPatientMapManager ppmMgr;
+	
 	
 	@EJB
 	QueryService queryManager;
@@ -146,7 +151,7 @@ public class I2b2FhirWS {
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
 			
 			s=I2b2Helper.parsePatientIdToFetchPDO(session,  request,c.getSimpleName(),
-			service); 
+			service,ppmMgr); 
 					
 			md.addBundle(s);
 			
@@ -238,7 +243,7 @@ public class I2b2FhirWS {
 						+ resourceName);
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
 			s=I2b2Helper.parsePatientIdToFetchPDO(session,request,
-					resourceName, service);
+					resourceName, service,ppmMgr);
 			md.addBundle(s);;
 
 			r = md.getParticularResource(c, id);

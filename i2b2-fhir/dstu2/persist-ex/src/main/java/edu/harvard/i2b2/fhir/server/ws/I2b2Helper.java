@@ -44,35 +44,24 @@ import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
+import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
 public class I2b2Helper {
 
 	static Logger logger = LoggerFactory.getLogger(I2b2Helper.class);
 
-	static Bundle allPatients = null;
-
-	static Bundle initAllPatients(AccessToken tok)
-			throws AuthenticationFailure, FhirServerException,
-			XQueryUtilException, JAXBException, IOException {
-		
-		if (allPatients == null) {// avoid redundant run
-			// if (session.getAttribute("INIT_ALL_PATIENTS") != null)
-			// return;
-
-			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-				//allPatients = I2b2Util.getAllPatientsAsFhirBundle(session);
-			logger.info("Got ResourceSet of size::"
-					+ allPatients.getEntry().size());
-			// md.addBundle(b);
-			// I2b2Helper.saveMetaResourceDb(session, md, sbb);
-		}
+	static Bundle initAllPatients(AccessToken tok,
+			ProjectPatientMapManager service)  {
+		logger.info("Got request:" + tok);
+		Bundle allPatients = service.getProjectPatientBundle(tok);
+		logger.info("Got ResourceSet of size::" + allPatients.getEntry().size());
 		return allPatients;
 	}
 
 	private static Bundle getPdo(AccessToken accessTok, String patientId,
-			 PatientBundleManager service) throws InterruptedException {
-			return service.getPatientBundle(accessTok, patientId);
+			PatientBundleManager service) {
+		return service.getPatientBundle(accessTok, patientId);
 	}
 
 	static String processXquery(String query, String input)
@@ -89,11 +78,13 @@ public class I2b2Helper {
 		// return input;
 	}
 
-	static Bundle parsePatientIdToFetchPDO(HttpSession session, HttpServletRequest request, String resourceName,
-			PatientBundleManager service) throws XQueryUtilException,
+	static Bundle parsePatientIdToFetchPDO(HttpSession session,
+			HttpServletRequest request, String resourceName,
+			PatientBundleManager service,
+			ProjectPatientMapManager ppmservice) throws XQueryUtilException,
 			JAXBException, IOException, AuthenticationFailure,
 			FhirServerException, InterruptedException {
-		AccessToken tok=(AccessToken) session.getAttribute("accessToken");
+		AccessToken tok = (AccessToken) session.getAttribute("accessToken");
 		String patientId = I2b2Helper
 				.extractPatientId(request.getQueryString());
 		if (patientId == null)
@@ -105,7 +96,7 @@ public class I2b2Helper {
 			return I2b2Helper.getPdo(tok, patientId, service);
 		} else {
 			if (resourceName.equals("Patient"))
-				 return I2b2Helper.initAllPatients(tok);
+				return I2b2Helper.initAllPatients(tok,ppmservice);
 
 		}
 		return null;

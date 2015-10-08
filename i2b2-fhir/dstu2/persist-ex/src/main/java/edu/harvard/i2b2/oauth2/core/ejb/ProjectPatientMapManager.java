@@ -1,9 +1,11 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 import javax.servlet.http.HttpSession;
@@ -18,20 +20,51 @@ import org.w3c.dom.ranges.RangeException;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
+import edu.harvard.i2b2.oauth2.core.entity.ProjectPatientMap;
 
 @Stateful
 public class ProjectPatientMapManager {
-	static Logger logger = LoggerFactory.getLogger(ProjectPatientMapManager.class);
-	
+	static Logger logger = LoggerFactory
+			.getLogger(ProjectPatientMapManager.class);
+
 	@EJB
 	ProjectPatientMapService service;
 
 	@EJB
 	BundleStatus status;
+	
+	@PostConstruct
+	public void init(){
+		logger.debug("initailized");
+	}
 
-	public List<String> getProjectPatientList(
-			String i2b2User, String i2b2Token, String i2b2Url,
-			String i2b2Domain, String i2b2Project) {
+	public Bundle getProjectPatientBundle(AccessToken token) {
+		ProjectPatientMap p = getProjectPatientMap(token.getResourceUserId(),
+				token.getI2b2Token(), token.getI2b2Url(),
+				token.getI2b2Domain(), token.getI2b2Project());
+		String bundleXml = p.getPatientBundle();
+		Bundle b = null;
+		try {
+			b = JAXBUtil.fromXml(bundleXml, Bundle.class);
+		} catch (JAXBException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return b;
+	}
+
+	public List<String> getProjectPatientList(String i2b2User,
+			String i2b2Token, String i2b2Url, String i2b2Domain,
+			String i2b2Project) {
+		ProjectPatientMap p = getProjectPatientMap(i2b2User, i2b2Token,
+				i2b2Url, i2b2Domain, i2b2Project);
+		List<String> list = Arrays.asList(p.getPatientIdList().replace("[", "")
+				.replace("]", "").split(","));
+		return list;
+	}
+
+	public ProjectPatientMap getProjectPatientMap(String i2b2User,
+			String i2b2Token, String i2b2Url, String i2b2Domain,
+			String i2b2Project) {
 
 		if (status.isComplete(i2b2Project)) {
 			return getProjectPatientMapLocking(i2b2Project);
@@ -51,7 +84,7 @@ public class ProjectPatientMapManager {
 				logger.error(e.getMessage(), e);
 			}
 		}
-		return getProjectPatientList(i2b2User, i2b2Token, i2b2Url, i2b2Domain,
+		return getProjectPatientMap(i2b2User, i2b2Token, i2b2Url, i2b2Domain,
 				i2b2Project);
 	}
 
@@ -62,19 +95,18 @@ public class ProjectPatientMapManager {
 			logger.trace("fetching all Patients for project:" + projectId);
 			String i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
 					i2b2Url, i2b2Domain, projectId);
+			Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
+			String bundleXml=JAXBUtil.toXml(b);
 			ArrayList<String> list = I2b2Util.getAllPatientsAsList(i2b2Xml);
-			service.put(projectId, list);
+			service.put(projectId, list, bundleXml);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 		status.markComplete(projectId);
 	}
 
-	private List<String> getProjectPatientMapLocking(String projectId) {
-		List<String> list = service.get(projectId);
-		logger.trace("returning List:" + list);
-
-		return list;
+	private ProjectPatientMap getProjectPatientMapLocking(String projectId) {
+		return service.get(projectId);
 	}
 
 }

@@ -25,7 +25,6 @@ public class ProjectPatientMapService {
 	static Logger logger = LoggerFactory
 			.getLogger(ProjectPatientMapService.class);
 
-	
 	@PersistenceContext
 	EntityManager em;
 
@@ -35,28 +34,25 @@ public class ProjectPatientMapService {
 	}
 
 	@Lock(LockType.READ)
-	public List<String> get(String projectId) {
+	public ProjectPatientMap get(String projectId) {
 		logger.info("getting: List<String> for pid:" + projectId);
 
 		// return patientList<String>Hm.get(id);
 		return find(projectId);
 	}
 
-	private List<String> find(String projectId) {
+	private ProjectPatientMap find(String projectId) {
 		ProjectPatientMap r = em.find(ProjectPatientMap.class, projectId);
 		if (r == null)
 			return null;
-		String rawList = r.getPatientIdList();
-		List<String> list =  Arrays.asList(rawList
-				.replace("[", "").replace("]", "").split(","));
 		logger.trace("found ProjectPatientMap:" + r.toString());
-		return list;
+		return r;
 	}
 
 	@Lock(LockType.WRITE)
-	public void put(String projectId, ArrayList<String> list) {
+	public void put(String projectId, ArrayList<String> list, String bundleXml) {
 		logger.info("putting:" + projectId + "=>" + list.toString());
-		createProjectPatientMap(projectId, list);
+		createProjectPatientMap(projectId, list, bundleXml);
 		// patientList<String>Hm.put(id,b);
 
 	}
@@ -67,11 +63,12 @@ public class ProjectPatientMapService {
 	}
 
 	private ProjectPatientMap createProjectPatientMap(String projectId,
-			ArrayList<String> list) {
+			ArrayList<String> list, String bundleXml) {
 
 		ProjectPatientMap r = new ProjectPatientMap();
 		r.setProjectId(projectId);
 		r.setPatientIdList(list.toString());
+		r.setPatientBundle(bundleXml);
 		em.persist(r);
 		logger.trace("created ProjectPatientMap:" + r.toString());
 		return r;

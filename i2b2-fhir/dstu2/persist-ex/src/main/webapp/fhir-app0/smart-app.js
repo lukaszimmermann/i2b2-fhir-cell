@@ -30,6 +30,11 @@ function updatePatientDisplay() {
 
 	FHIR.oauth2.ready(function(smart){
 		
+		pt.read().then(function (p) {
+    var name = p.name[0];
+    var formatted = name.given.join(" ") + " " + name.family;
+    $("#patient_name").text(formatted);
+});
 		smart.patient.api.search({type: 'Patient', query: {_id: patientIdInput}}).then(function(ptl){
 		//smart.api.Patient.where._id(patientIdInput).search().then(function(ptl){
 			var p=ptl[0];
