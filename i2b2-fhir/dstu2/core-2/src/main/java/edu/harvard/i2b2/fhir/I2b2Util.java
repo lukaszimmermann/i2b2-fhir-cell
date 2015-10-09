@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,16 +201,22 @@ public class I2b2Util {
 		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
 				i2b2Token, i2b2Url, I2b2Domain, project);
 
-		String pdo = WebServiceCall.run(i2b2Url
+		String pdo = getI2b2Response(i2b2Url, requestXml);
+
+		return pdo;
+	}
+
+	public static String getI2b2Response(String i2b2Url, String requestXml) throws XQueryUtilException {
+		String responseXml = WebServiceCall.run(i2b2Url
 				+ "/services/QueryToolService/pdorequest", requestXml);
 		String loginStatusquery = "//response_header/result_status/status/@type/string()";
-		String loginError = XQueryUtil.processXQuery(loginStatusquery, pdo);
+		String loginError = XQueryUtil.processXQuery(loginStatusquery,
+				responseXml);
 		logger.trace("ERROR?:<" + loginError + ">");
 
 		if (loginError.equals("ERROR"))
 			throw new IllegalArgumentException();
-
-		return pdo;
+		return responseXml;
 	}
 
 	public static Bundle getAllDataForAPatientAsFhirBundle(String pdoXml)
@@ -226,11 +233,12 @@ public class I2b2Util {
 			String i2b2Token, String i2b2Url, String I2b2Domain,
 			String project, String patientId, List<String> items) {
 		try {
-			logger.trace("got params:"+i2b2User+"-"+
-			 i2b2Token+"-"+ i2b2Url+"-"+ I2b2Domain+"-"+ project+"-"+ patientId+"-"+ items);
+			logger.trace("got params:" + i2b2User + "-" + i2b2Token + "-"
+					+ i2b2Url + "-" + I2b2Domain + "-" + project + "-"
+					+ patientId + "-" + items);
 			String requestXml = IOUtils
 					.toString(I2b2Util.class
-							.getResourceAsStream("/i2b2query/i2b2RequestAllDataForAPatient.xml"));
+							.getResourceAsStream("/i2b2query/i2b2RequestDynamicPanelsForAPatient.xml"));
 
 			String panelXml = "";
 			int count = 0;
@@ -238,17 +246,18 @@ public class I2b2Util {
 				count++;
 				String singlePanelXml = IOUtils.toString(I2b2Util.class
 						.getResourceAsStream("/i2b2query/panel.xml"));
-
+				
+				item=StringEscapeUtils.escapeJava(item);
 				singlePanelXml = replaceXMLString(singlePanelXml,
 						"//panel/item/item_key", item);
 				singlePanelXml = replaceXMLString(singlePanelXml,
 						"//panel/panel_number", Integer.toString(count));
-
 				panelXml += singlePanelXml;
-				logger.trace("panelXml:" + panelXml);
+				logger.trace("singlePanelXml:" + singlePanelXml);
 			}
-
-			requestXml = replaceXMLString(requestXml, "//filter_list", panelXml);
+			//panelXml=StringEscapeUtils.unescapeXml(panelXml);
+			
+			requestXml = requestXml.replaceAll("PANEL", panelXml);
 
 			requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml,
 					i2b2User, i2b2Token, i2b2Url, I2b2Domain, project);

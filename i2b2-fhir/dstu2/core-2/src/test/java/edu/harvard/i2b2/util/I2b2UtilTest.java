@@ -32,6 +32,7 @@ import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.Project;
+import edu.harvard.i2b2.Config;
 
 public class I2b2UtilTest {
 	Logger logger = LoggerFactory.getLogger(I2b2UtilTest.class);
@@ -123,6 +124,22 @@ public class I2b2UtilTest {
 		logger.trace("got response:" + responseXml);
 		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
 	}
-	
 
+	@Test
+	public void getDocuments(){
+	/*	
+		String path="\\\\i2b2_REP\\i2b2\\Reports\\";
+		path="\\\\i2b2_MEDS\\i2b2\\Medications\\";
+		List<String> pathList=new ArrayList<String>();
+		pathList.add(path);
+		I2b2Util.getAllDataForAPatient(Config.getOpenI2b2User(), Config.getOpenI2b2Password(), Config.getI2b2Url(), Config.getI2b2Domain(), Config.getOpenI2b2Project(), Config.getDemoPatientId(), pathList);
+	*/
+		try {
+			String requestXml=IOUtils.toString(I2b2UtilTest.class.getResourceAsStream("/i2b2RequestMedsForAPatient.xml"));
+			I2b2Util.getI2b2Response(Config.getI2b2Url(), requestXml);
+		} catch (IOException | XQueryUtilException e) {
+			logger.error(e.getMessage(),e);
+		}
+		
+	}
 }
