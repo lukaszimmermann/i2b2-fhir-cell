@@ -221,12 +221,18 @@ public class I2b2Util {
 	}
 
 	public static Bundle getAllDataForAPatientAsFhirBundle(String pdoXml)
-			throws JAXBException, IOException, XQueryUtilException {
-		Bundle b = FhirUtil.convertI2b2ToFhirForAParticularPatient(pdoXml);
+			throws FhirCoreException {
+		Bundle b=null;
+		try{
+		b = FhirUtil.convertI2b2ToFhirForAParticularPatient(pdoXml);
 		FhirEnrich.enrich(b);
 		logger.trace("bundle:" + JAXBUtil.toXml(b));
 		logger.trace("list size:" + b.getEntry().size());
 		logger.info("adding to memory...");
+		}catch( IOException | XQueryUtilException | JAXBException e){ 
+			logger.error(e.getMessage(),e);
+			throw new FhirCoreException(e);
+		}	
 		return b;
 	}
 
