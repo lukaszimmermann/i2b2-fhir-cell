@@ -53,6 +53,7 @@ import org.hl7.fhir.IssueSeverity;
 import org.hl7.fhir.IssueSeverityList;
 import org.hl7.fhir.IssueType;
 import org.hl7.fhir.IssueTypeList;
+import org.hl7.fhir.Narrative;
 import org.hl7.fhir.OperationOutcome;
 import org.hl7.fhir.OperationOutcomeIssue;
 import org.hl7.fhir.Resource;
@@ -414,8 +415,11 @@ public class I2b2FhirWS {
 		IssueSeverity severity=new IssueSeverity();
 		severity.setValue(issueSeverity);
 		i.setSeverity(severity);
+		org.hl7.fhir.String s1= new org.hl7.fhir.String() ;
+		s1.setValue(message);
+		i.setDiagnostics(s1 );
 		o.getIssue().add(i);
-		o.setText(message1);
+		
 		return o;
 	}
 	
