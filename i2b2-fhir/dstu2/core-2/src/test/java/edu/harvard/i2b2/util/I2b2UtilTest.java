@@ -31,6 +31,7 @@ import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.WebServiceCall;
 import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.Config;
 
@@ -57,7 +58,7 @@ public class I2b2UtilTest {
 	}
 
 	@Test
-	public void validateUser() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure {
+	public void validateUser() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure, FhirCoreException {
 		String pmResponse=I2b2Util.getPmResponseXml(i2b2User, i2b2Password, i2b2Url, i2b2Domain);
 		String i2b2Token=I2b2Util.getToken(pmResponse);
 		pmResponse=I2b2Util.getPmResponseXml(i2b2User, i2b2Token, i2b2Url, i2b2Domain);
@@ -69,7 +70,7 @@ public class I2b2UtilTest {
 		//logger.info(pmResponse);
 		//logger.info("i2b2Token:"+i2b2Token);
 		I2b2Util.getAllPatients(i2b2User, i2b2Token, i2b2Url, i2b2Domain, projMap.get(0).getId());
-		String pdoXml=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
+		String pdoXml=I2b2Util.getAllDataPDO(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
 		Bundle b = I2b2Util.getAllDataForAPatientAsFhirBundle(pdoXml);
 		logger.info("projMap:"+projMap.toString());
 		//logger.info("pdoAllPtDataXml:"+pdoXml);
@@ -79,8 +80,8 @@ public class I2b2UtilTest {
 	
 
 	@Test
-	public void getPDO() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure {
-		String pdoResponse=I2b2Util.getAllDataForAPatient(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
+	public void getPDO() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure, FhirCoreException {
+		String pdoResponse=I2b2Util.getAllDataPDO(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId,items);
 		
 		//logger.info("responseXml:"+pdoResponse);
 	}

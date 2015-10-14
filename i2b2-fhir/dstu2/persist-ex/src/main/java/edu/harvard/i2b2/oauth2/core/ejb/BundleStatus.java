@@ -35,6 +35,16 @@ public class BundleStatus {
 			return false;
 		}
 	}
+	
+	@Lock( LockType.READ)
+	public static boolean isFailed(String pid) {
+		if (statusHM.containsKey(pid)
+				&& statusHM.get(pid).equals(BundleStatusLevel.FAILED)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	@Lock( LockType.WRITE)
 	public static void markProcessing(String pid) {
@@ -61,6 +71,19 @@ public class BundleStatus {
 		if (statusHM.containsKey(pid)) {
 			statusHM.remove(pid);
 			statusHM.put(pid, BundleStatusLevel.COMPLETE);
+		}
+	}
+	
+	@Lock( LockType.WRITE)
+	public static void markFailed(String pid) {
+		logger.debug("Marking as Failed:" + pid);
+		if (!statusHM.containsKey(pid)) {
+			logger.error("Error: The status should tleast be PROCESSING");
+		}
+		
+		if (statusHM.containsKey(pid)) {
+			statusHM.remove(pid);
+			statusHM.put(pid, BundleStatusLevel.FAILED);
 		}
 	}
 

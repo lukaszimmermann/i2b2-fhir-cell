@@ -42,5 +42,9 @@ public class FhirServerException extends Exception {
 		super(string);
 	}
 
+	public FhirServerException(Exception e) {
+		super(e);
+	}
+
 	
 }
