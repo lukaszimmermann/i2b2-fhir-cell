@@ -41,11 +41,23 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.Code;
 import org.hl7.fhir.Conformance;
+import org.hl7.fhir.ConformanceInteraction;
+import org.hl7.fhir.ConformanceResource;
 import org.hl7.fhir.ConformanceRest;
+import org.hl7.fhir.ConformanceSearchParam;
 import org.hl7.fhir.ConformanceSecurity;
 import org.hl7.fhir.Extension;
+import org.hl7.fhir.IssueSeverity;
+import org.hl7.fhir.IssueSeverityList;
+import org.hl7.fhir.IssueType;
+import org.hl7.fhir.IssueTypeList;
+import org.hl7.fhir.OperationOutcome;
+import org.hl7.fhir.OperationOutcomeIssue;
 import org.hl7.fhir.Resource;
+import org.hl7.fhir.TypeRestfulInteraction;
+import org.hl7.fhir.TypeRestfulInteractionList;
 import org.hl7.fhir.Uri;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -78,11 +90,10 @@ public class I2b2FhirWS {
 
 	@EJB
 	PatientBundleManager service;
-	
+
 	@EJB
 	ProjectPatientMapManager ppmMgr;
-	
-	
+
 	@EJB
 	QueryService queryManager;
 
@@ -128,9 +139,9 @@ public class I2b2FhirWS {
 			logger.info("Query param:"
 					+ request.getParameterMap().keySet().toString());
 
-			String head="";
+			String head = "";
 			for (String h : headers.getRequestHeaders().keySet()) {
-				head+="Header->" + h + ":" + headers.getRequestHeader(h);
+				head += "Header->" + h + ":" + headers.getRequestHeader(h);
 
 			}
 			logger.info(head);
@@ -143,18 +154,19 @@ public class I2b2FhirWS {
 			String basePath = request.getRequestURL().toString()
 					.split(resourceName)[0];
 
-			
-
-			//I2b2Helper.resetMetaResourceDb(session, sbb);
+			// I2b2Helper.resetMetaResourceDb(session, sbb);
 			logger.debug("session id:" + session.getId());
-			
-			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
-			
-			s=I2b2Helper.parsePatientIdToFetchPDO(session,  request,c.getSimpleName(),
-			service,ppmMgr); 
-					
+
+			authService.authenticateSession(
+					headers.getRequestHeader(
+							AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
+					session);
+
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request,
+					c.getSimpleName(), service, ppmMgr);
+
 			md.addBundle(s);
-			
+
 			logger.info("running filter...");
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
@@ -162,9 +174,9 @@ public class I2b2FhirWS {
 					+ request.getQueryString());
 
 			if (request.getQueryString() != null) {
-				String fhirQuery=c.getSimpleName() + "?"
+				String fhirQuery = c.getSimpleName() + "?"
 						+ request.getQueryString();
-				s=queryManager.runQueryEngine(fhirQuery, s,basePath);
+				s = queryManager.runQueryEngine(fhirQuery, s, basePath);
 			}
 
 			logger.info("including...._include:" + includeResources.toString());
@@ -196,8 +208,9 @@ public class I2b2FhirWS {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("", e);
-			return Response.status(Status.BAD_REQUEST)
-					.header("xreason", e.getMessage()).build();
+			return Response.ok(getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL)).header("xreason", e.getMessage())
+					.header("session_id", session.getId()).build();
+			
 		}
 
 	}
@@ -212,7 +225,8 @@ public class I2b2FhirWS {
 			@PathParam("resourceName") String resourceName,
 			@PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader,
-			@Context HttpHeaders headers, @Context HttpServletRequest request,
+			@Context HttpHeaders headers,
+			@Context HttpServletRequest request,
 			@HeaderParam(AuthenticationFilter.AUTHENTICATION_HEADER) String tokString)
 			throws DatatypeConfigurationException,
 			ParserConfigurationException, SAXException, IOException,
@@ -224,14 +238,13 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 
 		try {
-			
-			
+
 			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			MetaResourceDb md = new MetaResourceDb();
 			String msg = null;
 			Resource r = null;
-			Bundle s=null;
+			Bundle s = null;
 			String mediaType = null;
 
 			logger.debug("session id:" + session.getId());
@@ -241,10 +254,14 @@ public class I2b2FhirWS {
 			if (c == null)
 				throw new RuntimeException("class not found for resource:"
 						+ resourceName);
-			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),session);
-			s=I2b2Helper.parsePatientIdToFetchPDO(session,request,
-					resourceName, service,ppmMgr);
-			md.addBundle(s);;
+			authService.authenticateSession(
+					headers.getRequestHeader(
+							AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
+					session);
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request,
+					resourceName, service, ppmMgr);
+			md.addBundle(s);
+			;
 
 			r = md.getParticularResource(c, id);
 
@@ -262,16 +279,16 @@ public class I2b2FhirWS {
 				return Response.ok(msg).header("session_id", session.getId())
 						.type(mediaType).build();
 			} else {
+				msg="xreason:"+
+						resourceName + " with id:" + id + " NOT found";
 				return Response
-						.noContent()
-						.header("xreason",
-								resourceName + " with id:" + id + " NOT found")
+						.ok(getOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
 						.header("session_id", session.getId()).build();
 			}
 
 		} catch (Exception e) {
 			logger.error("", e);
-			return Response.noContent().header("xreason", e.getMessage())
+			return Response.ok(getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL)).header("xreason", e.getMessage())
 					.header("session_id", session.getId()).build();
 		}
 
@@ -330,7 +347,24 @@ public class I2b2FhirWS {
 		OAuthext.getExtension().add(tokenExt);
 
 		rest.setSecurity(security);
+
+		// Patient
+		
+		rest.getResource().add(getReadOnlyConformanceResource("Patient",new HashMap<String, String>(){{
+		       put("_id","token"); put("gender","token");}}));
+		rest.getResource().add(getReadOnlyConformanceResource("MedicationOrder",new HashMap<String, String>(){{
+		       put("_id","token"); put("patient","token");put("medication","reference");}}));
+		rest.getResource().add(getReadOnlyConformanceResource("Medication",new HashMap<String, String>(){{
+		       put("_id","token"); put("code","token");}}));
+		rest.getResource().add(getReadOnlyConformanceResource("Observation",new HashMap<String, String>(){{
+		       put("_id","token"); put("code","token");put("value","string");}}));
+		rest.getResource().add(getReadOnlyConformanceResource("Condition",new HashMap<String, String>(){{
+		       put("_id","token"); put("code","token");}}));
+
+		
+
 		c.getRest().add(rest);
+
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
 		String msg;
@@ -349,30 +383,68 @@ public class I2b2FhirWS {
 		return Response.ok().type(mediaType).entity(msg).build();
 
 	}
-/*
-	private boolean authenticateOpenSession(HttpSession session, HttpHeaders headers)
-			throws XQueryUtilException, IOException, JAXBException,
-			InterruptedException {
-		List<String> authHeaderContentList = headers
-				.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER);
-		if (authHeaderContentList.size() == 0) {
-			logger.warn("No Authentication header present");
-			return false;
-		}
-		String authHeaderContent = authHeaderContentList.get(0);
-		boolean authenticationStatus = authService
-				.authenticate(authHeaderContent);
-		if (authenticationStatus == false) {
-			return false;
-		}
 
-		AccessToken tok = authService.getHttpAccessTokenString(authHeaderContent);
-		session.setAttribute("i2b2domain", tok.getI2b2Project());
-		session.setAttribute("i2b2domainUrl", Config.i2b2Url);
-		session.setAttribute("username", tok.getResourceUserId());
-		session.setAttribute("password", tok.getI2b2Token());
-
-		return true;
+	/*
+	 * private boolean authenticateOpenSession(HttpSession session, HttpHeaders
+	 * headers) throws XQueryUtilException, IOException, JAXBException,
+	 * InterruptedException { List<String> authHeaderContentList = headers
+	 * .getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER); if
+	 * (authHeaderContentList.size() == 0) {
+	 * logger.warn("No Authentication header present"); return false; } String
+	 * authHeaderContent = authHeaderContentList.get(0); boolean
+	 * authenticationStatus = authService .authenticate(authHeaderContent); if
+	 * (authenticationStatus == false) { return false; }
+	 * 
+	 * AccessToken tok =
+	 * authService.getHttpAccessTokenString(authHeaderContent);
+	 * session.setAttribute("i2b2domain", tok.getI2b2Project());
+	 * session.setAttribute("i2b2domainUrl", Config.i2b2Url);
+	 * session.setAttribute("username", tok.getResourceUserId());
+	 * session.setAttribute("password", tok.getI2b2Token());
+	 * 
+	 * return true; }
+	 */
+	
+	private OperationOutcome getOperationOutcome(String message,IssueTypeList issueType,IssueSeverityList issueSeverity) {
+		OperationOutcome o= new OperationOutcome();
+		OperationOutcomeIssue i= new OperationOutcomeIssue() ;
+		IssueType iType=new IssueType();
+		iType.setValue(issueType);
+		i.setCode(iType);
+		IssueSeverity severity=new IssueSeverity();
+		severity.setValue(issueSeverity);
+		i.setSeverity(severity);
+		o.getIssue().add(i);
+		o.setText(message1);
+		return o;
 	}
-*/
+	
+	private ConformanceResource getReadOnlyConformanceResource(String name,HashMap<String,String> hm) {
+		ConformanceResource p = new ConformanceResource();
+		Code value2 = new Code();
+		value2.setValue(name);
+		p.setType(value2);
+		ConformanceInteraction ci = new ConformanceInteraction();
+		TypeRestfulInteraction value = new TypeRestfulInteraction();
+		value.setValue(TypeRestfulInteractionList.READ);
+		ci.setCode(value);
+		p.getInteraction().add(ci);
+		for(String k:hm.keySet()){
+			addConformanceSearchParam(p,k,hm.get(k));
+		}
+		return p;
+	}
+
+	private void addConformanceSearchParam(ConformanceResource p,String name,
+			String type) {
+		ConformanceSearchParam sp = new ConformanceSearchParam();
+		org.hl7.fhir.String s = new org.hl7.fhir.String();
+		s.setValue(name);
+		sp.setName(s);
+		Code value3 = new Code();
+		value3.setValue(type);
+		sp.setType(value3);
+		p.getSearchParam().add(sp);
+		
+	}
 }
