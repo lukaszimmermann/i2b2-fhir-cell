@@ -15,6 +15,7 @@ import org.w3c.dom.ranges.RangeException;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
 
@@ -31,7 +32,7 @@ public class PatientBundleManager {
 	//TODO check of the tok has a project which has the given pid
 	//check if scope allows access to the patient
 	
-	public Bundle getPatientBundle(AccessToken tok, String pid) {
+	public Bundle getPatientBundle(AccessToken tok, String pid) throws FhirServerException {
 
 		if (status.isComplete(pid)) {
 			return getPatientBundleLocking(pid);
@@ -49,10 +50,13 @@ public class PatientBundleManager {
 				logger.error(e.getMessage(),e);
 			}
 		}
+		if(status.isFailed(pid)){
+			throw new FhirServerException("Processing has Failed");
+		}
 		return getPatientBundle(tok, pid);
 	}
 
-	private void fetchPatientBundle(AccessToken tok, String pid) {
+	private void fetchPatientBundle(AccessToken tok, String pid) throws FhirServerException {
 		status.markProcessing(pid);
 		Bundle b= new Bundle();
 		try{
@@ -61,13 +65,17 @@ public class PatientBundleManager {
 			ArrayList<String>items=new ArrayList<String>();
 			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
 			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
-			String i2b2Xml = I2b2Util.getAllDataForAPatient(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
+			String i2b2Xml = I2b2Util.getAllDataPDO(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
+			logger.trace("got PDO:"+i2b2Xml);
+			
 			b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
 			logger.trace("fetched bundle of size:"+b.getEntry().size());
 			
 			
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
+			status.markFailed(pid);
+			throw new FhirServerException(e);
 		}
 		service.put(pid, b);
 		status.markComplete(pid);

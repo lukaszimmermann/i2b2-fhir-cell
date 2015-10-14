@@ -34,6 +34,7 @@ import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.Project;
 
 public class I2b2Util {
@@ -229,16 +230,16 @@ public class I2b2Util {
 		return b;
 	}
 
-	public static String getAllDataForAPatient(String i2b2User,
+	public static String getAllDataPDO(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
-			String project, String patientId, List<String> items) {
+			String project, String patientId, List<String> items) throws FhirCoreException {
 		try {
 			logger.trace("got params:" + i2b2User + "-" + i2b2Token + "-"
 					+ i2b2Url + "-" + I2b2Domain + "-" + project + "-"
 					+ patientId + "-" + items);
 			String requestXml = IOUtils
 					.toString(I2b2Util.class
-							.getResourceAsStream("/i2b2query/i2b2RequestDynamicPanelsForAPatient.xml"));
+							.getResourceAsStream("/i2b2query/i2b2RequestEmptyFilterForAPatient.xml"));
 
 			String panelXml = "";
 			int count = 0;
@@ -273,7 +274,11 @@ public class I2b2Util {
 							.getStringSequence("//observation", responseXml)
 							.size());
 			return responseXml;
-		} catch (Exception e) {
+		} catch(java.net.ConnectException e){
+			logger.error(e.getMessage(),e);
+			throw new FhirCoreException(e);
+		}
+		catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 		return null;

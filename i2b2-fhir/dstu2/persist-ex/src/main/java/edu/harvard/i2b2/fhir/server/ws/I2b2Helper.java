@@ -60,7 +60,7 @@ public class I2b2Helper {
 	}
 
 	private static Bundle getPdo(AccessToken accessTok, String patientId,
-			PatientBundleManager service) {
+			PatientBundleManager service) throws FhirServerException {
 		return service.getPatientBundle(accessTok, patientId);
 	}
 

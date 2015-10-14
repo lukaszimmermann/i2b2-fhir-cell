@@ -48,10 +48,9 @@ import org.basex.query.value.item.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public final class  XQueryUtil{
+public final class XQueryUtil {
 	static Logger logger = LoggerFactory.getLogger(XQueryUtil.class);
-	
+
 	/**
 	 * Runs the example code.
 	 * 
@@ -74,7 +73,7 @@ public final class  XQueryUtil{
 		// Use internal parser to skip DTD parsing
 		try {
 			new Set("intparse", true).execute(context);
-			String dbName=UUID.randomUUID().toString();
+			String dbName = UUID.randomUUID().toString();
 			new org.basex.core.cmd.CreateDB(dbName, input).execute(context);
 
 			try (QueryProcessor proc = new QueryProcessor(query, context)) {
@@ -92,66 +91,69 @@ public final class  XQueryUtil{
 			}
 
 			// System.out.println("\n* Drop the database.");
-			
-			 new DropIndex("text").execute(context);
-			 new DropIndex("attribute").execute(context);
-			 new DropIndex("fulltext").execute(context);
-			    
+
+			new DropIndex("text").execute(context);
+			new DropIndex("attribute").execute(context);
+			new DropIndex("fulltext").execute(context);
+
 			new DropDB(dbName).execute(context);
 		} catch (BaseXException e1) {
 			e1.printStackTrace();
-			logger.error("",e1);
+			logger.error("", e1);
 			throw new XQueryUtilException(e1);
 		}
 		context.close();
 		return resList;
 	}
 
-	
-
 	public static String processXQuery(String query, String input)
 			throws XQueryUtilException {
 		String result = null;
-		Context context = new Context();
-		if(query==null ) throw new XQueryUtilException("query is null");
-		if(input==null ) throw new XQueryUtilException("input is null");
-
-		// Create a database from a remote XML document
-		// System.out.println("\n* Create a database from a file via http.");
-
-		// Use internal parser to skip DTD parsing
-		String dbName=UUID.randomUUID().toString();
 		try {
-			if (input != null) {
-				new Set("intparse", true).execute(context);
-				
-				new org.basex.core.cmd.CreateDB(dbName, input)
-						.execute(context);
-			}
-			try (QueryProcessor proc = new QueryProcessor(query, context)) {
-				// Store the pointer to the result in an iterator:
-				result = proc.execute().serialize();
-			} catch (QueryException | IOException e) {
-				e.printStackTrace();
-				throw new XQueryUtilException(e);
 
-			}
+			Context context = new Context();
+			if (query == null)
+				throw new XQueryUtilException("query is null");
+			if (input == null)
+				throw new XQueryUtilException("input is null");
 
-			// System.out.println("\n* Drop the database.");
-			if (input != null) {
-				new DropIndex("text").execute(context);
-				new DropIndex("attribute").execute(context);
-			 new DropIndex("fulltext").execute(context);
-				 
-				new DropDB(dbName).execute(context);
-			}
-		} catch (BaseXException e1) {
-			e1.printStackTrace();
-			logger.error(e1.getMessage(),e1);
-			throw new XQueryUtilException(e1);
+			// Create a database from a remote XML document
+			// System.out.println("\n* Create a database from a file via http.");
 
+			// Use internal parser to skip DTD parsing
+			String dbName = UUID.randomUUID().toString();
+			try {
+				if (input != null) {
+					new Set("intparse", true).execute(context);
+
+					new org.basex.core.cmd.CreateDB(dbName, input)
+							.execute(context);
+				}
+				try (QueryProcessor proc = new QueryProcessor(query, context)) {
+					// Store the pointer to the result in an iterator:
+					result = proc.execute().serialize();
+				} catch (QueryException | IOException e) {
+					e.printStackTrace();
+					throw new XQueryUtilException(e);
+
+				}
+
+				// System.out.println("\n* Drop the database.");
+				if (input != null) {
+					new DropIndex("text").execute(context);
+					new DropIndex("attribute").execute(context);
+					new DropIndex("fulltext").execute(context);
+
+					new DropDB(dbName).execute(context);
+				}
+			} catch (BaseXException e1) {
+				logger.error(e1.getMessage(), e1);
+				throw new XQueryUtilException(e1);
+			}
+			context.close();
+
+		} catch (java.nio.file.FileSystemNotFoundException e) {
 		}
-		context.close();
 		return result;
 	}
 
