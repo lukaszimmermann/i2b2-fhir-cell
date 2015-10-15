@@ -108,5 +108,20 @@ public class ProjectPatientMapManager {
 	private ProjectPatientMap getProjectPatientMapLocking(String projectId) {
 		return service.get(projectId);
 	}
+	
+	public boolean hasAccessToPatient(AccessToken token,String patientId){
+		String projectId=token.getI2b2Project();
+			ProjectPatientMap p = getProjectPatientMap(token.getResourceUserId(),
+					token.getI2b2Token(), token.getI2b2Url(),
+					token.getI2b2Domain(), token.getI2b2Project());
+			logger.warn("is patientId:"+patientId+" present in list"+ p.getPatientIdList());
+		//	if(p.getPatientIdList().length()<2) {
+		//		logger.warn("list seems empty for the project");
+		//		return false;}
+			List<String> list=Arrays.asList(p.getPatientIdList().replaceAll("[\\[\\]\\s]","").split(","));
+			logger.warn("list>:"+list);
+			return (list.contains(patientId))?true:false;
+			
+	}
 
 }

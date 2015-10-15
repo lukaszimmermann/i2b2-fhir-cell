@@ -229,9 +229,9 @@ public class I2b2Util {
 		logger.trace("bundle:" + JAXBUtil.toXml(b));
 		logger.trace("list size:" + b.getEntry().size());
 		logger.info("adding to memory...");
-		}catch( IOException | XQueryUtilException | JAXBException e){ 
+		}catch( Exception e){ 
 			logger.error(e.getMessage(),e);
-			throw new FhirCoreException(e);
+			throw new FhirCoreException("Error in retriving data for the Patient",e);
 		}	
 		return b;
 	}
