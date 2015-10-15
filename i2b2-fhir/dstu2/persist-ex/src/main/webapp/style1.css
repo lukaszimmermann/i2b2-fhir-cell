@@ -10,9 +10,8 @@ form {
 	text-align: center;
 }
 
-header {
+.header {
 	background-color: black;
 	color: white;
 	text-align: center;
-	padding: 15px;
-}
+	}
