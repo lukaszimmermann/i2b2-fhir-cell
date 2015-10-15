@@ -15,7 +15,7 @@ public class ProjectPatientMap {
 	String patientIdList;//comma seperated list of ids
 	
 	@Lob
-	String patientBundle;//comma seperated list of ids
+	String patientBundle;//Xml of Fhir Bundle
 
 
 	public String getProjectId() {

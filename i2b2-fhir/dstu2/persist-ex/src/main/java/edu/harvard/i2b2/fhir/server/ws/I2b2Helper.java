@@ -60,8 +60,12 @@ public class I2b2Helper {
 	}
 
 	private static Bundle getPdo(AccessToken accessTok, String patientId,
-			PatientBundleManager service) throws FhirServerException {
-		return service.getPatientBundle(accessTok, patientId);
+			PatientBundleManager pBundleMgr,ProjectPatientMapManager projPatMapMgr) throws FhirServerException {
+		if(projPatMapMgr.hasAccessToPatient(accessTok,patientId)){
+			return pBundleMgr.getPatientBundle(accessTok, patientId);
+		}else{
+			throw new FhirServerException("the patientId is invalid for the given access Token: Either the patient Id is invalid or the accessToken is not credientialed to access the given patient");
+		}
 	}
 
 	static String processXquery(String query, String input)
@@ -92,7 +96,7 @@ public class I2b2Helper {
 		logger.info("PatientId:" + patientId);
 		if (patientId != null) {
 			// filter.put("Patient", "Patient/" + patientId);
-			return I2b2Helper.getPdo(tok, patientId, service);
+			return I2b2Helper.getPdo(tok, patientId, service,ppmservice);
 		} else {
 			if (resourceName.equals("Patient"))
 				return I2b2Helper.initAllPatients(tok,ppmservice);

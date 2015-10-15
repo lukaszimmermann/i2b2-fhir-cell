@@ -34,7 +34,7 @@ import javax.xml.bind.JAXBException;
 
 public class FhirServerException extends Exception {
 
-	public FhirServerException(String string, Exception e) {
+	public FhirServerException(String string, Throwable e) {
 		super(string,e);
 	}
 	
