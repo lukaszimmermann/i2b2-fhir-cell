@@ -4,21 +4,23 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 <h:head>
-	<title>proj select</title>
+	<title>Project select</title>
+	   <link rel="stylesheet" type="text/css" href="../style1.css"></link>
 </h:head>
 <h:body>
 	<h:form>
 		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
 		<h2>Select Project</h2>
+		<!--
 		<li><h:outputText
 				value="proj:#{i2b2AuthenticationManager.i2b2ProjectList}" /></li>
-
+		-->
 
 
 		<h:selectOneRadio
 			value="#{i2b2AuthenticationManager.selectedI2b2Project}" required="true"
 				requiredMessage="Error: one project is required.">
-			<f:selectItems var="tutorial"
+			<f:selectItems var="project"
 				value="#{i2b2AuthenticationManager.i2b2ProjectList}"
 				itemValue="#{project}"
 				itemLabel="#{project.name}" 
@@ -35,6 +37,7 @@
 <h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
 	</h:form>
+	<!-- 
 	<p>
 					<h:outputText value="#{i2b2AuthenticationManager.scope}" />
 				</p>
@@ -44,6 +47,7 @@
 				<p>
 					<h:outputText value="#{i2b2AuthenticationManager.client_id}" />
 				</p>
+				 -->
 </h:body>
 </html>
 

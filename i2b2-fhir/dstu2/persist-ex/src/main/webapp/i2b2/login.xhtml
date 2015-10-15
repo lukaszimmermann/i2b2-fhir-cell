@@ -17,14 +17,17 @@
 						value="#{i2b2AuthenticationManager.processAuthUrl()}" />
 				</p>
 				
-				<p>
-					<h:outputText value="#{i2b2AuthenticationManager.scope}" />
+				<p>The app at following url, is requesting access to your i2b2 data:
 				</p>
 				<p>
-					<h:outputText value="#{i2b2AuthenticationManager.redirect_url}" />
+					url:<h:outputText value="#{i2b2AuthenticationManager.redirect_url}" />
 				</p>
 				<p>
-					<h:outputText value="#{i2b2AuthenticationManager.client_id}" />
+					scope:<h:outputText value="#{i2b2AuthenticationManager.scope}" />
+				</p>
+				
+				<p>
+					client id:<h:outputText value="#{i2b2AuthenticationManager.client_id}" />
 				</p>
 
 
