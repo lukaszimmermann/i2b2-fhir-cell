@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.Project;
 
+
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
 	
@@ -223,6 +224,7 @@ public class I2b2Util {
 		return responseXml;
 	}
 
+	@Deprecated
 	public static Bundle getAllDataForAPatientAsFhirBundle(String pdoXml)
 			throws FhirCoreException {
 		Bundle b=null;
@@ -238,7 +240,7 @@ public class I2b2Util {
 		}	
 		return b;
 	}
-
+	@Deprecated
 	public static String getAllDataPDO(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
 			String project, String patientId, List<String> items) throws FhirCoreException {
