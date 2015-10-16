@@ -67,6 +67,8 @@
 			<item_key>XPATHX</item_key>
 		</item>
 	</panel>
+
+
 </filter_list>
 <output_option>
 	<patient_set select="using_input_list" onlykeys="false"/>

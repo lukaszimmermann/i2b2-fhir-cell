@@ -16,8 +16,7 @@ import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import edu.harvard.i2b2.fhir.Config;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
@@ -36,7 +35,7 @@ public class QueryService {
 	
 	@PostConstruct
 	public void init(){
-		while(qc.getCount()>=Config.getMaxQueryThreads()){
+		while(qc.getCount()>=ServerConfig.getMaxQueryThreads()){
 			logger.trace("waiting as query count is "+qc.getCount());
 			try{
 				Thread.sleep(1000);

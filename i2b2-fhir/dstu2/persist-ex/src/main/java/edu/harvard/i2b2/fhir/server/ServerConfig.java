@@ -9,7 +9,7 @@
  * 		July 4, 2015
  */
 
-package edu.harvard.i2b2.fhir;
+package edu.harvard.i2b2.fhir.server;
 
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -18,7 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class Config {
+
+public class ServerConfig {
 	static private String i2b2Url ;
 	static private String i2b2Domain ;
 	static private String openAccessToken;
@@ -30,7 +31,7 @@ public class Config {
 	private static String demoPatientId;
 	private static int maxQueryThreads;
 
-	static Logger logger = LoggerFactory.getLogger(Config.class);
+	static Logger logger = LoggerFactory.getLogger(ServerConfig.class);
 	
 	
 	static {
@@ -66,7 +67,7 @@ public class Config {
 
 
 	public static void setI2b2Url(String i2b2Url) {
-		Config.i2b2Url = i2b2Url;
+		ServerConfig.i2b2Url = i2b2Url;
 	}
 
 
@@ -76,7 +77,7 @@ public class Config {
 
 
 	public static void setI2b2Domain(String i2b2Domain) {
-		Config.i2b2Domain = i2b2Domain;
+		ServerConfig.i2b2Domain = i2b2Domain;
 	}
 
 
@@ -86,7 +87,7 @@ public class Config {
 
 
 	public static void setOpenAccessToken(String openAccessToken) {
-		Config.openAccessToken = openAccessToken;
+		ServerConfig.openAccessToken = openAccessToken;
 	}
 
 
@@ -96,7 +97,7 @@ public class Config {
 
 
 	public static void setOpenAccess(boolean openAccess) {
-		Config.openAccess = openAccess;
+		ServerConfig.openAccess = openAccess;
 	}
 
 
@@ -106,7 +107,7 @@ public class Config {
 
 
 	public static void setOpenI2b2User(String openI2b2User) {
-		Config.openI2b2User = openI2b2User;
+		ServerConfig.openI2b2User = openI2b2User;
 	}
 
 
@@ -116,7 +117,7 @@ public class Config {
 
 
 	public static void setOpenI2b2Password(String openI2b2Password) {
-		Config.openI2b2Password = openI2b2Password;
+		ServerConfig.openI2b2Password = openI2b2Password;
 	}
 
 
@@ -126,7 +127,7 @@ public class Config {
 
 
 	public static void setOpenI2b2Project(String openI2b2Project) {
-		Config.openI2b2Project = openI2b2Project;
+		ServerConfig.openI2b2Project = openI2b2Project;
 	}
 
 
@@ -136,7 +137,7 @@ public class Config {
 
 
 	public static void setOpenClientId(String openClientId) {
-		Config.openClientId = openClientId;
+		ServerConfig.openClientId = openClientId;
 	}
 
 
@@ -146,7 +147,7 @@ public class Config {
 
 
 	public static void setDemoPatientId(String demoPatientId) {
-		Config.demoPatientId = demoPatientId;
+		ServerConfig.demoPatientId = demoPatientId;
 	}
 
 
@@ -156,7 +157,7 @@ public class Config {
 
 
 	public static void setMaxQueryThreads(int maxQueryThreads) {
-		Config.maxQueryThreads = maxQueryThreads;
+		ServerConfig.maxQueryThreads = maxQueryThreads;
 	}
 
 }

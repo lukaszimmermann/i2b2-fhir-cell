@@ -125,6 +125,27 @@ public class I2b2UtilTest {
 		logger.trace("got response:" + responseXml);
 		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
 	}
+	
+	@Test
+	public void getMedsAndLabsForAPatient()
+			throws IOException, XQueryUtilException {
+		String requestXml = IOUtils
+				.toString(I2b2Util.class
+						.getResourceAsStream("/i2b2query/i2b2RequestMEdsAndLabsForAPatient.xml"));
+
+		
+		
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Password, i2b2Url, i2b2Domain);
+
+		if (patientId != null)
+			requestXml = requestXml.replaceAll("PATIENTID", patientId);
+
+		String responseXml = WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestXml);
+		logger.trace("got response:" + responseXml);
+		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
+	}
 
 	@Test
 	public void getDocuments(){

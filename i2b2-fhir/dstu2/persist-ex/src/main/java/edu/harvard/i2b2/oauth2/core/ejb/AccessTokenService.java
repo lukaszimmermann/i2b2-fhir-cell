@@ -38,7 +38,7 @@ import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Config;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
@@ -54,7 +54,7 @@ public class AccessTokenService {
 	public void setup() {
 		try {
 			Random r = new Random();
-			if (Config.getOpenAccessToken() != null) {
+			if (ServerConfig.getOpenAccessToken() != null) {
 				createIfNotExistsDemoAccessToken();
 			}
 		} catch (Exception ex) {
@@ -100,19 +100,19 @@ public class AccessTokenService {
 		try {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
-			tok = em.find(AccessToken.class, Config.getOpenAccessToken());
+			tok = em.find(AccessToken.class, ServerConfig.getOpenAccessToken());
 		
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(Config.getOpenAccessToken());
-				tok.setResourceUserId(Config.getOpenI2b2User());
-				tok.setI2b2Token(Config.getOpenI2b2Password());
-				tok.setClientId(Config.getOpenClientId());
+				tok.setTokenString(ServerConfig.getOpenAccessToken());
+				tok.setResourceUserId(ServerConfig.getOpenI2b2User());
+				tok.setI2b2Token(ServerConfig.getOpenI2b2Password());
+				tok.setClientId(ServerConfig.getOpenClientId());
 				tok.setScope("user *.read");
-				tok.setI2b2Url(Config.getI2b2Url());
-				tok.setI2b2Project(Config.getOpenI2b2Project());
-				tok.setI2b2Domain(Config.getI2b2Domain());
+				tok.setI2b2Url(ServerConfig.getI2b2Url());
+				tok.setI2b2Project(ServerConfig.getOpenI2b2Project());
+				tok.setI2b2Domain(ServerConfig.getI2b2Domain());
 				tok.setCreatedDate(new Date());
 				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
 			
