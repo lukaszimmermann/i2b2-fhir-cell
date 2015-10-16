@@ -53,9 +53,9 @@ import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Config;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhir.core.Config;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;

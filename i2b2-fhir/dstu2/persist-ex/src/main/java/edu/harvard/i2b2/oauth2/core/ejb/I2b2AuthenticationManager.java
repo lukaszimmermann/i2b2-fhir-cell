@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Config;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.fhir.oauth2.ws.OAuth2AuthzEndpoint;
 
@@ -262,7 +262,7 @@ public class I2b2AuthenticationManager implements Serializable {
 		 * if(this.getPmResponseXml()==null)
 		 * {setPmResponseXml(I2b2Util.getPmResponseXml
 		 * (this.getI2b2User(),this.getI2b2Password(),
-		 * Config.i2b2Url,Config.i2b2Domain));}
+		 * ServerConfig.i2b2Url,ServerConfig.i2b2Domain));}
 		 * if(this.getI2b2ProjectList()==null){ return "selectProject"; }
 		 */
 
@@ -278,8 +278,8 @@ public class I2b2AuthenticationManager implements Serializable {
 					.getSessionMap();
 
 			String pmResponseXml = I2b2Util.getPmResponseXml(
-					this.getI2b2User(), this.getI2b2Password(), Config.getI2b2Url(),
-					Config.getI2b2Domain());
+					this.getI2b2User(), this.getI2b2Password(), ServerConfig.getI2b2Url(),
+					ServerConfig.getI2b2Domain());
 			if (I2b2Util.authenticateUser(pmResponseXml)) {
 				context.addMessage(null, new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Login Sucessful!", null));
@@ -291,8 +291,8 @@ public class I2b2AuthenticationManager implements Serializable {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
-				session.put("i2b2Url", Config.getI2b2Url());
-				session.put("i2b2Domain", Config.getI2b2Domain());
+				session.put("i2b2Url", ServerConfig.getI2b2Url());
+				session.put("i2b2Domain", ServerConfig.getI2b2Domain());
 				session.put("i2b2ProjectList", this.getI2b2ProjectList());
 				session.put("scope", this.scope);
 

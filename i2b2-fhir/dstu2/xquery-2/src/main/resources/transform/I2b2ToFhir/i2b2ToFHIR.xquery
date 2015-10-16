@@ -515,10 +515,8 @@ let $diagObs:= $distObs//observation[contains(concept_cd,"ICD9:")]
 
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-{local:processMedObs(<A>{$medObs}</A>)/entry}
- {local:processLabObs(<A>{$labObs}</A>)/entry}
-  {local:processDiagObs(<A>{$diagObs}</A>)/entry}
- 
+
+(:INSERT_RESOURCE_FUNCTION_HERE:)
 </Bundle>
 
 

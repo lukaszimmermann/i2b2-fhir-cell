@@ -25,7 +25,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Config;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
 
@@ -68,8 +68,8 @@ public class AuthTokenService {
 			tok.setI2b2Project(i2b2Project);
 			tok.setCreatedDate(new Date());
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
-			tok.setI2b2Url(Config.getI2b2Url());
-			tok.setI2b2Domain(Config.getI2b2Domain());
+			tok.setI2b2Url(ServerConfig.getI2b2Url());
+			tok.setI2b2Domain(ServerConfig.getI2b2Domain());
 			logger.info("Created authToken.." + tok.toString());
 			//em.getTransaction().begin();
 			em.persist(tok);

@@ -24,6 +24,7 @@ package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -39,6 +40,8 @@ import edu.harvard.i2b2.fhir.core.Project;
 
 public class I2b2Util {
 	static Logger logger = LoggerFactory.getLogger(I2b2Util.class);
+	
+	
 
 	public static String insertI2b2ParametersInXml(String xml, String username,
 			String password, String i2b2Url, String I2b2Domain, String project)

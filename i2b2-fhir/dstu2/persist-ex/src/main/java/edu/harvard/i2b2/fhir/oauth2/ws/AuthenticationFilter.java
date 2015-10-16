@@ -26,7 +26,7 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Config;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 
 
@@ -50,12 +50,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 				+ context.getUriInfo().getPath().toString());
 
 		
-		if (Config.getOpenAccessToken() != null & Config.isOpenAccess()
+		if (ServerConfig.getOpenAccessToken() != null & ServerConfig.isOpenAccess()
 				& context.getUriInfo().getPath().toString().startsWith("/open")) {
 			logger.debug("for open connection adding demo access token to header");
 			context.getHeaders().add(
 					AuthenticationFilter.AUTHENTICATION_HEADER,
-					"Bearer " + Config.getOpenAccessToken());
+					"Bearer " + ServerConfig.getOpenAccessToken());
 			return;
 
 		}
