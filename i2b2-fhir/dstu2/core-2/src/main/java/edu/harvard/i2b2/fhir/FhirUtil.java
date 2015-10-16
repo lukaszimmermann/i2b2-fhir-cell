@@ -498,7 +498,7 @@ public class FhirUtil {
 		return b;
 	}
 
-	private static BundleEntry newBundleEntryForResource(Resource r) {
+	static BundleEntry newBundleEntryForResource(Resource r) {
 		BundleEntry be = new BundleEntry();
 		ResourceContainer rc = FhirUtil.getResourceContainer(r);
 		be.setResource(rc);
@@ -704,6 +704,7 @@ public class FhirUtil {
 				.getResource());
 	}
 
+	@Deprecated
 	public static Bundle convertI2b2ToFhirForAParticularPatient(String i2b2Xml)
 			throws IOException, XQueryUtilException, JAXBException {
 

@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -9,12 +10,16 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ranges.RangeException;
 
+import edu.harvard.i2b2.fhir.FhirEnrich;
 import edu.harvard.i2b2.fhir.I2b2Util;
+import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.fhir.core.CoreConfig;
 import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
@@ -62,16 +67,16 @@ public class PatientBundleManager {
 		try{
 			if(tok==null) logger.error("AccessToken is null");
 			logger.trace("fetching PDO for pid:"+pid+" and tok"+tok);
-			ArrayList<String>items=new ArrayList<String>();
-			//items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
-			items.add("\\\\i2b2_MEDS\\i2b2\\Medications\\");
-			String i2b2Xml = I2b2Util.getAllDataPDO(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,items);
-			logger.trace("got PDO:"+i2b2Xml);
+			//HashMap<String,String>map=null;
+			HashMap<String,String>map=new HashMap<String,String>();
+			map.put("medications",CoreConfig.getMedicationPath());
+			map.put("labs",CoreConfig.getLabsPath());
+			map.put("diagnoses",CoreConfig.getDiagnosesPath());
+			b=I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,map);
 			
-			b=I2b2Util.getAllDataForAPatientAsFhirBundle(i2b2Xml);
+			FhirEnrich.enrich(b);
 			logger.trace("fetched bundle of size:"+b.getEntry().size());
-			
-			
+					
 		}catch(Exception e){
 			logger.error(e.getMessage(),e);
 			status.markFailed(pid);

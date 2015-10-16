@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class Config {
+public class CoreConfig {
 	static private String resourceCategoriesList ;//comma seperated
 	static private String medicationPath ;
 	static private String labsPath ;
@@ -26,7 +26,7 @@ public class Config {
 	static private String reportsPath ;
 	
 
-	static Logger logger = LoggerFactory.getLogger(Config.class);
+	static Logger logger = LoggerFactory.getLogger(CoreConfig.class);
 	
 	static {
 		try {
