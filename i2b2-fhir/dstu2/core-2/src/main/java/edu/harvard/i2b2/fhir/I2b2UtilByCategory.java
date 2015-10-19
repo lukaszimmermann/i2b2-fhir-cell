@@ -40,22 +40,26 @@ public class I2b2UtilByCategory {
 						.getResourceAsStream("/i2b2query/i2b2RequestTemplateForAPatient.xml"));
 
 		String path = "";
-		switch (resourceCategory) {
-		case "medications":
-			path = CoreConfig.getMedicationPath();
-			break;
-		case "labs":
-			path = CoreConfig.getLabsPath();
-			break;
-		case "diagnoses":
-			path = CoreConfig.getDiagnosesPath();
-			break;
+		if (resourceCategoryPath != null){
+				path=resourceCategoryPath;
+		}else {
+			switch (resourceCategory) {
+			case "medications":
+				path = CoreConfig.getMedicationPath();
+				break;
+			case "labs":
+				path = CoreConfig.getLabsPath();
+				break;
+			case "diagnoses":
+				path = CoreConfig.getDiagnosesPath();
+				break;
 
-		default:
-			throw new FhirCoreException("resourceCategory not known:"
-					+ resourceCategory);
+			default:
+				throw new FhirCoreException("resourceCategory not known:"
+						+ resourceCategory);
+			}
 		}
-
+		
 		requestXml = requestXml.replace("XPATHX", path);
 		logger.trace("requestXml with Path:" + requestXml);
 
@@ -98,12 +102,10 @@ public class I2b2UtilByCategory {
 		return xml;
 	}
 
-	
-		
 	public static Bundle getAllDataForAPatientAsFhirBundle(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
 			String project, String patientId,
-			HashMap<String,String> categoryPathMap) throws FhirCoreException {
+			HashMap<String, String> categoryPathMap) throws FhirCoreException {
 		// cycle thru resource categories and get bundles
 		String entryXmlCumulative = "";
 		Patient p = null;
@@ -111,31 +113,38 @@ public class I2b2UtilByCategory {
 			List<String> resourceCategories = Arrays.asList(CoreConfig
 					.getResourceCategoriesList().split("-"));
 			for (String rc : resourceCategories) {
-				
-				//will use HashMap if provided, else will default to the Ontology-Path map 
 
-				String path=null;
-				if(categoryPathMap!=null) {
-					String pathFromMap=categoryPathMap.get(rc);
-					path=pathFromMap;
-					if(pathFromMap==null){
-						throw new FhirCoreException("There is no path provided for category:"+rc+" in the configuration");
+				// will use HashMap if provided, else will default to the
+				// Ontology-Path map
+
+				String path = null;
+				if (categoryPathMap != null) {
+					String pathFromMap = categoryPathMap.get(rc);
+					path = pathFromMap;
+					if (pathFromMap == null) {
+						throw new FhirCoreException(
+								"There is no path provided for category:" + rc
+										+ " in the configuration");
 					}
-					if(pathFromMap.contains("SKIP")) continue;
-					
+					if (pathFromMap.contains("SKIP"))
+						continue;
+
 				}
-				
+
 				String i2b2ResponseXml = getI2b2ResponseXmlForAResourceCategory(
-						i2b2User, i2b2Token, i2b2Url, I2b2Domain, project, patientId,
-						rc, path);
+						i2b2User, i2b2Token, i2b2Url, I2b2Domain, project,
+						patientId, rc, path);
 				logger.trace("i2b2ResponseXml" + i2b2ResponseXml);
-				
-				if(p==null){ p = FhirUtil.getPatientResource(i2b2ResponseXml);}			
+
+				if (p == null) {
+					p = FhirUtil.getPatientResource(i2b2ResponseXml);
+				}
 				String query = getTransformQueryForAResourceCategory(rc);
-				
-				String bundleXml = XQueryUtil.processXQuery(query, i2b2ResponseXml);
-				logger.trace("ran XQuery transform" + query + " to get  bundle Xml:"
-						+ bundleXml);
+
+				String bundleXml = XQueryUtil.processXQuery(query,
+						i2b2ResponseXml);
+				logger.trace("ran XQuery transform" + query
+						+ " to get  bundle Xml:" + bundleXml);
 
 				String entryXml = XQueryUtil
 						.processXQuery(
@@ -143,24 +152,24 @@ public class I2b2UtilByCategory {
 								bundleXml);
 				logger.info("entriesXml:" + entryXml);
 				entryXmlCumulative += entryXml;
-				logger.info("added bundle of size:"+XQueryUtil.getStringSequence(
-								"declare default element namespace \"http://hl7.org/fhir\";//entry",
-								bundleXml).size());
+				logger.info("added bundle of size:"
+						+ XQueryUtil
+								.getStringSequence(
+										"declare default element namespace \"http://hl7.org/fhir\";//entry",
+										bundleXml).size());
 			}
 
 			// merge the bundles
 
 			String finalBundleXml = "<Bundle xmlns=\"http://hl7.org/fhir\">\n"
 					+ entryXmlCumulative + "</Bundle>";
-			Bundle b=JAXBUtil.fromXml(finalBundleXml, Bundle.class);
-			
-			
+			Bundle b = JAXBUtil.fromXml(finalBundleXml, Bundle.class);
+
 			b.getEntry().add(FhirUtil.newBundleEntryForResource(p));
-			
-			
-			logger.trace("returing bundle of size:"+b.getEntry().size());
+
+			logger.trace("returing bundle of size:" + b.getEntry().size());
 			return b;
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new FhirCoreException(
