@@ -53,7 +53,9 @@ public class I2b2UtilByCategory {
 			case "diagnoses":
 				path = CoreConfig.getDiagnosesPath();
 				break;
-
+			case "reports":
+				path = CoreConfig.getReportsPath();
+				break;
 			default:
 				throw new FhirCoreException("resourceCategory not known:"
 						+ resourceCategory);
@@ -90,6 +92,9 @@ public class I2b2UtilByCategory {
 			break;
 		case "diagnoses":
 			functionString = "{local:processDiagObs(<A>{$diagObs}</A>)/entry}";
+			break;
+		case "reports":
+			functionString = "{local:processReportObs(<A>{$reportObs}</A>)/entry}";
 			break;
 
 		default:

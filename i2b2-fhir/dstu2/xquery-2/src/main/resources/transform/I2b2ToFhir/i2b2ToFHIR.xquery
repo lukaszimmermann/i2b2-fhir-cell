@@ -202,6 +202,30 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
 };
 
 
+declare function local:fnFhirDiagReport($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string,$textContent as xs:string?) as node(){  
+
+<DiagnosticReport xmlns="http://hl7.org/fhir">
+  <id value="{$pid}-{$count}"/>
+  <text><status value="generated"/><div xmlns="http://www.w3.org/1999/xhtml">{$textContent}</div> </text>
+   
+  <status value="final"/>
+  <code>
+    <coding>
+      <system value="http://loinc.org"/>
+      <code value="{$cid}"/>
+    </coding>
+  </code>
+  <subject>
+    <reference value="{$pid}"/>
+   </subject>
+  <effectiveDateTime value="{$sd}"/>
+  <issued value="{$ed}"/>
+  <performer>
+    <reference value="Organization/TODO"/>
+  </performer> 
+</DiagnosticReport>
+};
+
 declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count as xs:string?,$last_updated as xs:string? ) as node(){
 <ns3:MetaData xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
     <ns3:id>{concat($class,'/',$pid,"-",$count)}</ns3:id>
@@ -464,7 +488,9 @@ for $id at $count in fn:distinct-values($A/observation/id)
 let $refObs :=  $A/observation[id =$id][1] (:why does some diagnosis in i2b2 have more than one modified cd?:)
 
 let $pid := $refObs/patient_id/text()
-let $cid := fn:replace($refObs/concept_cd/text(),"ICD9:","")
+let $cid := $refObs/concept_cd/text()
+
+
 
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
@@ -497,10 +523,55 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 
 
 
+declare function local:processReportObs
+  ( $A as node()* )  as node()*
+{
+
+let $O:=
+for $id at $count in fn:distinct-values($A/observation/id)
+let $refObs :=  $A/observation[id =$id][1] 
+
+let $pid := $refObs/patient_id/text()
+let $raw_cid := $refObs/concept_cd/text()
+let $textContent := $refObs/observation_blob/text()
+
+let $oid := $refObs/observer_cd
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
+let $sourceSystem := $refObs/@sourcesystem_cd/string()
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
+
+let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
+
+
+let $cid:=
+if ($raw_cid="LCS-I2B2:MRI_RPT") then "72230-6"
+else if($raw_cid="LCS-I2B2:MRI_RPT_DID") then "72230-6"
+else "UNK" 
+
+let $fhirDiagReport:=local:fnFhirDiagReport($sd ,$ed ,$count , $cid, $pid, $textContent )
+
+return 
+ <set>
+ <entry xmlns="http://hl7.org/fhir">
+<resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+{$fhirDiagReport}
+</resource>
+</entry>
+</set>
+
+
+return <Bundle xmlns="http://hl7.org/fhir" >
+    {$O/entry}
+</Bundle>
+
+};
 
 
 
-let $I:=root()
+let $I:=root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu2/xquery-2/src/main/resources/example/i2b2/reportsForAPatient.xml'):)
 (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/diagnosisForAPatient.xml'):)
 (:root()doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
 (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
@@ -511,7 +582,7 @@ let $distObs:=local:distinctObservations($I)
 let $labObs:= $distObs//observation[contains(concept_cd,"LOINC:")]
 let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
 let $diagObs:= $distObs//observation[contains(concept_cd,"ICD9:")]
-
+let $reportObs:= $distObs//observation
 
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">

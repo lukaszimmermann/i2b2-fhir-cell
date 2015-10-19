@@ -72,6 +72,7 @@ public class PatientBundleManager {
 			map.put("medications",CoreConfig.getMedicationPath());
 			map.put("labs",CoreConfig.getLabsPath());
 			map.put("diagnoses",CoreConfig.getDiagnosesPath());
+			map.put("reports",CoreConfig.getReportsPath());
 			b=I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,map);
 			
 			FhirEnrich.enrich(b);
