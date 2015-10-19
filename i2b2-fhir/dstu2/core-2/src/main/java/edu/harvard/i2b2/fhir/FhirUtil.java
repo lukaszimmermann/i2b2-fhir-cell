@@ -66,6 +66,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
+import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationOrder;
@@ -100,7 +101,7 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationOrder|Observation|Patient)";
+	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationOrder|Observation|Patient|DiagnosticReport)";
 	private static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
@@ -530,6 +531,9 @@ public class FhirUtil {
 		case "Bundle":
 			rc.setBundle((Bundle) r);
 			break;
+		case "DiagnosticReport":
+			rc.setDiagnosticReport((DiagnosticReport) r);
+			break;
 		default:
 			throw new RuntimeException("ResourceType not found:" + rClass);
 		}
@@ -563,6 +567,8 @@ public class FhirUtil {
 			return rc.getBundle();
 		if (rc.getSearchParameter() != null)
 			return rc.getSearchParameter();
+		if (rc.getDiagnosticReport() != null)
+			return rc.getDiagnosticReport();
 
 		String xml = null;
 		try {

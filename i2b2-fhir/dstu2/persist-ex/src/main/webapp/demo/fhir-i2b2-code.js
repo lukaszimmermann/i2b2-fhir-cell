@@ -26,10 +26,9 @@
    var ds4=new DataStore(fhirServerBase+"/Observation?subject=1000000005","Get Labs for a particular patient");
    var ds5=new DataStore(fhirServerBase+"/MedicationOrder?patient=1000000005&_include=medication&_include=patient","Get Medication Orders for a particular patient and include Medications and the Patient");
    var ds6=new DataStore(fhirServerBase+"/Condition?patient=1000000005","Get Conditions for particular Patients");
-   var ds7=new DataStore(fhirServerBase+"/Patient?gender=male&birthdate=<1970-01-01","Get Male Patients born before 1970");
-   
-   //var ds6=new DataStore(fhirBase+"Patient?gender=female&birthdate=<1970-01-01&@Patient.maritalStatus.coding.code:exact=M");
-   
+   var ds7=new DataStore(fhirServerBase+"/DiagnosticReport?subject=1000000005","Get Diagnostic Reports for a particular Patient");
+   var ds8=new DataStore(fhirServerBase+"/Patient?gender=male&birthdate=<1970-01-01","Get Male Patients born before 1970");
+    
    DSArray.push(ds1);
    DSArray.push(ds2);
    DSArray.push(ds3);
@@ -37,6 +36,7 @@
    DSArray.push(ds5);
    DSArray.push(ds6);
    DSArray.push(ds7);
+   DSArray.push(ds8);
    
    var theDiv=document.getElementById("nav1");
    //theDiv.innerHTML='<div style="width:100%;" onclick="return null">Use Cases</div>';
