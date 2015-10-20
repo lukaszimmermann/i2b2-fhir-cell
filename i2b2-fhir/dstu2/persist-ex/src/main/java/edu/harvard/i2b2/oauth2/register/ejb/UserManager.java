@@ -28,6 +28,10 @@ import org.apache.commons.lang.RandomStringUtils;
 import edu.harvard.i2b2.oauth2.register.entity.Client;
 import edu.harvard.i2b2.oauth2.register.entity.User;
 
+/*
+ * currently supports only admin user, who can create multiple clients
+ * next step would be to allow developer users, each of whom can create multiple clients
+ */
 @Named
 @RequestScoped
 public class UserManager {
@@ -36,7 +40,8 @@ public class UserManager {
 
 	@EJB
 	UserService service;
-
+	
+	
 	@PostConstruct
 	public void init() {
 		user = new User();

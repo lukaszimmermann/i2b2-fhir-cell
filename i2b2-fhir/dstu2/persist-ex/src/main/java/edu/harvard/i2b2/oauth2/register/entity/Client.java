@@ -22,6 +22,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.NotNull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,7 @@ public class Client implements Serializable{
 	
 	@ManyToOne
 	@JoinColumn(name="USER_ID")
+	@NotNull
 	private User user;
 
 	public String getClientId() {

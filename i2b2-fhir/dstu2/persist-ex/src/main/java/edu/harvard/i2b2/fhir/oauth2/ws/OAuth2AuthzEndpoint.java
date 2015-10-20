@@ -56,9 +56,12 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.Project;
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
+import edu.harvard.i2b2.oauth2.register.ejb.ClientService;
+import edu.harvard.i2b2.oauth2.register.entity.Client;
 
 //import edu.harvard.i2b2.fhirserver.ejb.AuthTokenManager;
 
@@ -92,6 +95,9 @@ public class OAuth2AuthzEndpoint {
 
 	@EJB 
 	AuthenticationService service;
+	
+	@EJB
+	ClientService clientService;
 	
 	// http://localhost:8080/srv-dstu2-0.2/api/authz/authorize?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=fcclient1
 	@GET
@@ -137,7 +143,7 @@ public class OAuth2AuthzEndpoint {
 			session.setAttribute("finalUri", finalUri);
 
 			String clientId = (String) oauthRequest.getClientId();
-			if (isClientIdValid(clientId) == true) {
+			if (isClientIdValid(clientId,oauthRequest.getRedirectURI()) == true) {
 				
 				String uri = HttpHelper.getBasePath(request).toString() + "../../i2b2/login.xhtml";
 				logger.trace("redirecting to:" + uri);
@@ -160,9 +166,16 @@ public class OAuth2AuthzEndpoint {
 	// Authenticate resource owner
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
-	boolean isClientIdValid(String clientId) {
+	boolean isClientIdValid(String clientId, String redirectUri) {
 		//if (clientId.equals("fcclient1"))
-			return true;
+		Client client=clientService.find(clientId);
+		if (client==null) logger.warn("client not found for id:"+clientId);
+		if (!client.getRedirectUrl().equals(redirectUri)){
+			logger.warn("Requested redirectUri does not match that of the registered client:"+client.getRedirectUrl());
+			return false;
+		}
+		return client!=null?true:false;
+			
 		/*
 		 * AuthToken authTok = authTokenBean.findByClientId(clientId);
 		 * 
