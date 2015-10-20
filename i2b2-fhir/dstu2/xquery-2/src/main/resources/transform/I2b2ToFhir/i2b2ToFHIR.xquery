@@ -202,7 +202,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
 };
 
 
-declare function local:fnFhirDiagReport($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string,$textContent as xs:string?) as node(){  
+declare function local:fnFhirDiagReport($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string,$textContent as xs:string) as node(){  
 
 <DiagnosticReport xmlns="http://hl7.org/fhir">
   <id value="{$pid}-{$count}"/>
@@ -321,6 +321,7 @@ let $distobs :=
   let $units_cd:=$t/units_cd/text()
   let $instNum := $t/instance_num/text()
   let $loc := $t/location_cd/text()
+  let $obs_blob:=$t/observation_blob/text()
  
   let $id := concat($pid,"-",$eid,"-",$cid,"-",$sd,"-",$oid,"-",$instNum) (:all in primary key except modifier_cd, but includes instNum:)
 
@@ -342,6 +343,7 @@ let $distobs :=
                         <instance_num>{$instNum}</instance_num>
                         <end_date>{$ed}</end_date>
                         <location_cd>{$loc}</location_cd>
+                        <observation_blob>{$obs_blob}</observation_blob>
                     </observation>
     return  <set>{functx:distinct-nodes($distobs)}</set>
  };
@@ -533,7 +535,7 @@ let $refObs :=  $A/observation[id =$id][1]
 
 let $pid := $refObs/patient_id/text()
 let $raw_cid := $refObs/concept_cd/text()
-let $textContent := $refObs/observation_blob/text()
+let $textContent :=  $refObs//observation_blob/text()
 
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
@@ -587,6 +589,8 @@ let $reportObs:= $distObs//observation
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 
+
+(:{local:processReportObs(<A>{$reportObs}</A>)/entry}:)
 (:INSERT_RESOURCE_FUNCTION_HERE:)
 </Bundle>
 
