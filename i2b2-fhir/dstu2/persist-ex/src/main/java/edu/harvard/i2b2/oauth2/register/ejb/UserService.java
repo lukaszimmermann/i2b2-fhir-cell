@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.oauth2.register.entity.Client;
 import edu.harvard.i2b2.oauth2.register.entity.User;
+import edu.harvard.i2b2.oauth2.register.entity.UserType;
 
 @Stateless
 public class UserService {
@@ -50,16 +51,19 @@ public class UserService {
 		User u=new User();
 		u.setEmail("email1");
 		u.setPassword("p1");
+		u.setUserType(UserType.ADMIN);
 		create(u);
 		
 		u=new User();
 		u.setEmail("email2");
 		u.setPassword("p2");
+		u.setUserType(UserType.DEVELOPER);
 		create(u);
 		
 		u=new User();
 		u.setEmail("email3");
 		u.setPassword("p3");
+		u.setUserType(UserType.DEVELOPER);
 		create(u);
 	}
 

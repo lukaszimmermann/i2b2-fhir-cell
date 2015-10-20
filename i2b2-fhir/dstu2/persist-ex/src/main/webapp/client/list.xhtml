@@ -9,15 +9,28 @@
 	<h:form>
 		<h2>Edit Clients</h2>
 
-<h:dataTable value="#{clientManager.list()}" var="c">
-    <h:column>#{c.clientId}</h:column>   
-    <h:column>#{c}</h:column>   
+		<h:dataTable value="#{clientManager.list()}" var="c">
+			<h:column>#{c.clientId}</h:column>
+			<h:column>#{c}</h:column>
+			<h:column>
+				<h:commandButton action="edit" value="#{c.clientId}">
+					<f:setPropertyActionListener target="#{clientManager.client}"
+						value="#{c}" />
+				</h:commandButton>
+			</h:column>
 		</h:dataTable>
-		
+
+
 		<h:commandButton id="submit" value="Submit" action="register">
 		</h:commandButton>
 		<h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
+		<p>
+			<h:commandLink value="Create Client" action="/client/new" />
+		</p>
+		<p>
+<h:commandLink value="Logout" action="#{userManager.logout()}" />
+</p>
 	</h:form>
 </h:body>
 </html>

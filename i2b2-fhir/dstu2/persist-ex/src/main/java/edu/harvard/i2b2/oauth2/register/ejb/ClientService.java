@@ -27,6 +27,7 @@ import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.oauth2.register.entity.Client;
 
 @Stateless
@@ -35,7 +36,7 @@ public class ClientService {
 
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@EJB
 	UserService userService;
 
@@ -47,7 +48,6 @@ public class ClientService {
 		find("client0");
 	}
 
-
 	public void createBlank() {
 		Client c = new Client();
 		c.setClientId("client0");
@@ -55,21 +55,22 @@ public class ClientService {
 		c.setRedirectUrl("http://google.com");
 		c.setUser(userService.find(1));
 		save(c);
-		
-		
+
 		c = new Client();
 		c.setClientId("client1");
 		c.setClientSecret("secret1");
 		c.setRedirectUrl("http://localhost:8080");
 		c.setUser(userService.find(1));
 		save(c);
-		
-		c = new Client();
-		c.setClientId("client2");
-		c.setClientSecret("secret2");
-		c.setRedirectUrl("http://yahoo.com");
-		c.setUser(userService.find(2));
-		save(c);
+
+		if (ServerConfig.getDemoConfidentialClientId() != null) {
+			c = new Client();
+			c.setClientId(ServerConfig.getDemoConfidentialClientId());
+			c.setClientSecret(ServerConfig.getDemoConfidentialClientSecret());
+			c.setRedirectUrl("http://localhost:8080");
+			c.setUser(userService.find(2));
+			save(c);
+		}
 	}
 
 	public void create(Client client) {

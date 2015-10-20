@@ -7,11 +7,12 @@
 </h:head>
 <h:body>
 	<h:form>
-		<h2>Edit Client</h2>
+		<h2>New Client</h2>
+		<h:commandLink immediate="true" value="#{clientManager.newClient()}" />
 		<h:outputText value="#{userManager.user}" />
 		<p></p>
 
-		Id:<h:outputText id="clientId" title="ClientId is: "
+		Id:<h:inputText id="clientId" title="ClientId is: "
 			value="#{clientManager.client.clientId}" required="true"
 			requiredMessage="Error: ClientId is required." maxlength="25" />
 		
@@ -33,20 +34,16 @@
 
 
 		<p></p>
-		<p>
-			<h:commandButton id="submit" value="Submit"
-				action="#{clientManager.save()}">
-			
-			</h:commandButton>
-		</p>
-		<p>
-			<h:commandButton id="reset" value="Reset" type="reset">
-			</h:commandButton>
-		</p>
+
+		<h:commandButton id="submit" value="Submit"
+			action="#{clientManager.save()}">
+
+		</h:commandButton>
+		<h:commandButton id="reset" value="Reset" type="reset">
+		</h:commandButton>
 		<p>
 			<h:commandLink value="Logout" action="#{userManager.logout()}" />
 		</p>
-
 	</h:form>
 </h:body>
 </html>

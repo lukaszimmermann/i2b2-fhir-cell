@@ -31,6 +31,10 @@ public class ServerConfig {
 	private static String demoPatientId;
 	private static int maxQueryThreads;
 
+	private static String demoConfidentialClientId;
+	private static String demoConfidentialClientSecret;
+	
+	
 	static Logger logger = LoggerFactory.getLogger(ServerConfig.class);
 	
 	
@@ -51,10 +55,14 @@ public class ServerConfig {
 			openClientId =config.getString("openClientId");
 			demoPatientId =config.getString("demoPatientId");
 			maxQueryThreads =config.getInt("maxQueryThreads");
+			demoConfidentialClientId=config.getString("demoConfidentialClientId");
+			demoConfidentialClientSecret=config.getString("demoConfidentialClientSecret");
 			
 			logger.info("initialized:"+"\ni2b2Url:"+i2b2Url
 					+"\ndemoAccessToken:"+openAccessToken+"\n openAccess:"+openAccess
-					+"\nmaxQueryThreads"+ maxQueryThreads);
+					+"\nmaxQueryThreads"+ maxQueryThreads
+					+"\ndemoConfidentialClientId:"+demoConfidentialClientId
+					+"\ndemoConfidentialClientSecret"+demoConfidentialClientSecret);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -160,4 +168,15 @@ public class ServerConfig {
 		ServerConfig.maxQueryThreads = maxQueryThreads;
 	}
 
+
+	public static String getDemoConfidentialClientId() {
+		return demoConfidentialClientId;
+	}
+
+
+	public static String getDemoConfidentialClientSecret() {
+		return demoConfidentialClientSecret;
+	}
+
+	
 }

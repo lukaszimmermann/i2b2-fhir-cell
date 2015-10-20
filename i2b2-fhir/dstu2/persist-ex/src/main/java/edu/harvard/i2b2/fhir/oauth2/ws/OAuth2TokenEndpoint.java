@@ -45,15 +45,22 @@ import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
+import edu.harvard.i2b2.oauth2.register.ejb.ClientManager;
+import edu.harvard.i2b2.oauth2.register.ejb.ClientService;
+import edu.harvard.i2b2.oauth2.register.entity.Client;
 
 @Path("token")
 public class OAuth2TokenEndpoint {
 	Logger logger = LoggerFactory.getLogger(OAuth2TokenEndpoint.class);
-
+	private Client client;
+	
 	@EJB
 	AuthTokenService authTokenBean;
 	@EJB
 	AccessTokenService accessTokenBean;
+	
+	@EJB
+	ClientService clientService;
 
 	/*
 	 * currently only checking for auth code and client id as stored in authcode
@@ -89,7 +96,7 @@ public class OAuth2TokenEndpoint {
 			logger.debug("authToken is "+authToken.toString());
 			
 			// check if clientid is valid
-			if (!checkClientId(oauthRequest.getClientId())) {
+			if (!checkClientId(oauthRequest.getClientId(),authToken)) {
 				return buildInvalidClientIdResponse();
 			}
 
@@ -159,7 +166,6 @@ public class OAuth2TokenEndpoint {
 	}
 
 	private Response buildInvalidClientIdResponse() {
-		// TODO Auto-generated method stub
 		return Response.ok().entity("invalid client").build();
 	}
 
@@ -175,14 +181,22 @@ public class OAuth2TokenEndpoint {
 	}
 
 	private boolean checkClientSecret(String clientSecret) {
-		// TODO XXX
-		return true;
+		boolean res= client.getClientSecret().equals(clientSecret)?true:false;
+		if (res==false) logger.warn("client secret is invalid");
+		return res;
 	}
 
-	private boolean checkClientId(String clientId) {
-		// TODO XXX
-		return true;
+	private boolean checkClientId(String clientId, AuthToken authToken) {
+		if(!authToken.getClientId().equals(clientId)) {
+			logger.warn("clientId in request is diffirent from that for which the auth code was issued:");
+			return false;
+		}
+		
+		client=clientService.find(clientId);
+		if (client==null) logger.warn("client not found for id:"+clientId);
+		
+		
+		return client!=null?true:false;
 	}
 
-	// ...
 }
