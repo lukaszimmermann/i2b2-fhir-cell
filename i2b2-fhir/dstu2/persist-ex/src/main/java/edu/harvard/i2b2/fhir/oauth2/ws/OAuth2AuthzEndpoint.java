@@ -145,7 +145,7 @@ public class OAuth2AuthzEndpoint {
 			String clientId = (String) oauthRequest.getClientId();
 			if (isClientIdValid(clientId,oauthRequest.getRedirectURI()) == true) {
 				
-				String uri = HttpHelper.getBasePath(request).toString() + "../../i2b2/login.xhtml";
+				String uri = HttpHelper.getServletUri(request).toString() + "/i2b2/login.xhtml";
 				logger.trace("redirecting to:" + uri);
 				return Response.status(Status.MOVED_PERMANENTLY)
 						.location(new URI(uri))
@@ -167,7 +167,7 @@ public class OAuth2AuthzEndpoint {
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
 	boolean isClientIdValid(String clientId, String redirectUri) {
-		//if (clientId.equals("fcclient1"))
+		if(ServerConfig.getOpenClientId()!=null && ServerConfig.getOpenClientId().equals(clientId)) return true;
 		Client client=clientService.find(clientId);
 		if (client==null) logger.warn("client not found for id:"+clientId);
 		if (!client.getRedirectUrl().equals(redirectUri)){
