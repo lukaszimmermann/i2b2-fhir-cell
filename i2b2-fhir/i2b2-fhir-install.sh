@@ -2,6 +2,10 @@ export INSTALL_DIR=i2b2-fhir-cell
 mkdir $INSTALL_DIR
 cd $INSTALL_DIR
 
+#export BRANCH=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,'); 
+export BRANCH=$1
+
+
 export IPADD=$(ifconfig eth0 | grep inet | awk '{print $2}' | sed 's/addr://'|head -n 1)
 
 export WILDFLY_DIR="$(pwd -P)/wildfly-9.0.1.Final"
@@ -86,7 +90,8 @@ echo "Installing source code from githib repository"
 if [ -f master.zip ]
 then echo ""
 else
-	wget https://github.com/waghsk/i2b2-fhir/archive/master.zip 
+	wget "https://github.com/waghsk/i2b2-fhir/archive/$BRANCH.zip" 
+	mv "$BRANCH.zip" master.zip
 	unzip master.zip
 	#git clone https://github.com/waghsk/i2b2-fhir.git
 fi
