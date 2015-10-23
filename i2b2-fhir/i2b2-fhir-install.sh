@@ -90,10 +90,11 @@ echo "Installing source code from githib repository"
 if [ -f master.zip ]
 then echo ""
 else
-	wget "https://github.com/waghsk/i2b2-fhir/archive/$BRANCH.zip" 
-	mv "$BRANCH.zip" master.zip
-	unzip master.zip
-	#git clone https://github.com/waghsk/i2b2-fhir.git
+     wget "https://github.com/waghsk/i2b2-fhir/archive/$BRANCH.zip" 
+        mv "$BRANCH.zip" master.zip
+        unzip master.zip
+        mv i2b2-fhir-$BRANCH/ i2b2-fhir-master/
+        #git clone https://github.com/waghsk/i2b2-fhir.git
 fi
 
 alias mvn=$MVN
