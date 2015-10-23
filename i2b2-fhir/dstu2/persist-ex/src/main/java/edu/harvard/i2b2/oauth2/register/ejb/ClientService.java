@@ -23,6 +23,7 @@ import javax.faces.bean.RequestScoped;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +35,15 @@ import edu.harvard.i2b2.oauth2.register.entity.Client;
 public class ClientService {
 	static Logger logger = LoggerFactory.getLogger(ClientService.class);
 
+	
 	@PersistenceContext
 	EntityManager em;
 
 	@EJB
 	UserService userService;
+	
+	//@javax.ws.rs.core.Context
+    //private ServletContext servletContext;
 
 	public void setup() {
 		createBlank();
@@ -49,6 +54,8 @@ public class ClientService {
 	}
 
 	public void createBlank() {
+		//logger.info("servletContext.getContextPath():"+servletContext.getContextPath());
+		
 		Client c = new Client();
 		c.setClientId("client0");
 		c.setClientSecret("secret0");
@@ -62,11 +69,31 @@ public class ClientService {
 		c.setRedirectUrl("http://localhost:8080");
 		c.setUser(userService.find(1));
 		save(c);
+		
+		c = new Client();
+		c.setClientId("smartapp1");
+		c.setClientSecret("1b6sf3bs72bs73bd73h3bs8ok8fb3bbftd7");
+		c.setRedirectUrl("http://localhost:8080/persist-ex-dstu2-0.2/fhir-app1/index.html");
+		c.setUser(userService.find(1));
+		save(c);
+		
+		
 
 		if (ServerConfig.getDemoConfidentialClientId() != null) {
 			c = new Client();
 			c.setClientId(ServerConfig.getDemoConfidentialClientId());
 			c.setClientSecret(ServerConfig.getDemoConfidentialClientSecret());
+			c.setRedirectUrl("http://localhost:8080");
+			c.setUser(userService.find(2));
+			save(c);
+		}
+		
+		
+		
+		if (ServerConfig.getOpenClientId() != null) {
+			c = new Client();
+			c.setClientId(ServerConfig.getOpenClientId() );
+			c.setClientSecret("dummysecret");
 			c.setRedirectUrl("http://localhost:8080");
 			c.setUser(userService.find(2));
 			save(c);
