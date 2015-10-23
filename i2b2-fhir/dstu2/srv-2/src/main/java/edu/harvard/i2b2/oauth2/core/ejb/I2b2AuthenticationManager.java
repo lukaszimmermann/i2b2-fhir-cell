@@ -29,6 +29,7 @@ import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.server.ServerConfig;
 import edu.harvard.i2b2.fhir.core.Project;
+import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.oauth2.ws.OAuth2AuthzEndpoint;
 
 //http://www.javabeat.net/jsf-2-selectoneradio/
@@ -217,7 +218,10 @@ public class I2b2AuthenticationManager implements Serializable {
 		if (getSelectedI2b2Project().getId() != null) {
 			ExternalContext c = FacesContext.getCurrentInstance()
 					.getExternalContext();
-			c.redirect("../api/authz/processScope");
+			//c.redirect("../api/authz/processScope");
+			
+			c.redirect(c.getRequestContextPath()+"/api/authz/processScope");
+			
 			return "/i2b2/success";
 		} else {
 			return "error";
