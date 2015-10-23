@@ -590,7 +590,7 @@ let $reportObs:= $distObs//observation
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 
 
-(:{local:processReportObs(<A>{$reportObs}</A>)/entry}:)
+
 (:INSERT_RESOURCE_FUNCTION_HERE:)
 </Bundle>
 
