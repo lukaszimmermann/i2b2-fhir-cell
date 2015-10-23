@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 		<groupId>edu.harvard.i2b2.fhir</groupId>
 		<artifactId>dstu</artifactId>
-		<version>dstu2-0.2</version>
+		<version>dstu2-0.3</version>
 		<packaging>pom</packaging>
 	<modules>
 		<module>xquery-2</module>
@@ -17,7 +17,7 @@
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<my-project-version>dstu2-0.2</my-project-version>
+		<my-project-version>dstu2-0.3</my-project-version>
 	</properties>
 
 
