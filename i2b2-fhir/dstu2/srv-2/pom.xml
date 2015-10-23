@@ -9,7 +9,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>edu.harvard.i2b2.fhir</groupId>
-	<artifactId>persist-ex</artifactId>
+	<artifactId>srv</artifactId>
 	<version>${my-project-version}</version>
 	<packaging>war</packaging>
 
