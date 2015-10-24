@@ -4,7 +4,7 @@
     <script src="fhir-client.js"></script>
     <script>
     var path= window.location.pathname;
-alert(path);
+//alert(path);
         path=RemoveLastDirectoryPartOf(path);
         path=RemoveLastDirectoryPartOf(path)+"/";
         
@@ -13,7 +13,7 @@ alert(path);
 var fhirServerBase="http://"+location.host+path+"api"
 var redirectTo="http://"+location.host+path+"fhir-app1/index.html"
 
-alert(fhirServerBase);
+//alert(fhirServerBase);
      FHIR.oauth2.authorize({
         "server": fhirServerBase,//"http://localhost:8080/srv-dstu2-0.2/api",
         "client": {
