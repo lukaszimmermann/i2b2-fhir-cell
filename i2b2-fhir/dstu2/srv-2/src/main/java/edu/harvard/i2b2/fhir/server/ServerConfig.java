@@ -42,8 +42,10 @@ public class ServerConfig {
 		try {
 			CompositeConfiguration config = new CompositeConfiguration();
 			config.addConfiguration(new SystemConfiguration());
+			//config.addConfiguration(new PropertiesConfiguration(
+				//	"application.properties"));
 			config.addConfiguration(new PropertiesConfiguration(
-					"application.properties"));
+					"confidential.properties"));
 			
 			i2b2Url =config.getString("i2b2Url");
 			i2b2Domain =config.getString("i2b2Domain");

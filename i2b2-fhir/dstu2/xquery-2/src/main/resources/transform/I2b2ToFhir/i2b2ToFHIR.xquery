@@ -581,9 +581,9 @@ root():)
   
 let $distObs:=local:distinctObservations($I)
  
-let $labObs:= $distObs//observation[contains(concept_cd,"LOINC:")]
-let $medObs:= $distObs//observation[contains(concept_cd,"NDC:")]
-let $diagObs:= $distObs//observation[contains(concept_cd,"ICD9:")]
+let $labObs:= $distObs//observation
+let $medObs:= $distObs//observation
+let $diagObs:= $distObs//observation
 let $reportObs:= $distObs//observation
 
 
