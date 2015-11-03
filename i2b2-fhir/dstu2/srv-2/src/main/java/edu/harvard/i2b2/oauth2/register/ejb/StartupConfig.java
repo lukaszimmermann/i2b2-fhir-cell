@@ -47,10 +47,13 @@ public class StartupConfig {
 
 	@PostConstruct
 	public void init() {
+		
+		try {
 		userService.setup();
 		clientService.setup();
 		accessTokenService.setup();
-		try {
+		
+		
 			/*patientBundleManager.getPatientBundle(
 					accessTokenService.find(Config.getOpenAccessToken()),
 					(String) Config.getDemoPatientId());

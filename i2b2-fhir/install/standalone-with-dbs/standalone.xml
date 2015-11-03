@@ -150,9 +150,24 @@
                         <password>sa</password>
                     </security>
                 </datasource>
+                <datasource jta="true" jndi-name="java:jboss/datasources/i2b2fhir" pool-name="i2b2fhir" enabled="true" use-java-context="true" use-ccm="true">
+                    <connection-url>jdbc:mysql://localhost:3306/i2b2fhir</connection-url>
+                    <driver>mysql</driver>
+                    <security>
+                        <user-name>ifcu</user-name>
+                        <password>ifcp</password>
+                    </security>
+                    <statement>
+                        <prepared-statement-cache-size>32</prepared-statement-cache-size>
+                        <share-prepared-statements>true</share-prepared-statements>
+                    </statement>
+                </datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
                         <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+                    </driver>
+                    <driver name="mysql" module="com.mysql.driver">
+                        <driver-class>com.mysql.jdbc.Driver</driver-class>
                     </driver>
                 </drivers>
             </datasources>
@@ -349,21 +364,18 @@
             <buffer-cache name="default"/>
             <server name="default-server">
                 <http-listener name="default" socket-binding="http" redirect-socket="https"/>
-                <!--<host name="default-host" alias="localhost">
-		added following line for default servlet-->
-        <host name="default-host" alias="localhost" default-web-module="srv-dstu2-0.2.war" />        
-	   <!-- <location name="/" handler="welcome-content"/>
+                <host name="default-host" alias="localhost">
+                    <location name="/" handler="welcome-content"/>
                     <filter-ref name="server-header"/>
                     <filter-ref name="x-powered-by-header"/>
-                </host>-->
+                </host>
             </server>
             <servlet-container name="default">
                 <jsp-config/>
                 <websockets/>
             </servlet-container>
             <handlers>
-                <!--<file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>-->
-                <file name="welcome-content" path="${jboss.home.dir}/welcome-content/redirect.html"/>
+                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
             </handlers>
             <filters>
                 <response-header name="server-header" header-name="Server" header-value="WildFly/9"/>
@@ -407,4 +419,5 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
+
 </server>
