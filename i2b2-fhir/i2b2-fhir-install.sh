@@ -82,7 +82,7 @@ else
 	echo $CMD
 	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
 	#seeting srv as default servlet
-	cp i2b2-fhir-master/i2b2-fhir/install/srv-default-servlet/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
+	cp i2b2-fhir-master/i2b2-fhir/install/standalone-with-dbs/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
 fi
 
 echo "Installing source code from githib repository"
@@ -116,3 +116,8 @@ echo "running server on port 8080"
 
 export RUN_WF="$WILDFLY_DIR/bin/standalone.sh" #-b=$IPADD"
 sh $RUN_WF
+
+
+#mkdir -p $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main
+wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
+mv mysql-connector-java-5.1.9.jar $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main/

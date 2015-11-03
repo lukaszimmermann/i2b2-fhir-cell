@@ -44,8 +44,8 @@ public class ServerConfig {
 			config.addConfiguration(new SystemConfiguration());
 			config.addConfiguration(new PropertiesConfiguration(
 					"application.properties"));
-			config.addConfiguration(new PropertiesConfiguration(
-					"/Users/kbw19/Syncplicity/confidential_data/config_local_pcori/confidential.properties"));
+			//config.addConfiguration(new PropertiesConfiguration(
+			//		"/Users/kbw19/Syncplicity/confidential_data/config_local_pcori/confidential.properties"));
 			
 			i2b2Url =config.getString("i2b2Url");
 			i2b2Domain =config.getString("i2b2Domain");
