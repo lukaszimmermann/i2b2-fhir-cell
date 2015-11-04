@@ -37,6 +37,10 @@ public class StartupConfig {
 	UserService userService;
 
 	@EJB
+	ConfigDbService configDbService;
+
+	
+	@EJB
 	AccessTokenService accessTokenService;
 
 	@EJB
@@ -52,7 +56,7 @@ public class StartupConfig {
 		userService.setup();
 		clientService.setup();
 		accessTokenService.setup();
-		
+		configDbService.setup();
 		
 			/*patientBundleManager.getPatientBundle(
 					accessTokenService.find(Config.getOpenAccessToken()),

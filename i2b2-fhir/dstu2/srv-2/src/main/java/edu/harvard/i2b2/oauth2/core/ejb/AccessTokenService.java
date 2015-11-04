@@ -25,6 +25,7 @@ import javax.ejb.EJBException;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateful;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -38,7 +39,8 @@ import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
@@ -50,11 +52,14 @@ public class AccessTokenService {
 	@PersistenceContext
 	EntityManager em;
 
+	@Inject
+	ServerConfigs serverConfig;
+	
 	//@PostConstruct
 	public void setup() {
 		try {
 			Random r = new Random();
-			if (ServerConfig.getOpenAccessToken() != null) {
+			if (serverConfig.GetString(ConfigParameter.openAccessToken) != null) {
 				createIfNotExistsDemoAccessToken();
 			}
 		} catch (Exception ex) {
@@ -100,19 +105,19 @@ public class AccessTokenService {
 		try {
 			AccessToken tok = null;
 			logger.info("default token exists? ..");
-			tok = em.find(AccessToken.class, ServerConfig.getOpenAccessToken());
+			tok = em.find(AccessToken.class, serverConfig.GetString(ConfigParameter.openAccessToken));
 		
 			if (tok == null) {
 
 				tok = new AccessToken();
-				tok.setTokenString(ServerConfig.getOpenAccessToken());
-				tok.setResourceUserId(ServerConfig.getOpenI2b2User());
-				tok.setI2b2Token(ServerConfig.getOpenI2b2Password());
-				tok.setClientId(ServerConfig.getOpenClientId());
+				tok.setTokenString(serverConfig.GetString(ConfigParameter.openAccessToken));
+				tok.setResourceUserId(serverConfig.GetString(ConfigParameter.openI2b2User));
+				tok.setI2b2Token(serverConfig.GetString(ConfigParameter.openI2b2Password));
+				tok.setClientId(serverConfig.GetString(ConfigParameter.openClientId));
 				tok.setScope("user *.read");
-				tok.setI2b2Url(ServerConfig.getI2b2Url());
-				tok.setI2b2Project(ServerConfig.getOpenI2b2Project());
-				tok.setI2b2Domain(ServerConfig.getI2b2Domain());
+				tok.setI2b2Url(serverConfig.GetString(ConfigParameter.i2b2Url));
+				tok.setI2b2Project(serverConfig.GetString(ConfigParameter.openI2b2Project));
+				tok.setI2b2Domain(serverConfig.GetString(ConfigParameter.i2b2Domain));
 				tok.setCreatedDate(new Date());
 				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
 			
