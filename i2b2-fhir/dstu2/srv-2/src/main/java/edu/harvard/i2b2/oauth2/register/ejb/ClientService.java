@@ -20,6 +20,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.faces.bean.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -28,7 +29,8 @@ import javax.servlet.ServletContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.register.entity.Client;
 
 @Stateless
@@ -41,6 +43,10 @@ public class ClientService {
 
 	@EJB
 	UserService userService;
+	
+	@EJB
+	ServerConfigs serverConfig;
+	
 	
 	//@javax.ws.rs.core.Context
     //private ServletContext servletContext;
@@ -78,11 +84,10 @@ public class ClientService {
 		save(c);
 		
 		
-
-		if (ServerConfig.getDemoConfidentialClientId() != null) {
+		if (serverConfig.GetString(ConfigParameter.demoConfidentialClientId) != null) {
 			c = new Client();
-			c.setClientId(ServerConfig.getDemoConfidentialClientId());
-			c.setClientSecret(ServerConfig.getDemoConfidentialClientSecret());
+			c.setClientId(serverConfig.GetString(ConfigParameter.demoConfidentialClientId));
+			c.setClientSecret(serverConfig.GetString(ConfigParameter.demoConfidentialClientSecret));
 			c.setRedirectUrl("http://localhost:8080");
 			c.setUser(userService.find(2));
 			save(c);
@@ -90,9 +95,9 @@ public class ClientService {
 		
 		
 		
-		if (ServerConfig.getOpenClientId() != null) {
+		if (serverConfig.GetString(ConfigParameter.openClientId) != null) {
 			c = new Client();
-			c.setClientId(ServerConfig.getOpenClientId() );
+			c.setClientId(serverConfig.GetString(ConfigParameter.openClientId) );
 			c.setClientSecret("dummysecret");
 			c.setRedirectUrl("http://localhost:8080");
 			c.setUser(userService.find(2));

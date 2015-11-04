@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.AccessTimeout;
+import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.Singleton;
 import javax.ejb.Stateless;
@@ -16,7 +17,8 @@ import org.hl7.fhir.Bundle;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
@@ -33,9 +35,12 @@ public class QueryService {
 	@Inject
 	QueryCount qc;
 	
+	@EJB
+	ServerConfigs serverConfig;
+	
 	@PostConstruct
 	public void init(){
-		while(qc.getCount()>=ServerConfig.getMaxQueryThreads()){
+		while(qc.getCount()>=serverConfig.getMaxQueryThreads()){
 			logger.trace("waiting as query count is "+qc.getCount());
 			try{
 				Thread.sleep(1000);

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,7 +42,8 @@ import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
@@ -62,6 +64,10 @@ public class OAuth2TokenEndpoint {
 	
 	@EJB
 	ClientService clientService;
+	
+	@Inject
+	ServerConfigs serverConfig;
+	
 
 	/*
 	 * currently only checking for auth code and client id as stored in authcode
@@ -183,7 +189,7 @@ public class OAuth2TokenEndpoint {
 
 	private boolean checkClientSecret(String clientSecret) {
 		//for open open client
-		if(ServerConfig.getOpenClientId()!=null && ServerConfig.getOpenClientId().equals(client.getClientId())) return true;
+		if(serverConfig.GetString(ConfigParameter.openClientId)!=null && serverConfig.GetString(ConfigParameter.openClientId).equals(client.getClientId())) return true;
 		
 		boolean res= client.getClientSecret().equals(clientSecret)?true:false;
 		if (res==false) logger.warn("client secret is invalid");

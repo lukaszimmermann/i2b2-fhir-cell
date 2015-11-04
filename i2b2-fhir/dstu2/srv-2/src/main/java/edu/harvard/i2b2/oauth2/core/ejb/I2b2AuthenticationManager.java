@@ -19,6 +19,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,7 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.oauth2.ws.OAuth2AuthzEndpoint;
@@ -41,6 +43,10 @@ public class I2b2AuthenticationManager implements Serializable {
 
 	@EJB
 	ProjectPatientMapManager projectPatientMapManager;
+	
+	@EJB
+	ServerConfigs serverConfig;
+	
 
 	private String i2b2User;
 	private String i2b2Password;
@@ -282,8 +288,8 @@ public class I2b2AuthenticationManager implements Serializable {
 					.getSessionMap();
 
 			String pmResponseXml = I2b2Util.getPmResponseXml(
-					this.getI2b2User(), this.getI2b2Password(), ServerConfig.getI2b2Url(),
-					ServerConfig.getI2b2Domain());
+					this.getI2b2User(), this.getI2b2Password(), serverConfig.GetString(ConfigParameter.i2b2Url),
+					serverConfig.GetString(ConfigParameter.i2b2Domain));
 			if (I2b2Util.authenticateUser(pmResponseXml)) {
 				context.addMessage(null, new FacesMessage(
 						FacesMessage.SEVERITY_INFO, "Login Sucessful!", null));
@@ -295,8 +301,8 @@ public class I2b2AuthenticationManager implements Serializable {
 				session.put("i2b2User", this.getI2b2User());
 				session.put("pmResponseXml", this.getPmResponseXml());
 				session.put("i2b2Token", this.getI2b2Token());
-				session.put("i2b2Url", ServerConfig.getI2b2Url());
-				session.put("i2b2Domain", ServerConfig.getI2b2Domain());
+				session.put("i2b2Url", serverConfig.GetString(ConfigParameter.i2b2Url));
+				session.put("i2b2Domain", serverConfig.GetString(ConfigParameter.i2b2Domain));
 				session.put("i2b2ProjectList", this.getI2b2ProjectList());
 				session.put("scope", this.scope);
 

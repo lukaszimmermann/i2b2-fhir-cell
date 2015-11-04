@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import javax.annotation.Priority;
 import javax.ejb.EJB;
+import javax.inject.Inject;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
@@ -26,7 +27,8 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.server.ServerConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 
 
@@ -41,6 +43,10 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	@EJB
 	AuthenticationService authService;
+	
+	@EJB
+	ServerConfigs serverConfig;
+	
 
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
@@ -49,13 +55,12 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		logger.trace("Authorization header:" + authHeaderContent + "\n for"
 				+ context.getUriInfo().getPath().toString());
 
-		
-		if (ServerConfig.getOpenAccessToken() != null & ServerConfig.isOpenAccess()
+		if (serverConfig.GetString(ConfigParameter.openAccessToken) != null & serverConfig.isOpenAccess()
 				& context.getUriInfo().getPath().toString().startsWith("/open")) {
 			logger.debug("for open connection adding demo access token to header");
 			context.getHeaders().add(
 					AuthenticationFilter.AUTHENTICATION_HEADER,
-					"Bearer " + ServerConfig.getOpenAccessToken());
+					"Bearer " + serverConfig.GetString(ConfigParameter.openAccessToken));
 			return;
 
 		}
