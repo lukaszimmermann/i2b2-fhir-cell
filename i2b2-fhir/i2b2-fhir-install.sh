@@ -5,6 +5,7 @@ cd $INSTALL_DIR
 #export BRANCH=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,'); 
 export BRANCH=$1
 
+#export CONFIG_FILE_PATH=$2
 
 export IPADD=$(ifconfig eth0 | grep inet | awk '{print $2}' | sed 's/addr://'|head -n 1)
 
@@ -83,6 +84,8 @@ else
 	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
 	#seeting srv as default servlet
 	cp i2b2-fhir-master/i2b2-fhir/install/standalone-with-dbs/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
+	cp $CONFIG_FILE_PATH i2b2-fhir-master/i2b2-fhir/dstu2/src/main/resources/application.properties
+	cp i2b2-fhir-master/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
 fi
 
 echo "Installing source code from githib repository"
@@ -119,5 +122,5 @@ sh $RUN_WF
 
 
 #mkdir -p $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main
-wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
-mv mysql-connector-java-5.1.9.jar $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main/
+#wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
+#mv mysql-connector-java-5.1.9.jar $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main/
