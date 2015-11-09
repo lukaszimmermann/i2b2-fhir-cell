@@ -1,5 +1,6 @@
 package edu.harvard.i2b2.oauth2.register.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -11,6 +12,8 @@ import javax.persistence.Id;
 public class ConfigDb {
 	@Id
 	String parameter;
+	
+	@Column(columnDefinition = "TEXT")
 	String value;
 	
 	

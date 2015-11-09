@@ -19,10 +19,11 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.enterprise.context.RequestScoped;
+
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.slf4j.Logger;
