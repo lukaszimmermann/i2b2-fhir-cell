@@ -30,6 +30,7 @@ import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.server.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
+import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.fhir.core.Project;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.oauth2.ws.OAuth2AuthzEndpoint;
@@ -199,7 +200,7 @@ public class I2b2AuthenticationManager implements Serializable {
 
 	}
 
-	public String selectProject() throws IOException {
+	public String selectProject() throws IOException, FhirServerException {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, Object> session = context.getExternalContext()
 				.getSessionMap();

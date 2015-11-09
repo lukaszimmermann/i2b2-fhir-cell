@@ -26,6 +26,11 @@ public class ConfigDb {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	@Override
+	public String toString() {
+		return "ConfigDb [parameter=" + parameter + ", value=" + value + "]";
+	}
+	
 	
 	
 }

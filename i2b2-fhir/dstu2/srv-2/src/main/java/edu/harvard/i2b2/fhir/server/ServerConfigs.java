@@ -13,6 +13,7 @@ package edu.harvard.i2b2.fhir.server;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -32,10 +33,11 @@ import edu.harvard.i2b2.oauth2.register.entity.ConfigDb;
 
 
 @Stateless
+@DependsOn("ConfigDbService")
 public class ServerConfigs {
 
 	@EJB
-	private ConfigDbManager configDbManager;
+	private ConfigDbService configDbService;
 
 	static private boolean openAccess;
 	static private int maxQueryThreads;
@@ -63,7 +65,7 @@ public class ServerConfigs {
 
 				openAccess = Boolean
 						.parseBoolean(GetString(ConfigParameter.openAccess));
-				maxQueryThreads = configC.getInt("maxQueryThreads");
+				maxQueryThreads = Integer.parseInt(GetString(ConfigParameter.maxQueryThreads));
 				
 				logger.info("initialized:"+configC.toString());
 				/*logger.info("initialized:" + "\ni2b2Url:" + i2b2Url
@@ -84,9 +86,11 @@ public class ServerConfigs {
 		String parName=configParameter.toString();
 		
 		logger.info("parName:"+parName);
-		if(configDbManager==null) logger.warn("configDbManager is null");;
-		//ConfigDb p=configDbManager.find(parName);
-		//if(p!=null) value=p.getValue();
+		if(configDbService==null) {logger.warn("configDbService is null");}
+		else{
+			ConfigDb p=configDbService.find(parName);
+			if(p!=null) value=p.getValue();
+		}
 		if(value==null){value=configC.getString(parName);}
 		return value;
 	}

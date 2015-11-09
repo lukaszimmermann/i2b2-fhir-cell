@@ -19,6 +19,7 @@ import org.w3c.dom.ranges.RangeException;
 
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.ProjectPatientMap;
 
@@ -38,7 +39,7 @@ public class ProjectPatientMapManager {
 		logger.debug("initailized");
 	}
 
-	public Bundle getProjectPatientBundle(AccessToken token) {
+	public Bundle getProjectPatientBundle(AccessToken token) throws FhirServerException {
 		ProjectPatientMap p = getProjectPatientMap(token.getResourceUserId(),
 				token.getI2b2Token(), token.getI2b2Url(),
 				token.getI2b2Domain(), token.getI2b2Project());
@@ -54,7 +55,7 @@ public class ProjectPatientMapManager {
 
 	public List<String> getProjectPatientList(String i2b2User,
 			String i2b2Token, String i2b2Url, String i2b2Domain,
-			String i2b2Project) {
+			String i2b2Project) throws FhirServerException {
 		ProjectPatientMap p = getProjectPatientMap(i2b2User, i2b2Token,
 				i2b2Url, i2b2Domain, i2b2Project);
 		List<String> list = Arrays.asList(p.getPatientIdList().replace("[", "")
@@ -64,7 +65,7 @@ public class ProjectPatientMapManager {
 
 	public ProjectPatientMap getProjectPatientMap(String i2b2User,
 			String i2b2Token, String i2b2Url, String i2b2Domain,
-			String i2b2Project) {
+			String i2b2Project) throws FhirServerException {
 
 		if (status.isComplete(i2b2Project)) {
 			return getProjectPatientMapLocking(i2b2Project);
@@ -89,7 +90,7 @@ public class ProjectPatientMapManager {
 	}
 
 	private void fetchPatientList(String i2b2User, String i2b2Token,
-			String i2b2Url, String i2b2Domain, String projectId) {
+			String i2b2Url, String i2b2Domain, String projectId) throws FhirServerException {
 		status.markProcessing(projectId);
 		try {
 			logger.trace("fetching all Patients for project:" + projectId);
@@ -101,6 +102,7 @@ public class ProjectPatientMapManager {
 			service.put(projectId, list, bundleXml);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			throw new FhirServerException("Could not fetch patient list from i2b2 server");
 		}
 		status.markComplete(projectId);
 	}
@@ -109,7 +111,7 @@ public class ProjectPatientMapManager {
 		return service.get(projectId);
 	}
 	
-	public boolean hasAccessToPatient(AccessToken token,String patientId){
+	public boolean hasAccessToPatient(AccessToken token,String patientId) throws FhirServerException{
 		String projectId=token.getI2b2Project();
 			ProjectPatientMap p = getProjectPatientMap(token.getResourceUserId(),
 					token.getI2b2Token(), token.getI2b2Url(),

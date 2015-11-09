@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.server.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
+import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbManager;
+import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbService;
 
 
 @Provider
@@ -47,6 +49,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 	@EJB
 	ServerConfigs serverConfig;
 	
+	
 
 	@Override
 	public void filter(ContainerRequestContext context) throws IOException {
@@ -55,6 +58,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 		logger.trace("Authorization header:" + authHeaderContent + "\n for"
 				+ context.getUriInfo().getPath().toString());
 
+		
 		if (serverConfig.GetString(ConfigParameter.openAccessToken) != null & serverConfig.isOpenAccess()
 				& context.getUriInfo().getPath().toString().startsWith("/open")) {
 			logger.debug("for open connection adding demo access token to header");

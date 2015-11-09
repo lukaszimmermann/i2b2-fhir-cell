@@ -52,7 +52,7 @@ public class I2b2Helper {
 	static Logger logger = LoggerFactory.getLogger(I2b2Helper.class);
 
 	static Bundle initAllPatients(AccessToken tok,
-			ProjectPatientMapManager service)  {
+			ProjectPatientMapManager service) throws FhirServerException  {
 		logger.info("Got request:" + tok);
 		Bundle allPatients = service.getProjectPatientBundle(tok);
 		logger.info("Got ResourceSet of size::" + allPatients.getEntry().size());
