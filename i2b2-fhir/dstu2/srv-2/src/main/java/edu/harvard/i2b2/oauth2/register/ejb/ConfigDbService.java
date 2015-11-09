@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.register.entity.ConfigDb;
 
 import javax.ejb.Singleton;
@@ -51,6 +52,12 @@ public class ConfigDbService {
 
 
 	public void createDefault() {
+		ServerConfigs sconfig=new ServerConfigs();
+		for(String key:sconfig.getKeys()){
+			//logger.trace("creating ConfigDb for:"+key);
+			create(key,sconfig.getFileConfigValue(key));
+		}
+		/*
 		create("p1","v1");
 		create("i2b2Url","http://services.i2b2.org:9090/i2b2");
 		create("i2b2Domain","i2b2demo");
@@ -69,6 +76,7 @@ public class ConfigDbService {
 		create("reportsPath","\\\\i2b2_REP\\i2b2\\Reports\\");
 		create("demoConfidentialClientId","webclient");
 		create("demoConfidentialClientSecret","1b6sg3bs72bs73bd73h3bs8ok8fb3bbftd7");
+		*/
 	}
 	
 	public void create(String parName,String value ) {

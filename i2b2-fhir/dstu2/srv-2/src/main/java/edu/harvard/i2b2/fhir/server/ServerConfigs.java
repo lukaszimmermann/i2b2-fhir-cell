@@ -11,6 +11,10 @@
 
 package edu.harvard.i2b2.fhir.server;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
 import javax.ejb.DependsOn;
@@ -114,6 +118,17 @@ public class ServerConfigs {
 		ServerConfigs.maxQueryThreads = maxQueryThreads;
 	}
 
+	public List<String> getKeys(){
+		List<String> list= new ArrayList<String>();
+		Iterator<String> i=configC.getKeys();
+		while(i.hasNext()){
+			list.add(i.next());
+		}
+		return list;
+	}
 	
+	public String getFileConfigValue(String parName){
+		return configC.getString(parName);
+	}
 
 }
