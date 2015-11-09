@@ -39,7 +39,6 @@ public class StartupConfig {
 	@EJB
 	ConfigDbService configDbService;
 
-	
 	@EJB
 	AccessTokenService accessTokenService;
 
@@ -51,23 +50,24 @@ public class StartupConfig {
 
 	@PostConstruct
 	public void init() {
-		
+
 		try {
-		userService.setup();
-		clientService.setup();
-		accessTokenService.setup();
-		configDbService.setup();
-		
-			/*patientBundleManager.getPatientBundle(
-					accessTokenService.find(Config.getOpenAccessToken()),
-					(String) Config.getDemoPatientId());
-			patientBundleManager.getPatientBundle(
-					accessTokenService.find(Config.getOpenAccessToken()),
-					(String) Config.getDemoPatientId());
-			*/
-			//projectPatientMapManager.getProjectPatientList(Config.openI2b2User,
-				//	Config.openI2b2Password, Config.i2b2Url, Config.i2b2Domain,
-					//Config.openI2b2Project);
+			configDbService.setup();
+			userService.setup();
+			clientService.setup();
+			accessTokenService.setup();
+
+			/*
+			 * patientBundleManager.getPatientBundle(
+			 * accessTokenService.find(Config.getOpenAccessToken()), (String)
+			 * Config.getDemoPatientId());
+			 * patientBundleManager.getPatientBundle(
+			 * accessTokenService.find(Config.getOpenAccessToken()), (String)
+			 * Config.getDemoPatientId());
+			 */
+			// projectPatientMapManager.getProjectPatientList(Config.openI2b2User,
+			// Config.openI2b2Password, Config.i2b2Url, Config.i2b2Domain,
+			// Config.openI2b2Project);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

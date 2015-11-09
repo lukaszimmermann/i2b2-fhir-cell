@@ -42,7 +42,7 @@ public class ConfigDbService {
 		// patientList<String>Hm=new HashMap<String,List<String>>();
 	}
 	public void setup() {
-		createBlank();
+		createDefault();
 		list();
 		find("p1");
 		// remove("client1");
@@ -50,13 +50,32 @@ public class ConfigDbService {
 	}
 
 
-	public void createBlank() {
+	public void createDefault() {
+		create("p1","v1");
+		create("i2b2Url","http://services.i2b2.org:9090/i2b2");
+		create("i2b2Domain","i2b2demo");
+		create("openAccessToken","1f4ffead29414d1977fba44e2bf4d8b7");
+		create("openAccess","true");
+		create("openI2b2User","demo");
+		create("openI2b2Password","demouser");
+		create("openI2b2Project","Demo");
+		create("openClientId","my_web_app");
+		create("demoPatientId","1000000005");
+		create("maxQueryThreads","2");
+		create("resourceCategoriesList","medications-labs-diagnoses-reports");
+		create("medicationPath","\\\\i2b2_MEDS\\i2b2\\Medications\\");
+		create("labsPath","\\\\i2b2_LABS\\i2b2\\Labtests\\");
+		create("diagnosesPath","\\\\i2b2_DIAG\\i2b2\\Diagnoses\\");
+		create("reportsPath","\\\\i2b2_REP\\i2b2\\Reports\\");
+		create("demoConfidentialClientId","webclient");
+		create("demoConfidentialClientSecret","1b6sg3bs72bs73bd73h3bs8ok8fb3bbftd7");
+	}
+	
+	public void create(String parName,String value ) {
 		ConfigDb d=new ConfigDb();
-		d.setParameter("p1");
-		d.setValue("p2");
+		d.setParameter(parName);
+		d.setValue(value);
 		create(d);
-		
-		
 	}
 
 	public void create(ConfigDb u) {
