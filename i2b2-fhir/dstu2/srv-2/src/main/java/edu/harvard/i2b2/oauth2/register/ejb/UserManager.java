@@ -22,6 +22,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.RandomStringUtils;
 
@@ -86,7 +87,7 @@ public class UserManager {
 			User authorizedUser=service.findByEmail(user.getEmail());
 			context.getExternalContext().getSessionMap()
 					.put("authenticatedUser", authorizedUser);
-			return "successlogin";
+			return "/user/successlogin";
 		}
 		{
 
@@ -104,9 +105,13 @@ public class UserManager {
 
 	public String logout() {
 		FacesContext context = FacesContext.getCurrentInstance();
-		user = new User();
+		
+
 		context.addMessage(null, new FacesMessage("Logout successful!"));
-		return "login";
+		
+        HttpSession httpSession = (HttpSession)context.getExternalContext().getSession(false);
+        httpSession.invalidate();
+		return "/login/signin";
 
 	}
 
