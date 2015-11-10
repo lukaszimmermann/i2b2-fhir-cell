@@ -11,7 +11,7 @@
 
 <h:dataTable value="#{configDbManager.list()}" var="c">
     <h:column>#{c.parameter}</h:column>  
-    <h:column>#{u.value}</h:column>  
+    <h:column>#{c.value}</h:column>  
     	</h:dataTable>
 		
 		<h:commandButton id="submit" value="Submit" action="register">

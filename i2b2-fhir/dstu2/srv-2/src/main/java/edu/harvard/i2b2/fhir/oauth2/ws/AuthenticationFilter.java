@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.server.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
-import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbManager;
 import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbService;
 
 
