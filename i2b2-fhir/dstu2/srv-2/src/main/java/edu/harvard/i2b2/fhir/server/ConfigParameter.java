@@ -12,6 +12,11 @@ public enum  ConfigParameter {
 	demoPatientId,
 	maxQueryThreads,
 	demoConfidentialClientId,
-	demoConfidentialClientSecret
+	demoConfidentialClientSecret,
+	resourceCategoriesList,
+	medicationPath,
+	labsPath,
+	diagnosesPath,
+	reportsPath
 
 }

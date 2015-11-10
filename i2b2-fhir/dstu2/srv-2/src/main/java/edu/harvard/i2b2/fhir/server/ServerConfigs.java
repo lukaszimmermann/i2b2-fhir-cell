@@ -12,6 +12,7 @@
 package edu.harvard.i2b2.fhir.server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,7 +32,6 @@ import org.apache.commons.configuration.SystemConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbManager;
 import edu.harvard.i2b2.oauth2.register.ejb.ConfigDbService;
 import edu.harvard.i2b2.oauth2.register.entity.ConfigDb;
 
@@ -120,9 +120,9 @@ public class ServerConfigs {
 
 	public List<String> getKeys(){
 		List<String> list= new ArrayList<String>();
-		Iterator<String> i=configC.getKeys();
-		while(i.hasNext()){
-			list.add(i.next());
+		ConfigParameter[] enumArr = ConfigParameter.values();
+		for(int i=0;i<enumArr.length;i++){
+			list.add(enumArr[i].toString());
 		}
 		return list;
 	}
