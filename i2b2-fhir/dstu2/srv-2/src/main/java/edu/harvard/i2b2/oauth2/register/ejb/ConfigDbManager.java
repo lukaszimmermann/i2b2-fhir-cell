@@ -7,6 +7,12 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIOutput;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +29,57 @@ public class ConfigDbManager {
 	@EJB
 	ConfigDbService service;
 
+	List<ConfigDb> list=null;
+	String lastSave;
 	
 	@PostConstruct
 	public void init(){
-		
+		list=service.list();
+		lastSave="h1";
 	}
-	//@EJB
-	//ConfigDbService service;
+	
+	public void save(AjaxBehaviorEvent evt){
+		String msg="";
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		
+		
+		for(UIComponent c:evt.getComponent().getParent().getChildren()){
+					UIComponent root = facesContext.getViewRoot();
+				      UIComponent component = root.findComponent(c.getId());
+				      if(component!=null)
+				      {  msg+="\n"+c.getId()+"="+component.toString();}
+						     
+		}
+		logger.trace("msg:"+msg);
+		logger.trace("running save:"+((UIOutput)evt.getSource()).getValue());
+		logger.trace("running save:"+((UIOutput)evt.getSource()).getValueExpression("label"));
+		
+		lastSave+="1";
+	}
+	
+	
+	public List<ConfigDb> getList() {
+		return list;
+	}
 
 	
-	//TODO check of the tok has a project which has the given pid
-	//check if scope allows access to the patient
 	
-	public List<ConfigDb> list() {
-		return service.list();
+	public void setList(List<ConfigDb> list) {
+		this.list = list;
 	}
+
+	public String getLastSave() {
+		return lastSave;
+	}
+
+	public void setLastSave(String lastSave) {
+		this.lastSave = lastSave;
+	}
+
+	
+	
+	
+		
+	
 	
 }

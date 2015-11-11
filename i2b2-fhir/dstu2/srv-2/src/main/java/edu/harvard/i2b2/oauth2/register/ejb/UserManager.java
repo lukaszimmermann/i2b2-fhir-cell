@@ -88,8 +88,7 @@ public class UserManager {
 			context.getExternalContext().getSessionMap()
 					.put("authenticatedUser", authorizedUser);
 			return "/user/successlogin";
-		}
-		{
+		}else{
 
 			context.addMessage(null, new FacesMessage(
 					FacesMessage.SEVERITY_ERROR, "Login failed.", null));
@@ -109,8 +108,9 @@ public class UserManager {
 
 		context.addMessage(null, new FacesMessage("Logout successful!"));
 		
-        HttpSession httpSession = (HttpSession)context.getExternalContext().getSession(false);
-        httpSession.invalidate();
+		HttpSession httpSession = (HttpSession) context.getExternalContext()
+				.getSession(false);
+		httpSession.invalidate();
 		return "/login/signin";
 
 	}
