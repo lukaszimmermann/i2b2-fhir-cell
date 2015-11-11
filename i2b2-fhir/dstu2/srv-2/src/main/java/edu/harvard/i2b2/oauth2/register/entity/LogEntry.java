@@ -9,9 +9,7 @@ import javax.persistence.Id;
  */
 
 @Entity 
-public class ConfigDb {
-	
-	private static final long serialVersionUID = 7284798170579315586L;
+public class LogEntry {
 	@Id
 	String parameter;
 	

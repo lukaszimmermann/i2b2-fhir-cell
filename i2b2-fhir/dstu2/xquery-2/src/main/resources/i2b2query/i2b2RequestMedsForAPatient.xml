@@ -76,7 +76,10 @@
 <output_option>
 	<patient_set select="using_input_list" onlykeys="false"/>
   <observation_set withmodifiers="true"
-blob="true" onlykeys="false" techdata = "true"/>
+ blob="true" onlykeys="false" techdata = "true"/>
+ 
+  
+  
 </output_option>
 		</ns3:request>
 	</message_body>

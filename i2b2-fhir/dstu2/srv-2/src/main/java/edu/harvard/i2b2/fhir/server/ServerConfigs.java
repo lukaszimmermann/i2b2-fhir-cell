@@ -64,8 +64,8 @@ public class ServerConfigs {
 				configC.addConfiguration(new SystemConfiguration());
 				configC.addConfiguration(new PropertiesConfiguration(
 						"application.properties"));
-				// config.addConfiguration(new PropertiesConfiguration(
-				// "/Users/kbw19/Syncplicity/confidential_data/config_local_pcori/confidential.properties"));
+				//configC.addConfiguration(new PropertiesConfiguration(
+				// "confidential.properties"));
 
 				openAccess = Boolean
 						.parseBoolean(GetString(ConfigParameter.openAccess));
@@ -95,7 +95,9 @@ public class ServerConfigs {
 			ConfigDb p=configDbService.find(parName);
 			if(p!=null) value=p.getValue();
 		}
-		if(value==null){value=configC.getString(parName);}
+		if(value==null){
+			value=configC.getString(parName);
+			}
 		return value;
 	}
 
