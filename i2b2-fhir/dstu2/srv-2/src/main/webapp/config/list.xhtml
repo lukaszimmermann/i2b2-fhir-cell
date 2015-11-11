@@ -27,9 +27,16 @@ function setName(p1){
     <h:column>#{c.parameter}</h:column>  
      <h:column>
     <h:inputText value="#{c.value}" > 
-    	<f:ajax render="result" execute="@this" listener="#{configDbManager.save}"/>
+    	
 	</h:inputText>
 	 </h:column>
+	 <h:column>
+    				
+    	<f:facet name="header">Action</f:facet>
+    				
+    	<h:commandLink value="Update" action="#{configDbManager.update(c)}" />
+    				
+</h:column>	
 </h:dataTable>
 
 </h:form>
