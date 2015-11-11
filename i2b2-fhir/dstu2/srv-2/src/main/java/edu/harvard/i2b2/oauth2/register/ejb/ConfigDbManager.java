@@ -57,6 +57,10 @@ public class ConfigDbManager {
 		lastSave+="1";
 	}
 	
+	public void update(ConfigDb c){
+		logger.trace("updating"+c.toString());
+		service.update(c);
+	}
 	
 	public List<ConfigDb> getList() {
 		return list;
