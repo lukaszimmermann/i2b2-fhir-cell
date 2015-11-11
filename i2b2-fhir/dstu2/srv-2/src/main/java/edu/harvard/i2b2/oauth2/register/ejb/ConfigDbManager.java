@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIOutput;
 import javax.faces.context.ExternalContext;
@@ -38,11 +39,28 @@ public class ConfigDbManager {
 		lastSave="h1";
 	}
 	
+	public String saveAction(){
+		
+		
+		logger.trace("saving all rows");
+		try{
+		for (ConfigDb c:list){
+			service.update(c);
+		}
+		}catch(Exception e){
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			facesContext.addMessage("", new FacesMessage( "Update error" ));
+		}
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		facesContext.addMessage("", new FacesMessage( "Update successfull" ));
+		return null;
+	}
+	
 	public void save(AjaxBehaviorEvent evt){
 		String msg="";
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		
-		
+		/*
 		for(UIComponent c:evt.getComponent().getParent().getChildren()){
 					UIComponent root = facesContext.getViewRoot();
 				      UIComponent component = root.findComponent(c.getId());
@@ -53,6 +71,7 @@ public class ConfigDbManager {
 		logger.trace("msg:"+msg);
 		logger.trace("running save:"+((UIOutput)evt.getSource()).getValue());
 		logger.trace("running save:"+((UIOutput)evt.getSource()).getValueExpression("label"));
+		*/
 		
 		lastSave+="1";
 	}

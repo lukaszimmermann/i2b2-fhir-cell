@@ -20,6 +20,8 @@ import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.core.CoreConfig;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
@@ -67,12 +69,13 @@ public class PatientBundleManager {
 		try{
 			if(tok==null) logger.error("AccessToken is null");
 			logger.trace("fetching PDO for pid:"+pid+" and tok"+tok);
-			//HashMap<String,String>map=null;
+			ServerConfigs sConfig= new ServerConfigs();
 			HashMap<String,String>map=new HashMap<String,String>();
-			map.put("medications",CoreConfig.getMedicationPath());
-			map.put("labs",CoreConfig.getLabsPath());
-			map.put("diagnoses",CoreConfig.getDiagnosesPath());
-			map.put("reports",CoreConfig.getReportsPath());
+			
+			map.put("medications",sConfig.GetString(ConfigParameter.medicationPath));
+			map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
+			map.put("diagnoses",sConfig.GetString(ConfigParameter.medicationPath));
+			map.put("reports",sConfig.GetString(ConfigParameter.reportsPath));
 			b=I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,map);
 			
 			FhirEnrich.enrich(b);

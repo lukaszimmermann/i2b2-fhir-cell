@@ -15,39 +15,39 @@ function setName(p1){
 </script>
 
 </h:head>
+
 <h:body>
 	<h:form>
 		<h2>List Config</h2>
 
 <div id="name"/>
 
-<h:form id="form1">
 
 <h:dataTable value="#{configDbManager.list}" var="c">
     <h:column>#{c.parameter}</h:column>  
      <h:column>
-    <h:inputText value="#{c.value}" > 
+	    <h:inputText value="#{c.value}" > 
     	
-	</h:inputText>
+		</h:inputText>
 	 </h:column>
 	 <h:column>
     				
     	<f:facet name="header">Action</f:facet>
     				
-    	<h:commandLink value="Update" action="#{configDbManager.update(c)}" />
+    	<h:commandLink value="Update"  immediate="true" action="#{configDbManager.update(c)}" />
     				
 </h:column>	
 </h:dataTable>
 
-</h:form>
+
 	<h:inputText id="result" value="#{configDbManager.lastSave}" />
 	
 	<h:commandButton value ="Run" type ="button" actionListener ="#{configDbManager.save}"> 
+	
+	 <h:commandButton value="Save Changes" action="#{configDbManager.saveAction}" />
 		
 	</h:commandButton>
 		
-		<h:commandButton  value="Submit" action="register">
-		</h:commandButton>
 		<h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
 	</h:form>
