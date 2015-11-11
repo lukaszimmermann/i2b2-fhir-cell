@@ -58,7 +58,8 @@ public class WebsiteFilter implements Filter {
 		String servletPath = ((HttpServletRequest) request).getServletPath();
 		logger.info("url:" + url);
 		
-		if ((servletPath.startsWith("/user") || servletPath.startsWith("/config")
+		if ((servletPath.startsWith("/user") 
+				//|| servletPath.startsWith("/config")
 				 || servletPath.startsWith("/client"))) {
 
 			Object u = ((HttpServletRequest) request).getSession()
