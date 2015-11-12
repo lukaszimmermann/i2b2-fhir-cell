@@ -74,8 +74,12 @@
 	<patient_set select="using_input_list" onlykeys="false"/>
   <observation_set withmodifiers="true"
 blob="true" onlykeys="false" techdata = "true"/>
-<modifier_set_using_filter_list/>
-
+<modifier_set_using_filter_list select="using_filter_list"
+onlykeys="false"/>
+<dimension_set_using_filter_list dimensionname="dimension1"
+onlykeys="false"/>
+<concept_set_using_filter_list select="using_filter_list"
+onlykeys="false"/>
 </output_option>
 		</ns3:request>
 	</message_body>
