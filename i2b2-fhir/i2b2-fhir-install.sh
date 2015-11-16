@@ -83,28 +83,33 @@ else
 	echo $CMD
 	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
 	#seeting srv as default servlet
-	cp i2b2-fhir-master/i2b2-fhir/install/standalone-with-dbs/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
-	cp $CONFIG_FILE_PATH i2b2-fhir-master/i2b2-fhir/dstu2/src/main/resources/application.properties
-	cp i2b2-fhir-master/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
+	cp i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
+	#cp $CONFIG_FILE_PATH i2b2-fhir-branch/i2b2-fhir/dstu2/src/main/resources/application.properties
 fi
 
 echo "Installing source code from githib repository"
 
-if [ -f master.zip ]
+if [ -f branch.zip ]
 then echo ""
 else
      wget "https://github.com/waghsk/i2b2-fhir/archive/$BRANCH.zip" 
-        mv "$BRANCH.zip" master.zip
-        unzip master.zip
-        mv i2b2-fhir-$BRANCH/ i2b2-fhir-master/
+        mv "$BRANCH.zip" branch.zip
+        unzip branch.zip
+fi
+
+echo PWD:$PWD
+if [ -d i2b2-fhir-branch ]
+then echo ""
+        mv "i2b2-fhir-$BRANCH/" i2b2-fhir-branch/
         #git clone https://github.com/waghsk/i2b2-fhir.git
+	cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
 fi
 
 alias mvn=$MVN
 
 echo "Compiling and deploying war"
 
-cd i2b2-fhir-master/i2b2-fhir/;
+cd i2b2-fhir-branch/i2b2-fhir/;
 mvn clean install -Dmaven.test.skip=true; 
 cd dstu2 ;
 mvn clean install -Dmaven.test.skip=true; 
@@ -112,7 +117,6 @@ mvn clean install -Dmaven.test.skip=true;
 
 #deploy
 cp srv-2/target/*.war $DEPLOY_DIR
-cp smart-2/target/*.war $DEPLOY_DIR
 
 echo "running server on port 8080"
 
