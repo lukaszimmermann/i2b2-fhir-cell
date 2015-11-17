@@ -117,6 +117,7 @@ mvn clean install -Dmaven.test.skip=true;
 
 #deploy
 cp srv-2/target/*.war $DEPLOY_DIR
+cp smart-2/target/*.war $DEPLOY_DIR
 
 echo "running server on port 8080"
 
