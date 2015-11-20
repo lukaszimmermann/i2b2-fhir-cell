@@ -100,6 +100,7 @@ fi
 echo PWD:$PWD
 if [ -d i2b2-fhir-branch ]
 then echo ""
+else
         mv "i2b2-fhir-$BRANCH/" i2b2-fhir-branch/
         #git clone https://github.com/waghsk/i2b2-fhir.git
 	cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
