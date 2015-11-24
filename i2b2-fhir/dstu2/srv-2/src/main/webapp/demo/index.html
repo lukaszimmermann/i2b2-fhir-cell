@@ -50,7 +50,7 @@
 	path=RemoveLastDirectoryPartOf(path)+"/";
 	//var basePath=path.split("/")[1];
 	//var fhirServerBase="http://"+location.host+"/"+basePath;
-	var fhirServerBase="http://"+location.host+path+"api/open"
+	var fhirServerBase=window.location.protocol+"//"+location.host+path+"api/open"
 	 
 	function runMyFunction2() {
 		runMyFunction(document.getElementById("url_bar").value);
