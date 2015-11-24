@@ -27,6 +27,7 @@ public class LogEntry {
 	int userId;
 
 	String clientId;
+	@Column(columnDefinition = "TEXT")
 	String url;
 
 	@Column(columnDefinition = "TEXT")
