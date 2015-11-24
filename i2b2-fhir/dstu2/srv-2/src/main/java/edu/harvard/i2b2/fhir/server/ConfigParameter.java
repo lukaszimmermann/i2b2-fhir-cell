@@ -17,6 +17,6 @@ public enum  ConfigParameter {
 	medicationPath,
 	labsPath,
 	diagnosesPath,
-	reportsPath
-
+	reportsPath,
+	ontologyType
 }

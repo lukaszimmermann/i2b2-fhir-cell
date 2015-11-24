@@ -13,6 +13,7 @@ package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,7 +45,6 @@ import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.AuthToken;
 
-
 @Singleton
 public class AccessTokenService {
 	static Logger logger = LoggerFactory.getLogger(AccessTokenService.class);
@@ -54,8 +54,8 @@ public class AccessTokenService {
 
 	@Inject
 	ServerConfigs serverConfig;
-	
-	//@PostConstruct
+
+	// @PostConstruct
 	public void setup() {
 		try {
 			Random r = new Random();
@@ -69,16 +69,14 @@ public class AccessTokenService {
 
 	public void deleteAllAccessTokens() {
 		try {
-			em.createQuery("delete from accesstoken where id!='-';")
-					.executeUpdate();
+			em.createQuery("delete from accesstoken where id!='-';").executeUpdate();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			throw new EJBException(ex.getMessage());
 		}
 	}
 
-	public AccessToken createAccessToken(String authCode,
-			String resourceUserId, String i2b2Token, String i2b2Project,
+	public AccessToken createAccessToken(String authCode, String resourceUserId, String i2b2Token, String i2b2Project,
 			String clientId, String scope) {
 		try {
 			AccessToken tok = new AccessToken();
@@ -101,33 +99,35 @@ public class AccessTokenService {
 		}
 	}
 
-	public AccessToken createIfNotExistsDemoAccessToken() {
+	public void createIfNotExistsDemoAccessToken() {
 		try {
 			AccessToken tok = null;
-			logger.info("default token exists? ..");
-			tok = em.find(AccessToken.class, serverConfig.GetString(ConfigParameter.openAccessToken));
-		
-			if (tok == null) {
-
-				tok = new AccessToken();
-				tok.setTokenString(serverConfig.GetString(ConfigParameter.openAccessToken));
-				tok.setResourceUserId(serverConfig.GetString(ConfigParameter.openI2b2User));
-				tok.setI2b2Token(serverConfig.GetString(ConfigParameter.openI2b2Password));
-				tok.setClientId(serverConfig.GetString(ConfigParameter.openClientId));
-				tok.setScope("user *.read");
-				tok.setI2b2Url(serverConfig.GetString(ConfigParameter.i2b2Url));
-				tok.setI2b2Project(serverConfig.GetString(ConfigParameter.openI2b2Project));
-				tok.setI2b2Domain(serverConfig.GetString(ConfigParameter.i2b2Domain));
-				tok.setCreatedDate(new Date());
-				tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
 			
-				logger.info("Demo token does not exist; Hence creating .."
-						+ tok.toString());
-				em.persist(tok);
-				logger.info("Persisted " + tok.toString());
+		
+			for (String tokString : Arrays.asList(serverConfig.GetString(ConfigParameter.openAccessToken).split("\\|"))) {
+				logger.info("default tokens exists? ..:"+tokString);
+				tok = em.find(AccessToken.class, tokString);
+
+				if (tok == null) {
+					tok = new AccessToken();
+					tok.setTokenString( tokString);
+					tok.setResourceUserId(serverConfig.GetString(ConfigParameter.openI2b2User));
+					tok.setI2b2Token(serverConfig.GetString(ConfigParameter.openI2b2Password));
+					tok.setClientId(serverConfig.GetString(ConfigParameter.openClientId));
+					tok.setScope("user *.read");
+					tok.setI2b2Url(serverConfig.GetString(ConfigParameter.i2b2Url));
+					tok.setI2b2Project(serverConfig.GetString(ConfigParameter.openI2b2Project));
+					tok.setI2b2Domain(serverConfig.GetString(ConfigParameter.i2b2Domain));
+					tok.setCreatedDate(new Date());
+					tok.setExpiryDate(DateUtils.addYears(new Date(), 1000));
+
+					logger.info("Demo token does not exist; Hence creating .." + tok.toString());
+					em.persist(tok);
+					logger.info("Persisted " + tok.toString());
+				}
 			}
 			logger.trace("returning:" + tok.toString());
-			return tok;
+			
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 			throw new EJBException(ex.getMessage());
@@ -139,10 +139,9 @@ public class AccessTokenService {
 	 */
 	public AccessToken createAccessTokenAndDeleteAuthToken(AuthToken authToken) {
 		try {
-			OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(
-					new MD5Generator());
+			OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
 			final String accessTokenCode = oauthIssuerImpl.accessToken();
-			
+
 			AccessToken tok = new AccessToken();
 			tok.setTokenString(accessTokenCode);
 			tok.setResourceUserId(authToken.getResourceUserId());
@@ -154,32 +153,32 @@ public class AccessTokenService {
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
 			tok.setI2b2Url(authToken.getI2b2Url());
 			tok.setI2b2Domain(authToken.getI2b2Domain());
-			
+
 			logger.info("Created .." + tok.toString());
-			////em.getTransaction().begin();
+			//// em.getTransaction().begin();
 			em.persist(tok);
 
 			AuthToken authTok = em.find(AuthToken.class, authToken.getAuthorizationCode());
-			if (authTok==null) throw new RuntimeException("auth Tok was not found");
-			logger.info("Removing authTok " );
+			if (authTok == null)
+				throw new RuntimeException("auth Tok was not found");
+			logger.info("Removing authTok ");
 			em.remove(authTok);
-			
-			////em.getTransaction().commit();
-			
+
+			//// em.getTransaction().commit();
+
 			logger.info("Persisted " + tok.toString());
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			//em.getTransaction().rollback();
+			// em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 	}
 
 	public List<AccessToken> getAuthTokens() {
 		try {
-			List<AccessToken> tokens = em.createQuery("from AccessToken")
-					.getResultList();
-			//em.getTransaction().commit();
+			List<AccessToken> tokens = em.createQuery("from AccessToken").getResultList();
+			// em.getTransaction().commit();
 			return tokens;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -189,11 +188,11 @@ public class AccessTokenService {
 
 	public void removeAccessToken(AccessToken authToken) {
 		try {
-			//em.getTransaction().begin();
+			// em.getTransaction().begin();
 			em.remove(authToken);
-			//em.getTransaction().commit();
+			// em.getTransaction().commit();
 		} catch (Exception ex) {
-			//em.getTransaction().rollback();
+			// em.getTransaction().rollback();
 			logger.error(ex.getMessage(), ex);
 			throw new EJBException(ex.getMessage());
 		}
@@ -201,19 +200,19 @@ public class AccessTokenService {
 
 	public AccessToken find(String accessCode) {
 		try {
-			//em.getTransaction().begin();
-			logger.trace("find accesstok with id:"+accessCode);
+			// em.getTransaction().begin();
+			logger.trace("find accesstok with id:" + accessCode);
 			AccessToken tok = em.find(AccessToken.class, accessCode);
 			if (tok != null) {
 				logger.info("returning :" + tok);
 			} else {
 				logger.info("NOT found");
 			}
-			//em.getTransaction().commit();
+			// em.getTransaction().commit();
 			return tok;
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			//em.getTransaction().rollback();
+			// em.getTransaction().rollback();
 			throw new EJBException(ex.getMessage());
 		}
 
@@ -221,22 +220,18 @@ public class AccessTokenService {
 
 	public void listAccessTokens() {
 		try {
-			//em.getTransaction().begin();
+			// em.getTransaction().begin();
 			@SuppressWarnings("unchecked")
-			List<AccessToken> list = em.createQuery("from AccessToken")
-					.getResultList();
-			for (Iterator<AccessToken> iterator = list.iterator(); iterator
-					.hasNext();) {
+			List<AccessToken> list = em.createQuery("from AccessToken").getResultList();
+			for (Iterator<AccessToken> iterator = list.iterator(); iterator.hasNext();) {
 				AccessToken a = (AccessToken) iterator.next();
 				logger.info(a.toString());
 			}
-			//em.getTransaction().commit();
+			// em.getTransaction().commit();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-			//em.getTransaction().rollback();
+			// em.getTransaction().rollback();
 		}
 	}
-
-	
 
 }
