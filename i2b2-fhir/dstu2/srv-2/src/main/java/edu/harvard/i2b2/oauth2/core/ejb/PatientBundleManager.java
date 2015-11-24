@@ -103,7 +103,7 @@ public class PatientBundleManager {
 					map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
 					break;
 				case "diagnoses":
-					map.put("diagnoses", sConfig.GetString(ConfigParameter.medicationPath));
+					map.put("diagnoses", sConfig.GetString(ConfigParameter.diagnosesPath));
 					break;
 				case "reports":
 					map.put("reports", sConfig.GetString(ConfigParameter.reportsPath));
@@ -114,7 +114,7 @@ public class PatientBundleManager {
 					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map,
 					serverConfig.GetString(ConfigParameter.ontologyType));
 
-			// FhirEnrich.enrich(b);
+			if(sConfig.GetString(ConfigParameter.enrichEnabled).equals("true")){FhirEnrich.enrich(b);}
 			logger.trace("fetched bundle of size:" + b.getEntry().size());
 
 		} catch (Exception e) {

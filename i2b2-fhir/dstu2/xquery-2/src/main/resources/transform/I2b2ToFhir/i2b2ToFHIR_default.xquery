@@ -233,14 +233,14 @@ declare function local:fnMetaData($class as xs:string,$pid as xs:string?,$count 
 </ns3:MetaData>
 };
 
-declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timingScheduleFhir as node()?, $routeFhir as node()?,$doseQuantityFhir as node()?, $medication_id as xs:string?,
+declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingScheduleFhir as node()?, $routeFhir as node()?,$doseQuantityFhir as node()?, $medication_id as xs:string?,
         $sd as xs:string, $ed as xs:string, $pid as xs:string?,$instr as xs:string?) as node(){
  
-  <MedicationOrder xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+  <MedicationStatement xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
  
   
-<!--<identifier value="MedicationPrescription/{$pid}-{$count}"/>-->
+<!--<identifier value="MedicationStatement/{$pid}-{$count}"/>-->
    <dateWritten value="{$sd}"/>
    
    <text>
@@ -275,7 +275,7 @@ declare function local:fnFhirMedicationPrescription($count as xs:integer?, $timi
     </dosageInstruction>
 
   
-</MedicationOrder>
+</MedicationStatement>
  
 };
 
@@ -393,7 +393,7 @@ let $routeFhir:=local:fnRoute($route)
 let $doseQuantityFhir:=local:fnDoseFhir($dose,$doseUnit)
 
 
-let $fhirMedicationPrescription:=local:fnFhirMedicationPrescription($count,$timingScheduleFhir,$routeFhir,$doseQuantityFhir,$medication_id,$sd,$ed,$pid,$instr)
+let $fhirMedicationStatement:=local:fnFhirMedicationStatement($count,$timingScheduleFhir,$routeFhir,$doseQuantityFhir,$medication_id,$sd,$ed,$pid,$instr)
 
 
 
@@ -406,7 +406,7 @@ return
 </entry>
 <entry xmlns="http://hl7.org/fhir">
 <resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-{$fhirMedicationPrescription}
+{$fhirMedicationStatement}
 </resource>
 </entry>
 </set>
@@ -490,7 +490,7 @@ for $id at $count in fn:distinct-values($A/observation/id)
 let $refObs :=  $A/observation[id =$id][1] (:why does some diagnosis in i2b2 have more than one modified cd?:)
 
 let $pid := $refObs/patient_id/text()
-let $cid := $refObs/concept_cd/text()
+let $cid := fn:replace($refObs/concept_cd/text(),"ICD9:","")
 
 
 
