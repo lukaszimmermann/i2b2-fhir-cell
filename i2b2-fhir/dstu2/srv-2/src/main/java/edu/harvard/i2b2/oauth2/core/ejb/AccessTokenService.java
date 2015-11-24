@@ -59,10 +59,8 @@ public class AccessTokenService {
 	public void setup() {
 		try {
 			Random r = new Random();
-			if (serverConfig.GetString(ConfigParameter.openAccessToken) != null) {
-				createIfNotExistsDemoAccessToken();
-			}
-		} catch (Exception ex) {
+			createIfNotExistsConfigTokens();
+			} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 		}
 	}
@@ -99,12 +97,17 @@ public class AccessTokenService {
 		}
 	}
 
-	public void createIfNotExistsDemoAccessToken() {
+	public void createIfNotExistsConfigTokens() {
 		try {
 			AccessToken tok = null;
-			
+			List<String> tokStrList=new ArrayList<String>();
+			if(serverConfig.GetString(ConfigParameter.openAccessToken)!=null)
+				tokStrList.add(serverConfig.GetString(ConfigParameter.openAccessToken));
+			if(serverConfig.GetString(ConfigParameter.nonExpiringTokenList)!=null)
+				tokStrList.addAll(Arrays.asList(serverConfig.GetString(ConfigParameter.nonExpiringTokenList).split("\\|")));
 		
-			for (String tokString : Arrays.asList(serverConfig.GetString(ConfigParameter.openAccessToken).split("\\|"))) {
+			
+			for (String tokString : tokStrList) {
 				logger.info("default tokens exists? ..:"+tokString);
 				tok = em.find(AccessToken.class, tokString);
 
