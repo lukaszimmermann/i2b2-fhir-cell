@@ -1,10 +1,13 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 
@@ -25,10 +28,12 @@ import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
-
 @Stateful
 public class PatientBundleManager {
 	static Logger logger = LoggerFactory.getLogger(PatientBundleManager.class);
+	int timeOutInSecs;// will time out after
+	Date callReceiptDt;
+	Date timeOutDt;
 
 	@EJB
 	PatientBundleService service;
@@ -36,11 +41,20 @@ public class PatientBundleManager {
 	@EJB
 	BundleStatus status;
 
-	//TODO check of the tok has a project which has the given pid
-	//check if scope allows access to the patient
-	
-	public Bundle getPatientBundle(AccessToken tok, String pid) throws FhirServerException {
+	@Inject
+	ServerConfigs serverConfig;
 
+	@PostConstruct
+	void init() {
+		timeOutInSecs = Integer.parseInt(serverConfig.GetString(ConfigParameter.patientBundleTimeOut));
+	}
+	// TODO check of the tok has a project which has the given pid
+	// check if scope allows access to the patient
+
+	public Bundle getPatientBundle(AccessToken tok, String pid) throws FhirServerException {
+		callReceiptDt = new Date();
+		timeOutDt = ((Date) callReceiptDt.clone());
+		timeOutDt.setSeconds(callReceiptDt.getSeconds() + timeOutInSecs);
 		if (status.isComplete(pid)) {
 			return getPatientBundleLocking(pid);
 		}
@@ -51,13 +65,17 @@ public class PatientBundleManager {
 
 		while (status.isProcessing(pid)) {
 			logger.info("waiting on complete status");
-			try{
+			try {
+				Date now = new Date();
+				if (now.after(timeOutDt)) {
+					throw new InterruptedException("Waiting time execeed patientBundleTimeOut parameter of:" + timeOutInSecs);
+				}
 				Thread.sleep(1000);
-			}catch(InterruptedException e){
-				logger.error(e.getMessage(),e);
+			} catch (InterruptedException e) {
+				throw new FhirServerException(e.getMessage(), e);
 			}
 		}
-		if(status.isFailed(pid)){
+		if (status.isFailed(pid)) {
 			throw new FhirServerException("Processing has Failed");
 		}
 		return getPatientBundle(tok, pid);
@@ -65,24 +83,26 @@ public class PatientBundleManager {
 
 	private void fetchPatientBundle(AccessToken tok, String pid) throws FhirServerException {
 		status.markProcessing(pid);
-		Bundle b= new Bundle();
-		try{
-			if(tok==null) logger.error("AccessToken is null");
-			logger.trace("fetching PDO for pid:"+pid+" and tok"+tok);
-			ServerConfigs sConfig= new ServerConfigs();
-			HashMap<String,String>map=new HashMap<String,String>();
-			
-			map.put("medications",sConfig.GetString(ConfigParameter.medicationPath));
+		Bundle b = new Bundle();
+		try {
+			if (tok == null)
+				logger.error("AccessToken is null");
+			logger.trace("fetching PDO for pid:" + pid + " and tok" + tok);
+			ServerConfigs sConfig = new ServerConfigs();
+			HashMap<String, String> map = new HashMap<String, String>();
+
+			map.put("medications", sConfig.GetString(ConfigParameter.medicationPath));
 			map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
-			map.put("diagnoses",sConfig.GetString(ConfigParameter.medicationPath));
-			map.put("reports",sConfig.GetString(ConfigParameter.reportsPath));
-			b=I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(), tok.getI2b2Url(),tok.getI2b2Domain(), tok.getI2b2Project(), pid,map);
-			
+			map.put("diagnoses", sConfig.GetString(ConfigParameter.medicationPath));
+			map.put("reports", sConfig.GetString(ConfigParameter.reportsPath));
+			b = I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(),
+					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map,serverConfig.GetString(ConfigParameter.ontologyType)	);
+
 			FhirEnrich.enrich(b);
-			logger.trace("fetched bundle of size:"+b.getEntry().size());
-					
-		}catch(Exception e){
-			logger.error(e.getMessage(),e);
+			logger.trace("fetched bundle of size:" + b.getEntry().size());
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			status.markFailed(pid);
 			throw new FhirServerException(e);
 		}
@@ -91,14 +111,13 @@ public class PatientBundleManager {
 	}
 
 	private Bundle getPatientBundleLocking(String pid) {
-			Bundle b=service.get(pid);
-			try{
-				logger.trace("returning Bundle:"+JAXBUtil.toXml(b));
-			}catch(JAXBException e){
-				logger.error(e.getMessage(),e);
-			}
-			return b;
+		Bundle b = service.get(pid);
+		try {
+			logger.trace("returning Bundle:" + JAXBUtil.toXml(b));
+		} catch (JAXBException e) {
+			logger.error(e.getMessage(), e);
+		}
+		return b;
 	}
 
-	
 }
