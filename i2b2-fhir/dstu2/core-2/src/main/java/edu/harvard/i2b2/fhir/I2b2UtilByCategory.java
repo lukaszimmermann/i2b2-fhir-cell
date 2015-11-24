@@ -78,10 +78,10 @@ public class I2b2UtilByCategory {
 	}
 
 	private static String getTransformQueryForAResourceCategory(
-			String resourceCategory) throws FhirCoreException, IOException {
+			String resourceCategory,String ontologyType) throws FhirCoreException, IOException {
 		String xml = IOUtils
 				.toString(FhirUtil.class
-						.getResourceAsStream("/transform/I2b2ToFhir/i2b2ToFHIR.xquery"));
+						.getResourceAsStream("/transform/I2b2ToFhir/i2b2ToFHIR_"+ontologyType+".xquery"));
 		String functionString = "";
 		switch (resourceCategory) {
 		case "medications":
@@ -110,7 +110,7 @@ public class I2b2UtilByCategory {
 	public static Bundle getAllDataForAPatientAsFhirBundle(String i2b2User,
 			String i2b2Token, String i2b2Url, String I2b2Domain,
 			String project, String patientId,
-			HashMap<String, String> categoryPathMap) throws FhirCoreException {
+			HashMap<String, String> categoryPathMap,String ontologyType) throws FhirCoreException {
 		// cycle thru resource categories and get bundles
 		String entryXmlCumulative = "";
 		Patient p = null;
@@ -144,7 +144,7 @@ public class I2b2UtilByCategory {
 				if (p == null) {
 					p = FhirUtil.getPatientResource(i2b2ResponseXml);
 				}
-				String query = getTransformQueryForAResourceCategory(rc);
+				String query = getTransformQueryForAResourceCategory(rc,ontologyType);
 
 				String bundleXml = XQueryUtil.processXQuery(query,
 						i2b2ResponseXml);
