@@ -57,7 +57,7 @@ public class I2b2UtilByCategoryTest {
 
 	@Test
 	public void getAllData() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure, FhirCoreException {
-		I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId, null);
+		I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(i2b2User, i2b2Password, i2b2Url, i2b2Domain, projectId, patientId, null,"default");
 	}
 	
 }

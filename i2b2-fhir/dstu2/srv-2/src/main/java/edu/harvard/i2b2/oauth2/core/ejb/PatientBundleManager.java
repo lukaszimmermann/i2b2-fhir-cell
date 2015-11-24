@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -68,7 +69,8 @@ public class PatientBundleManager {
 			try {
 				Date now = new Date();
 				if (now.after(timeOutDt)) {
-					throw new InterruptedException("Waiting time execeed patientBundleTimeOut parameter of:" + timeOutInSecs);
+					throw new InterruptedException(
+							"Waiting time execeed patientBundleTimeOut parameter of:" + timeOutInSecs);
 				}
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
@@ -87,18 +89,32 @@ public class PatientBundleManager {
 		try {
 			if (tok == null)
 				logger.error("AccessToken is null");
-			logger.trace("fetching PDO for pid:" + pid + " and tok" + tok);
 			ServerConfigs sConfig = new ServerConfigs();
+			logger.trace("fetching PDO for pid:" + pid + " and tok" + tok+" for categories:"+sConfig.GetString(ConfigParameter.resourceCategoriesList));
+			
 			HashMap<String, String> map = new HashMap<String, String>();
-
-			map.put("medications", sConfig.GetString(ConfigParameter.medicationPath));
-			map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
-			map.put("diagnoses", sConfig.GetString(ConfigParameter.medicationPath));
-			map.put("reports", sConfig.GetString(ConfigParameter.reportsPath));
+			
+			for (String cat : Arrays.asList(sConfig.GetString(ConfigParameter.resourceCategoriesList).split("-"))) {
+				switch (cat) {
+				case "medications":
+					map.put("medications", sConfig.GetString(ConfigParameter.medicationPath));
+					break;
+				case "labs":
+					map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
+					break;
+				case "diagnoses":
+					map.put("diagnoses", sConfig.GetString(ConfigParameter.medicationPath));
+					break;
+				case "reports":
+					map.put("reports", sConfig.GetString(ConfigParameter.reportsPath));
+					break;
+				}
+			}
 			b = I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(),
-					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map,serverConfig.GetString(ConfigParameter.ontologyType)	);
+					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map,
+					serverConfig.GetString(ConfigParameter.ontologyType));
 
-			FhirEnrich.enrich(b);
+			// FhirEnrich.enrich(b);
 			logger.trace("fetched bundle of size:" + b.getEntry().size());
 
 		} catch (Exception e) {

@@ -62,10 +62,10 @@ public class ServerConfigs {
 				configC = new CompositeConfiguration();
 
 				configC.addConfiguration(new SystemConfiguration());
-				configC.addConfiguration(new PropertiesConfiguration(
-						"application.properties"));
 				//configC.addConfiguration(new PropertiesConfiguration(
-				// "confidential.properties"));
+				//		"application.properties"));
+				configC.addConfiguration(new PropertiesConfiguration(
+				 "confidential.properties"));
 
 				openAccess = Boolean
 						.parseBoolean(GetString(ConfigParameter.openAccess));
