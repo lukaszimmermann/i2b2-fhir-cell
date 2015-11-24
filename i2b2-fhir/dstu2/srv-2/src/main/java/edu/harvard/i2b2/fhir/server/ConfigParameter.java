@@ -20,5 +20,6 @@ public enum  ConfigParameter {
 	reportsPath,
 	ontologyType,
 	nonExpiringTokenList,
-	patientBundleTimeOut
+	patientBundleTimeOut,
+	enrichEnabled
 }
