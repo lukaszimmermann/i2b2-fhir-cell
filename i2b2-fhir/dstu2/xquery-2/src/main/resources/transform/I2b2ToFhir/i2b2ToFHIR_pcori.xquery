@@ -95,7 +95,7 @@ declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string*, 
 };
 
 
-declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string, $valueFhir as node()?) as node(){     
+declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$count as xs:integer,$cn as xs:string?, $cid as xs:string, $pid as xs:string, $valueFhir as node()?) as node(){     
   let $endDateString:=
     if($ed != "") then
     <end value="{$ed}"/>
@@ -167,7 +167,7 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 };
 
 
-declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string) as node(){           
+declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string,$cn as xs:string?) as node(){           
    <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <status value="generated"/>
@@ -182,6 +182,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
+      <display value="{$cn}"/>
     </coding>/
   </code>
   <category>
@@ -403,7 +404,7 @@ let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 let $pid := $refObs/patient_id/text()
 
-let $cn:=$cnAll[concept_cd[string()=$cid]]/name_char/string()
+let $cn:=$cnAll[concept_cd[string()=$cid]][1]/name_char/string()
 (:
 let $cnPath:=$cnAll[concept_cd[string()=$cid]]/concept_path/string()
 let $rxs:=tokenize($cnPath,"\\")[last()-2]
@@ -469,7 +470,8 @@ let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 let $pid := $refObs/patient_id/text()
 
-let $cn:=$cnAll[concept_cd[string()=$cid]]/name_char/string()
+
+let $cn:=$cnAll[concept_cd[string()=$cid]][1]/name_char/string()
 
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid,"http://local-meds")
 
@@ -503,7 +505,7 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 };
 
 declare function local:processLabObs
-  ( $A as node()* )  as node()*
+  ( $A as node()* , $C as node()*)  as node()*
 {
 
 let $O:=
@@ -512,7 +514,6 @@ let $refObs :=  $A/observation[id =$id]
 
 let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
-let $cn := $refObs/concept_cd/@name/string()
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
 let $ed := $refObs/end_date/text()
@@ -521,6 +522,8 @@ let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 
+let $cnAll:=$C/concept
+let $cn:=$cnAll[concept_cd[string()=$cid]][1]/name_char/string()
 
 let $valType:= $refObs/valuetype_cd/text()
 let $nval:=$refObs/nval_num/text()
@@ -565,7 +568,7 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 
 
 declare function local:processDiagObs
-  ( $A as node()* )  as node()*
+  ( $A as node()* , $C as node()*)  as node()*
 {
 
 let $O:=
@@ -587,8 +590,10 @@ let $updateDate := $refObs/@update_date/string()
 
 let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
 
+let $cnAll:=$C/concept
+let $cn:=$cnAll[concept_cd[string()=$cid]][1]/name_char/string()
 
-let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid, $pid )
+let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid, $pid ,$cn)
 
 return 
  <set>
@@ -656,7 +661,7 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 
 
 
-let $I:=doc('/Users/***REMOVED***/Syncplicity/shared/meds.xml')
+let $I:=doc('/Users/***REMOVED***/Syncplicity/shared/labs.xml')
 (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/diagnosisForAPatient.xml'):)
 (:root()doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
 (:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
@@ -676,6 +681,8 @@ return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fh
 
 
 
+{local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
+{local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
 {local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
 {local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
@@ -683,6 +690,10 @@ return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fh
 
 
 (:
+
+
+let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhirValue)
+
 valueQuantity
 
  

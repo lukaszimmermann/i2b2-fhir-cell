@@ -27,22 +27,19 @@ public class I2b2UtilByCategory {
 	 * {local:processDiagObs(<A>{$diagObs}</A>)/entry} :)
 	 * (:INSERT_RESOURCE_FUNCTION_HERE:)
 	 */
-	public static String getI2b2ResponseXmlForAResourceCategory(
-			String i2b2User, String i2b2Token, String i2b2Url,
-			String I2b2Domain, String project, String patientId,
-			String resourceCategory, String resourceCategoryPath)
-			throws IOException, XQueryUtilException, FhirCoreException {
+	public static String getI2b2ResponseXmlForAResourceCategory(String i2b2User, String i2b2Token, String i2b2Url,
+			String I2b2Domain, String project, String patientId, String resourceCategory, String resourceCategoryPath)
+					throws IOException, XQueryUtilException, FhirCoreException {
 		if (resourceCategory == null)
 			throw new FhirCoreException("resourceCategory is null");
 
-		String requestXml = IOUtils
-				.toString(I2b2UtilByCategory.class
-						.getResourceAsStream("/i2b2query/i2b2RequestTemplateForAPatient.xml"));
+		String requestXml = IOUtils.toString(
+				I2b2UtilByCategory.class.getResourceAsStream("/i2b2query/i2b2RequestTemplateForAPatient.xml"));
 
 		String path = "";
-		if (resourceCategoryPath != null){
-				path=resourceCategoryPath;
-		}else {
+		if (resourceCategoryPath != null) {
+			path = resourceCategoryPath;
+		} else {
 			switch (resourceCategory) {
 			case "medications":
 				path = CoreConfig.getMedicationPath();
@@ -57,31 +54,27 @@ public class I2b2UtilByCategory {
 				path = CoreConfig.getReportsPath();
 				break;
 			default:
-				throw new FhirCoreException("resourceCategory not known:"
-						+ resourceCategory);
+				throw new FhirCoreException("resourceCategory not known:" + resourceCategory);
 			}
 		}
-		
+
 		requestXml = requestXml.replace("XPATHX", path);
 		logger.trace("requestXml with Path:" + requestXml);
 
-		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
-				i2b2Token, i2b2Url, I2b2Domain, project);
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User, i2b2Token, i2b2Url, I2b2Domain, project);
 
 		if (patientId != null)
 			requestXml = requestXml.replaceAll("PATIENTID", patientId);
 
-		String responseXml = WebServiceCall.run(i2b2Url
-				+ "/services/QueryToolService/pdorequest", requestXml);
+		String responseXml = WebServiceCall.run(i2b2Url + "/services/QueryToolService/pdorequest", requestXml);
 		return responseXml;
 
 	}
 
-	private static String getTransformQueryForAResourceCategory(
-			String resourceCategory,String ontologyType) throws FhirCoreException, IOException {
-		String xml = IOUtils
-				.toString(FhirUtil.class
-						.getResourceAsStream("/transform/I2b2ToFhir/i2b2ToFHIR_"+ontologyType+".xquery"));
+	private static String getTransformQueryForAResourceCategory(String resourceCategory, String ontologyType)
+			throws FhirCoreException, IOException {
+		String xml = IOUtils.toString(
+				FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2ToFHIR_" + ontologyType + ".xquery"));
 		String functionString = "";
 		switch (resourceCategory) {
 		case "medications":
@@ -98,8 +91,7 @@ public class I2b2UtilByCategory {
 			break;
 
 		default:
-			throw new FhirCoreException("resourceCategory not known:"
-					+ resourceCategory);
+			throw new FhirCoreException("resourceCategory not known:" + resourceCategory);
 		}
 
 		xml = xml.replace("(:INSERT_RESOURCE_FUNCTION_HERE:)", functionString);
@@ -107,67 +99,52 @@ public class I2b2UtilByCategory {
 		return xml;
 	}
 
-	public static Bundle getAllDataForAPatientAsFhirBundle(String i2b2User,
-			String i2b2Token, String i2b2Url, String I2b2Domain,
-			String project, String patientId,
-			HashMap<String, String> categoryPathMap,String ontologyType) throws FhirCoreException {
+	public static Bundle getAllDataForAPatientAsFhirBundle(String i2b2User, String i2b2Token, String i2b2Url,
+			String I2b2Domain, String project, String patientId, HashMap<String, String> categoryPathMap,
+			String ontologyType) throws FhirCoreException {
 		// cycle thru resource categories and get bundles
 		String entryXmlCumulative = "";
 		Patient p = null;
 		try {
-			List<String> resourceCategories = Arrays.asList(CoreConfig
-					.getResourceCategoriesList().split("-"));
+			List<String> resourceCategories = Arrays.asList(CoreConfig.getResourceCategoriesList().split("-"));
 			for (String rc : resourceCategories) {
 
-				// will use HashMap if provided, else will default to the
-				// Ontology-Path map
-
-				String path = null;
+					String path = null;
 				if (categoryPathMap != null) {
 					String pathFromMap = categoryPathMap.get(rc);
 					path = pathFromMap;
 					if (pathFromMap == null) {
 						throw new FhirCoreException(
-								"There is no path provided for category:" + rc
-										+ " in the configuration");
+								"There is no path provided for category:" + rc + " in the configuration");
 					}
 					if (pathFromMap.contains("SKIP"))
 						continue;
 
 				}
 
-				String i2b2ResponseXml = getI2b2ResponseXmlForAResourceCategory(
-						i2b2User, i2b2Token, i2b2Url, I2b2Domain, project,
-						patientId, rc, path);
+				String i2b2ResponseXml = getI2b2ResponseXmlForAResourceCategory(i2b2User, i2b2Token, i2b2Url,
+						I2b2Domain, project, patientId, rc, path);
 				logger.trace("i2b2ResponseXml" + i2b2ResponseXml);
 
 				if (p == null) {
 					p = FhirUtil.getPatientResource(i2b2ResponseXml);
 				}
-				String query = getTransformQueryForAResourceCategory(rc,ontologyType);
+				String query = getTransformQueryForAResourceCategory(rc, ontologyType);
 
-				String bundleXml = XQueryUtil.processXQuery(query,
-						i2b2ResponseXml);
-				logger.trace("ran XQuery transform" + query
-						+ " to get  bundle Xml:" + bundleXml);
+				String bundleXml = XQueryUtil.processXQuery(query, i2b2ResponseXml);
+				logger.trace("ran XQuery transform" + query + " to get  bundle Xml:" + bundleXml);
 
 				String entryXml = XQueryUtil
-						.processXQuery(
-								"declare default element namespace \"http://hl7.org/fhir\";//entry",
-								bundleXml);
+						.processXQuery("declare default element namespace \"http://hl7.org/fhir\";//entry", bundleXml);
 				logger.info("entriesXml:" + entryXml);
 				entryXmlCumulative += entryXml;
-				logger.info("added bundle of size:"
-						+ XQueryUtil
-								.getStringSequence(
-										"declare default element namespace \"http://hl7.org/fhir\";//entry",
-										bundleXml).size());
+				logger.info("added bundle of size:" + XQueryUtil.getStringSequence(
+						"declare default element namespace \"http://hl7.org/fhir\";//entry", bundleXml).size());
 			}
 
 			// merge the bundles
 
-			String finalBundleXml = "<Bundle xmlns=\"http://hl7.org/fhir\">\n"
-					+ entryXmlCumulative + "</Bundle>";
+			String finalBundleXml = "<Bundle xmlns=\"http://hl7.org/fhir\">\n" + entryXmlCumulative + "</Bundle>";
 			Bundle b = JAXBUtil.fromXml(finalBundleXml, Bundle.class);
 
 			b.getEntry().add(FhirUtil.newBundleEntryForResource(p));
@@ -177,8 +154,7 @@ public class I2b2UtilByCategory {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			throw new FhirCoreException(
-					"Error in getting AllDataBundle for Patient ", e);
+			throw new FhirCoreException("Error in getting AllDataBundle for Patient ", e);
 		}
 	}
 
