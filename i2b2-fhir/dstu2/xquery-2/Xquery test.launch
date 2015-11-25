@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.wst.xquery.launching.XQDTLaunchConfigurationType">
-<stringAttribute key="interpreterArguments" value="-i /Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/fhir/MetaResourceSet1.xml"/>
+<stringAttribute key="interpreterArguments" value="-i /Users/kbw19/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/fhir/MetaResourceSet1.xml"/>
 <stringAttribute key="mainScript" value="src/main/resources/transform/test.xquery"/>
 <stringAttribute key="nature" value="org.eclipse.wst.xquery.core.nature"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">

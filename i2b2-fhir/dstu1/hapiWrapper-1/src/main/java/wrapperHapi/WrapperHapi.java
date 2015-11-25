@@ -67,7 +67,7 @@ public class WrapperHapi {
 				+ "<address><use value=\"home\" /><line value=\"2222 Home Street\" /></address><active value=\"true\" />"
 				+ "</Patient>";
 		FileInputStream inputStream = new FileInputStream(
-				"/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/fhir/GeneralPatient.xml");
+				"/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/fhir/GeneralPatient.xml");
 		xmlString = IOUtils.toString(inputStream);
 		System.out.println(resourceXmlToJson(xmlString));
 	}

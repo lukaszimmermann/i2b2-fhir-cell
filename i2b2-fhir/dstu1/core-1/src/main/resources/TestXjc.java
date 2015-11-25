@@ -129,11 +129,11 @@ public class TestXjc {
 	    // Change USERNAME and PASSWORD values
 	    XQConnection xqjc = xqs.getConnection("admin", "admin");
 	    
-	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
+	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/kbw19/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
 			xqjc.prepareExpression(new ByteArrayInputStream(query.getBytes(StandardCharsets.UTF_8)));
 			
 	XMLInputFactory factory = XMLInputFactory.newInstance();
-	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
+	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/kbw19/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
 			factory.createXMLStreamReader(new StringReader(input));
 	xqje.bindDocument(XQConstants.CONTEXT_ITEM,streamReader, xqjc.createDocumentType());
 
@@ -155,11 +155,11 @@ public class TestXjc {
 	private static void processXquery(String query, String input) throws XQException, ParserConfigurationException, SAXException, IOException, XMLStreamException {
 	XQDataSource ds = new SaxonXQDataSource();
 	XQConnection xqjc = ds.getConnection();
-	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
+	XQPreparedExpression xqje = //xqjc.prepareExpression(new FileInputStream("/Users/kbw19/git/res/xjctestmvn/src/main/resources/transform/I2b2ToFhir/i2b2MedsToFHIRMeds.xquery"));
 			xqjc.prepareExpression(new ByteArrayInputStream(query.getBytes(StandardCharsets.UTF_8)));
 			
 	XMLInputFactory factory = XMLInputFactory.newInstance();
-	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
+	XMLStreamReader streamReader = //factory.createXMLStreamReader(new FileReader("/Users/kbw19/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt"));
 			factory.createXMLStreamReader(new StringReader(input));
 	xqje.bindDocument(XQConstants.CONTEXT_ITEM,streamReader, xqjc.createDocumentType());
 

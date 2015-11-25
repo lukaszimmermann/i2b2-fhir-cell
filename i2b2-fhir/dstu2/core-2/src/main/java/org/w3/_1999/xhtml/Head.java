@@ -137,8 +137,8 @@ public class Head {
      * <p>
      * You are getting this "catch-all" property because of the following reason: 
      * The field name "Base" is used by two different parts of a schema. See: 
-     * line 868 of file:/Users/***REMOVED***/Downloads/fhir-spec/site/fhir-xhtml.xsd
-     * line 855 of file:/Users/***REMOVED***/Downloads/fhir-spec/site/fhir-xhtml.xsd
+     * line 868 of file:/Users/kbw19/Downloads/fhir-spec/site/fhir-xhtml.xsd
+     * line 855 of file:/Users/kbw19/Downloads/fhir-spec/site/fhir-xhtml.xsd
      * <p>
      * To get rid of this property, apply a property customization to one 
      * of both of the following declarations to change their names: 

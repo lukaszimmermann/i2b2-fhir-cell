@@ -190,7 +190,7 @@ let $distobs :=
     return  <set>{functx:distinct-nodes($distobs)}</set>
  };
  
- let $I:= root()(:doc('/Users/***REMOVED***/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/i2b2/MedicationsForAPatient3.xml')
+ let $I:= root()(:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/xquery/src/main/resources/example/i2b2/MedicationsForAPatient3.xml')
 :)let $distObs:=local:distinctObservations($I)
  
 

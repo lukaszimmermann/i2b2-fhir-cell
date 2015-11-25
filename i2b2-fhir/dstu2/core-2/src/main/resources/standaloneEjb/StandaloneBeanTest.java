@@ -51,7 +51,7 @@ public class StandaloneBeanTest {
     public void setUp() {
     	Map<String, Object> properties = new HashMap<String, Object>();
     	properties.put("org.glassfish.ejb.embedded.glassfish.installation.root", 
-    	"/Users/***REMOVED***/local/opt/glassfish4/glassfish");
+    	"/Users/kbw19/local/opt/glassfish4/glassfish");
     	properties.put(EJBContainer.APP_NAME, "app");
 
         ec = EJBContainer.createEJBContainer(properties);

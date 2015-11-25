@@ -71,7 +71,7 @@ public class BinResourceFromIcd9Data {
 
 	/*
 	public void toDoinitIcd9CodeToNameMap() throws IOException, TikaException {
-		String inputFilePath = "/Users/***REMOVED***/Downloads/Dindex12.rtf";
+		String inputFilePath = "/Users/kbw19/Downloads/Dindex12.rtf";
 		FileInputStream is=new FileInputStream(inputFilePath);
 		
 		
@@ -182,8 +182,8 @@ public class BinResourceFromIcd9Data {
 	public static void main(String[] args) {
 
 		try {
-			new BinResourceFromIcd9Data(//"/Users/***REMOVED***/Downloads/");
-					"/Users/***REMOVED***/Downloads/cmsv31-master-descriptions/");
+			new BinResourceFromIcd9Data(//"/Users/kbw19/Downloads/");
+					"/Users/kbw19/Downloads/cmsv31-master-descriptions/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());

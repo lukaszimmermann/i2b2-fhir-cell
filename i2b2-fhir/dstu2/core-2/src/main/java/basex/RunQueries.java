@@ -68,7 +68,7 @@ public final class RunQueries {
 
    // Evaluate the specified XQuery
    String query =
-       //"for $x in doc('/Users/***REMOVED***/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt')//li return $x";
+       //"for $x in doc('/Users/kbw19/git/res/xjctestmvn/src/main/resources/example/i2b2/i2b2medspod.txt')//li return $x";
 		   " let $x:= <h1>e</h1> return $x";
    // Process the query by using the database command
  //  System.out.println("\n* Use the database command:");

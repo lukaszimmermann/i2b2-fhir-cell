@@ -106,8 +106,8 @@ public class I2b2UtilByCategory {
 		String entryXmlCumulative = "";
 		Patient p = null;
 		try {
-			List<String> resourceCategories = Arrays.asList(CoreConfig.getResourceCategoriesList().split("-"));
-			for (String rc : resourceCategories) {
+			//List<String> resourceCategories = Arrays.asList(CoreConfig.getResourceCategoriesList().split("-"));
+			for (String rc : categoryPathMap.keySet()) {
 
 					String path = null;
 				if (categoryPathMap != null) {

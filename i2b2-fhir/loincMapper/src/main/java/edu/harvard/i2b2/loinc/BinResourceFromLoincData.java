@@ -133,7 +133,7 @@ public class BinResourceFromLoincData {
 
 		try {
 			new BinResourceFromLoincData(
-					"/Users/***REMOVED***/Downloads/LOINC_252_Text/");
+					"/Users/kbw19/Downloads/LOINC_252_Text/");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

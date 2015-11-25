@@ -53,7 +53,7 @@ public class BinResourceFromRXNormData {
 	}
 
 	public void initRxCuiMap() throws IOException {
-		String inputFilePath = "/Users/***REMOVED***/Downloads/RxNorm_full_06012015/rrf/RXNCONSO.RRF";
+		String inputFilePath = "/Users/kbw19/Downloads/RxNorm_full_06012015/rrf/RXNCONSO.RRF";
 		int maxLines = Utils.countLines(inputFilePath);
 
 		InputStream fileIS = null;
@@ -82,7 +82,7 @@ public class BinResourceFromRXNormData {
 
 			reader = new BufferedReader(
 					new FileReader(
-							"/Users/***REMOVED***/Downloads/RxNorm_full_06012015/rrf/RXNCONSO.RRF"));
+							"/Users/kbw19/Downloads/RxNorm_full_06012015/rrf/RXNCONSO.RRF"));
 			// logger.trace("read line:"+reader.readLine());
 
 			String line = reader.readLine();
@@ -156,7 +156,7 @@ public class BinResourceFromRXNormData {
 	}
 
 	public void initNdc2CuiMap() throws IOException {
-		String inputFilePath = "/Users/***REMOVED***/Downloads/RxNorm_full_06012015/rrf/RXNSAT.RRF";
+		String inputFilePath = "/Users/kbw19/Downloads/RxNorm_full_06012015/rrf/RXNSAT.RRF";
 		int maxLines = Utils.countLines(inputFilePath);
 		Ndc2CuiMap = new HashMap<String, Integer>();
 		InputStream fileIS = null;
@@ -297,7 +297,7 @@ public class BinResourceFromRXNormData {
 
 		try {
 			new BinResourceFromRXNormData(
-					"/Users/***REMOVED***/Downloads/RxNorm_full_06012015/rrf");
+					"/Users/kbw19/Downloads/RxNorm_full_06012015/rrf");
 			// System.out.println(PrepareBinaryResourceFilesFromRXNormData.readCuiMap().toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

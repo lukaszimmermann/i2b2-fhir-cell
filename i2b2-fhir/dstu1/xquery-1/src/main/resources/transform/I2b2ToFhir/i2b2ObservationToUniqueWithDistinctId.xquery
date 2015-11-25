@@ -70,7 +70,7 @@ let $distobs :=
  
  let $I:=
 if(empty(root())) 
-then doc('/Users/***REMOVED***/Documents/workspace-sts/xqueryProject1/resources/example/i2b2/medicationsForAPatient.xml')
+then doc('/Users/kbw19/Documents/workspace-sts/xqueryProject1/resources/example/i2b2/medicationsForAPatient.xml')
 else root()
 let $distObs:=local:distinctObservations($I)
  
