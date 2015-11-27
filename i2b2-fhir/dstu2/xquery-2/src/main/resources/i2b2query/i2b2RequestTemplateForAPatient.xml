@@ -61,7 +61,7 @@
 	</patient_list>
 </input_list>
 <filter_list>
-	<panel name="XPATHX">
+	<panel name="XCATX">
 		<invert>0</invert>
 		<item>
 			<item_key>XPATHX</item_key>

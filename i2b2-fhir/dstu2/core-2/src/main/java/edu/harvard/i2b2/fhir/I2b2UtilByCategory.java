@@ -58,6 +58,9 @@ public class I2b2UtilByCategory {
 			}
 		}
 
+		requestXml = requestXml.replace("XCATX", resourceCategory);
+		logger.trace("requestXml with Cat:" + requestXml);
+		
 		requestXml = requestXml.replace("XPATHX", path);
 		logger.trace("requestXml with Path:" + requestXml);
 

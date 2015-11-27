@@ -404,6 +404,7 @@ let $downloadDate := $refObs/@download_date/string()
 let $updateDate := $refObs/@update_date/string()
 let $pid := $refObs/patient_id/text()
 
+
 let $cn:=$cnAll[concept_cd[string()=$cid]][1]/name_char/string()
 (:
 let $cnPath:=$cnAll[concept_cd[string()=$cid]]/concept_path/string()
@@ -510,10 +511,11 @@ declare function local:processLabObs
 
 let $O:=
 for $id at $count in fn:distinct-values($A/observation/id)
-let $refObs :=  $A/observation[id =$id]
+let $refObs :=  $A/observation[id =$id][1]
 
 let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
+
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
 let $ed := $refObs/end_date/text()
@@ -553,7 +555,7 @@ return
  <set>
  <entry xmlns="http://hl7.org/fhir">
 <resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-{$fhirObservation}
+{$refObs}
 </resource>
 </entry>
 </set>
@@ -573,7 +575,7 @@ declare function local:processDiagObs
 
 let $O:=
 for $id at $count in fn:distinct-values($A/observation/id)
-let $refObs :=  $A/observation[id =$id][1] (:why does some diagnosis in i2b2 have more than one modified cd?:)
+let $refObs :=  $A/observation[id =$id][1] (:why does some diagnosis in i2b2 have more than one modified cd?:FI and AD:)
 
 let $pid := $refObs/patient_id/text()
 let $cid := $refObs/concept_cd/text()
@@ -661,7 +663,8 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 
 
 
-let $I:=root()(:doc('/Users/kbw19/Syncplicity/shared/labs.xml'):)
+let $I:=root()(:doc('/Users/kbw19/Syncplicity/confidential_data/LACDRN/diag.xml'):)
+(:doc('/Users/kbw19/Syncplicity/shared/labs.xml'):)
 (:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/diagnosisForAPatient.xml'):)
 (:root()doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
 (:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
@@ -679,10 +682,11 @@ let $concepts:=$I//concept
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 
-
-
 {local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
+
+
 {local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
+
 {local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
 {local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
