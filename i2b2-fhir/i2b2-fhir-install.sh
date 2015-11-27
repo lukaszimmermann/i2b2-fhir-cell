@@ -82,9 +82,11 @@ else
 	export CMD=" cat \"$WILDFLY_DIR/bin/standalone.conf\"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/' | sed -e 's/Xmx512m/Xmx1024m/' > result; mv result $WILDFLY_DIR/bin/standalone.conf"
 	echo $CMD
 	cat "$WILDFLY_DIR/bin/standalone.conf"| sed -e 's/MaxPermSize=256m/MaxPermSize=1024m/'| sed -e 's/Xmx512m/Xmx1024m/' > result; mv result "$WILDFLY_DIR/bin/standalone.conf"
-	#seeting srv as default servlet
-	cp i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/standalone.xml "$WILDFLY_DIR/standalone/configuration/"
-	#cp $CONFIG_FILE_PATH i2b2-fhir-branch/i2b2-fhir/dstu2/src/main/resources/application.properties
+	#setting srv as default servlet
+	##
+	mkdir -p $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main
+	wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
+	mv mysql-connector-java-5.1.9.jar $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/
 fi
 
 echo "Installing source code from githib repository"
@@ -102,8 +104,9 @@ if [ -d i2b2-fhir-branch ]
 then echo ""
 else
         mv "i2b2-fhir-$BRANCH/" i2b2-fhir-branch/
-        #git clone https://github.com/waghsk/i2b2-fhir.git
-	cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
+	#cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
+	cp i2b2-fhir-cell/i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/standalone.xml i2b2-fhir-cell/wildfly-9.0.1.Final/standalone/configuration/
+	cp i2b2-fhir-cell/i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
 fi
 
 alias mvn=$MVN
@@ -118,7 +121,6 @@ mvn clean install -Dmaven.test.skip=true;
 
 #deploy
 cp srv-2/target/*.war $DEPLOY_DIR
-cp smart-2/target/*.war $DEPLOY_DIR
 
 echo "running server on port 8080"
 
@@ -127,6 +129,3 @@ export RUN_WF="$WILDFLY_DIR/bin/standalone.sh" #-b=$IPADD"
 sh $RUN_WF
 
 
-#mkdir -p $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main
-#wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
-#mv mysql-connector-java-5.1.9.jar $WILDFLY_HOME/modules/system/layers/base/com/mysql/driver/main/
