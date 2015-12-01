@@ -329,6 +329,7 @@ declare function local:distinctObservations($I as node()?) as node ()?{
 let $distobs := 
  (:for $t in $doc//observation:)
  for $t in $I//observation
+ let $panelName:=$t/../@panel_name/string()
  let $eid := $t/event_id/text()
  let $pid := $t/patient_id/text()
  let $cid := $t/concept_cd/text()
@@ -356,6 +357,7 @@ let $distobs :=
   
              <observation sourcesystem_cd="{$sourceSystem}" import_date="{$importDate}" download_date="{$downloadDate}" update_date="{$updateDate}">
                         <id>{$id}</id>
+                        <panel_name>{$panelName}</panel_name>
                         <event_id source="HIVE">{$eid}</event_id>
                         <patient_id source="HIVE">{$pid}</patient_id>
                         <concept_cd name="{$cn}">{$cid}</concept_cd>
@@ -555,7 +557,7 @@ return
  <set>
  <entry xmlns="http://hl7.org/fhir">
 <resource xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-{$refObs}
+{$fhirObservation}
 </resource>
 </entry>
 </set>
@@ -672,30 +674,31 @@ root():)
   
 let $distObs:=local:distinctObservations($I)
  
-let $labObs:= $distObs//observation
-let $medObs:= $distObs//observation[modifier_cd="@" and valuetype_cd="N"]
-let $medDis:= $distObs//observation[modifier_cd="@" and valuetype_cd="M"]
-let $diagObs:= $distObs//observation
-let $reportObs:= $distObs//observation
+let $labObs:= $distObs//observation[panel_name="labs"]
+let $medObs:= $distObs//observation[modifier_cd="@" and valuetype_cd="N" and panel_name="medications"]
+let $medDis:= $distObs//observation[modifier_cd="@" and valuetype_cd="M" and panel_name="medications"]
+let $diagObs:= $distObs//observation[panel_name="diagnoses"]
+let $reportObs:= $distObs//observation[panel_name="reports"]
 
 let $concepts:=$I//concept
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 
+
+
 {local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
 
+{local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
 
-
+{local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
+{local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
 </Bundle>
 
 
 (:
 
-{local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
 
-{local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
-{local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
 let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhirValue)
 

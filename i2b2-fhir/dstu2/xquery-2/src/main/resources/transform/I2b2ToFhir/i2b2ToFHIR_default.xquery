@@ -302,7 +302,9 @@ declare function local:distinctObservations($I as node()?) as node ()?{
 
 let $distobs := 
  (:for $t in $doc//observation:)
+ 
  for $t in $I//observation
+ let $panelName:=$t/../@panel_name/string()
  let $eid := $t/event_id/text()
  let $pid := $t/patient_id/text()
  let $cid := $t/concept_cd/text()
@@ -329,6 +331,7 @@ let $distobs :=
   
              <observation sourcesystem_cd="{$sourceSystem}" import_date="{$importDate}" download_date="{$downloadDate}" update_date="{$updateDate}">
                         <id>{$id}</id>
+                        <panel_name>{$panelName}</panel_name>
                         <event_id source="HIVE">{$eid}</event_id>
                         <patient_id source="HIVE">{$pid}</patient_id>
                         <concept_cd name="{$cn}">{$cid}</concept_cd>
@@ -580,12 +583,11 @@ let $I:=root()(:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu2/xquery-2/src/m
 root():)
   
 let $distObs:=local:distinctObservations($I)
- 
-let $labObs:= $distObs//observation
-let $medObs:= $distObs//observation
-let $diagObs:= $distObs//observation
-let $reportObs:= $distObs//observation
 
+let $labObs:= $distObs//observation[panel_name="labs"]
+let $medObs:= $distObs//observation[ panel_name="medications"]
+let $diagObs:= $distObs//observation[panel_name="diagnoses"]
+let $reportObs:= $distObs//observation[panel_name="reports"]
 
 return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
 
