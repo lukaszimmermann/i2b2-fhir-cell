@@ -685,16 +685,17 @@ return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fh
 {local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
 
 
-{local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
 
-{local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
-{local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
 </Bundle>
 
 
 (:
 
+{local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
+
+{local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
+{local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}
 
 let $fhirObservation:=local:fnFhirObservation($sd,$ed,$count,$cn, $cid,$pid,$fhirValue)
 
