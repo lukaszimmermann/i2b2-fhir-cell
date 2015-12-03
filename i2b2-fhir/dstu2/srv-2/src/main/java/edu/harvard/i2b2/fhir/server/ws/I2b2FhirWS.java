@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
@@ -115,7 +116,9 @@ public class I2b2FhirWS {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	
 	@GET
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
@@ -239,7 +242,8 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 
 		try {
-
+			
+			
 			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			MetaResourceDb md = new MetaResourceDb();
@@ -295,17 +299,37 @@ public class I2b2FhirWS {
 
 	}
 
+	
+	
+	/*
+	@GET
+	@Path("")
+	@Produces({ MediaType.TEXT_HTML})
+	public Response info2() {
+		return dummyToByPassAuthentication() ;
+		}
+	
+	@GET
+	@Path("")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+		"application/xml+fhir", "application/json+fhir" })
+	public Response info(){
+		 return info2();
+	}
+	*/
+
 	@GET
 	@Path("open")
 	public Response dummyToByPassAuthentication() {
-		return Response.ok().entity("dummy").build();
+		//return Response.ok().entity("<html><header><META http-equiv=\"refresh\" content=\"0;URL=../demo/\"></header><body>This is the FHIR endpoint. Append a resource e.g. /Patient to this URL to get data</body></html>").build();
+		return Response.ok().entity("This is the FHIR endpoint. Append a resource.").build();
 
+		
 	}
-
+	
 	@OPTIONS
 	@Path("")
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
-			"application/xml+fhir", "application/json+fhir" })
+	
 	public Response conformanceStatement2(
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request) throws JAXBException,
