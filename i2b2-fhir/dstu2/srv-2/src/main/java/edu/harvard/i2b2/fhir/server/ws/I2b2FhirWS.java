@@ -300,15 +300,14 @@ public class I2b2FhirWS {
 	}
 
 	
-	
-
-	/*
 	@GET
 	@Path("")
-	@Produces({ MediaType.TEXT_HTML})
 	public Response info2() {
 		return dummyToByPassAuthentication() ;
-		}
+	}
+
+	/*
+	
 	
 	@GET
 	@Path("")
