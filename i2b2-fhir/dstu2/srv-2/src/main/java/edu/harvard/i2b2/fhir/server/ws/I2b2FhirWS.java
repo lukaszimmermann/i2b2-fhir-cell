@@ -301,6 +301,7 @@ public class I2b2FhirWS {
 
 	
 	
+
 	/*
 	@GET
 	@Path("")
@@ -323,9 +324,8 @@ public class I2b2FhirWS {
 	public Response dummyToByPassAuthentication() {
 		//return Response.ok().entity("<html><header><META http-equiv=\"refresh\" content=\"0;URL=../demo/\"></header><body>This is the FHIR endpoint. Append a resource e.g. /Patient to this URL to get data</body></html>").build();
 		return Response.ok().entity("This is the FHIR endpoint. Append a resource.").build();
-
-		
 	}
+	
 	
 	@OPTIONS
 	@Path("")
