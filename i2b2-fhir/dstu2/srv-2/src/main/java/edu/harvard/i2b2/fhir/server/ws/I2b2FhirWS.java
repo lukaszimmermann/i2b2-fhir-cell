@@ -321,6 +321,8 @@ public class I2b2FhirWS {
 
 	@GET
 	@Path("open")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+		"application/xml+fhir", "application/json+fhir" ,MediaType.TEXT_HTML})
 	public Response dummyToByPassAuthentication() {
 		//return Response.ok().entity("<html><header><META http-equiv=\"refresh\" content=\"0;URL=../demo/\"></header><body>This is the FHIR endpoint. Append a resource e.g. /Patient to this URL to get data</body></html>").build();
 		return Response.ok().entity("This is the FHIR endpoint. Append a resource.").build();
@@ -329,7 +331,6 @@ public class I2b2FhirWS {
 	
 	@OPTIONS
 	@Path("")
-	
 	public Response conformanceStatement2(
 			@HeaderParam("accept") String acceptHeader,
 			@Context HttpServletRequest request) throws JAXBException,
