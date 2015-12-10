@@ -113,7 +113,22 @@ declare function local:fnPatient($zip as xs:string?,
   </text>
 
 <!--  {$local:getIdentifier()}-->
-  
+ 
+<identifier>
+    <use value="usual"/>
+    <type>
+      <coding>
+        <system value="http://hl7.org/fhir/v2/0203"/>
+        <code value="MR"/>
+      </coding>
+    </type>
+    <system value="urn:oid:1.2.36.146.595.217.0.1"/>
+    <value value="{$id}"/>
+    <assigner>
+      <display value="i2b2"/>
+    </assigner>
+  </identifier>
+ 
   <!--   use FHIR code system for male / female   -->
   <gender value="{$gender_expanded}"/>
   <birthDate value="{$birthdate}"/>
