@@ -67,6 +67,9 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 			return;
 
 		}
+		
+		if (context.getMethod().equals("OPTIONS")) return;
+		
 		// skip urls for authentication
 		if (context.getUriInfo().getPath().toString().startsWith("/authz")
 				|| context.getUriInfo().getPath().toString()
