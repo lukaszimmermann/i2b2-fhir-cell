@@ -1,13 +1,8 @@
 
-<script>
-path=RemoveLastDirectoryPartOf(path);
-	path=RemoveLastDirectoryPartOf(path)+"/";
-	var fhirServerBase="http://"+location.host+path+"api/open"
-</script>
 <a href="./api/authz/authorize?scope=user*.read&response_type=code&state=state234&client_id=webclient&redirect_uri=http://localhost:8080"> auth</a>
 <br>
 <a href="./api/authz/authorize?scope=launch/patient&response_type=code&state=state234&client_id=webclient&redirect_uri=http://localhost:8080"> launch_patient</a>
 <br>
 <a href="./fhir-app1/launch.html"> public smartapp</a>
 
-<a href="http://localhost:8080/srv-dstu2-0.3/api/authz/authorize?scope=launch/patient&response_type=code&state=1234&client_id=my_web_app&redirect_uri=http://localhost:8080/srv-dstu2-0.3/sof/patient/fhir-app/> local pat launch </a>
+<br><a href="http://localhost:8080/srv-dstu2-0.3/sof/patient/fhir-app/launch.html?iss=http://localhost:8080/srv-dstu2-0.3/api> local pat launch </a>
