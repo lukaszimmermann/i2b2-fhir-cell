@@ -12,19 +12,13 @@
 		<ui:define name="content">
 	<h:form>
 		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
-		<h2>Select Project</h2>
+		<p align="center"><h2>Select Project</h2>
 		
 
 
-		<h:selectOneRadio
-			value="#{i2b2AuthenticationManager.selectedI2b2Project}" required="true"
-				requiredMessage="Error: one project is required.">
-			<f:selectItems var="project"
-				value="#{i2b2AuthenticationManager.i2b2ProjectList}"
-				itemValue="#{project}"
-				itemLabel="#{project.name}" 
-				/>
-				<f:converter converterId = "pc"/>  
+		<h:selectOneRadio value="#{i2b2AuthenticationManager.selectedI2b2Project}" required="true" requiredMessage="Error: one project is required.">
+			<f:selectItems var="project" value="#{i2b2AuthenticationManager.i2b2ProjectList}" itemValue="#{project}" itemLabel="#{project.name}" />
+				<f:converter converterId="pc" />  
 				
 		</h:selectOneRadio>
 
@@ -35,7 +29,7 @@
 	
 <h:commandButton id="reset" value="Reset" type="reset">
 		</h:commandButton>
-	</h:form>
+	</p></h:form>
 	<!-- 
 	<p>
 					<h:outputText value="#{i2b2AuthenticationManager.scope}" />

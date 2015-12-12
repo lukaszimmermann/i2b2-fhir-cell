@@ -8,6 +8,7 @@
 	<title>Login</title>
 </h:head>
 <h:body>
+<center>
 	<ui:composition template="../template.xhtml">
 		<ui:define name="content">
 
@@ -37,7 +38,7 @@
 					value="#{i2b2AuthenticationManager.i2b2User}" required="true"
 					requiredMessage="Error: username is required." maxlength="25" />
 				<p></p>
-		Password:<h:inputSecret redisplay="false" id="password"
+		Password:<h:inputSecret redisplay="true" id="password"
 					title="Password is: "
 					value="#{i2b2AuthenticationManager.i2b2Password}" required="true"
 					requiredMessage="Error: Password is required." maxlength="25" />
@@ -47,12 +48,12 @@
 					action="#{i2b2AuthenticationManager.login()}">
 				</h:commandButton>
 				<h:commandButton id="reset" value="Reset" type="reset">
-				</h:commandButton>
-			</h:form>
+				</h:commandButton><p>
+			</p></h:form>
 
 		</ui:define>
 	</ui:composition>
-
+</center>
 </h:body>
 </html>
 

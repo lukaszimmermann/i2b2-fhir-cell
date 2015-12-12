@@ -6,33 +6,32 @@
 <h:head>
 	<title>proj select</title>
 </h:head>
-<h:body><h:form>
+<h:body>
+<ui:composition template="../template.xhtml">
+		<ui:define name="content">
+	
+	<h:form>
+
 		<!-- http://wiki.apache.org/myfaces/Display_Radio_Buttons_In_Columns -->
-		<h2>Select Patient</h2>
+		<h2><p align="center">Select Patient</p></h2><p align="center">
 		<!-- 
 		<li><h:outputText
 				value="proj:#{i2b2AuthenticationManager.i2b2ProjectList}" /></li>
 -->
 
 
-		<h:selectOneListbox
-			value="#{i2b2AuthenticationManager.selectedI2b2PatientId}"
-			required="true"
-				requiredMessage="Error: one patient is required.">
-			<f:selectItems var="p"
-				value="#{i2b2AuthenticationManager.i2b2PatientList}"
-				itemValue="#{p}"
-				itemLabel="#{p}" />
+		<h:selectOneListbox value="#{i2b2AuthenticationManager.selectedI2b2PatientId}" required="true" size="10" requiredMessage="Error: one patient is required.">
+			<f:selectItems var="p" value="#{i2b2AuthenticationManager.i2b2PatientList}" itemValue="#{p}" itemLabel="#{p}" />
 			 
 		</h:selectOneListbox>
 
 
 
-		<h:commandButton id="submit" value="Submit" action="#{i2b2AuthenticationManager.selectPatient()}">
+		<br /><h:commandButton id="submit" value="Submit" action="#{i2b2AuthenticationManager.selectPatient()}">
 		</h:commandButton>
 	
 <h:commandButton id="reset" value="Reset" type="reset">
-		</h:commandButton>
+		</h:commandButton></p>
 	</h:form>
 	<!-- 
 <p>
@@ -46,5 +45,8 @@
 				</p>
 				
 -->				
+</ui:define>
+	</ui:composition>
+
 </h:body>
 </html>
