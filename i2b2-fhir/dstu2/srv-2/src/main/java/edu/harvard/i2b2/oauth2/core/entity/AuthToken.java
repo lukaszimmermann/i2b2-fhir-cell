@@ -55,9 +55,13 @@ public class AuthToken {
 	
 	private String i2b2Domain;
 	
+	private String patient;
+	
 	private Date createdDate;
 	
 	private Date expiryDate;
+	
+	
 
 	public String getAuthorizationCode() {
 		return authorizationCode;
@@ -156,15 +160,26 @@ public class AuthToken {
 	public void setI2b2Domain(String i2b2Domain) {
 		this.i2b2Domain = i2b2Domain;
 	}
+	
+	
+	public void setPatient(String patient) {
+		this.patient = patient;
+	}
+
+	
+
+	
+
+	public String getPatient() {
+		return patient;
+	}
 
 	@Override
 	public String toString() {
-		return "AuthToken [authorizationCode=" + authorizationCode + ", state="
-				+ state + ", clientId=" + clientId + ", clientRedirectUri="
-				+ clientRedirectUri + ", resourceUserId=" + resourceUserId
-				+ ", i2b2Token=" + i2b2Token + ", scope=" + scope
-				+ ", i2b2Project=" + i2b2Project + ", i2b2Url=" + i2b2Url
-				+ ", i2b2Domain=" + i2b2Domain + ", createdDate=" + createdDate
+		return "AuthToken [authorizationCode=" + authorizationCode + ", state=" + state + ", clientId=" + clientId
+				+ ", clientRedirectUri=" + clientRedirectUri + ", resourceUserId=" + resourceUserId + ", i2b2Token="
+				+ i2b2Token + ", scope=" + scope + ", i2b2Project=" + i2b2Project + ", i2b2Url=" + i2b2Url
+				+ ", i2b2Domain=" + i2b2Domain + ", patient=" + patient + ", createdDate=" + createdDate
 				+ ", expiryDate=" + expiryDate + "]";
 	}
 

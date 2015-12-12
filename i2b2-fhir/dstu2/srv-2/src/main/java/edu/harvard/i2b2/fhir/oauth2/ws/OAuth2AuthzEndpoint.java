@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -139,14 +140,14 @@ public class OAuth2AuthzEndpoint {
 
 			String finalUri = successfulResponse(request);
 			// finalUri+="&state="+state;
-			logger.info("generated finalUri:" + finalUri);
+			//logger.info("generated finalUri:" + finalUri);
 			session.setAttribute("redirectUri", oauthRequest.getRedirectURI());
 			session.setAttribute("clientId", oauthRequest.getClientId());
 			session.setAttribute("state", oauthRequest.getState());
 			session.setAttribute("scope", oauthRequest.getScopes());
 
 			session.setAttribute("finalUri", finalUri);
-
+			//session.setAttribute("request", request);
 			String clientId = (String) oauthRequest.getClientId();
 			if (isClientIdValid(clientId,oauthRequest.getRedirectURI()) == true) {
 				
@@ -297,8 +298,7 @@ public class OAuth2AuthzEndpoint {
 			HttpSession session = request.getSession();
 			session.setAttribute("permittedScopes", "user/*.*");
 
-			String finalUri = (String) session.getAttribute("finalUri");
-
+			
 			String msg = "";
 			Enumeration x = session.getAttributeNames();
 			while (x.hasMoreElements()) {
@@ -323,12 +323,25 @@ public class OAuth2AuthzEndpoint {
 			String clientId = (String) session.getAttribute("clientId");
 			String i2b2Project = (String) session.getAttribute("i2b2Project");
 			String state = (String) session.getAttribute("state");
-			String scope = "user/*.*";// HashSet<String>
-										// session.getAttribute("scope");
+			String patientId=(String) session.getAttribute("patientId");
+			
+			HashSet<String> scopeHashSet= (HashSet<String>) session.getAttribute("scope");
+			String scope="";
+			for(String s:scopeHashSet){
+				scope+=","+s;
+			}
+			scope=scope.substring(1);
+			logger.debug(">>scopeHS="+scopeHashSet.toString());
+			//String scope = "user/*.*";//(String) session.getAttribute("scope");//"user/*.*";// 
 			AuthToken authToken =authTokenBean.find(authorizationCode);
-			if(authToken==null) authToken=authTokenBean.createAuthToken(authorizationCode, resourceUserId, i2b2Token, clientRedirectUri, clientId, state, scope, i2b2Project);
+			if(authToken==null) authToken=authTokenBean.createAuthToken(authorizationCode, resourceUserId, i2b2Token, clientRedirectUri, clientId, state, scope, i2b2Project,patientId);
 					 
 			session.setAttribute("msg", "");
+			
+			//String finalUri = successfulResponse((HttpServletRequest) session.getAttribute("request"),scope,patientId,state);
+			String finalUri=(String) session.getAttribute("finalUri");
+					//+"&patient="+patientId.trim()	+"&scope="+patientId.trim();
+			logger.trace("finalUri:"+finalUri);
 			return Response.status(Status.MOVED_PERMANENTLY)
 					.location(new URI(finalUri))
 					.header("session_id", session.getId()).build();
@@ -344,7 +357,7 @@ public class OAuth2AuthzEndpoint {
 	// establishing approval via other means).
 	
 
-	 String successfulResponse(HttpServletRequest request)
+	 String successfulResponse(HttpServletRequest request)//, String scope, String patientId, String state)
 			throws OAuthSystemException, URISyntaxException,
 			OAuthProblemException {
 		OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
@@ -363,8 +376,9 @@ public class OAuth2AuthzEndpoint {
 
 			logger.info("generated authorizationCode:" + authorizationCode);
 			builder.setCode(authorizationCode);
-			builder.setParam("state", oauthRequest.getState());
-
+			
+			
+			
 			HttpSession session = request.getSession();
 			session.setAttribute("authorizationCode", authorizationCode);
 			logger.info("put generated authcode "

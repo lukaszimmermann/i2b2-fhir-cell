@@ -57,8 +57,7 @@ public class I2b2AuthenticationManager implements Serializable {
 
 	List<Project> i2b2ProjectList = new ArrayList<Project>();
 	List<String> i2b2PatientList = new ArrayList<String>();
-	List<Tutorial> tutorials = new ArrayList<Tutorial>();
-
+	
 	private String client_id;
 	private Project selectedI2b2Project;
 	private String selectedI2b2PatientId;
@@ -70,11 +69,6 @@ public class I2b2AuthenticationManager implements Serializable {
 	public void init() {
 		this.setI2b2User("demo");
 		this.setI2b2Password("demouser");
-
-		tutorials.add(new Tutorial(1, "JSF 2"));
-		tutorials.add(new Tutorial(2, "EclipseLink"));
-		tutorials.add(new Tutorial(3, "HTML 5"));
-		tutorials.add(new Tutorial(4, "Spring"));
 
 		// Project p=new Project();
 		// p.setId("proj1");p.setIntId(12);p.setName("proj1name");
@@ -244,7 +238,7 @@ public class I2b2AuthenticationManager implements Serializable {
 		}
 
 		if (getSelectedI2b2PatientId() != null) {
-			session.put("patientId", getSelectedI2b2PatientId());
+			session.put("patientId", getSelectedI2b2PatientId().trim());
 			ExternalContext c = FacesContext.getCurrentInstance()
 					.getExternalContext();
 			c.redirect("../api/authz/processScope");
@@ -331,13 +325,7 @@ public class I2b2AuthenticationManager implements Serializable {
 		this.selectedTutorial = selectedTutorial;
 	}
 
-	public List<Tutorial> getTutorials() {
-		return tutorials;
-	}
-
-	public void setTutorials(List<Tutorial> tutorials) {
-		this.tutorials = tutorials;
-	}
+	
 
 	public List<String> getI2b2PatientList() {
 		return i2b2PatientList;

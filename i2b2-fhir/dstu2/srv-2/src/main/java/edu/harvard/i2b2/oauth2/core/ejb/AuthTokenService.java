@@ -50,7 +50,7 @@ public class AuthTokenService {
 			//em = factory.createEntityManager();
 			Random r = new Random();
 			String rs = Integer.toString(r.nextInt());
-			createAuthToken(rs, rs, rs, rs, rs, rs, rs, rs);
+			createAuthToken(rs, rs, rs, rs, rs, rs, rs, rs,rs);
 			logger.info("total:" + totalCount());
 			// createAuthToken("clientId232" + r.nextInt());
 		} catch (Exception ex) {
@@ -60,7 +60,7 @@ public class AuthTokenService {
 
 	public AuthToken createAuthToken(String authCode, String resourceUserId,
 			String i2b2Token, String clientRedirectUri, String clientId,
-			String state, String scope, String i2b2Project) {
+			String state, String scope, String i2b2Project, String patientId) {
 		try {
 			AuthToken tok = new AuthToken();
 			tok.setAuthorizationCode(authCode);
@@ -75,6 +75,7 @@ public class AuthTokenService {
 			tok.setExpiryDate(DateUtils.addMinutes(new Date(), 30));
 			tok.setI2b2Url(serverConfig.GetString(ConfigParameter.i2b2Url));
 			tok.setI2b2Domain(serverConfig.GetString(ConfigParameter.i2b2Domain));
+			tok.setPatient(patientId);
 			logger.info("Created authToken.." + tok.toString());
 			//em.getTransaction().begin();
 			em.persist(tok);

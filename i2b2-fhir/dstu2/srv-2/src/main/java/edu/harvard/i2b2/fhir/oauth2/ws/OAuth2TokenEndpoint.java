@@ -131,6 +131,10 @@ public class OAuth2TokenEndpoint {
 				// buildInvalidUserPassResponse();
 				//buildAccessTokenNotSupportedResponse();
 			}
+			
+			logger.trace("authToken:"+authToken);
+			String state=authToken.getState();
+			String patientId=authToken.getPatient();
 
 			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
@@ -138,7 +142,12 @@ public class OAuth2TokenEndpoint {
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
 					.setAccessToken(accessToken.getTokenString()).setExpiresIn("3600")
+					.setScope(accessToken.getScope())
+					.setParam("token_type", "Bearer")
+					.setParam("state", state)
+					.setParam("patient", patientId)//"1000000005")//authToken.getPatient())
 					.buildJSONMessage();
+			logger.trace("pat:"+authToken.getPatient());
 			logger.info("returning res:" + response.getBody());
 
 			return Response.status(response.getResponseStatus())
