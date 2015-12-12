@@ -184,11 +184,19 @@ public class I2b2AuthenticationManager implements Serializable {
 	}
 
 	public String login() {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Map<String, Object> session = context.getExternalContext().getSessionMap();
-		this.getI2b2ProjectList();
-		return validate() ? "/i2b2/project_select" : "/i2b2/login";
-
+		try {
+			FacesContext context = FacesContext.getCurrentInstance();
+			Map<String, Object> session = context.getExternalContext().getSessionMap();
+			this.getI2b2ProjectList();
+			return validate() ? "/i2b2/project_select" : "/i2b2/login";
+		} catch (Exception e) {
+			logger.error(e.getMessage(),e);
+			FacesContext context = FacesContext.getCurrentInstance();
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+					"Error while performing login:" , null));
+			
+			return "/i2b2/login";
+		}
 	}
 
 	public String selectProject() throws IOException, FhirServerException {
