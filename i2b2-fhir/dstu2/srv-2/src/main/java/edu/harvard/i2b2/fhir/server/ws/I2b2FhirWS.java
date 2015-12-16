@@ -356,9 +356,9 @@ public class I2b2FhirWS {
 
 		URI fhirBase = HttpHelper.getBasePath(request);
 		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("false")){
-		}else{
+		}else{}
 			fhirBase=new URI(fhirBase.toString().replaceAll("^http:", "https:"));
-		}
+		//}
 		Conformance c = new Conformance();
 		ConformanceRest rest = new ConformanceRest();
 		ConformanceSecurity security = new ConformanceSecurity();
