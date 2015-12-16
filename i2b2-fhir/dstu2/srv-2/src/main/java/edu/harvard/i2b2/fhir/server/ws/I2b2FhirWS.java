@@ -70,6 +70,8 @@ import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.query.QueryEngine;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
@@ -101,6 +103,9 @@ public class I2b2FhirWS {
 
 	@javax.ws.rs.core.Context
 	ServletContext context;
+	
+	@EJB
+	ServerConfigs serverConfigs;
 
 	@PostConstruct
 	private void init() {
@@ -350,6 +355,10 @@ public class I2b2FhirWS {
 			SAXException, URISyntaxException {
 
 		URI fhirBase = HttpHelper.getBasePath(request);
+		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("false")){
+		}else{
+			fhirBase=new URI(fhirBase.toString().replaceAll("^http:", "https:"));
+		}
 		Conformance c = new Conformance();
 		ConformanceRest rest = new ConformanceRest();
 		ConformanceSecurity security = new ConformanceSecurity();

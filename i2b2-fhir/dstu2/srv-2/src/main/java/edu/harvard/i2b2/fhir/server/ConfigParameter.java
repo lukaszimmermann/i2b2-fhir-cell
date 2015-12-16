@@ -21,5 +21,6 @@ public enum  ConfigParameter {
 	ontologyType,
 	nonExpiringTokenList,
 	patientBundleTimeOut,
-	enrichEnabled
+	enrichEnabled, 
+	fhirbaseSSL
 }
