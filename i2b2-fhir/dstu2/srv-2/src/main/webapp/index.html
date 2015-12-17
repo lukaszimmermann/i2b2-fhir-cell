@@ -15,6 +15,10 @@
 		href="./fhir-app1/launch.html?scope=launch/patient&response_type=code&state=state234&client_id=my_web_app&redirect_uri="+fhirServerBase+"/sof/patient/fhir-app/">
 		public smartapp</a>
 
+
+<a
+		href="./fhir-app1/launch.html?scope=launch/patient&response_type=code&state=state234&client_id=my_web_app&redirect_uri="+fhirServerBase+"/smart-app1/">example</a>
+
 	<div id="nav1" />
 
 	<script>
@@ -25,6 +29,7 @@
 		//var fhirServerBase="http://"+location.host+"/"+basePath;
 		var fhirServerBase = window.location.protocol + "//" + location.host
 				+ path ;//+ "api/open";
+//fhirServerBase=fhirServerBase.replace("https:","http:");
 
 		function addlink(url, text) {
 			var theDiv = document.getElementById("nav1");
@@ -33,6 +38,8 @@
 		};
 		addlink('./sof/patient/fhir-app/launch.html?iss=' + fhirServerBase
 				+ '/srv-dstu2-0.3/api', 'local pat launch');
+	addlink('./smart-app1/launch.html?iss=' + fhirServerBase
+				+ '/srv-dstu2-0.3/api', 'sample ');
 
 		function RemoveLastDirectoryPartOf(the_url) {
 			var the_arr = the_url.split('/');

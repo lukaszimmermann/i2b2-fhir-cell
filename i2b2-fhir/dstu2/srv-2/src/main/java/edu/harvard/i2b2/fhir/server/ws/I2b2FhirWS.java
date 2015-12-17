@@ -355,10 +355,10 @@ public class I2b2FhirWS {
 			SAXException, URISyntaxException {
 
 		URI fhirBase = HttpHelper.getBasePath(request);
-		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("false")){
-		}else{}
+		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
 			fhirBase=new URI(fhirBase.toString().replaceAll("^http:", "https:"));
-		//}
+		}
+		
 		Conformance c = new Conformance();
 		ConformanceRest rest = new ConformanceRest();
 		ConformanceSecurity security = new ConformanceSecurity();
@@ -418,26 +418,7 @@ public class I2b2FhirWS {
 
 	}
 
-	/*
-	 * private boolean authenticateOpenSession(HttpSession session, HttpHeaders
-	 * headers) throws XQueryUtilException, IOException, JAXBException,
-	 * InterruptedException { List<String> authHeaderContentList = headers
-	 * .getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER); if
-	 * (authHeaderContentList.size() == 0) {
-	 * logger.warn("No Authentication header present"); return false; } String
-	 * authHeaderContent = authHeaderContentList.get(0); boolean
-	 * authenticationStatus = authService .authenticate(authHeaderContent); if
-	 * (authenticationStatus == false) { return false; }
-	 * 
-	 * AccessToken tok =
-	 * authService.getHttpAccessTokenString(authHeaderContent);
-	 * session.setAttribute("i2b2domain", tok.getI2b2Project());
-	 * session.setAttribute("i2b2domainUrl", Config.i2b2Url);
-	 * session.setAttribute("username", tok.getResourceUserId());
-	 * session.setAttribute("password", tok.getI2b2Token());
-	 * 
-	 * return true; }
-	 */
+	
 	
 	private OperationOutcome getOperationOutcome(String message,IssueTypeList issueType,IssueSeverityList issueSeverity) {
 		OperationOutcome o= new OperationOutcome();
