@@ -2,6 +2,7 @@
 <html>
  <head>
     <script src="fhir-client.js"></script>
+    <script type="text/javascript" src="jquery-2.1.4.js"></script>
    
  </head>
  <body>
@@ -9,6 +10,7 @@
 
     <ul id="med_list"></ul>
     <table id="lab_list"></table>
+     <table id="diag_list"></table>
 
 
     <script type="text/javascript">
@@ -29,65 +31,114 @@
             var patient = smart.patient;
 
             patient.read().then(function(pt) {
+            	pid=pt.id;
                 if (pt.name && pt.name.length > 0) {
                 	name = pt.name[0].given.join(" ") +" "+ pt.name[0].family.join(" ");
-            		pid=pt.id;
+            		
                 } else {
             		name = "anonymous";
             	}
-                document.getElementById('name').innerHTML = name;
+                document.getElementById('name').innerHTML = pid;
                 
-                patient.api.search({type: "MedicationOrder"}).then(function(prescriptions) {
-              	   if (prescriptions.data.entry) {
-              	       var med_list = document.getElementById('med_list');
-                       prescriptions.data.entry.forEach(function(prescription){
-                          var med = prescription.resource.medicationCodeableConcept;
-                          med_list.innerHTML += "<li> " + getName(med) + "</li>";
-                       });
-                   }
-                });
                 
-                smart.api.search({type: "Observation", query: {subject :"1000000005"}})
-                //patient.api.search({type: "Observation"})
-                .then(function(labs) {
-               	   if (labs.data.entry) {
-               	       var lab_list = document.getElementById('lab_list');
-                        labs.data.entry.forEach(function(lab){
-                           var labName ;
-                           if(lab.hasOwnProperty("resource")
-                        		   &&lab.resource.hasOwnProperty("code")
-                        		   &&lab.resource.code.hasOwnProperty("coding")
-                        		   &&lab.resource.code.coding[0].hasOwnProperty("display")
-                        		   ){	
-                        	 	labName=lab.resource.code.coding[0].display;
-       						}
-       					 if(labName==null) {labName="--";}
-                           
-                           var labValue ;
-                           if(lab.hasOwnProperty("resource") 
-                        		   && lab.resource.hasOwnProperty("valueCodeableConcept")
-                        		   && lab.resource.valueCodeableConcept.hasOwnProperty("coding")
-                        		   && lab.resource.valueCodeableConcept.coding[0].hasOwnProperty("display")
-                        		   ){	
-                       	 		labValue=lab.resource.valueCodeableConcept.coding[0].display;
-      						}
-                           if(labValue==null
-                        		   &&lab.hasOwnProperty("resource") 
-                        		   && lab.resource.hasOwnProperty("valueQuantity")
-                        		   && lab.resource.valueQuantity.hasOwnProperty("value")
-                        		    && lab.resource.valueQuantity.hasOwnProperty("code")
-                        		   
-                        		   ){	
-                        	   labValue=lab.resource.valueQuantity.value+" "+lab.resource.valueQuantity.code;
-      						}
-                           if(labValue==null) {labValue="--";}
-                           
-                           //JSON.stringify(lab.resource.valueCodeableConcept,null,4);
-                           lab_list.innerHTML += "<li> " + labName + "  "+labValue +"</li>";
-                        });
-                    }
-                 });
-            });
+
+            
+            
+            smart.api.search({type: "Condition", query: {patient :pid }})
+            .then(function(diags) {
+           	   if (diags.data.entry) {
+           	       var diag_list = document.getElementById('diag_list');
+           	    $("#diag_list").empty().attr("frame","none");
+           	 $('#diag_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+				$("#diag_list").append('<th align="Diagnoses:">Diagnoses:</th>');
+
+                    diags.data.entry.forEach(function(diag){
+                    	
+                    	var row = $("<tr>");
+        				//row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
+        				
+                       var diagName ;
+                       if(diag.hasOwnProperty("resource") 
+                    		   && diag.resource.hasOwnProperty("code")
+                    		   && diag.resource.code.hasOwnProperty("coding")
+                    		   && diag.resource.code.coding[0].hasOwnProperty("display")
+                    		   ){	
+                    	   diagName=diag.resource.code.coding[0].display;
+  						}
+   					 if(diagName==null) {diagName="--";
+   					 }
+   					row.append( $("<td>").text(diagName));
+   					
+                       $("#diag_list").append(row);
+                       
+                       
+                    });
+                }
+             });
+            
+            
+            /////
+            
+            
+            smart.api.search({type: "Observation", query: {subject :pid}})
+            //patient.api.search({type: "Observation"})
+            .then(function(labs) {
+           	   if (labs.data.entry) {
+           	       var lab_list = document.getElementById('lab_list');
+           	    $("#lab_list").empty().attr("frame","none");
+           	 $('#lab_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+				$("#lab_list").append('<th align="left">Labs:</th>');
+
+                    labs.data.entry.forEach(function(lab){
+                    	
+                    	var row = $("<tr>");
+        				//row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
+        				
+                       var labName ;
+                       if(lab.hasOwnProperty("resource")
+                    		   &&lab.resource.hasOwnProperty("code")
+                    		   &&lab.resource.code.hasOwnProperty("coding")
+                    		   &&lab.resource.code.coding[0].hasOwnProperty("display")
+                    		   ){	
+                    	 	labName=lab.resource.code.coding[0].display;
+   						}
+   					 if(labName==null) {labName="--";}
+   					row.append( $("<td>").text(labName));
+   					
+                       var labValue ;
+                       if(lab.hasOwnProperty("resource") 
+                    		   && lab.resource.hasOwnProperty("valueCodeableConcept")
+                    		   && lab.resource.valueCodeableConcept.hasOwnProperty("coding")
+                    		   && lab.resource.valueCodeableConcept.coding[0].hasOwnProperty("display")
+                    		   ){	
+                   	 		labValue=lab.resource.valueCodeableConcept.coding[0].display;
+  						}
+                       if(labValue==null
+                    		   &&lab.hasOwnProperty("resource") 
+                    		   && lab.resource.hasOwnProperty("valueQuantity")
+                    		   && lab.resource.valueQuantity.hasOwnProperty("value")
+                    		    && lab.resource.valueQuantity.hasOwnProperty("code")
+                    		   
+                    		   ){	
+                    	   labValue=lab.resource.valueQuantity.value+" "+lab.resource.valueQuantity.code;
+  						}
+                       if(labValue==null) {labValue="--";}
+                       row.append( $("<td>").text(labValue));
+                       $("#lab_list").append(row);
+                       
+                       //JSON.stringify(lab.resource.valueCodeableConcept,null,4);
+                       //lab_list.innerHTML += "<li> " + labName + "  "+labValue +"</li>";
+                    });
+                }
+             });
+                
+        /////////////
+            
+            
+            ////
+            
+        });
+
         });
 
     </script>
