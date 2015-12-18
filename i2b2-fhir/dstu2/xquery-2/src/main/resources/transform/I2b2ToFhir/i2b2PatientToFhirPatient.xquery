@@ -71,6 +71,17 @@ declare function local:fnMetaData($last_updated as xs:string? ) as node(){
 </MetaData>
 };
 
+declare function local:fnTxt($label as xs:string,$x as xs:string?){
+      
+         <tr>
+            <td>{$label}</td>
+            <td>{$x}</td>
+          </tr>
+};
+
+
+
+
 declare function local:fnPatient($zip as xs:string?,
                                  $id as xs:string?,
                                   $gender as xs:string?,
@@ -88,25 +99,14 @@ declare function local:fnPatient($zip as xs:string?,
       <table>
         <tbody>
           <tr>
-            <td>Zip</td>
-            <td>{$zip}</td>
-          </tr>
-          <tr>
             <td>Id</td>
             <td>{$id}</td>
           </tr>
-           <tr>
-            <td>Gender</td>
-            <td>{$gender_expanded}</td>
-          </tr>
-           <tr>
-            <td>Birthdate</td>
-            <td>{$birthdate}</td>
-          </tr>
-           <tr>
-           <td>Marital Status</td>
-            <td>{$marital_status_raw}</td>
-          </tr>
+          {local:fnTxt('Zip',$zip)}
+          {local:fnTxt('Gender',$gender_expanded)}
+          {local:fnTxt('BirthDate',$birthdate)}
+          {local:fnTxt('Marital Status',$marital_status_raw)}
+   
         </tbody>
       </table>
     </div>
@@ -166,8 +166,10 @@ declare function local:fnPatient($zip as xs:string?,
 </Patient>
 };
 
+let $I:=root()(:doc('/Users/kbw19/git/res/i2b2-fhir/dstu2/xquery-2/src/main/resources/example/i2b2/AllPatients.xml'):)
+
 let $O:=
-for $p in //ns2:patient_set/patient
+for $p in  $I//ns2:patient_set/patient
 let $id:=$p/patient_id/text()
 let $zip:=$p/param[(@column='zip_cd')]/text()
 let $gender:=$p/param[(@column='sex_cd')]/text()

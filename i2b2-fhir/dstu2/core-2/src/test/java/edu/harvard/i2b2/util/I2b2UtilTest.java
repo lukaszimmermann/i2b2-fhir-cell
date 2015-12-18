@@ -33,7 +33,6 @@ import edu.harvard.i2b2.fhir.XQueryUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.core.Project;
-import edu.harvard.i2b2.Config;
 
 public class I2b2UtilTest {
 	Logger logger = LoggerFactory.getLogger(I2b2UtilTest.class);
@@ -57,6 +56,27 @@ public class I2b2UtilTest {
 		items.add("\\\\i2b2_LABS\\i2b2\\Labtests\\");
 	}
 
+	
+	@Test
+	public void getAllPatientMin() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure, FhirCoreException {
+		String requestXml = IOUtils
+				.toString(I2b2Util.class
+						.getResourceAsStream("/i2b2query/getAllPatientsMin.xml"));
+
+		
+		
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Password, i2b2Url, i2b2Domain);
+
+		if (patientId != null)
+			requestXml = requestXml.replaceAll("PATIENTID", patientId);
+
+		String responseXml = WebServiceCall.run(i2b2Url
+				+ "/services/QueryToolService/pdorequest", requestXml);
+		logger.trace("got response:" + responseXml);
+		logger.trace(""+XQueryUtil.getStringSequence("//observation", responseXml).size());
+	}
+	
 	@Test
 	public void validateUser() throws XQueryUtilException, IOException, JAXBException, AuthenticationFailure, FhirCoreException {
 		String pmResponse=I2b2Util.getPmResponseXml(i2b2User, i2b2Password, i2b2Url, i2b2Domain);
@@ -148,7 +168,7 @@ public class I2b2UtilTest {
 	}
 
 	@Test
-	public void getDocuments(){
+	public void getDocuments() throws IOException{
 	/*	
 		String path="\\\\i2b2_REP\\i2b2\\Reports\\";
 		path="\\\\i2b2_MEDS\\i2b2\\Medications\\";
@@ -156,12 +176,10 @@ public class I2b2UtilTest {
 		pathList.add(path);
 		I2b2Util.getAllDataForAPatient(Config.getOpenI2b2User(), Config.getOpenI2b2Password(), Config.getI2b2Url(), Config.getI2b2Domain(), Config.getOpenI2b2Project(), Config.getDemoPatientId(), pathList);
 	*/
-		try {
+		
 			String requestXml=IOUtils.toString(I2b2UtilTest.class.getResourceAsStream("/i2b2RequestMedsForAPatient.xml"));
-			I2b2Util.getI2b2Response(Config.getI2b2Url(), requestXml);
-		} catch (IOException | XQueryUtilException e) {
-			logger.error(e.getMessage(),e);
-		}
+		//	I2b2Util.getI2b2Response(Config.getI2b2Url(), requestXml);
+		
 		
 	}
 }

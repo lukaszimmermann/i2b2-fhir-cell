@@ -202,7 +202,9 @@ public class I2b2Util {
 			throws XQueryUtilException, IOException {
 
 		String requestXml = IOUtils.toString(FhirUtil.class
-				.getResourceAsStream("/i2b2query/getAllPatients.xml"));
+				//.getResourceAsStream("/i2b2query/getAllPatients.xml"));
+				.getResourceAsStream("/i2b2query/getAllPatientsMin.xml"));
+		
 		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
 				i2b2Token, i2b2Url, I2b2Domain, project);
 

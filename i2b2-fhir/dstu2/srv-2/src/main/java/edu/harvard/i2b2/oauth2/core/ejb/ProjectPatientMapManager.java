@@ -13,10 +13,13 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleEntry;
+import org.hl7.fhir.Patient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ranges.RangeException;
 
+import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
@@ -96,9 +99,19 @@ public class ProjectPatientMapManager {
 			logger.trace("fetching all Patients for project:" + projectId);
 			String i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
 					i2b2Url, i2b2Domain, projectId);
-			Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
-			String bundleXml=JAXBUtil.toXml(b);
+			//Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
+			
+			
 			ArrayList<String> list = I2b2Util.getAllPatientsAsList(i2b2Xml);
+			Bundle b= new Bundle();
+			for(String id:list){
+				Patient p=new Patient();
+				p=(Patient) FhirUtil.setId(p, id);
+				BundleEntry be=new BundleEntry();
+				be.setResource(FhirUtil.getResourceContainer(p));
+				b.getEntry().add(be);
+			}
+			String bundleXml=JAXBUtil.toXml(b);
 			service.put(projectId, list, bundleXml);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

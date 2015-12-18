@@ -98,9 +98,10 @@ public class I2b2Helper {
 			// filter.put("Patient", "Patient/" + patientId);
 			return I2b2Helper.getPdo(tok, patientId, service,ppmservice);
 		} else {
-			if (resourceName.equals("Patient"))
+			if (resourceName.equals("Patient")){
+				//throw new FhirServerException("Search on patients is not allowed. Patient id needs to be specified");
 				return I2b2Helper.initAllPatients(tok,ppmservice);
-
+			}
 		}
 		return null;
 	}
