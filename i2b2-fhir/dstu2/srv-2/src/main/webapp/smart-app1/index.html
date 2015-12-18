@@ -6,10 +6,11 @@
    
  </head>
  <body>
-    <h1>Medications for <span id="name"></span></h1>
-
-    <ul id="med_list"></ul>
+    <div id="display"></div>
+    <table id="demo_list"></table>
+    <br>
     <table id="lab_list"></table>
+    <br>
      <table id="diag_list"></table>
 
 
@@ -29,7 +30,8 @@
         	var name;
         	var pid;
             var patient = smart.patient;
-
+            document.getElementById("display").innerHTML="loading...";
+            
             patient.read().then(function(pt) {
             	pid=pt.id;
                 if (pt.name && pt.name.length > 0) {
@@ -38,8 +40,23 @@
                 } else {
             		name = "anonymous";
             	}
-                document.getElementById('name').innerHTML = pid;
-                
+                if(pid!=null){
+               		 var row = $("<tr>");
+               	 	row.append( '<tr><td>Id:</td><td>'+pid+'</td></tr>');
+           		 
+                	if(pt.hasOwnProperty("gender")){
+            	    	row.append( '<tr><td>Gender:</td><td>'+pt.gender+'</td></tr>');
+           			 }
+              	  	if(pt.hasOwnProperty("birthDate")){
+    					row.append( '<tr><td>BirthDate:</td><td>'+pt.birthDate.split("T")[0]+'</td></tr>');
+               		 }
+                	if(pt.hasOwnProperty("maritalStatus") && pt.maritalStatus.hasOwnProperty("coding")){
+    					row.append( '<tr><td>MaritalStatus:</td><td>'+pt.maritalStatus.coding[0].display +'</td></tr>');
+               		 }
+    				$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+    				$("#demo_list").append('<th align="left"">Demographics</th>');
+    				$("#demo_list").append(row);
+                }
                 
 
             
@@ -50,7 +67,7 @@
            	       var diag_list = document.getElementById('diag_list');
            	    $("#diag_list").empty().attr("frame","none");
            	 $('#diag_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
-				$("#diag_list").append('<th align="Diagnoses:">Diagnoses:</th>');
+				$("#diag_list").append('<th align="left">Diagnoses:</th>');
 
                     diags.data.entry.forEach(function(diag){
                     	
@@ -136,10 +153,10 @@
             
             
             ////
-            
+           
         });
-
-        });
+            document.getElementById("display").innerHTML="";
+    });
 
     </script>
  </body>
