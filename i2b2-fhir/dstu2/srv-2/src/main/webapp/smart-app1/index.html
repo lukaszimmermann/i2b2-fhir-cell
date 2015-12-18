@@ -6,6 +6,8 @@
    
  </head>
  <body>
+ 	<h4>SMART Dashboard</h4>
+ 	<br>
     <div id="display"></div>
     <table id="demo_list"></table>
     <br>
@@ -56,6 +58,7 @@
     				$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
     				$("#demo_list").append('<th align="left"">Demographics</th>');
     				$("#demo_list").append(row);
+    				document.getElementById("display").innerHTML="";
                 }
                 
 
@@ -91,6 +94,7 @@
                        
                     });
                 }
+         	  	document.getElementById("display").innerHTML="";
              });
             
             
@@ -142,7 +146,7 @@
                        if(labValue==null) {labValue="--";}
                        row.append( $("<td>").text(labValue));
                        $("#lab_list").append(row);
-                       
+                       document.getElementById("display").innerHTML="";
                        //JSON.stringify(lab.resource.valueCodeableConcept,null,4);
                        //lab_list.innerHTML += "<li> " + labName + "  "+labValue +"</li>";
                     });
@@ -155,7 +159,7 @@
             ////
            
         });
-            document.getElementById("display").innerHTML="";
+            
     });
 
     </script>
