@@ -193,5 +193,11 @@ public class Utils {
 	        is.close();
 	    }
 	}
+	
+	public static String fileToString(String filePath) throws IOException{
+		return IOUtils
+		.toString(Utils.class
+				.getResourceAsStream(filePath));
+	}
 
 }

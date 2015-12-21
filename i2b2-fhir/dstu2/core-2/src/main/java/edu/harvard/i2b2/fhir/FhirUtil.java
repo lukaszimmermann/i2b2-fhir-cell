@@ -651,17 +651,20 @@ public class FhirUtil {
 
 	}
 
+	//makes copy of child and puts in a container in p
 	public static Resource containResource(Resource p, Resource c)
 			throws JAXBException {
 		try {
 			Class parentClass = FhirUtil.getResourceClass(p);
 			Class childClass = FhirUtil.getResourceClass(c);
-
+			
+			
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
 			String childReference = c.getId().getValue();
 			// xml = xml.replace(childReference, "#-" + childReference);
 			// p = JAXBUtil.fromXml(xml, parentClass);
+			logger.trace("getting path to parent:"+parentClass+"\nchild:"+childClass.getSimpleName().toLowerCase());
 			String path = new SearchParameterMap().getParameterPath(
 					parentClass, childClass.getSimpleName().toLowerCase());
 			logger.trace("SEARCH PATH:" + path);
@@ -673,11 +676,15 @@ public class FhirUtil {
 			String childId = childRef.getReference().getValue();
 
 			childRef.getReference().setValue(
-					"#" + childClass.getSimpleName() + "-" + childId);
+					"#" //+ childClass.getSimpleName() + "-" 
+							+ childId);
 
 			Id cId = c.getId();
-			cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
-			c.setId(cId);
+			c=FhirUtil.clone(c,childClass.getSimpleName() + "/" + cId.getValue());
+
+			//Id cId = c.getId();
+			//cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
+			//c.setId(cId);
 			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
 
 			Method method;
@@ -699,6 +706,15 @@ public class FhirUtil {
 		}
 		return p;
 
+	}
+
+	private static Resource clone(Resource i, String newId) throws JAXBException {
+		Class rClass = FhirUtil.getResourceClass(i);
+		Resource c=JAXBUtil.fromXml(JAXBUtil.toXml(i),rClass);
+		Id cId = c.getId();
+		cId.setValue(newId);
+		c.setId(cId);
+		return c;
 	}
 
 	public static String bundleToJsonString(Bundle s) throws IOException,

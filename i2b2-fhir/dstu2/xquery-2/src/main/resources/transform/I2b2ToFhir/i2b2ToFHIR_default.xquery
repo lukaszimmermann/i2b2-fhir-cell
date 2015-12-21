@@ -128,7 +128,7 @@ return
   <reliability value="ok"/>
   
    <subject>
-     <reference value="{$pid}"/>
+     <reference value="Patient/{$pid}"/>
   </subject>
 
   </Observation>
@@ -174,7 +174,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
   <text>   
   </text>
   <patient>
-     <reference value="{$pid}"/>
+     <reference value="Patient/{$pid}"/>
   </patient>
   
   <dateAsserted value="{$sd}"/>
@@ -216,7 +216,7 @@ declare function local:fnFhirDiagReport($sd as xs:string?, $ed as xs:string?,$co
     </coding>
   </code>
   <subject>
-    <reference value="{$pid}"/>
+    <reference value="Patient/{$pid}"/>
    </subject>
   <effectiveDateTime value="{$sd}"/>
   <issued value="{$ed}"/>
@@ -253,7 +253,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
   <!--<status value="active"/>-->
   
   <patient>
-     <reference value="{$pid}"/>
+     <reference value="Patient/{$pid}"/>
   </patient>
  
  <!-- <prescriber>
@@ -263,7 +263,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
     <end value="{$ed}"/>
 -->
   <medicationReference>
-    <reference value="{$medication_id}"/> 
+    <reference value="Medication/{$medication_id}"/> 
   </medicationReference>
     
 

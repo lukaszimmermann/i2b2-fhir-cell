@@ -80,6 +80,7 @@ public class QueryReference extends Query {
 			rawId = getXmlFromParameterPath(resourceXml,  getParameterPath()+"/reference/@value/string()");
 		
 		// id=this.getLastElementOfparamPath()+"/"+id;
+			rawId=rawId.split("/")[1];
 
 		 logger.info("matching "+rawId+" to value:"+this.getRawValue());
 		if (rawId.equals(this.getRawValue())) {

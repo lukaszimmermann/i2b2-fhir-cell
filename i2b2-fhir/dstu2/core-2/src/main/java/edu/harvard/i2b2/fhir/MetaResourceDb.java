@@ -58,7 +58,7 @@ import edu.harvard.i2b2.fhir.query.SearchParameterMap;
 import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class MetaResourceDb {
-	Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
+	static Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
 	List<Resource> resourceList;
 
@@ -206,20 +206,18 @@ public class MetaResourceDb {
 		return null;
 	}
 
-	public Resource searchById(String idStr) {
+	public Resource searchById(String idStr,Class c) {
 		// logger.trace("searching id:" + id);
 		for (Resource r : resourceList) {
-			if (r.getId().getValue().equals(idStr))
+			//logger.trace("id:"+r.getId().getValue())
+			if(c.isInstance(r)&& r.getId().getValue().equals(idStr))
 				return r;
 		}
 		logger.trace("id NOT found:" + idStr);
 		return null;
 	}
 
-	public Resource searchResourceById(String id) {
-		Resource r = searchById(id);
-		return r;
-	}
+	
 
 	// child can be a element in the resource or element of a reference element
 	public Object getChildOfResource(Resource r, String pathStr)
@@ -251,7 +249,7 @@ public class MetaResourceDb {
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
-				return searchResourceById(idn);
+				return searchById(idn,c);
 			} else {
 				logger.trace("returning NOT from reference");
 				return o;
@@ -271,7 +269,7 @@ public class MetaResourceDb {
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
-				nextR = searchResourceById(idn);
+				nextR = searchById(idn,c);
 			} else {
 				logger.trace("returning NOT from reference");
 				return o;
@@ -283,6 +281,9 @@ public class MetaResourceDb {
 
 	}
 
+	//inputSet is set of resources to process for inclusion
+	//c is class of the resources for processing
+	// includesResources is search name of resources for inclusion
 	public List<Resource> getIncludedResources(Class c,
 			List<Resource> inputSet, List<String> includeResources)
 			throws IllegalAccessException, IllegalArgumentException,
@@ -292,6 +293,8 @@ public class MetaResourceDb {
 		List<Resource> outList = new ArrayList<Resource>();
 			// iterate through resources and add included dependencies
 
+		//logger.trace("inputSet size:"+inputSet.size());
+		
 		for (String ir : includeResources) {
 			String paramterPath =  new SearchParameterMap().getParameterPath(
 					c, ir);
@@ -304,13 +307,18 @@ public class MetaResourceDb {
 			for (Resource r : inputSet) {
 				// String id = ((Reference)this.getFirstLevelChild(r, c,
 				// methodName)).getId();
-				Reference ref = (Reference) this.getFirstLevelChild(r, c,
+				Reference ref = (Reference) getFirstLevelChild(r, c,
 						methodName);
 
-				String id = ref.getReference().getValue().toString();
+				String rawid = ref.getReference().getValue().toString();
+				//String id=rawid;//
+				String id=rawid.split("/")[1];
+				Class depClass=FhirUtil.getResourceClass(rawid.split("/")[0]);
+				
 				logger.trace("Found dep:<" + id + ">");
-				Resource depMr = searchById(id);
+				Resource depMr = searchById(id,depClass);
 				if (depMr != null) {
+					//logger.trace("dependent Res:"+JAXBUtil.toXml(depMr));
 					outList.add(FhirUtil.containResource(r, depMr));
 				} else {
 					outList.add(r);
