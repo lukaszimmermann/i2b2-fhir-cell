@@ -175,8 +175,9 @@ public class OAuth2AuthzEndpoint {
 	boolean isClientIdValid(String clientId, String redirectUri) {
 		if(serverConfig.GetString(ConfigParameter.openClientId)!=null && serverConfig.GetString(ConfigParameter.openClientId).equals(clientId)) return true;
 		Client client=clientService.find(clientId);
-		if (client==null) logger.warn("client not found for id:"+clientId);
-		if (!client.getRedirectUrl().equals(redirectUri)){
+		if (client==null) {
+			logger.warn("client not found for id:"+clientId);
+		}else if (client.getRedirectUrl()!=null && !client.getRedirectUrl().equals(redirectUri)){
 			logger.warn("Requested redirectUri does not match that of the registered client:"+client.getRedirectUrl());
 			return false;
 		}
