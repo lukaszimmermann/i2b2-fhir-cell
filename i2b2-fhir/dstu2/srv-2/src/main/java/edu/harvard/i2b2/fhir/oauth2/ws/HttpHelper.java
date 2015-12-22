@@ -19,10 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
+
 public class HttpHelper {
 	static Logger logger = LoggerFactory.getLogger(HttpHelper.class);
 
-	static public URI getBasePath(HttpServletRequest request)
+	static public URI getBasePath(HttpServletRequest request,ServerConfigs serverConfigs)
 			throws URISyntaxException {
 		String uri = request.getScheme()
 				+ "://"
@@ -52,6 +55,9 @@ public class HttpHelper {
 		logger.info("request.getServletPath():" + request.getServletPath());
 		logger.info("request.getPathInfo():" + request.getPathInfo());
 		 */
+		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
+			uri=uri.toString().replaceAll("^http:", "https:");
+		}
 		return new URI(uri);
 	}
 	

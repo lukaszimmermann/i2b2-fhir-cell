@@ -345,6 +345,13 @@ public class I2b2FhirWS {
 	}
 
 	@GET
+	@Path("smartstyleuri")
+	public Response smartStyleUri() throws IOException{
+		return Response.ok().entity(Utils.fileToString("/smartStyleUri.json")).build();
+	}
+			
+	
+	@GET
 	@Path("metadata")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
 			"application/xml+fhir", "application/json+fhir" })
@@ -354,10 +361,8 @@ public class I2b2FhirWS {
 			JSONException, IOException, ParserConfigurationException,
 			SAXException, URISyntaxException {
 
-		URI fhirBase = HttpHelper.getBasePath(request);
-		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
-			fhirBase=new URI(fhirBase.toString().replaceAll("^http:", "https:"));
-		}
+		URI fhirBase = HttpHelper.getBasePath(request,serverConfigs);
+		
 		
 		Conformance c = new Conformance();
 		ConformanceRest rest = new ConformanceRest();

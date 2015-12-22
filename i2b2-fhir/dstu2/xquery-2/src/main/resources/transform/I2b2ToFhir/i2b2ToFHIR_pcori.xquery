@@ -177,28 +177,21 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
      <reference value="Patient/{$pid}"/>
   </patient>
   
-  <dateAsserted value="{$sd}"/>
+   <dateAsserted value="{$sd}"/>
   <code>
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
-      <display value="{$cn}"/>
     </coding>/
   </code>
   <category>
     <coding>
       <system value="http://hl7.org/fhir/condition-category"/>
-      <code value="diagnose"/>
+      <code value="diagnosis"/>
+      <display value="Diagnosis"/>
     </coding>
   </category>
-  <status value="confirmed"/>
-  <certainty>
-    <coding>
-      <system value="http://snomed.info/sct"/>
-      <code value="17162000"/>
-      <display value="Certain"/>
-    </coding>
-  </certainty>
+  <clinicalStatus value="active"/>
   </Condition>
 };
 

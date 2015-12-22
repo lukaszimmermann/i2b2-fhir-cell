@@ -12,6 +12,8 @@
 package edu.harvard.i2b2.fhir.oauth2.ws;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Enumeration;
 
 import javax.ejb.EJB;
@@ -77,7 +79,7 @@ public class OAuth2TokenEndpoint {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces("application/json")
 	public Response authorize(@Context HttpServletRequest request)
-			throws OAuthSystemException, IOException {
+			throws OAuthSystemException, IOException, URISyntaxException {
 
 		try {
 			logger.info("got url:" + request.getRequestURL());
@@ -138,7 +140,7 @@ public class OAuth2TokenEndpoint {
 
 			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
-			
+			URI fhirBase = HttpHelper.getBasePath(request,serverConfig);
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
 					.setAccessToken(accessToken.getTokenString()).setExpiresIn("3600")
@@ -146,6 +148,8 @@ public class OAuth2TokenEndpoint {
 					.setParam("token_type", "Bearer")
 					.setParam("state", state)
 					.setParam("patient", patientId)//"1000000005")//authToken.getPatient())
+					.setParam("need_patient_banner", "true")
+					.setParam("smart_style_url", fhirBase.toString()+"smartstyleuri")
 					.buildJSONMessage();
 			logger.trace("pat:"+authToken.getPatient());
 			logger.info("returning res:" + response.getBody());
@@ -207,7 +211,7 @@ public class OAuth2TokenEndpoint {
 
 	private boolean checkClientId(String clientId, AuthToken authToken) {
 		if(!authToken.getClientId().equals(clientId)) {
-			logger.warn("clientId in request is diffirent from that for which the auth code was issued:");
+			logger.warn("clientId in request is different from that for which the auth code was issued:");
 			return false;
 		}
 		

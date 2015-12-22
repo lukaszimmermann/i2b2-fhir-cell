@@ -187,17 +187,12 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
   <category>
     <coding>
       <system value="http://hl7.org/fhir/condition-category"/>
-      <code value="diagnose"/>
+      <code value="diagnosis"/>
+      <display value="Diagnosis"/>
     </coding>
   </category>
-  <status value="confirmed"/>
-  <certainty>
-    <coding>
-      <system value="http://snomed.info/sct"/>
-      <code value="17162000"/>
-      <display value="Certain"/>
-    </coding>
-  </certainty>
+  <clinicalStatus value="active"/>
+  
   </Condition>
 };
 

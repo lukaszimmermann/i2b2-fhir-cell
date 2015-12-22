@@ -84,6 +84,18 @@ public class ServerConfigs {
 		}
 	}
 
+	public void SetString(ConfigParameter configParameter,String value) {
+		String parName=configParameter.toString();
+		if(configDbService==null) {logger.warn("configDbService is null");}
+		else{
+			ConfigDb p=configDbService.find(parName);
+			p.setValue(value);
+			configDbService.save(p);
+			
+		}
+	
+	}
+	
 	public String GetString(ConfigParameter configParameter) {
 		String value=null;
 		String parName=configParameter.toString();
