@@ -60,18 +60,24 @@ import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 public class MetaResourceDb {
 	static Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
-	List<Resource> resourceList;
+	HashMap<Class,List<Resource>> resourceMap;
+	//List<Resource> resourceList;
 
 	public MetaResourceDb() throws IOException {
 		init();
 	}
 
 	public int getSize() {
-		return this.resourceList.size();
+		int count=0;
+		for(Class c:resourceMap.keySet()){
+			count+=resourceMap.get(c).size();
+		}
+		return count;
 	}
 
 	public void init() throws IOException {
-		resourceList = new ArrayList<Resource>();
+		resourceMap= new HashMap<>();
+		//resourceList = new ArrayList<Resource>();
 		// metaResources = new MetaResourcePrimaryDb();
 		logger.trace("created resourcedb");
 		logger.trace("resources size:" + getSize());
@@ -79,6 +85,8 @@ public class MetaResourceDb {
 
 	public String addResource(Resource r) throws JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
+		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
+		
 		logger.trace("EJB Putting resource:" + c.getSimpleName());
 		try {
 			logger.trace("EJB Put Resource:"
@@ -99,10 +107,11 @@ public class MetaResourceDb {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
 			logger.trace("replacing resource with id:" + r.getId());
-			resourceList.remove(presentRes);
+			
+			//resourceList.remove(presentRes);
+			
 		}
 
-		//r = FhirEnrich.enrich(r);
 		resourceList.add(r);
 
 		logger.trace("EJB resources (after adding) size:" + this.getSize());
@@ -119,6 +128,7 @@ public class MetaResourceDb {
 	}
 
 	public Resource getResource(String id, Class c) {
+		List<Resource> resourceList = this.resourceMap.get(c);
 		logger.trace("EJB searching for resource with id:" + id);
 		logger.trace("mResources size:" + this.getSize());
 		for (Resource r : resourceList) {
@@ -138,7 +148,7 @@ public class MetaResourceDb {
 		logger.trace("EJB searching for resource type:" + c.getSimpleName());
 		logger.trace("resources size:" + this.getSize());
 		int count = 0;
-
+		List<Resource> resourceList = this.resourceMap.get(c);
 		for (Resource r : resourceList) {
 			if (!c.isInstance(r))
 				continue;
@@ -148,7 +158,15 @@ public class MetaResourceDb {
 	}
 
 	public void removeResource(Resource r1) {
+		Class c = FhirUtil.getResourceClass(r1);
+		List<Resource> resourceList =getResourceListCreateIfAbsent(c);
 		resourceList.remove(r1);
+	}
+
+	private List<Resource> getResourceListCreateIfAbsent(Class c) {
+		List<Resource> resourceList = this.resourceMap.get(c);
+		if((resourceList)==null) this.resourceMap.put(c, new ArrayList<Resource>() );
+		return this.resourceMap.get(c);
 	}
 
 	public static String getValueOfFirstLevelChild(Resource r, Class c, String k)
@@ -181,6 +199,7 @@ public class MetaResourceDb {
 
 	public List<Resource> getAll(Class c) {
 		List<Resource> list = new ArrayList<Resource>();
+		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		for (Resource r : resourceList) {
 			if (c.isInstance(r)) {
 				list.add(r);
@@ -190,11 +209,15 @@ public class MetaResourceDb {
 	}
 
 	public List<Resource> getAll() {
-		return this.resourceList;
-
+		List<Resource> all= new ArrayList<Resource>();
+		for(Class c:resourceMap.keySet()){
+			all.addAll(resourceMap.get(c));
+		}
+		return all;
 	}
 
 	public Resource getParticularResource(Class c, String id) {
+		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		for (Resource r : resourceList) {
 			logger.trace(r.getId().getValue().toString());
 			if (c.isInstance(r)
@@ -208,6 +231,7 @@ public class MetaResourceDb {
 
 	public Resource searchById(String idStr,Class c) {
 		// logger.trace("searching id:" + id);
+		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		for (Resource r : resourceList) {
 			//logger.trace("id:"+r.getId().getValue())
 			if(c.isInstance(r)&& r.getId().getValue().equals(idStr))
