@@ -159,7 +159,7 @@ public class OAuth2AuthzEndpoint {
 				
 			} else
 				return Response.status(Status.UNAUTHORIZED)
-						.entity("clientId IsNotValid").build();
+						.entity("client_id or redirect_uri is not valid").build();
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
