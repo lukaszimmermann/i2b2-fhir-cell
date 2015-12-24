@@ -22,5 +22,6 @@ public enum  ConfigParameter {
 	nonExpiringTokenList,
 	patientBundleTimeOut,
 	enrichEnabled, 
-	fhirbaseSSL
+	fhirbaseSSL, 
+	patientFetchMin
 }

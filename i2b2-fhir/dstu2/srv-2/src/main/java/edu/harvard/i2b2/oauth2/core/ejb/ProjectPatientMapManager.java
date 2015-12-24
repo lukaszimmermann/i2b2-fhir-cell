@@ -22,6 +22,8 @@ import org.w3c.dom.ranges.RangeException;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.FhirServerException;
 import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 import edu.harvard.i2b2.oauth2.core.entity.ProjectPatientMap;
@@ -36,6 +38,9 @@ public class ProjectPatientMapManager {
 
 	@EJB
 	BundleStatus status;
+	
+	@EJB
+	ServerConfigs serverConfigs;
 	
 	@PostConstruct
 	public void init(){
@@ -97,8 +102,15 @@ public class ProjectPatientMapManager {
 		status.markProcessing(projectId);
 		try {
 			logger.trace("fetching all Patients for project:" + projectId);
-			String i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
+			String i2b2Xml=null;
+			if(serverConfigs.GetString(ConfigParameter.patientFetchMin)!=null
+					&& serverConfigs.GetString(ConfigParameter.patientFetchMin).equals("true") ){
+			i2b2Xml = I2b2Util.getAllPatientsMin(i2b2User, i2b2Token,
 					i2b2Url, i2b2Domain, projectId);
+			}else{
+				i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
+						i2b2Url, i2b2Domain, projectId);
+			}
 			//Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
 			
 			

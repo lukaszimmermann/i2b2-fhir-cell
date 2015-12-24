@@ -203,6 +203,22 @@ public class I2b2Util {
 
 		String requestXml = IOUtils.toString(FhirUtil.class
 				//.getResourceAsStream("/i2b2query/getAllPatients.xml"));
+				.getResourceAsStream("/i2b2query/getAllPatients.xml"));
+		
+		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
+				i2b2Token, i2b2Url, I2b2Domain, project);
+
+		String pdo = getI2b2Response(i2b2Url, requestXml);
+
+		return pdo;
+	}
+	
+	public static String getAllPatientsMin(String i2b2User, String i2b2Token,
+			String i2b2Url, String I2b2Domain, String project)
+			throws XQueryUtilException, IOException {
+
+		String requestXml = IOUtils.toString(FhirUtil.class
+				//.getResourceAsStream("/i2b2query/getAllPatients.xml"));
 				.getResourceAsStream("/i2b2query/getAllPatientsMin.xml"));
 		
 		requestXml = I2b2Util.insertI2b2ParametersInXml(requestXml, i2b2User,
@@ -212,6 +228,7 @@ public class I2b2Util {
 
 		return pdo;
 	}
+
 
 	public static String getI2b2Response(String i2b2Url, String requestXml) throws XQueryUtilException {
 		String responseXml = WebServiceCall.run(i2b2Url

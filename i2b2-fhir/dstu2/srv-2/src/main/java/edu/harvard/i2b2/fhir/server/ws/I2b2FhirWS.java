@@ -66,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import ca.uhn.fhir.model.dstu2.resource.Patient;
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
@@ -185,7 +186,15 @@ public class I2b2FhirWS {
 			if (request.getQueryString() != null) {
 				String fhirQuery = c.getSimpleName() + "?"
 						+ request.getQueryString();
-				s = queryManager.runQueryEngine(fhirQuery, s, basePath);
+				
+				//optimization to avoid query search on patient id
+				if(!c.equals(Patient.class)){
+					fhirQuery=fhirQuery.replaceAll("\\?patient=(\\d+)", "");
+					fhirQuery=fhirQuery.replaceAll("\\?subject=(\\d+)", "");
+					logger.trace("bypassing sophisticated query");
+				}else{
+					s = queryManager.runQueryEngine(fhirQuery, s, basePath);
+				}
 			}
 
 			logger.info("including...._include:" + includeResources.toString());
