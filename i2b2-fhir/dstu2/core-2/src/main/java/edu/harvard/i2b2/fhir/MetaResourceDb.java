@@ -106,7 +106,7 @@ public class MetaResourceDb {
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			logger.trace("replacing resource with id:" + r.getId());
+			logger.debug("replacing resource with id:" + r.getId());
 			
 			//resourceList.remove(presentRes);
 			
@@ -114,7 +114,7 @@ public class MetaResourceDb {
 
 		resourceList.add(r);
 
-		logger.trace("EJB resources (after adding) size:" + this.getSize());
+		logger.debug("MrDB resources (after adding) size:" + this.getSize());
 		return r.getId().getValue().toString();
 	}
 
@@ -237,7 +237,7 @@ public class MetaResourceDb {
 			if(c.isInstance(r)&& r.getId().getValue().equals(idStr))
 				return r;
 		}
-		logger.trace("id NOT found:" + idStr);
+		logger.debug("id NOT found:" + idStr);
 		return null;
 	}
 

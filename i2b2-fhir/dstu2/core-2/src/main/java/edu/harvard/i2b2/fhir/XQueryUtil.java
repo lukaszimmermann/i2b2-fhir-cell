@@ -61,8 +61,7 @@ public final class XQueryUtil {
 	 *             if a database command fails
 	 */
 
-	public static ArrayList<String> getStringSequence(String query, String input)
-			throws XQueryUtilException {
+	public static ArrayList<String> getStringSequence(String query, String input) throws XQueryUtilException {
 		ArrayList<String> resList = new ArrayList<String>();
 		// Database context.
 		Context context = new Context();
@@ -106,8 +105,7 @@ public final class XQueryUtil {
 		return resList;
 	}
 
-	public static String processXQuery(String query, String input)
-			throws XQueryUtilException {
+	public static String processXQuery(String query, String input) throws XQueryUtilException {
 		String result = null;
 		try {
 
@@ -118,7 +116,8 @@ public final class XQueryUtil {
 				throw new XQueryUtilException("input is null");
 
 			// Create a database from a remote XML document
-			// System.out.println("\n* Create a database from a file via http.");
+			// System.out.println("\n* Create a database from a file via
+			// http.");
 
 			// Use internal parser to skip DTD parsing
 			String dbName = UUID.randomUUID().toString();
@@ -126,8 +125,7 @@ public final class XQueryUtil {
 				if (input != null) {
 					new Set("intparse", true).execute(context);
 
-					new org.basex.core.cmd.CreateDB(dbName, input)
-							.execute(context);
+					new org.basex.core.cmd.CreateDB(dbName, input).execute(context);
 				}
 				try (QueryProcessor proc = new QueryProcessor(query, context)) {
 					// Store the pointer to the result in an iterator:
@@ -147,12 +145,15 @@ public final class XQueryUtil {
 					new DropDB(dbName).execute(context);
 				}
 			} catch (BaseXException e1) {
-				logger.error(e1.getMessage(), e1);
-				throw new XQueryUtilException(e1);
+				
+					logger.error(e1.getMessage(), e1);
+					throw new XQueryUtilException(e1);
+				
 			}
 			context.close();
 
 		} catch (java.nio.file.FileSystemNotFoundException e) {
+				logger.error(">>>>>>>>caught exception");
 		}
 		return result;
 	}

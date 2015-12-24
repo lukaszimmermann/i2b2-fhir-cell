@@ -118,10 +118,11 @@ return
     </coding>
 </code>
   
-  <appliesPeriod>
+  <effectivePeriod>
     <start value="{$sd}"/>
     {$endDateString}
-  </appliesPeriod>
+  </effectivePeriod>
+  
     {$valueFhir}
   <!--   the mandatory quality flags:   -->
   <status value="final"/>
@@ -168,7 +169,14 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 
 
 declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string) as node(){           
-   <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+  let $endDateString:=
+    if($ed != "") then
+    <end value="{$ed}"/>
+  else ()
+ 
+ return
+
+<Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <status value="generated"/>
   <text>   
@@ -177,7 +185,11 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
      <reference value="Patient/{$pid}"/>
   </patient>
   
-  <dateAsserted value="{$sd}"/>
+  <onsetPeriod>
+    <start value="{$sd}"/>
+    {$endDateString}
+  </onsetPeriod>
+  
   <code>
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>

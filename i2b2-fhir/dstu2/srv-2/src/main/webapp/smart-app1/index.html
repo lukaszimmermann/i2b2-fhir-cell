@@ -77,6 +77,19 @@
                     	var row = $("<tr>");
         				//row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
         				
+                    	 var date ;
+                         if(diag.hasOwnProperty("resource") 
+                      		   && diag.resource.hasOwnProperty("onsetPeriod")
+                      		   && diag.resource.onsetPeriod.hasOwnProperty("start")
+                      		  
+                      		   ){	
+                      	   date=diag.resource.onsetPeriod.start.split("T")[0]
+    						}
+     					 if(date==null) {date="--";
+     					 }
+     					row.append( $("<td>").text(date));
+        				
+        				
                        var diagName ;
                        if(diag.hasOwnProperty("resource") 
                     		   && diag.resource.hasOwnProperty("code")
@@ -114,6 +127,19 @@
                     	
                     	var row = $("<tr>");
         				//row.append( $("<td>").text(lab.appliesPeriod.start.replace("T"," ")));
+        				
+        				 var date ;
+                         if(lab.hasOwnProperty("resource") 
+                      		   && lab.resource.hasOwnProperty("effectivePeriod")
+                      		   && lab.resource.effectivePeriod.hasOwnProperty("start")
+                      		  
+                      		   ){	
+                      	   date=lab.resource.effectivePeriod.start.split("T")[0]
+    						}
+     					 if(date==null) {date="--";
+     					 }
+     					row.append( $("<td>").text(date));
+        					
         				
                        var labName ;
                        if(lab.hasOwnProperty("resource")
