@@ -111,7 +111,13 @@ declare function local:fnPatient($zip as xs:string?,
       </table>
     </div>
   </text>
-
+  
+  <name>
+    <use value="anonymous"/>
+    <family value="anonymous"/>
+    <given value="anonymous"/>
+  </name>
+  
 <!--  {$local:getIdentifier()}-->
  
 <identifier>
