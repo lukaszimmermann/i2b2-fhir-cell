@@ -49,8 +49,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
-import org.json.XML;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -100,9 +99,7 @@ public class Utils {
 		}
 	}
 
-	public static String xmlToJson(String xmlStr) throws JSONException {
-		return XML.toJSONObject(xmlStr).toString(2);
-	}
+
 
 	/*
 	 * public String convert(String input) throws ParserConfigurationException,

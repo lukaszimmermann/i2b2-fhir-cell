@@ -479,4 +479,13 @@ public class I2b2FhirWS {
 		p.getSearchParam().add(sp);
 		
 	}
+	
+	@GET
+	@Path("validate")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON,
+		"application/xml+fhir", "application/json+fhir" })
+	public Response validate(){
+		return null;
+		
+	}
 }

@@ -93,7 +93,8 @@
 			<artifactId>validator</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/validator-1.0.jar</systemPath>
+			<systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath>
+			
 		</dependency>
 
 

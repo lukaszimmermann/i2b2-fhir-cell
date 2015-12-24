@@ -44,6 +44,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -81,7 +82,6 @@ import org.hl7.fhir.ResourceContainer;
 import org.hl7.fhir.UnsignedInt;
 import org.hl7.fhir.Uri;
 import org.hl7.fhir.instance.validation.Validator;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,11 +171,15 @@ public class FhirUtil {
 		try {
 			if (v == null)
 				init();
+			
 			v.setSource(input);
+			logger.trace("source"+v.getSource());
 			v.process();
+			return v.getOutcome().toString();
 
 		} catch (Exception e) {
 			msg = e.getMessage();
+			logger.error(e.getMessage(),e);
 		}
 		return msg;
 
@@ -198,12 +202,16 @@ public class FhirUtil {
 
 	private static void init() {
 		if (v == null) {
+			try{
 			v = new Validator();
-			String path = Utils.getFilePath("validation.zip");
+			String path = Utils.getFilePath("validation-min.xml.zip");
 
 			v.setDefinitions(path);
-			// logger.trace(v.getDefinitions());
-			// logger.trace("ready");
+			logger.trace(v.getDefinitions());
+			logger.trace("ready");
+			}catch(Exception e){
+				logger.error(e.getMessage(),e);
+			}
 		}
 
 	}
@@ -586,7 +594,7 @@ public class FhirUtil {
 		throw new RuntimeException("Not implemented all resource types:" + xml);
 	}
 
-	public static String resourceToJsonString(Resource r) throws JSONException,
+	public static String resourceToJsonString(Resource r) throws
 			JAXBException, IOException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(r));
 
