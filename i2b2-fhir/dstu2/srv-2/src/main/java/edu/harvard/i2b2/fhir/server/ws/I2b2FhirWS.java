@@ -124,7 +124,7 @@ public class I2b2FhirWS {
 			// PropertyConfigurator.configure(props);
 
 			logger.info("Got init request");
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -161,15 +161,15 @@ public class I2b2FhirWS {
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
 			session = request.getSession();
-			String basePath = request.getRequestURL().toString().split(resourceName)[0];
-
-			// I2b2Helper.resetMetaResourceDb(session, sbb);
+			//String basePath = request.getRequestURL().toString().split(resourceName)[0];
+			URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+			String basePath=fhirBase.toString();
 			logger.debug("session id:" + session.getId());
 
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 					session);
 
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr);
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr,null);
 
 			md.addBundle(s);
 
@@ -229,7 +229,7 @@ public class I2b2FhirWS {
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response getParticularResource(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+	public Response getParticularResourceWrapper(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request,
 			@HeaderParam(AuthenticationFilter.AUTHENTICATION_HEADER) String tokString)
@@ -245,22 +245,12 @@ public class I2b2FhirWS {
 
 			MetaResourceDb md = new MetaResourceDb();
 			String msg = null;
-			Resource r = null;
-			Bundle s = null;
-			String mediaType = null;
-
-			logger.debug("session id:" + session.getId());
-			logger.info("searching particular resource:<" + resourceName + "> with id:<" + id + ">");
-			Class c = FhirUtil.getResourceClass(resourceName);
-			if (c == null)
-				throw new RuntimeException("class not found for resource:" + resourceName);
+			String mediaType="";
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 					session);
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr);
-			md.addBundle(s);
-			;
-
-			r = md.getParticularResource(c, id);
+			Resource r =getParticularResource(request,resourceName,id,headers);
+			
+			
 
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
@@ -285,6 +275,31 @@ public class I2b2FhirWS {
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 		}
 
+	}
+
+	private Resource getParticularResource(HttpServletRequest request, String resourceName, String id,HttpHeaders headers) throws IOException, XQueryUtilException, JAXBException, AuthenticationFailure, FhirServerException, InterruptedException {
+		MetaResourceDb md = new MetaResourceDb();
+		String msg = null;
+		Resource r = null;
+		Bundle s = null;
+		String mediaType = null;
+		HttpSession session=request.getSession();
+		authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
+				session);
+
+		
+		logger.debug("session id:" + session.getId());
+		logger.info("searching particular resource:<" + resourceName + "> with id:<" + id + ">");
+		Class c = FhirUtil.getResourceClass(resourceName);
+		if (c == null)
+			throw new RuntimeException("class not found for resource:" + resourceName);
+		
+		s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr,id);
+		md.addBundle(s);
+		;
+
+		r = md.getParticularResource(c, id);
+		return r;
 	}
 
 	@GET
@@ -467,81 +482,92 @@ public class I2b2FhirWS {
 
 	}
 
+	// URL: [base]/Resource/$validate
+	// URL: [base]/Resource/[id]/$validate
+
+	@POST
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}/$validate")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+	"application/json+fhir" })
+	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request,  String inTxt) throws IOException, JAXBException, URISyntaxException, XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException {
+		Resource r=getParticularResource(request,resourceName,id,headers);
+		inTxt=JAXBUtil.toXml(r);
+		
+		return validate2(acceptHeader,request,inTxt);
+
+	}
+
 	@POST
 	@Path("validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response validate(
+	public Response validate2(
 			
-			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
-			@Context HttpServletRequest request, @Context ServletContext servletContext,
-			String inTxt) throws IOException, JAXBException, URISyntaxException {
+			@HeaderParam("accept") String acceptHeader, 
+			@Context HttpServletRequest request,  String inTxt)
+					throws IOException, JAXBException, URISyntaxException {
 		HttpSession session = request.getSession();
 		String mediaType;
-		String outTxt;
-		Resource r=JAXBUtil.fromXml(inTxt, Resource.class);
-		Class c=FhirUtil.getResourceClass(r);
-		logger.debug("Resource is of type:"+c);
-		logger.debug(" got Resource:"+JAXBUtil.toXml(r));
-		
-		Bundle s=null;
-		if(Bundle.class.isInstance(r)){
-			s=(Bundle) r;
-		}
-		
-		String ooTxt=FhirUtil.getValidatorErrorMessage(inTxt);
-		outTxt=ooTxt;
-		logger.trace("ooTxt:"+ooTxt);
-		//OperationOutcome oo=JAXBUtil.fromXml(ooTxt, OperationOutcome.class);
-		
+		String outTxt = validate(inTxt);
+
 		if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
-			//outTxt = FhirUtil.resourceToJsonString(oo);
+			// outTxt = FhirUtil.resourceToJsonString(oo);
 			mediaType = "application/json+fhir";
 		} else {
-			//outTxt = JAXBUtil.toXml(oo);
+			// outTxt = JAXBUtil.toXml(oo);
 			mediaType = "application/xml+fhir";
 		}
-		
+
 		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
 
 	}
-	
-	/*
-	static Validator v;
-	static public String init1(String fhirBase)  {
-		String outText="-";
-		if (v == null) {
-			try{
-			v = new Validator();
-			//String path = Utils.getFilePath("validation-min.xml.zip");
-			String fileName="/validation-min.xml.zip";
-			File file = new File(FhirUtil.class.getResource(fileName).getFile());
-			
-		
-			//v.setDefinitions(file.getAbsolutePath());//"file:///"+FhirUtil.class.getResource(fileName).getPath());
-			//logger.trace(v.getDefinitions());
-			logger.trace("ready");
-			
-			
-			File temp = File.createTempFile("tempFileForValidator", ".tmp"); 
-			FileOutputStream outTemp = new FileOutputStream(temp);
-			String input=Utils.getFile("/example/fhir/DSTU2/singlePatient.xml");
-			IOUtils.write(input, outTemp);
-			outTemp.close();
-	    	logger.trace("tmp file:"+new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath()); 
-			
-			v.setSource(fhirBase.split("srv*")[0]+"validation-min.xml.zip");//temp.getPath());
-			logger.trace("source"+v.getSource());
-			v.process();
-			
-			temp.delete();
-			outText=v.getOutcome().toString();
-			logger.debug(outText);
-			
-			}catch(Exception e){
-				logger.error(e.getMessage(),e);
-			}
+
+	private String validate(String inTxt) throws JAXBException {
+		String outTxt = "-";
+		/*
+		Resource r = JAXBUtil.fromXml(inTxt, Resource.class);
+		Class c = FhirUtil.getResourceClass(r);
+		logger.debug("Resource is of type:" + c);
+		// logger.debug(" got Resource:"+JAXBUtil.toXml(r));
+
+		Bundle s = null;
+		if (Bundle.class.isInstance(r)) {
+			s = (Bundle) r;
 		}
-		return outText;
-	}*/
+*/
+		String ooTxt = FhirUtil.getValidatorErrorMessage(inTxt);
+		outTxt = ooTxt;
+		logger.trace("ooTxt:" + ooTxt);
+		// OperationOutcome oo=JAXBUtil.fromXml(ooTxt, OperationOutcome.class);
+		return outTxt;
+	}
+
+	/*
+	 * static Validator v; static public String init1(String fhirBase) { String
+	 * outText="-"; if (v == null) { try{ v = new Validator(); //String path =
+	 * Utils.getFilePath("validation-min.xml.zip"); String
+	 * fileName="/validation-min.xml.zip"; File file = new
+	 * File(FhirUtil.class.getResource(fileName).getFile());
+	 * 
+	 * 
+	 * //v.setDefinitions(file.getAbsolutePath());//"file:///"+FhirUtil.class.
+	 * getResource(fileName).getPath()); //logger.trace(v.getDefinitions());
+	 * logger.trace("ready");
+	 * 
+	 * 
+	 * File temp = File.createTempFile("tempFileForValidator", ".tmp");
+	 * FileOutputStream outTemp = new FileOutputStream(temp); String
+	 * input=Utils.getFile("/example/fhir/DSTU2/singlePatient.xml");
+	 * IOUtils.write(input, outTemp); outTemp.close(); logger.trace("tmp file:"
+	 * +new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath());
+	 * 
+	 * v.setSource(fhirBase.split("srv*")[0]+"validation-min.xml.zip");//temp.
+	 * getPath()); logger.trace("source"+v.getSource()); v.process();
+	 * 
+	 * temp.delete(); outText=v.getOutcome().toString(); logger.debug(outText);
+	 * 
+	 * }catch(Exception e){ logger.error(e.getMessage(),e); } } return outText;
+	 * }
+	 */
 }

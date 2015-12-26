@@ -1,8 +1,14 @@
 declare namespace  ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/";
 declare namespace map="http://www.w3.org/2005/xpath-functions/map";
 
+
+declare function local:fnGetDate($r as xs:string?) as xs:string{ 
+let $x :=substring-before($r,'T')
+return $x
+};
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
-fn:replace($r,'.000Z$','') 
+let $x :=fn:replace($r,'.000Z$','') 
+return $x
 };
 
 declare function local:getIdentifier() as node(){ 
@@ -65,6 +71,22 @@ else if ($r="single") then "S"
 else "UNK"
 };
 
+declare function local:fnMaritalStatusDisplay($r as xs:string?) as xs:string
+{ 
+if ($r="T")  then  "Domestic partner"
+(:XXX mapped to domestic partner) :)
+else if ($r="D")  then  "Divorced"
+else if ($r="M")  then  "Married"
+else if ($r="UNK")  then  "unknown"
+else if ($r="L")  then  "Legally seperated"
+else if ($r="W") then "Widowed"
+else if ($r="S") then "Never married"
+else if ($r="A") then "Annulled"
+else if ($r="I") then "Interlocutory"
+else if ($r="P") then "Polygamous"
+else "unknown"
+};
+
 declare function local:fnMetaData($last_updated as xs:string? ) as node(){
 <MetaData>
     <lastUpdated>{$last_updated}</lastUpdated>
@@ -91,6 +113,9 @@ declare function local:fnPatient($zip as xs:string?,
                                  $marital_status_raw as xs:string?,
                                  $race_code as xs:string?
 ) as node()?{
+let $birthdateDate:=local:fnGetDate($birthdate)
+let $maritalStatusDisplay:=local:fnMaritalStatusDisplay($marital_status)
+return 
 <Patient  namespace="http://hl7.org/fhir"  >
   <id value="{$id}"/>
   <text>
@@ -105,7 +130,7 @@ declare function local:fnPatient($zip as xs:string?,
           {local:fnTxt('Zip',$zip)}
           {local:fnTxt('Gender',$gender_expanded)}
           {local:fnTxt('BirthDate',$birthdate)}
-          {local:fnTxt('Marital Status',$marital_status_raw)}
+          {local:fnTxt('Marital Status',$maritalStatusDisplay)}
    
         </tbody>
       </table>
@@ -128,7 +153,7 @@ declare function local:fnPatient($zip as xs:string?,
         <code value="MR"/>
       </coding>
     </type>
-    <system value="urn:oid:1.2.36.146.595.217.0.1"/>
+    <system value="http://fhir.i2b2.org"/>
     <value value="{$id}"/>
     <assigner>
       <display value="i2b2"/>
@@ -137,7 +162,11 @@ declare function local:fnPatient($zip as xs:string?,
  
   <!--   use FHIR code system for male / female   -->
   <gender value="{$gender_expanded}"/>
-  <birthDate value="{$birthdate}"/>
+  <birthDate value="{$birthdateDate}">
+    <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
+      <valueDateTime value="{$birthdate}"/>
+    </extension>
+  </birthDate>
   <deceasedBoolean value="false"/>
   
   <extension url="http://hl7.org/fhir/StructureDefinition/us-core-race">
@@ -162,7 +191,7 @@ declare function local:fnPatient($zip as xs:string?,
     <coding>
       <system value="http://hl7.org/fhir/v3/MaritalStatus"/>
       <code value="{$marital_status}"/>
-      <display value="{$marital_status_raw}"/>
+      <display value="{$maritalStatusDisplay}"/>
     </coding>
    </maritalStatus>
    
@@ -183,7 +212,7 @@ let $gender_expanded:=if ($gender='M') then 'male' else 'female'
 let $marital_status_raw:=$p/param[(@column='marital_status_cd')]/text()
 let $marital_status:=local:fnMaritalStatus(fn:lower-case($marital_status_raw))
 let $race_code:=local:fnrace(fn:lower-case($p/param[(@column='race')]/text()))
-let $birthdate:=$p/param[(@column='birth_date')]/text()
+let $birthdate:=local:fnI2b2TimeToFhirTime($p/param[(@column='birth_date')]/text())
 let $updateDate := local:fnI2b2TimeToFhirTime($p/@update_date)
 
 return 

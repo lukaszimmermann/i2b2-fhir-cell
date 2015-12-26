@@ -105,7 +105,7 @@ public class ProjectPatientMapManager {
 			String i2b2Xml=null;
 			if(serverConfigs.GetString(ConfigParameter.patientFetchMin)!=null
 					&& serverConfigs.GetString(ConfigParameter.patientFetchMin).equals("true") ){
-			i2b2Xml = I2b2Util.getAllPatientsMin(i2b2User, i2b2Token,
+				i2b2Xml = I2b2Util.getAllPatientsMin(i2b2User, i2b2Token,
 					i2b2Url, i2b2Domain, projectId);
 			}else{
 				i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
