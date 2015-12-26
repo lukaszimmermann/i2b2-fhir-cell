@@ -85,7 +85,7 @@ import org.hl7.fhir.Resource;
 import org.hl7.fhir.ResourceContainer;
 import org.hl7.fhir.UnsignedInt;
 import org.hl7.fhir.Uri;
-import org.hl7.fhir.instance.validation.Validator;
+import org.hl7.fhir.dstu21.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -183,6 +183,7 @@ public class FhirUtil {
 	    	logger.trace("tmp file:"+new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath()); 
 		
 	    	v.setSource(temp.getPath());
+	    	//v.setProfile("");
 			logger.trace("source"+v.getSource());
 			v.process();
 			
@@ -224,6 +225,7 @@ public class FhirUtil {
 			IOUtils.copy(FhirUtil.class.getResourceAsStream("/validation-min.xml.zip"), outTemp);
 		
 			v.setDefinitions(temp.getAbsolutePath());
+			
 			logger.trace(v.getDefinitions());
 			logger.trace("ready");
 			temp.deleteOnExit();

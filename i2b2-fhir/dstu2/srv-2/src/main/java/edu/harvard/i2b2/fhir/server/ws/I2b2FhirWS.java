@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,31 +61,28 @@ import org.hl7.fhir.IssueSeverityList;
 import org.hl7.fhir.IssueType;
 import org.hl7.fhir.IssueTypeList;
 import org.hl7.fhir.Narrative;
+import org.hl7.fhir.NarrativeStatusList;
 import org.hl7.fhir.OperationOutcome;
 import org.hl7.fhir.OperationOutcomeIssue;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.TypeRestfulInteraction;
 import org.hl7.fhir.TypeRestfulInteractionList;
 import org.hl7.fhir.Uri;
-import org.hl7.fhir.instance.validation.Validator;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3._1999.xhtml.Div;
 import org.xml.sax.SAXException;
 
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
-import edu.harvard.i2b2.fhir.query.QueryEngine;
-import edu.harvard.i2b2.fhir.server.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
-import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
-import edu.harvard.i2b2.oauth2.core.entity.AccessToken;
 
 /*
  * to use accessToken for authentication
@@ -417,7 +415,8 @@ public class I2b2FhirWS {
 		}));
 
 		c.getRest().add(rest);
-
+		//c=addConformanceText(c);
+		
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
 		String msg;
@@ -459,16 +458,25 @@ public class I2b2FhirWS {
 		Code value2 = new Code();
 		value2.setValue(name);
 		p.setType(value2);
-		ConformanceInteraction ci = new ConformanceInteraction();
-		TypeRestfulInteraction value = new TypeRestfulInteraction();
-		value.setValue(TypeRestfulInteractionList.READ);
-		ci.setCode(value);
-		p.getInteraction().add(ci);
+		List<TypeRestfulInteractionList> list=new ArrayList<>();
+		list.add(TypeRestfulInteractionList.READ);
+		list.add(TypeRestfulInteractionList.SEARCH_TYPE);
+		list.add(TypeRestfulInteractionList.VALIDATE);
+		
+		for(TypeRestfulInteractionList tril:list){
+			ConformanceInteraction ci = new ConformanceInteraction();
+			TypeRestfulInteraction value = new TypeRestfulInteraction();
+			value.setValue(tril);
+			ci.setCode(value);
+			p.getInteraction().add(ci);
+		}
 		for (String k : hm.keySet()) {
 			addConformanceSearchParam(p, k, hm.get(k));
 		}
 		return p;
 	}
+	
+	
 
 	private void addConformanceSearchParam(ConformanceResource p, String name, String type) {
 		ConformanceSearchParam sp = new ConformanceSearchParam();
@@ -499,9 +507,9 @@ public class I2b2FhirWS {
 	}
 
 	@POST
-	@Path("validate")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
-			"application/json+fhir" })
+	"application/json+fhir" })
 	public Response validate2(
 			
 			@HeaderParam("accept") String acceptHeader, 
@@ -543,31 +551,5 @@ public class I2b2FhirWS {
 		return outTxt;
 	}
 
-	/*
-	 * static Validator v; static public String init1(String fhirBase) { String
-	 * outText="-"; if (v == null) { try{ v = new Validator(); //String path =
-	 * Utils.getFilePath("validation-min.xml.zip"); String
-	 * fileName="/validation-min.xml.zip"; File file = new
-	 * File(FhirUtil.class.getResource(fileName).getFile());
-	 * 
-	 * 
-	 * //v.setDefinitions(file.getAbsolutePath());//"file:///"+FhirUtil.class.
-	 * getResource(fileName).getPath()); //logger.trace(v.getDefinitions());
-	 * logger.trace("ready");
-	 * 
-	 * 
-	 * File temp = File.createTempFile("tempFileForValidator", ".tmp");
-	 * FileOutputStream outTemp = new FileOutputStream(temp); String
-	 * input=Utils.getFile("/example/fhir/DSTU2/singlePatient.xml");
-	 * IOUtils.write(input, outTemp); outTemp.close(); logger.trace("tmp file:"
-	 * +new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath());
-	 * 
-	 * v.setSource(fhirBase.split("srv*")[0]+"validation-min.xml.zip");//temp.
-	 * getPath()); logger.trace("source"+v.getSource()); v.process();
-	 * 
-	 * temp.delete(); outText=v.getOutcome().toString(); logger.debug(outText);
-	 * 
-	 * }catch(Exception e){ logger.error(e.getMessage(),e); } } return outText;
-	 * }
-	 */
+	
 }

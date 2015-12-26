@@ -114,19 +114,19 @@
 
 	</dependencies>
 
+
+
 	<build>
-		<plugins>
-			<!-- This plugin installs the Evip jar from the project's resource folder 
-				to the local repository for normal Maven consumption -->
+	<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.2.1</version>
-				<inherited>false</inherited>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
-						<id>install-Grahams-validator-jar</id>
+						<id>install-validator-jar</id>
 						<phase>validate</phase>
+
 						<goals>
 							<goal>exec</goal>
 						</goals>
@@ -136,7 +136,7 @@
 					<executable>mvn</executable>
 					<arguments>
 						<argument>install:install-file</argument>
-						<argument>-Dfile=${basedir}\src\main\resources\org.hl7.fhir.validator.jar</argument>
+						<argument>-Dfile=${basedir}/src/main/resources/org.hl7.fhir.validator.jar</argument>
 						<argument>-DgroupId=org.hl7.fhir.tools</argument>
 						<argument>-DartifactId=validator</argument>
 						<argument>-Dversion=1.0</argument>
