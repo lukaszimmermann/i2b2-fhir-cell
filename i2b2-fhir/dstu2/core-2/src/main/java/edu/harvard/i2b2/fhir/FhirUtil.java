@@ -31,6 +31,8 @@
  */
 package edu.harvard.i2b2.fhir;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -40,6 +42,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -172,9 +176,17 @@ public class FhirUtil {
 			if (v == null)
 				init();
 			
-			v.setSource(input);
+			File temp = File.createTempFile("tempFileForValidator", ".tmp"); 
+			FileOutputStream outTemp = new FileOutputStream(temp);
+			IOUtils.write(input, outTemp);
+			outTemp.close();
+	    	logger.trace("tmp file:"+new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath()); 
+		
+	    	v.setSource(temp.getPath());
 			logger.trace("source"+v.getSource());
 			v.process();
+			
+			temp.delete();
 			return v.getOutcome().toString();
 
 		} catch (Exception e) {
@@ -204,11 +216,17 @@ public class FhirUtil {
 		if (v == null) {
 			try{
 			v = new Validator();
-			String path = Utils.getFilePath("validation-min.xml.zip");
-
-			v.setDefinitions(path);
+			//String path = Utils.getFilePath("validation-min.xml.zip");
+			
+			File temp = File.createTempFile("tempFileForDefinitions", ".tmp"); 
+			FileOutputStream outTemp = new FileOutputStream(temp);
+			
+			IOUtils.copy(FhirUtil.class.getResourceAsStream("/validation-min.xml.zip"), outTemp);
+		
+			v.setDefinitions(temp.getAbsolutePath());
 			logger.trace(v.getDefinitions());
 			logger.trace("ready");
+			temp.deleteOnExit();
 			}catch(Exception e){
 				logger.error(e.getMessage(),e);
 			}

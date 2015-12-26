@@ -92,7 +92,7 @@ public class PdoEGtoFhirBundle {
 	public void validate() {
 		// URL path=FhirUtil.class.getResource("validation.zip");
 		// System.out.println(FhirUtil.isValid(Utils.getFile("example/fhir/singlePatient.xml")));
-		String msg = FhirUtil.getValidatorErrorMessage(Utils.getFile("example/fhir/DSTU2/PatientBundle.xml"));
+		String msg = FhirUtil.getValidatorErrorMessage(Utils.getFile("example/fhir/DSTU2/singlePatient.xml"));
 		//"/Users/kbw19/git/res/i2b2-fhir/dstu2/xquery-2/src/main/resources/example/fhir/DSTU2/singlePatientInvalid.xml");
 		logger.trace("msg:"+msg);
 		/*
