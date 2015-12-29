@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -356,67 +357,8 @@ public class I2b2FhirWS {
 
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 
-		Conformance c = new Conformance();
-		ConformanceRest rest = new ConformanceRest();
-		ConformanceSecurity security = new ConformanceSecurity();
-		Extension OAuthext = new Extension();
-		security.getExtension().add(OAuthext);
-		OAuthext.setUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
-
-		Extension authExt = new Extension();
-		authExt.setUrl("authorize");
-		Uri uri = new Uri();
-		uri.setValue(fhirBase + "authz/authorize");
-		authExt.setValueUri(uri);
-		OAuthext.getExtension().add(authExt);
-
-		Extension tokenExt = new Extension();
-		tokenExt.setUrl("token");
-		uri = new Uri();
-		uri.setValue(fhirBase + "token");
-		tokenExt.setValueUri(uri);
-		OAuthext.getExtension().add(tokenExt);
-
-		rest.setSecurity(security);
-
-		// Patient
-
-		rest.getResource().add(getReadOnlyConformanceResource("Patient", new HashMap<String, String>() {
-			{
-				put("_id", "token");
-				put("gender", "token");
-			}
-		}));
-		rest.getResource().add(getReadOnlyConformanceResource("MedicationOrder", new HashMap<String, String>() {
-			{
-				put("_id", "token");
-				put("patient", "token");
-				put("medication", "reference");
-			}
-		}));
-		rest.getResource().add(getReadOnlyConformanceResource("Medication", new HashMap<String, String>() {
-			{
-				put("_id", "token");
-				put("code", "token");
-			}
-		}));
-		rest.getResource().add(getReadOnlyConformanceResource("Observation", new HashMap<String, String>() {
-			{
-				put("_id", "token");
-				put("code", "token");
-				put("value", "string");
-			}
-		}));
-		rest.getResource().add(getReadOnlyConformanceResource("Condition", new HashMap<String, String>() {
-			{
-				put("_id", "token");
-				put("code", "token");
-			}
-		}));
-
-		c.getRest().add(rest);
-		//c=addConformanceText(c);
 		
+		Conformance c = ConformanceStatement.getStatement(fhirBase);
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
 		String msg;
@@ -451,43 +393,6 @@ public class I2b2FhirWS {
 		o.getIssue().add(i);
 
 		return o;
-	}
-
-	private ConformanceResource getReadOnlyConformanceResource(String name, HashMap<String, String> hm) {
-		ConformanceResource p = new ConformanceResource();
-		Code value2 = new Code();
-		value2.setValue(name);
-		p.setType(value2);
-		List<TypeRestfulInteractionList> list=new ArrayList<>();
-		list.add(TypeRestfulInteractionList.READ);
-		list.add(TypeRestfulInteractionList.SEARCH_TYPE);
-		list.add(TypeRestfulInteractionList.VALIDATE);
-		
-		for(TypeRestfulInteractionList tril:list){
-			ConformanceInteraction ci = new ConformanceInteraction();
-			TypeRestfulInteraction value = new TypeRestfulInteraction();
-			value.setValue(tril);
-			ci.setCode(value);
-			p.getInteraction().add(ci);
-		}
-		for (String k : hm.keySet()) {
-			addConformanceSearchParam(p, k, hm.get(k));
-		}
-		return p;
-	}
-	
-	
-
-	private void addConformanceSearchParam(ConformanceResource p, String name, String type) {
-		ConformanceSearchParam sp = new ConformanceSearchParam();
-		org.hl7.fhir.String s = new org.hl7.fhir.String();
-		s.setValue(name);
-		sp.setName(s);
-		Code value3 = new Code();
-		value3.setValue(type);
-		sp.setType(value3);
-		p.getSearchParam().add(sp);
-
 	}
 
 	// URL: [base]/Resource/$validate

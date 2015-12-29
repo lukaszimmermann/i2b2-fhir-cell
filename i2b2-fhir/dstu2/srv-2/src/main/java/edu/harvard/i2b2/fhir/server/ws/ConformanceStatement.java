@@ -1,19 +1,12 @@
-package edu.harvard.i2b2.fhir.cs;
+package edu.harvard.i2b2.fhir.server.ws;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.hl7.fhir.Code;
 import org.hl7.fhir.Conformance;
@@ -28,38 +21,54 @@ import org.hl7.fhir.NarrativeStatusList;
 import org.hl7.fhir.TypeRestfulInteraction;
 import org.hl7.fhir.TypeRestfulInteractionList;
 import org.hl7.fhir.Uri;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3._1999.xhtml.Div;
-import org.xml.sax.SAXException;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
-import edu.harvard.i2b2.fhir.JAXBUtil;
 
-public class ConformanceStatementTest {
-	static Logger logger = LoggerFactory.getLogger(ConformanceStatementTest.class);
+public class ConformanceStatement {
+	static Logger logger = LoggerFactory.getLogger(ConformanceStatement.class);
+	
 
-	@Test
-	public void test() throws JAXBException {
-		// fail("Not yet implemented");
-		Conformance c = conformanceStatement();
-		c = addConformanceText(c);
-		logger.trace("" + JAXBUtil.toXml(c));
-
+	private static ConformanceResource getReadOnlyConformanceResource(String name, HashMap<String, String> hm) {
+		ConformanceResource p = new ConformanceResource();
+		Code value2 = new Code();
+		value2.setValue(name);
+		p.setType(value2);
+		List<TypeRestfulInteractionList> list=new ArrayList<>();
+		list.add(TypeRestfulInteractionList.READ);
+		list.add(TypeRestfulInteractionList.SEARCH_TYPE);
+		list.add(TypeRestfulInteractionList.VALIDATE);
+		
+		for(TypeRestfulInteractionList tril:list){
+			ConformanceInteraction ci = new ConformanceInteraction();
+			TypeRestfulInteraction value = new TypeRestfulInteraction();
+			value.setValue(tril);
+			ci.setCode(value);
+			p.getInteraction().add(ci);
+		}
+		for (String k : hm.keySet()) {
+			addConformanceSearchParam(p, k, hm.get(k));
+		}
+		return p;
 	}
-
-	private Conformance addConformanceText(Conformance c) throws JAXBException {
+	
+	static private Conformance addConformanceText(Conformance c) throws JAXBException {
 		Narrative t = new Narrative();
 		Div d = new Div();
 		List<Object> con = d.getContent();
 		org.w3._1999.xhtml.H2 h2 = new org.w3._1999.xhtml.H2();
-		h2.setTitle("FHIR Reference Server Conformance Statement");
+		h2.getContent().add("FHIR Reference Server Conformance Statement");
 
 		Code code = new Code();
 		code.setValue(NarrativeStatusList.GENERATED.toString());
 		c.setStatus(code);
 		org.w3._1999.xhtml.Table tb = new org.w3._1999.xhtml.Table();
+		tb.setBorder(BigInteger.ONE);
+		tb.setCellpadding("0");
+		tb.setCellspacing("0");
+		
 		List<String> opList = new ArrayList<>();
 		opList.add("Resource Type");
 		opList.add("Profile");
@@ -75,7 +84,7 @@ public class ConformanceStatementTest {
 		org.w3._1999.xhtml.Tr row = new org.w3._1999.xhtml.Tr();
 		for (String op : opList) {
 			org.w3._1999.xhtml.Th col = new org.w3._1999.xhtml.Th();
-			col.setTitle(op);
+			col.getContent().add(op);
 			row.getThOrTd().add(col);
 		}
 		tb.getTr().add(row);
@@ -83,17 +92,21 @@ public class ConformanceStatementTest {
 		for (ConformanceResource cr : c.getRest().get(0).getResource()) {
 			// logger.trace("cr:" + JAXBUtil.toXml(cr));
 			row = new org.w3._1999.xhtml.Tr();
-			org.w3._1999.xhtml.Th col1 = new org.w3._1999.xhtml.Th();
-			col1.setTitle(cr.getType().getValue());
+			org.w3._1999.xhtml.Td col1 = new org.w3._1999.xhtml.Td();
+			col1.getContent().add(cr.getType().getValue());
+			col1.setAlign("left");
 			row.getThOrTd().add(col1);
+			row.getThOrTd().add(new org.w3._1999.xhtml.Td());//Profile
 			
 			
 			boolean interactF = false;
 			for (String op : opList) {
-				org.w3._1999.xhtml.Th col = new org.w3._1999.xhtml.Th();
+				if(op.equals("Resource Type")||op.equals("Profile")){continue;}
+				org.w3._1999.xhtml.Td col = new org.w3._1999.xhtml.Td();
 				String value = "";
 				for (ConformanceInteraction i : cr.getInteraction()) {
 					// logger.trace(""+i.getCode().getValue().toString().toLowerCase());
+					op=(op.toLowerCase().equals("search"))?"search_type":op;
 					if (i.getCode().getValue().toString().toLowerCase().equals(op.toLowerCase())) {
 						interactF = true;
 						logger.trace(cr.getType().getValue() + "-->" + op);
@@ -101,10 +114,12 @@ public class ConformanceStatementTest {
 						img.setSrc("http://www.healthintersections.com.au/tick.png");
 						img.setTitle("Y");
 						col.getContent().add(img);
+						//col.getContent().add(op);
+						col.setAlign("center");
 					}
 				}
 				if(!interactF){
-					col.setTitle(value);
+					col.getContent().add(value);
 				}
 				row.getThOrTd().add(col);
 			}
@@ -113,6 +128,7 @@ public class ConformanceStatementTest {
 		}
 
 		con.add(h2);
+		con.add(new org.w3._1999.xhtml.Br());
 		con.add(tb);
 		t.setDiv(d);
 		c.setText(t);
@@ -121,32 +137,21 @@ public class ConformanceStatementTest {
 		return c;
 	}
 
-	private ConformanceResource getReadOnlyConformanceResource(String name, HashMap<String, String> hm) {
-		ConformanceResource p = new ConformanceResource();
-		Code value2 = new Code();
-		value2.setValue(name);
-		p.setType(value2);
-		List<TypeRestfulInteractionList> list = new ArrayList<>();
-		list.add(TypeRestfulInteractionList.READ);
-		list.add(TypeRestfulInteractionList.SEARCH_TYPE);
-		list.add(TypeRestfulInteractionList.VALIDATE);
+	static private void addConformanceSearchParam(ConformanceResource p, String name, String type) {
+		ConformanceSearchParam sp = new ConformanceSearchParam();
+		org.hl7.fhir.String s = new org.hl7.fhir.String();
+		s.setValue(name);
+		sp.setName(s);
+		Code value3 = new Code();
+		value3.setValue(type);
+		sp.setType(value3);
+		p.getSearchParam().add(sp);
 
-		for (TypeRestfulInteractionList tril : list) {
-			ConformanceInteraction ci = new ConformanceInteraction();
-			TypeRestfulInteraction value = new TypeRestfulInteraction();
-			value.setValue(tril);
-			ci.setCode(value);
-			p.getInteraction().add(ci);
-		}
-		for (String k : hm.keySet()) {
-			addConformanceSearchParam(p, k, hm.get(k));
-		}
-		return p;
 	}
 
-	public Conformance conformanceStatement() {
-
+	public static Conformance getStatement(URI fhirBase) throws JAXBException {
 		Conformance c = new Conformance();
+		FhirUtil.setId(c, "I2b2FHIRCell");
 		ConformanceRest rest = new ConformanceRest();
 		ConformanceSecurity security = new ConformanceSecurity();
 		Extension OAuthext = new Extension();
@@ -156,7 +161,6 @@ public class ConformanceStatementTest {
 		Extension authExt = new Extension();
 		authExt.setUrl("authorize");
 		Uri uri = new Uri();
-		String fhirBase = "BASE";
 		uri.setValue(fhirBase + "authz/authorize");
 		authExt.setValueUri(uri);
 		OAuthext.getExtension().add(authExt);
@@ -206,19 +210,8 @@ public class ConformanceStatementTest {
 		}));
 
 		c.getRest().add(rest);
+		c=addConformanceText(c);
 		return c;
-
 	}
 
-	private void addConformanceSearchParam(ConformanceResource p, String name, String type) {
-		ConformanceSearchParam sp = new ConformanceSearchParam();
-		org.hl7.fhir.String s = new org.hl7.fhir.String();
-		s.setValue(name);
-		sp.setName(s);
-		Code value3 = new Code();
-		value3.setValue(type);
-		sp.setType(value3);
-		p.getSearchParam().add(sp);
-
-	}
 }
