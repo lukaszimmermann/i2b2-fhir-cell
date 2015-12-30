@@ -85,6 +85,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 						|| context.getUriInfo().getPath().toString()
 						.startsWith("/smartstyleuri")
 						
+						
 		// bypass Authentication
 		)
 			return;

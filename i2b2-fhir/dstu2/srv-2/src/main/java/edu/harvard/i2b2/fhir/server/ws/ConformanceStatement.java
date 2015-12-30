@@ -54,7 +54,7 @@ public class ConformanceStatement {
 		return p;
 	}
 	
-	static private Conformance addConformanceText(Conformance c) throws JAXBException {
+	static private Conformance addConformanceText(Conformance c,URI fhirBase) throws JAXBException {
 		Narrative t = new Narrative();
 		Div d = new Div();
 		List<Object> con = d.getContent();
@@ -111,7 +111,7 @@ public class ConformanceStatement {
 						interactF = true;
 						logger.trace(cr.getType().getValue() + "-->" + op);
 						org.w3._1999.xhtml.Img img=new org.w3._1999.xhtml.Img();
-						img.setSrc("http://www.healthintersections.com.au/tick.png");
+						img.setSrc(fhirBase+"../tick.png");
 						img.setTitle("Y");
 						col.getContent().add(img);
 						//col.getContent().add(op);
@@ -210,7 +210,7 @@ public class ConformanceStatement {
 		}));
 
 		c.getRest().add(rest);
-		c=addConformanceText(c);
+		c=addConformanceText(c,fhirBase);
 		return c;
 	}
 
