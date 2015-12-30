@@ -218,7 +218,7 @@ public class I2b2FhirWS {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("", e);
-			return Response.ok(getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
+			return Response.ok(FhirHelper.getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 
 		}
@@ -257,13 +257,13 @@ public class I2b2FhirWS {
 				return generateResponse(acceptHeader, request, r);
 			} else {
 				msg = "xreason:" + resourceName + " with id:" + id + " NOT found";
-				return Response.ok(getOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
+				return Response.ok(FhirHelper.getOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
 						.header("session_id", session.getId()).build();
 			}
 
 		} catch (Exception e) {
 			logger.error("", e);
-			return Response.ok(getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
+			return Response.ok(FhirHelper.getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 		}
 
@@ -361,23 +361,7 @@ public class I2b2FhirWS {
 
 	}
 
-	private OperationOutcome getOperationOutcome(String message, IssueTypeList issueType,
-			IssueSeverityList issueSeverity) {
-		OperationOutcome o = new OperationOutcome();
-		OperationOutcomeIssue i = new OperationOutcomeIssue();
-		IssueType iType = new IssueType();
-		iType.setValue(issueType);
-		i.setCode(iType);
-		IssueSeverity severity = new IssueSeverity();
-		severity.setValue(issueSeverity);
-		i.setSeverity(severity);
-		org.hl7.fhir.String s1 = new org.hl7.fhir.String();
-		s1.setValue(message);
-		i.setDiagnostics(s1);
-		o.getIssue().add(i);
-
-		return o;
-	}
+	
 
 	// URL: [base]/Resource/$validate
 	// URL: [base]/Resource/[id]/$validate
@@ -461,14 +445,14 @@ public class I2b2FhirWS {
 	}
 
 	@POST
-	@Path("/DecisionSupportServiceModule/{id:[0-9|-]+}/$evaluate")
+	@Path("DecisionSupportServiceModule/{id:[0-9a-z|-]+}/$evaluate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response cdsEvaluate(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+	public Response cdsEvaluate( @PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException{
-		
-		Resource r=null;
+		logger.trace("called DSS");
+		Resource r=DecisionSupportServiceModule.evaluate(inTxt);
 		return generateResponse(acceptHeader, request, r);
 		
 	}
