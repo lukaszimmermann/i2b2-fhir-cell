@@ -252,17 +252,9 @@ public class I2b2FhirWS {
 					session);
 			Resource r = getParticularResource(request, resourceName, id, headers);
 
-			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
-				msg = FhirUtil.resourceToJsonString(r);
-				mediaType = "application/json";
-			} else {
-				msg = JAXBUtil.toXml(r);
-				mediaType = "application/xml";
-			}
-
-			msg = I2b2Helper.removeSpace(msg);
+			
 			if (r != null) {
-				return Response.ok(msg).header("session_id", session.getId()).type(mediaType).build();
+				return generateResponse(acceptHeader, request, r);
 			} else {
 				msg = "xreason:" + resourceName + " with id:" + id + " NOT found";
 				return Response.ok(getOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
@@ -362,19 +354,10 @@ public class I2b2FhirWS {
 		Conformance c = ConformanceStatement.getStatement(fhirBase);
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
-		String msg;
-		String mediaType;
-		if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
-			msg = FhirUtil.resourceToJsonString(c);
-			mediaType = "application/json";
-		} else {
-			msg = JAXBUtil.toXml(c);
-			mediaType = "application/xml";
-		}
-		msg = I2b2Helper.removeSpace(msg);
-		logger.info("acceptHeader:" + acceptHeader);
-
-		return Response.ok().type(mediaType).entity(msg).build();
+		
+		return generateResponse(acceptHeader, request, c);
+		
+		
 
 	}
 
@@ -406,11 +389,11 @@ public class I2b2FhirWS {
 	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException,
-					XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException {
+					XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException, ParserConfigurationException, SAXException {
 		Resource r = getParticularResource(request, resourceName, id, headers);
 		inTxt = JAXBUtil.toXml(r);
 
-		return validate2(resourceName,acceptHeader, request, inTxt);
+		return validate2(resourceName, acceptHeader, request, inTxt);
 
 	}
 
@@ -418,57 +401,47 @@ public class I2b2FhirWS {
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response validate2(
-			@PathParam("resourceName") String resourceName,
+	public Response validate2(@PathParam("resourceName") String resourceName,
 			@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request, String inTxt)
-					throws IOException, JAXBException, URISyntaxException {
+					throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException {
 		HttpSession session = request.getSession();
 		String mediaType;
 		Parameters ps = null;
 		Resource r = null;
-		String outTxt="-";
+		String outTxt = "-";
 
-		try{
-			
-			r = JAXBUtil.fromXml(inTxt, Resource.class);
-			Class resourceClass=FhirUtil.getResourceClass(resourceName);
-			if(!resourceClass.isInstance(r)) throw new FhirServerException("The input is not an instance of class:"+resourceClass);
-			
 		try {
-			ps = JAXBUtil.fromXml(inTxt, Parameters.class);
-			if (ps != null) {
-				for (ParametersParameter p : ps.getParameter()) {
-					logger.trace("pname:" + p.getName().getValue());
-				}
-			} else {
-				logger.trace("ps is null");
-			}
-		} catch (ClassCastException e) {
 
-		}
-		if (ps == null) {
+			r = JAXBUtil.fromXml(inTxt, Resource.class);
+			Class resourceClass = FhirUtil.getResourceClass(resourceName);
+			if (!resourceClass.isInstance(r))
+				throw new FhirServerException("The input is not an instance of class:" + resourceClass);
+
 			try {
-				
-				outTxt = validate(inTxt);
-			} catch (JAXBException e) {
+				ps = JAXBUtil.fromXml(inTxt, Parameters.class);
+				if (ps != null) {
+					for (ParametersParameter p : ps.getParameter()) {
+						logger.trace("pname:" + p.getName().getValue());
+					}
+				} else {
+					logger.trace("ps is null");
+				}
+			} catch (ClassCastException e) {
+
 			}
-		}
-		}catch(Exception e){
-			outTxt=e.getMessage();
-		}
-		
-		// String outTxt = validate(inTxt);
+			if (ps == null) {
+				try {
 
-		if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
-			// outTxt = FhirUtil.resourceToJsonString(oo);
-			mediaType = "application/json+fhir";
-		} else {
-			// outTxt = JAXBUtil.toXml(oo);
-			mediaType = "application/xml+fhir";
+					outTxt = validate(inTxt);
+				} catch (JAXBException e) {
+				}
+			}
+		} catch (Exception e) {
+			outTxt = e.getMessage();
 		}
 
-		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
-
+		Resource rOut=JAXBUtil.fromXml(outTxt, OperationOutcome.class);
+		return generateResponse(acceptHeader, request, rOut);
 	}
 
 	private String validate(String inTxt) throws JAXBException {
@@ -486,11 +459,43 @@ public class I2b2FhirWS {
 		// OperationOutcome oo=JAXBUtil.fromXml(ooTxt, OperationOutcome.class);
 		return outTxt;
 	}
-	
-	//[base]/$meta
-	//GET /fhir/Patient/$meta
-	//GET /fhir/Patient/id/$meta
-	//GET /fhir/Patient/id/$meta-add
-	//GET /fhir/Patient/id/$meta-del
+
+	@POST
+	@Path("/DecisionSupportServiceModule/{id:[0-9|-]+}/$evaluate")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response cdsEvaluate(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException{
+		
+		Resource r=null;
+		return generateResponse(acceptHeader, request, r);
+		
+	}
+
+	public Response generateResponse(@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request,
+			Resource r) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+		String mediaType;
+		String outTxt="-";
+		HttpSession session = request.getSession();
+		if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
+			outTxt = FhirUtil.resourceToJsonString(r);
+			mediaType = "application/json";
+		} else {
+			outTxt = JAXBUtil.toXml(r);
+			mediaType = "application/xml+fhir";
+		}
+		outTxt = I2b2Helper.removeSpace(outTxt);
+		logger.info("acceptHeader:" + acceptHeader);
+
+		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
+
+	}
+
+	// [base]/$meta
+	// GET /fhir/Patient/$meta
+	// GET /fhir/Patient/id/$meta
+	// GET /fhir/Patient/id/$meta-add
+	// GET /fhir/Patient/id/$meta-del
 
 }
