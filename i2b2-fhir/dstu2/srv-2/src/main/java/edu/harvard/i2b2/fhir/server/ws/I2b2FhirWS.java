@@ -65,6 +65,8 @@ import org.hl7.fhir.Narrative;
 import org.hl7.fhir.NarrativeStatusList;
 import org.hl7.fhir.OperationOutcome;
 import org.hl7.fhir.OperationOutcomeIssue;
+import org.hl7.fhir.Parameters;
+import org.hl7.fhir.ParametersParameter;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.TypeRestfulInteraction;
 import org.hl7.fhir.TypeRestfulInteractionList;
@@ -160,15 +162,16 @@ public class I2b2FhirWS {
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
 			session = request.getSession();
-			//String basePath = request.getRequestURL().toString().split(resourceName)[0];
+			// String basePath =
+			// request.getRequestURL().toString().split(resourceName)[0];
 			URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
-			String basePath=fhirBase.toString();
+			String basePath = fhirBase.toString();
 			logger.debug("session id:" + session.getId());
 
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 					session);
 
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr,null);
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr, null);
 
 			md.addBundle(s);
 
@@ -228,8 +231,8 @@ public class I2b2FhirWS {
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response getParticularResourceWrapper(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
-			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+	public Response getParticularResourceWrapper(@PathParam("resourceName") String resourceName,
+			@PathParam("id") String id, @HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request,
 			@HeaderParam(AuthenticationFilter.AUTHENTICATION_HEADER) String tokString)
 					throws DatatypeConfigurationException, ParserConfigurationException, SAXException, IOException,
@@ -244,12 +247,10 @@ public class I2b2FhirWS {
 
 			MetaResourceDb md = new MetaResourceDb();
 			String msg = null;
-			String mediaType="";
+			String mediaType = "";
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 					session);
-			Resource r =getParticularResource(request,resourceName,id,headers);
-			
-			
+			Resource r = getParticularResource(request, resourceName, id, headers);
 
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.resourceToJsonString(r);
@@ -276,24 +277,25 @@ public class I2b2FhirWS {
 
 	}
 
-	private Resource getParticularResource(HttpServletRequest request, String resourceName, String id,HttpHeaders headers) throws IOException, XQueryUtilException, JAXBException, AuthenticationFailure, FhirServerException, InterruptedException {
+	private Resource getParticularResource(HttpServletRequest request, String resourceName, String id,
+			HttpHeaders headers) throws IOException, XQueryUtilException, JAXBException, AuthenticationFailure,
+					FhirServerException, InterruptedException {
 		MetaResourceDb md = new MetaResourceDb();
 		String msg = null;
 		Resource r = null;
 		Bundle s = null;
 		String mediaType = null;
-		HttpSession session=request.getSession();
+		HttpSession session = request.getSession();
 		authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 				session);
 
-		
 		logger.debug("session id:" + session.getId());
 		logger.info("searching particular resource:<" + resourceName + "> with id:<" + id + ">");
 		Class c = FhirUtil.getResourceClass(resourceName);
 		if (c == null)
 			throw new RuntimeException("class not found for resource:" + resourceName);
-		
-		s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr,id);
+
+		s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr, id);
 		md.addBundle(s);
 		;
 
@@ -357,7 +359,6 @@ public class I2b2FhirWS {
 
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 
-		
 		Conformance c = ConformanceStatement.getStatement(fhirBase);
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
@@ -401,28 +402,62 @@ public class I2b2FhirWS {
 	@POST
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
-	"application/json+fhir" })
-	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
-			@Context HttpServletRequest request,  String inTxt) throws IOException, JAXBException, URISyntaxException, XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException {
-		Resource r=getParticularResource(request,resourceName,id,headers);
-		inTxt=JAXBUtil.toXml(r);
-		
-		return validate2(acceptHeader,request,inTxt);
+			"application/json+fhir" })
+	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException,
+					XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException {
+		Resource r = getParticularResource(request, resourceName, id, headers);
+		inTxt = JAXBUtil.toXml(r);
+
+		return validate2(resourceName,acceptHeader, request, inTxt);
 
 	}
 
 	@POST
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
-	"application/json+fhir" })
+			"application/json+fhir" })
 	public Response validate2(
-			
-			@HeaderParam("accept") String acceptHeader, 
-			@Context HttpServletRequest request,  String inTxt)
+			@PathParam("resourceName") String resourceName,
+			@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request, String inTxt)
 					throws IOException, JAXBException, URISyntaxException {
 		HttpSession session = request.getSession();
 		String mediaType;
-		String outTxt = validate(inTxt);
+		Parameters ps = null;
+		Resource r = null;
+		String outTxt="-";
+
+		try{
+			
+			r = JAXBUtil.fromXml(inTxt, Resource.class);
+			Class resourceClass=FhirUtil.getResourceClass(resourceName);
+			if(!resourceClass.isInstance(r)) throw new FhirServerException("The input is not an instance of class:"+resourceClass);
+			
+		try {
+			ps = JAXBUtil.fromXml(inTxt, Parameters.class);
+			if (ps != null) {
+				for (ParametersParameter p : ps.getParameter()) {
+					logger.trace("pname:" + p.getName().getValue());
+				}
+			} else {
+				logger.trace("ps is null");
+			}
+		} catch (ClassCastException e) {
+
+		}
+		if (ps == null) {
+			try {
+				
+				outTxt = validate(inTxt);
+			} catch (JAXBException e) {
+			}
+		}
+		}catch(Exception e){
+			outTxt=e.getMessage();
+		}
+		
+		// String outTxt = validate(inTxt);
 
 		if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
 			// outTxt = FhirUtil.resourceToJsonString(oo);
@@ -439,22 +474,23 @@ public class I2b2FhirWS {
 	private String validate(String inTxt) throws JAXBException {
 		String outTxt = "-";
 		/*
-		Resource r = JAXBUtil.fromXml(inTxt, Resource.class);
-		Class c = FhirUtil.getResourceClass(r);
-		logger.debug("Resource is of type:" + c);
-		// logger.debug(" got Resource:"+JAXBUtil.toXml(r));
-
-		Bundle s = null;
-		if (Bundle.class.isInstance(r)) {
-			s = (Bundle) r;
-		}
-*/
+		 * Resource r = JAXBUtil.fromXml(inTxt, Resource.class); Class c =
+		 * FhirUtil.getResourceClass(r); logger.debug("Resource is of type:" +
+		 * c); // logger.debug(" got Resource:"+JAXBUtil.toXml(r));
+		 * 
+		 * Bundle s = null; if (Bundle.class.isInstance(r)) { s = (Bundle) r; }
+		 */
 		String ooTxt = FhirUtil.getValidatorErrorMessage(inTxt);
 		outTxt = ooTxt;
 		logger.trace("ooTxt:" + ooTxt);
 		// OperationOutcome oo=JAXBUtil.fromXml(ooTxt, OperationOutcome.class);
 		return outTxt;
 	}
-
 	
+	//[base]/$meta
+	//GET /fhir/Patient/$meta
+	//GET /fhir/Patient/id/$meta
+	//GET /fhir/Patient/id/$meta-add
+	//GET /fhir/Patient/id/$meta-del
+
 }
