@@ -48,7 +48,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -106,14 +105,14 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationDispense|MedicationOrder|Observation|Patient|DiagnosticReport)";
+	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationDispense|MedicationOrder|Observation|Patient|DiagnosticReport|DecisionSupportServiceModule|Parameters)";
 	private static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
 
 	public final static String namespaceDeclaration = "declare default element namespace \"http://hl7.org/fhir\";";
 
-	//http://jboss-javassist.github.io/javassist/tutorial/tutorial.html#load
+	// http://jboss-javassist.github.io/javassist/tutorial/tutorial.html#load
 	public static void addJAXBAnnotationsToClasses() {
 		try {
 			String className = "org.hl7.fhir.Observation";// Observation.class.getName();
@@ -122,12 +121,10 @@ public class FhirUtil {
 			CtClass cc = pool.get(className);
 			ClassFile cf = cc.getClassFile();
 			ConstPool cp = cf.getConstPool();
-			AnnotationsAttribute attr = new AnnotationsAttribute(cp,
-					AnnotationsAttribute.visibleTag);
+			AnnotationsAttribute attr = new AnnotationsAttribute(cp, AnnotationsAttribute.visibleTag);
 
-			Annotation a = new Annotation(
-					"javax.xml.bind.annotation.XmlRootElement", cp);
-			a.addMemberValue("name", new StringMemberValue(className.substring(className.lastIndexOf(".")+1), cp));
+			Annotation a = new Annotation("javax.xml.bind.annotation.XmlRootElement", cp);
+			a.addMemberValue("name", new StringMemberValue(className.substring(className.lastIndexOf(".") + 1), cp));
 			attr.setAnnotation(a);
 			cf.addAttribute(attr);
 			// cf.setVersionToJava5();
@@ -145,7 +142,7 @@ public class FhirUtil {
 			 */
 
 		} catch (CannotCompileException |
-		// | IOException | IllegalConnectorArgumentsException|
+				// | IOException | IllegalConnectorArgumentsException|
 				NotFoundException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -175,24 +172,24 @@ public class FhirUtil {
 		try {
 			if (v == null)
 				init();
-			
-			File temp = File.createTempFile("tempFileForValidator", ".tmp"); 
+
+			File temp = File.createTempFile("tempFileForValidator", ".tmp");
 			FileOutputStream outTemp = new FileOutputStream(temp);
 			IOUtils.write(input, outTemp);
 			outTemp.close();
-	    	logger.trace("tmp file:"+new Scanner(temp).useDelimiter("\\Z").next());//temp.getAbsolutePath()); 
-		
-	    	v.setSource(temp.getPath());
-	    	//v.setProfile("");
-			logger.trace("source"+v.getSource());
+			logger.trace("tmp file:" + new Scanner(temp).useDelimiter("\\Z").next());// temp.getAbsolutePath());
+
+			v.setSource(temp.getPath());
+			// v.setProfile("");
+			logger.trace("source" + v.getSource());
 			v.process();
-			
+
 			temp.delete();
 			return v.getOutcome().toString();
 
 		} catch (Exception e) {
 			msg = e.getMessage();
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 		}
 		return msg;
 
@@ -215,22 +212,22 @@ public class FhirUtil {
 
 	private static void init() {
 		if (v == null) {
-			try{
-			v = new Validator();
-			//String path = Utils.getFilePath("validation-min.xml.zip");
-			
-			File temp = File.createTempFile("tempFileForDefinitions", ".tmp"); 
-			FileOutputStream outTemp = new FileOutputStream(temp);
-			
-			IOUtils.copy(FhirUtil.class.getResourceAsStream("/validation-min.xml.zip"), outTemp);
-		
-			v.setDefinitions(temp.getAbsolutePath());
-			
-			logger.trace(v.getDefinitions());
-			logger.trace("ready");
-			temp.deleteOnExit();
-			}catch(Exception e){
-				logger.error(e.getMessage(),e);
+			try {
+				v = new Validator();
+				// String path = Utils.getFilePath("validation-min.xml.zip");
+
+				File temp = File.createTempFile("tempFileForDefinitions", ".tmp");
+				FileOutputStream outTemp = new FileOutputStream(temp);
+
+				IOUtils.copy(FhirUtil.class.getResourceAsStream("/validation-min.xml.zip"), outTemp);
+
+				v.setDefinitions(temp.getAbsolutePath());
+
+				logger.trace(v.getDefinitions());
+				logger.trace("ready");
+				temp.deleteOnExit();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -248,16 +245,14 @@ public class FhirUtil {
 
 	}
 
-	public static List<Class> getAllFhirResourceClasses(String packageName)
-			throws IOException {
+	public static List<Class> getAllFhirResourceClasses(String packageName) throws IOException {
 
 		// logger.trace("Running getAllFhirResourceClasses for:" +
 		// packageName);
 		List<Class> commands = new ArrayList<Class>();
 
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
-				null, null, null);
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
 
 		Location location = StandardLocation.CLASS_PATH;
 
@@ -265,8 +260,7 @@ public class FhirUtil {
 		kinds.add(JavaFileObject.Kind.CLASS);
 		boolean recurse = false;
 
-		Iterable<JavaFileObject> list = fileManager.list(location, packageName,
-				kinds, recurse);
+		Iterable<JavaFileObject> list = fileManager.list(location, packageName, kinds, recurse);
 
 		for (JavaFileObject javaFileObject : list) {
 
@@ -275,8 +269,7 @@ public class FhirUtil {
 
 		Class c = null;
 
-		for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(", "")
-				.replace(")", "").split("\\|")))
+		for (String x : Arrays.asList(RESOURCE_LIST_REGEX.replace("(", "").replace(")", "").split("\\|")))
 
 		{
 			x = "org.hl7.fhir." + x;
@@ -291,8 +284,7 @@ public class FhirUtil {
 
 	public static Class getResourceClass(String resourceName) {
 		for (Class c : getResourceClassList()) {
-			if (c.getSimpleName().toLowerCase()
-					.equals(resourceName.toLowerCase()))
+			if (c.getSimpleName().toLowerCase().equals(resourceName.toLowerCase()))
 				return c;
 		}
 		// logger.trace("Class Not Found for FHIR resource:" + resourceName);
@@ -319,11 +311,9 @@ public class FhirUtil {
 
 	}
 
-	public static List<Object> getChildrenThruChain(Resource r, String pathStr,
-			List<Resource> s)
+	public static List<Object> getChildrenThruChain(Resource r, String pathStr, List<Resource> s)
 			// is dot separated path
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 
 		List<Object> children = new ArrayList<Object>();
@@ -340,8 +330,7 @@ public class FhirUtil {
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
 
-		String methodName = prefix.substring(0, 1).toUpperCase()
-				+ prefix.subSequence(1, prefix.length());
+		String methodName = prefix.substring(0, 1).toUpperCase() + prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		Object o = method.invoke(c.cast(r));
 
@@ -368,8 +357,7 @@ public class FhirUtil {
 					 * block e.printStackTrace(); }
 					 */
 
-					Resource r1 = FhirUtil.findResourceById(rr.getReference()
-							.getValue(), s);
+					Resource r1 = FhirUtil.findResourceById(rr.getReference().getValue(), s);
 					resolvedChildren.add(getChildrenThruChain(r1, suffix, s));
 
 				} else {
@@ -381,11 +369,9 @@ public class FhirUtil {
 		return resolvedChildren;
 	}
 
-	public static Object getChildThruChain(Resource r, String pathStr,
-			List<Resource> s)
+	public static Object getChildThruChain(Resource r, String pathStr, List<Resource> s)
 			// is dot separated path
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		Class c = FhirUtil.getResourceClass(r);
 
@@ -398,8 +384,7 @@ public class FhirUtil {
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
 
-		String methodName = prefix.substring(0, 1).toUpperCase()
-				+ prefix.subSequence(1, prefix.length());
+		String methodName = prefix.substring(0, 1).toUpperCase() + prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		Object o = method.invoke(c.cast(r));
 
@@ -418,8 +403,7 @@ public class FhirUtil {
 				 * e.printStackTrace(); }
 				 */
 
-				Resource r1 = FhirUtil.findResourceById(rr.getReference()
-						.getValue(), s);
+				Resource r1 = FhirUtil.findResourceById(rr.getReference().getValue(), s);
 				return getChildThruChain(r1, suffix, s);
 			} else {
 				return getChildThruChain(r, suffix, s);
@@ -438,8 +422,7 @@ public class FhirUtil {
 
 	public static Object getChild(Resource r, String pathStr)
 			// is dot separated path
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		Class c = FhirUtil.getResourceClass(r);
 		String returnStr = null;
@@ -450,8 +433,7 @@ public class FhirUtil {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
-		String methodName = prefix.substring(0, 1).toUpperCase()
-				+ prefix.subSequence(1, prefix.length());
+		String methodName = prefix.substring(0, 1).toUpperCase() + prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		if (suffix == null) {
 			Object o = method.invoke(c.cast(r));
@@ -471,8 +453,7 @@ public class FhirUtil {
 		return Arrays.asList(Utils.getFile("resourceList.txt").split("\\n"));
 	}
 
-	public static String getResourceXml(String id, String metaResourceSetXml)
-			throws FhirCoreException {
+	public static String getResourceXml(String id, String metaResourceSetXml) throws FhirCoreException {
 		String xml;
 		String xQuery = namespaceDeclaration + "//i:Resource[@id='" + id + "']";
 
@@ -510,8 +491,7 @@ public class FhirUtil {
 		return s2;
 	}
 
-	public static Bundle getResourceBundle(List<Resource> s, String basePath,
-			String url) {
+	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url) {
 		Bundle b = new Bundle();
 		for (Resource r : s) {
 			BundleEntry be = FhirUtil.newBundleEntryForResource(r);
@@ -603,7 +583,6 @@ public class FhirUtil {
 			return rc.getSearchParameter();
 		if (rc.getDiagnosticReport() != null)
 			return rc.getDiagnosticReport();
-		
 
 		String xml = null;
 		try {
@@ -614,19 +593,16 @@ public class FhirUtil {
 		throw new RuntimeException("Not implemented all resource types:" + xml);
 	}
 
-	public static String resourceToJsonString(Resource r) throws
-			JAXBException, IOException {
+	public static String resourceToJsonString(Resource r) throws JAXBException, IOException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(r));
 
 	}
 
-	public static String hapiBundleToJsonString(ca.uhn.fhir.model.api.Bundle b)
-			throws Exception {
+	public static String hapiBundleToJsonString(ca.uhn.fhir.model.api.Bundle b) throws Exception {
 		return WrapperHapi.bundleToJson(b);
 	}
 
-	public static ca.uhn.fhir.model.api.Bundle fhirBundleToHapiBundle(Bundle b)
-			throws Exception {
+	public static ca.uhn.fhir.model.api.Bundle fhirBundleToHapiBundle(Bundle b) throws Exception {
 		ca.uhn.fhir.model.api.Bundle hb = new ca.uhn.fhir.model.api.Bundle();
 
 		// IdDt idb = new IdDt();
@@ -668,8 +644,7 @@ public class FhirUtil {
 					StringDt theLinkSelf = new StringDt();
 					theLinkSelf.setValue(fhirBase + r.getId());
 					entry.setLinkSelf(theLinkSelf);
-					IResource theResource = WrapperHapi
-							.resourceXmlToIResource(JAXBUtil.toXml(r));
+					IResource theResource = WrapperHapi.resourceXmlToIResource(JAXBUtil.toXml(r));
 					entry.setResource(theResource);
 					hb.addEntry(entry);
 				}
@@ -679,40 +654,38 @@ public class FhirUtil {
 
 	}
 
-	//makes copy of child and puts in a container in p
-	public static Resource containResource(Resource p, Resource c)
-			throws JAXBException {
+	// makes copy of child and puts in a container in p
+	public static Resource containResource(Resource p, Resource c) throws JAXBException {
 		try {
 			Class parentClass = FhirUtil.getResourceClass(p);
 			Class childClass = FhirUtil.getResourceClass(c);
-			
-			
+
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
 			String childReference = c.getId().getValue();
 			// xml = xml.replace(childReference, "#-" + childReference);
 			// p = JAXBUtil.fromXml(xml, parentClass);
-			logger.trace("getting path to parent:"+parentClass+"\nchild:"+childClass.getSimpleName().toLowerCase());
-			String path = new SearchParameterMap().getParameterPath(
-					parentClass, childClass.getSimpleName().toLowerCase());
+			logger.trace(
+					"getting path to parent:" + parentClass + "\nchild:" + childClass.getSimpleName().toLowerCase());
+			String path = new SearchParameterMap().getParameterPath(parentClass,
+					childClass.getSimpleName().toLowerCase());
 			logger.trace("SEARCH PATH:" + path);
-			String childPath = path.replaceAll(
-					"^" + parentClass.getSimpleName() + "/", "");
+			String childPath = path.replaceAll("^" + parentClass.getSimpleName() + "/", "");
 			logger.trace("MchildPath:" + childPath);
 
 			Reference childRef = (Reference) FhirUtil.getChild(p, childPath);
 			String childId = childRef.getReference().getValue();
 
-			childRef.getReference().setValue(
-					"#" //+ childClass.getSimpleName() + "-" 
-							+ childId);
+			childRef.getReference().setValue("#" // + childClass.getSimpleName()
+													// + "-"
+					+ childId);
 
 			Id cId = c.getId();
-			c=FhirUtil.clone(c,childClass.getSimpleName() + "/" + cId.getValue());
+			c = FhirUtil.clone(c, childClass.getSimpleName() + "/" + cId.getValue());
 
-			//Id cId = c.getId();
-			//cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
-			//c.setId(cId);
+			// Id cId = c.getId();
+			// cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
+			// c.setId(cId);
 			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
 
 			Method method;
@@ -726,8 +699,7 @@ public class FhirUtil {
 			logger.debug("added " + c.getId() + " into " + p.getId());
 			logger.trace(JAXBUtil.toXml(p));
 
-		} catch (NoSuchMethodException | SecurityException
-				| IllegalAccessException | IllegalArgumentException
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | FhirCoreException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
@@ -738,51 +710,44 @@ public class FhirUtil {
 
 	private static Resource clone(Resource i, String newId) throws JAXBException {
 		Class rClass = FhirUtil.getResourceClass(i);
-		Resource c=JAXBUtil.fromXml(JAXBUtil.toXml(i),rClass);
+		Resource c = JAXBUtil.fromXml(JAXBUtil.toXml(i), rClass);
 		Id cId = c.getId();
 		cId.setValue(newId);
 		c.setId(cId);
 		return c;
 	}
 
-	public static String bundleToJsonString(Bundle s) throws IOException,
-			JAXBException {
+	public static String bundleToJsonString(Bundle s) throws IOException, JAXBException {
 		return WrapperHapi.resourceXmlToJson(JAXBUtil.toXml(s));
 	}
 
-	public static Patient getPatientResource(String inputXml)
-			throws XQueryUtilException, JAXBException, IOException {
+	public static Patient getPatientResource(String inputXml) throws XQueryUtilException, JAXBException, IOException {
 		String query = IOUtils
-				.toString(FhirUtil.class
-						.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
+				.toString(FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2PatientToFhirPatient.xquery"));
 		String bundleXml = XQueryUtil.processXQuery(query, inputXml).toString();
 		Bundle b = JAXBUtil.fromXml(bundleXml, Bundle.class);
-		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0)
-				.getResource());
+		return (Patient) FhirUtil.getResourceFromContainer(b.getEntry().get(0).getResource());
 	}
 
 	@Deprecated
 	public static Bundle convertI2b2ToFhirForAParticularPatient(String i2b2Xml)
 			throws IOException, XQueryUtilException, JAXBException {
 
-		String query = IOUtils
-				.toString(FhirUtil.class
-						.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
+		String query = IOUtils.toString(
+				FhirUtil.class.getResourceAsStream("/transform/I2b2ToFhir/i2b2MedsToFHIRMedPrescription.xquery"));
 
-		String xQueryResultString = XQueryUtil.processXQuery(query, i2b2Xml)
-				.toString();
+		String xQueryResultString = XQueryUtil.processXQuery(query, i2b2Xml).toString();
 		Bundle b = JAXBUtil.fromXml(xQueryResultString, Bundle.class);
 		Patient p = getPatientResource(i2b2Xml);
 		b.getEntry().add(newBundleEntryForResource(p));
 		return b;
 	}
-	
+
 	static public String extractPatientId(String input) {
 		if (input == null)
 			return null;
 		String id = null;
-		Pattern p = Pattern
-				.compile("(Subject:subject|subject|Patient|patient|_id)+=([^?&]+)");
+		Pattern p = Pattern.compile("(Subject:subject|subject|Patient|patient|_id)+=([^?&]+)");
 		Matcher m = p.matcher(input);
 
 		if (m.find()) {
@@ -809,7 +774,11 @@ public class FhirUtil {
 			id = null;
 		return id;
 	}
-	
-	
+
+	static public org.hl7.fhir.String generateFhirString(String val) {
+		org.hl7.fhir.String fstr = new org.hl7.fhir.String();
+		fstr.setValue(val);
+		return fstr;
+	}
 
 }

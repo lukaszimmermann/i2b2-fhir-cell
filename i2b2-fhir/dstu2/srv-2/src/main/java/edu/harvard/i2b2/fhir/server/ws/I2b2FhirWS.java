@@ -82,6 +82,8 @@ import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
+import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
+import edu.harvard.i2b2.fhir.server.ws.operation.Validate;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
@@ -415,8 +417,8 @@ public class I2b2FhirWS {
 			}
 			if (ps == null) {
 				try {
-
-					outTxt = validate(inTxt);
+					//TODO move most of the code here(Param check into Validate class)
+					outTxt = Validate.runValidate(inTxt);
 				} catch (JAXBException e) {
 				}
 			}
@@ -428,37 +430,30 @@ public class I2b2FhirWS {
 		return generateResponse(acceptHeader, request, rOut);
 	}
 
-	private String validate(String inTxt) throws JAXBException {
-		String outTxt = "-";
-		/*
-		 * Resource r = JAXBUtil.fromXml(inTxt, Resource.class); Class c =
-		 * FhirUtil.getResourceClass(r); logger.debug("Resource is of type:" +
-		 * c); // logger.debug(" got Resource:"+JAXBUtil.toXml(r));
-		 * 
-		 * Bundle s = null; if (Bundle.class.isInstance(r)) { s = (Bundle) r; }
-		 */
-		String ooTxt = FhirUtil.getValidatorErrorMessage(inTxt);
-		outTxt = ooTxt;
-		logger.trace("ooTxt:" + ooTxt);
-		// OperationOutcome oo=JAXBUtil.fromXml(ooTxt, OperationOutcome.class);
-		return outTxt;
-	}
+	
 
 	@POST
-	@Path("DecisionSupportServiceModule/{id:[0-9a-z|-]+}/$evaluate")
+	@Path("{resourceName:(DecisionSupportServiceModule|DecisionSupportRule|CQIF-Questionnaire|OrderSet)}/{id:[0-9a-zA-Z|-]+}/$evaluate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response cdsEvaluate( @PathParam("id") String id,
+	public Response evaluate( @PathParam("resourceName") String resourceName, @PathParam("id") String id,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException{
-		logger.trace("called DSS");
-		Resource r=DecisionSupportServiceModule.evaluate(inTxt);
-		return generateResponse(acceptHeader, request, r);
+		Resource outR=null;
+		if(resourceName.equals("DecisionSupportServiceModule")){
+			logger.trace("called DSS");
+			outR=DSSEvaluate.evaluate(id,inTxt);
+		}else{
+			logger.trace("called evaluate for:"+resourceName);
+			outR=FhirHelper.getOperationOutcome("evaluate not (yet) implemented for "+resourceName, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
+		}	
+		return generateResponse(acceptHeader, request, outR);
 		
 	}
 
 	public Response generateResponse(@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request,
 			Resource r) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+		if(r==null) throw new IllegalArgumentException("input resource is null");
 		String mediaType;
 		String outTxt="-";
 		HttpSession session = request.getSession();

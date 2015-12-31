@@ -102,19 +102,17 @@ public class MetaResourceDb {
 			r.setId(id);
 		}
 
-		Resource presentRes = getResource(r.getId().getValue(), c);
+		Resource presentRes = searchById(r.getId().getValue(), c);
 		if (presentRes != null) {
 			// throw new
 			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			logger.debug("replacing resource with id:" + r.getId());
-			
 			//resourceList.remove(presentRes);
-			
+			logger.debug("replacing resource with id:" + r.getId());
 		}
 
 		resourceList.add(r);
 
-		logger.debug("MrDB resources (after adding) size:" + this.getSize());
+		logger.debug("MrDB resources (after adding resource with id:"+r.getId().getValue()+") size:" + this.getSize());
 		return r.getId().getValue().toString();
 	}
 
@@ -127,22 +125,7 @@ public class MetaResourceDb {
 
 	}
 
-	public Resource getResource(String id, Class c) {
-		List<Resource> resourceList = this.resourceMap.get(c);
-		logger.trace("EJB searching for resource with id:" + id);
-		logger.trace("mResources size:" + this.getSize());
-		for (Resource r : resourceList) {
-			if (!c.isInstance(r))
-				continue;
-			// logger.trace("examining resource with id:<" + r.getId()+
-			// "> for match to qid:<" + id + ">");
-			if (r.getId().equals(id)) {
-				// logger.trace("matched resource with id:" + r.getId());
-				return r;
-			}
-		}
-		return null;
-	}
+	
 
 	public int getResourceTypeCount(Class c) {
 		logger.trace("EJB searching for resource type:" + c.getSimpleName());
