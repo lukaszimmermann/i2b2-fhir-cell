@@ -175,8 +175,11 @@ public class I2b2FhirWS {
 
 			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr, null);
 
-			md.addBundle(s);
-
+			if(FhirHelper.isPatientDependentResource(c)){
+				md.addBundle(s);
+			}else{
+				FhirHelper.loadTestResources(md);
+			}
 			logger.info("running filter...");
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
@@ -220,17 +223,19 @@ public class I2b2FhirWS {
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error("", e);
-			return Response.ok(FhirHelper.getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
+			return Response.ok(FhirHelper.generateOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 
 		}
 
 	}
 
+
+
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
 	@GET
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
 	public Response getParticularResourceWrapper(@PathParam("resourceName") String resourceName,
@@ -244,10 +249,6 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 
 		try {
-
-			// MetaResourceDb md = I2b2Helper.getMetaResourceDb(session, sbb);
-
-			MetaResourceDb md = new MetaResourceDb();
 			String msg = null;
 			String mediaType = "";
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
@@ -259,13 +260,13 @@ public class I2b2FhirWS {
 				return generateResponse(acceptHeader, request, r);
 			} else {
 				msg = "xreason:" + resourceName + " with id:" + id + " NOT found";
-				return Response.ok(FhirHelper.getOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
+				return Response.ok(FhirHelper.generateOperationOutcome(msg, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR))
 						.header("session_id", session.getId()).build();
 			}
 
 		} catch (Exception e) {
 			logger.error("", e);
-			return Response.ok(FhirHelper.getOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
+			return Response.ok(FhirHelper.generateOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 		}
 
@@ -288,14 +289,18 @@ public class I2b2FhirWS {
 		Class c = FhirUtil.getResourceClass(resourceName);
 		if (c == null)
 			throw new RuntimeException("class not found for resource:" + resourceName);
-
-		s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr, id);
-		md.addBundle(s);
-		;
-
+		
+		if(FhirHelper.isPatientDependentResource(c)){
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr, id);
+			md.addBundle(s);
+		}else{
+			FhirHelper.loadTestResources(md);
+		}
 		r = md.getParticularResource(c, id);
 		return r;
 	}
+
+	
 
 	@GET
 	@Path("")
@@ -369,7 +374,7 @@ public class I2b2FhirWS {
 	// URL: [base]/Resource/[id]/$validate
 
 	@POST
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}/$validate")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
 	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
@@ -445,7 +450,7 @@ public class I2b2FhirWS {
 			outR=DSSEvaluate.evaluate(id,inTxt);
 		}else{
 			logger.trace("called evaluate for:"+resourceName);
-			outR=FhirHelper.getOperationOutcome("evaluate not (yet) implemented for "+resourceName, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
+			outR=FhirHelper.generateOperationOutcome("evaluate not (yet) implemented for "+resourceName, IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
 		}	
 		return generateResponse(acceptHeader, request, outR);
 		

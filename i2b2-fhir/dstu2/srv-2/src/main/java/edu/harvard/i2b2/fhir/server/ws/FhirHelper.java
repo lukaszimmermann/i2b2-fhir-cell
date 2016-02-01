@@ -1,5 +1,9 @@
 package edu.harvard.i2b2.fhir.server.ws;
 
+import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
 import org.hl7.fhir.GuidanceResponse;
 import org.hl7.fhir.IssueSeverity;
 import org.hl7.fhir.IssueSeverityList;
@@ -9,11 +13,16 @@ import org.hl7.fhir.OperationOutcome;
 import org.hl7.fhir.OperationOutcomeIssue;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
+import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
+import net.sf.saxon.exslt.Random;
+import net.sf.saxon.trans.XPathException;
 
 public class FhirHelper {
-	static public OperationOutcome getOperationOutcome(String message, IssueTypeList issueTypeList,
+	static public OperationOutcome generateOperationOutcome(String message, IssueTypeList issueTypeList,
 			IssueSeverityList issueSeverityList) {
 		OperationOutcome o = new OperationOutcome();
+		FhirUtil.setId(o, FhirUtil.generateRandomId());
 		OperationOutcomeIssue i = new OperationOutcomeIssue();
 		IssueType iType = new IssueType();
 		iType.setValue(issueTypeList);
@@ -28,12 +37,14 @@ public class FhirHelper {
 
 		return o;
 	}
-	
-	static public GuidanceResponse genGuidanceResponse(String requestId){
-		GuidanceResponse g=new GuidanceResponse();
-		
-		g.setRequestId(FhirUtil.generateFhirString(requestId));
-		
-		return g;
+
+	static boolean isPatientDependentResource(Class c) {
+		String className = c.getSimpleName();
+		return (className.equals("DecisionSupportServiceModule")) ? false : true;
+	}
+
+	static public void loadTestResources(MetaResourceDb md) throws JAXBException, IOException {
+		DSSEvaluate.loadDSSModules(md);
+
 	}
 }

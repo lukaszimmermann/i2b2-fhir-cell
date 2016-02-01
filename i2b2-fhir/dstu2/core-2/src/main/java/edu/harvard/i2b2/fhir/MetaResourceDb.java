@@ -60,24 +60,24 @@ import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 public class MetaResourceDb {
 	static Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);
 
-	HashMap<Class,List<Resource>> resourceMap;
-	//List<Resource> resourceList;
+	HashMap<Class, List<Resource>> resourceMap;
+	// List<Resource> resourceList;
 
 	public MetaResourceDb() throws IOException {
 		init();
 	}
 
 	public int getSize() {
-		int count=0;
-		for(Class c:resourceMap.keySet()){
-			count+=resourceMap.get(c).size();
+		int count = 0;
+		for (Class c : resourceMap.keySet()) {
+			count += resourceMap.get(c).size();
 		}
 		return count;
 	}
 
 	public void init() throws IOException {
-		resourceMap= new HashMap<>();
-		//resourceList = new ArrayList<Resource>();
+		resourceMap = new HashMap<>();
+		// resourceList = new ArrayList<Resource>();
 		// metaResources = new MetaResourcePrimaryDb();
 		logger.trace("created resourcedb");
 		logger.trace("resources size:" + getSize());
@@ -86,11 +86,10 @@ public class MetaResourceDb {
 	public String addResource(Resource r) throws JAXBException {
 		Class c = FhirUtil.getResourceClass(r);
 		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
-		
+
 		logger.trace("EJB Putting resource:" + c.getSimpleName());
 		try {
-			logger.trace("EJB Put Resource:"
-					+ c.cast(r).getClass().getSimpleName());
+			logger.trace("EJB Put Resource:" + c.cast(r).getClass().getSimpleName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -105,14 +104,16 @@ public class MetaResourceDb {
 		Resource presentRes = searchById(r.getId().getValue(), c);
 		if (presentRes != null) {
 			// throw new
-			// RuntimeException("resource with id:"+p.getId()+" already exists");
-			//resourceList.remove(presentRes);
+			// RuntimeException("resource with id:"+p.getId()+" already
+			// exists");
+			// resourceList.remove(presentRes);
 			logger.debug("replacing resource with id:" + r.getId());
 		}
 
 		resourceList.add(r);
 
-		logger.debug("MrDB resources (after adding resource with id:"+r.getId().getValue()+") size:" + this.getSize());
+		logger.debug(
+				"MrDB resources (after adding resource with id:" + r.getId().getValue() + ") size:" + this.getSize());
 		return r.getId().getValue().toString();
 	}
 
@@ -124,8 +125,6 @@ public class MetaResourceDb {
 		}
 
 	}
-
-	
 
 	public int getResourceTypeCount(Class c) {
 		logger.trace("EJB searching for resource type:" + c.getSimpleName());
@@ -142,20 +141,19 @@ public class MetaResourceDb {
 
 	public void removeResource(Resource r1) {
 		Class c = FhirUtil.getResourceClass(r1);
-		List<Resource> resourceList =getResourceListCreateIfAbsent(c);
+		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		resourceList.remove(r1);
 	}
 
 	private List<Resource> getResourceListCreateIfAbsent(Class c) {
 		List<Resource> resourceList = this.resourceMap.get(c);
-		if((resourceList)==null) this.resourceMap.put(c, new ArrayList<Resource>() );
+		if ((resourceList) == null)
+			this.resourceMap.put(c, new ArrayList<Resource>());
 		return this.resourceMap.get(c);
 	}
 
-	public static String getValueOfFirstLevelChild(Resource r, Class c, String k)
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException {
+	public static String getValueOfFirstLevelChild(Resource r, Class c, String k) throws NoSuchMethodException,
+			SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Object returnValue = null;
 		String returnStr = null;
 
@@ -169,12 +167,10 @@ public class MetaResourceDb {
 
 	public static Object getFirstLevelChild(Resource r, Class c, String k)
 			// k is name of child
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 
-		String methodName = k.substring(0, 1).toUpperCase()
-				+ k.subSequence(1, k.length());
+		String methodName = k.substring(0, 1).toUpperCase() + k.subSequence(1, k.length());
 		Method method = c.getMethod("get" + methodName, null);
 		return method.invoke(c.cast(r));
 
@@ -192,8 +188,8 @@ public class MetaResourceDb {
 	}
 
 	public List<Resource> getAll() {
-		List<Resource> all= new ArrayList<Resource>();
-		for(Class c:resourceMap.keySet()){
+		List<Resource> all = new ArrayList<Resource>();
+		for (Class c : resourceMap.keySet()) {
 			all.addAll(resourceMap.get(c));
 		}
 		return all;
@@ -203,34 +199,29 @@ public class MetaResourceDb {
 		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		for (Resource r : resourceList) {
 			logger.trace(r.getId().getValue().toString());
-			if (c.isInstance(r)
-					&& r.getId().getValue().toString()
-							.equals( id)) {
+			if (c.isInstance(r) && r.getId().getValue().toString().equals(id)) {
 				return r;
 			}
 		}
 		return null;
 	}
 
-	public Resource searchById(String idStr,Class c) {
+	public Resource searchById(String idStr, Class c) {
 		// logger.trace("searching id:" + id);
 		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 		for (Resource r : resourceList) {
-			//logger.trace("id:"+r.getId().getValue())
-			if(c.isInstance(r)&& r.getId().getValue().equals(idStr))
+			// logger.trace("id:"+r.getId().getValue())
+			if (c.isInstance(r) && r.getId().getValue().equals(idStr))
 				return r;
 		}
 		logger.debug("id NOT found:" + idStr);
 		return null;
 	}
 
-	
-
 	// child can be a element in the resource or element of a reference element
 	public Object getChildOfResource(Resource r, String pathStr)
 			// is dot separated path
-			throws NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException,
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
 			InvocationTargetException {
 		Class c = FhirUtil.getResourceClass(r);
 		String returnStr = null;
@@ -241,8 +232,7 @@ public class MetaResourceDb {
 			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
 			prefix = pathStr.substring(0, pathStr.indexOf('.'));
 		}
-		String methodName = prefix.substring(0, 1).toUpperCase()
-				+ prefix.subSequence(1, prefix.length());
+		String methodName = prefix.substring(0, 1).toUpperCase() + prefix.subSequence(1, prefix.length());
 		Method method = c.getMethod("get" + methodName, null);
 		if (suffix == null) {
 			Object o = method.invoke(c.cast(r));
@@ -256,7 +246,7 @@ public class MetaResourceDb {
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
-				return searchById(idn,c);
+				return searchById(idn, c);
 			} else {
 				logger.trace("returning NOT from reference");
 				return o;
@@ -276,7 +266,7 @@ public class MetaResourceDb {
 				String idn = rr.getReference().getValue();
 				logger.trace(":" + idn);
 
-				nextR = searchById(idn,c);
+				nextR = searchById(idn, c);
 			} else {
 				logger.trace("returning NOT from reference");
 				return o;
@@ -288,44 +278,40 @@ public class MetaResourceDb {
 
 	}
 
-	//inputSet is set of resources to process for inclusion
-	//c is class of the resources for processing
+	// inputSet is set of resources to process for inclusion
+	// c is class of the resources for processing
 	// includesResources is search name of resources for inclusion
-	public List<Resource> getIncludedResources(Class c,
-			List<Resource> inputSet, List<String> includeResources)
-			throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException,
+	public List<Resource> getIncludedResources(Class c, List<Resource> inputSet, List<String> includeResources)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
 			SecurityException, JAXBException, FhirCoreException {
 		// MetaResourceSet s = new MetaResourceSet();
 		List<Resource> outList = new ArrayList<Resource>();
-			// iterate through resources and add included dependencies
+		// iterate through resources and add included dependencies
 
-		//logger.trace("inputSet size:"+inputSet.size());
-		
+		// logger.trace("inputSet size:"+inputSet.size());
+
 		for (String ir : includeResources) {
-			String paramterPath =  new SearchParameterMap().getParameterPath(
-					c, ir);
+			String paramterPath = new SearchParameterMap().getParameterPath(c, ir);
 			logger.trace("paramterPath:" + paramterPath);
 			String[] set = paramterPath.split("/");
-			String methodName=set[set.length-1]; 
+			String methodName = set[set.length - 1];
 			logger.trace("MethodName:" + methodName);
 
 			outList = new ArrayList<Resource>();
 			for (Resource r : inputSet) {
 				// String id = ((Reference)this.getFirstLevelChild(r, c,
 				// methodName)).getId();
-				Reference ref = (Reference) getFirstLevelChild(r, c,
-						methodName);
+				Reference ref = (Reference) getFirstLevelChild(r, c, methodName);
 
 				String rawid = ref.getReference().getValue().toString();
-				//String id=rawid;//
-				String id=rawid.split("/")[1];
-				Class depClass=FhirUtil.getResourceClass(rawid.split("/")[0]);
-				
+				// String id=rawid;//
+				String id = rawid.split("/")[1];
+				Class depClass = FhirUtil.getResourceClass(rawid.split("/")[0]);
+
 				logger.trace("Found dep:<" + id + ">");
-				Resource depMr = searchById(id,depClass);
+				Resource depMr = searchById(id, depClass);
 				if (depMr != null) {
-					//logger.trace("dependent Res:"+JAXBUtil.toXml(depMr));
+					// logger.trace("dependent Res:"+JAXBUtil.toXml(depMr));
 					outList.add(FhirUtil.containResource(r, depMr));
 				} else {
 					outList.add(r);
@@ -339,7 +325,36 @@ public class MetaResourceDb {
 		return inputSet;
 	}
 
-	
+	public Resource getIncludedResource(Class c, Resource r, List<String> includeResources)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+			SecurityException, JAXBException, FhirCoreException {
+
+		for (String ir : includeResources) {
+			String paramterPath = new SearchParameterMap().getParameterPath(c, ir);
+			logger.trace("paramterPath:" + paramterPath);
+			String[] set = paramterPath.split("/");
+			String methodName = set[set.length - 1];
+			logger.trace("MethodName:" + methodName);
+
+			// String id = ((Reference)this.getFirstLevelChild(r, c,
+			// methodName)).getId();
+			Reference ref = (Reference) getFirstLevelChild(r, c, methodName);
+
+			String rawid = ref.getReference().getValue().toString();
+			// String id=rawid;//
+			String id = rawid.split("/")[1];
+			Class depClass = FhirUtil.getResourceClass(rawid.split("/")[0]);
+
+			logger.trace("Found dep:<" + id + ">");
+			Resource depMr = searchById(id, depClass);
+			if (depMr != null) {
+				// logger.trace("dependent Res:"+JAXBUtil.toXml(depMr));
+				FhirUtil.containResource(r, depMr);
+			}
+		}
+
+		return r;
+	}
 
 	public void addResourceList(List<Resource> s) throws JAXBException {
 		for (Resource r : s)

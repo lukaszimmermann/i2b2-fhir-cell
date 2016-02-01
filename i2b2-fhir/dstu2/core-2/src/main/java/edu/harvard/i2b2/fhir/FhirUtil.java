@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -105,7 +106,7 @@ public class FhirUtil {
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
 
-	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationDispense|MedicationOrder|Observation|Patient|DiagnosticReport|DecisionSupportServiceModule|Parameters)";
+	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationDispense|MedicationOrder|Observation|Patient|DiagnosticReport|DiagnosticOrder|DecisionSupportServiceModule|Parameters|Order|OperationOutcome|GuidanceResponse)";
 	private static ArrayList<Class> resourceClassList = null;
 
 	private static Validator v;
@@ -583,7 +584,10 @@ public class FhirUtil {
 			return rc.getSearchParameter();
 		if (rc.getDiagnosticReport() != null)
 			return rc.getDiagnosticReport();
-
+		if (rc.getDiagnosticOrder() != null)
+			return rc.getDiagnosticOrder();
+		if (rc.getOrder() != null)
+			return rc.getOrder();
 		String xml = null;
 		try {
 			xml = JAXBUtil.toXml(rc);
@@ -659,6 +663,8 @@ public class FhirUtil {
 		try {
 			Class parentClass = FhirUtil.getResourceClass(p);
 			Class childClass = FhirUtil.getResourceClass(c);
+			
+			if(childClass==null || parentClass==null) throw new RuntimeException("unknown resource class for child or parent");
 
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
@@ -667,8 +673,13 @@ public class FhirUtil {
 			// p = JAXBUtil.fromXml(xml, parentClass);
 			logger.trace(
 					"getting path to parent:" + parentClass + "\nchild:" + childClass.getSimpleName().toLowerCase());
+			
+			//get path from profile
+			
 			String path = new SearchParameterMap().getParameterPath(parentClass,
 					childClass.getSimpleName().toLowerCase());
+			
+			
 			logger.trace("SEARCH PATH:" + path);
 			String childPath = path.replaceAll("^" + parentClass.getSimpleName() + "/", "");
 			logger.trace("MchildPath:" + childPath);
@@ -779,6 +790,12 @@ public class FhirUtil {
 		org.hl7.fhir.String fstr = new org.hl7.fhir.String();
 		fstr.setValue(val);
 		return fstr;
+	}
+
+	public static String generateRandomId() {
+		SecureRandom random = new SecureRandom();
+		return new BigInteger(130, random).toString(32);
+
 	}
 
 }
