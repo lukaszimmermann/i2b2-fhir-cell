@@ -3,22 +3,22 @@
 	<modelVersion>4.0.0</modelVersion>
 		<groupId>edu.harvard.i2b2.fhir</groupId>
 		<artifactId>dstu</artifactId>
-		<version>dstu2-0.3</version>
+		<version>dstu21-0.3</version>
 		<packaging>pom</packaging>
 	<modules>
-		<module>xquery-2</module>
-		<module>core-2</module>
-<!--		<module>client-2</module>
-	-->	<module>hapiWrapper-2</module>
-		<module>srv-2</module>
-		<module>applib-2</module>
+		<module>xquery</module>
+		<module>core</module>
+<!--		<module>client</module>
+	-->	<module>hapiWrapper</module>
+		<module>srv</module>
+		<module>applib</module>
   </modules>
 
 	<properties>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
 		<failOnMissingWebXml>false</failOnMissingWebXml>
-		<my-project-version>dstu2-0.3</my-project-version>
+		<my-project-version>dstu21-0.3</my-project-version>
 	</properties>
 
 

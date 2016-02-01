@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>edu.harvard.i2b2.fhir</groupId>
 		<artifactId>dstu</artifactId>
-		<version>dstu2-0.2</version>
+		<version>dstu21-0.3</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 

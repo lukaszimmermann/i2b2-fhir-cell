@@ -115,16 +115,16 @@ echo "Compiling and deploying war"
 
 cd i2b2-fhir-branch/i2b2-fhir/;
 mvn clean install -Dmaven.test.skip=true; 
-cd dstu2 ;
-mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=core-2/src/main/resources/org.hl7.fhir.validator.jar -Dversion=1.0 -Dpackaging=jar
+cd $BRANCH ;
+mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=core/src/main/resources/org.hl7.fhir.validator.jar -Dversion=1.0 -Dpackaging=jar
 mvn clean install -Dmaven.test.skip=true; 
 
 
 #deploy
-cp srv-2/target/*.war $DEPLOY_DIR
-cp applib-2/target/*.war $DEPLOY_DIR
+cp srv/target/*.war $DEPLOY_DIR
+cp applib/target/*.war $DEPLOY_DIR
 
-echo "running server on port 8080"
+echo "running server"
 
 
 export RUN_WF="$WILDFLY_DIR/bin/standalone.sh" #-b=$IPADD"
