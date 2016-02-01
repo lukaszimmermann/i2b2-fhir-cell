@@ -15,8 +15,6 @@ export DEPLOY_DIR="$WILDFLY_DIR/standalone/deployments/"
 export JAVA_HOME="$(pwd)/jdk1.8.0_60"
 echo "DEPLOY_DIR:$DEPLOY_DIR"
 
-#export PATH="$PATH;$MAVEN_HOME/bin;$JAVA_HOME/bin"
-#echo "PATH:$PATH"
 
 export java="$JAVA_HOME/bin/java"
 echo "java:$java" 
@@ -65,6 +63,8 @@ if [ $? == 0 ]
 	echo "MVN:$MVN" 
 
 fi
+export PATH="$PATH:$MAVEN_HOME/bin:$JAVA_HOME/bin"
+
 #$MVN -version 1>/dev/null  
 #echo $?
 #if [ $? -ne 0 ];  then echo "mvn was not found. Please install maven  or higher"; fi
