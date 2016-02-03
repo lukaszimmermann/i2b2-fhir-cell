@@ -106,6 +106,7 @@ else
         mv "i2b2-fhir-$BRANCH/" i2b2-fhir-branch/
 	#cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
 	cp i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/standalone.xml wildfly-9.0.1.Final/standalone/configuration/
+	cp i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/server.keystore wildfly-9.0.1.Final/standalone/configuration/
 	cp i2b2-fhir-branch/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
 fi
 
