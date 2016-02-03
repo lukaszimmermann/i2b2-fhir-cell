@@ -35,6 +35,11 @@
     <management>
         <security-realms>
             <security-realm name="ManagementRealm">
+                <server-identities>
+                    <ssl>
+                        <keystore path="server.keystore" relative-to="jboss.server.config.dir" keystore-password="keystore_password" alias="server" key-password="keystore_password"/>
+                    </ssl>
+                </server-identities>
                 <authentication>
                     <local default-user="$local" skip-group-loading="true"/>
                     <properties path="mgmt-users.properties" relative-to="jboss.server.config.dir"/>
@@ -364,6 +369,7 @@
             <buffer-cache name="default"/>
             <server name="default-server">
                 <http-listener name="default" socket-binding="http" redirect-socket="https"/>
+		<https-listener name="httpsServer" socket-binding="https" security-realm="ManagementRealm"/>
                 <host name="default-host" alias="localhost">
                     <location name="/" handler="welcome-content"/>
                     <filter-ref name="server-header"/>
@@ -419,5 +425,4 @@
             <remote-destination host="localhost" port="25"/>
         </outbound-socket-binding>
     </socket-binding-group>
-
 </server>

@@ -116,7 +116,7 @@ echo "Compiling and deploying war"
 cd i2b2-fhir-branch/i2b2-fhir/;
 mvn clean install -Dmaven.test.skip=true; 
 cd $BRANCH ;
-#mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=core/src/main/resources/org.hl7.fhir.validator.jar -Dversion=1.0 -Dpackaging=jar
+mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=core/src/main/resources/org.hl7.fhir.validator.jar -Dversion=1.0 -Dpackaging=jar
 mvn clean install -Dmaven.test.skip=true; 
 
 
