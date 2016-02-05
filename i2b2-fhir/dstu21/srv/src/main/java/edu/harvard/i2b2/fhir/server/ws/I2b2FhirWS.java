@@ -192,7 +192,8 @@ public class I2b2FhirWS {
 				String fhirQuery = c.getSimpleName() + "?" + request.getQueryString();
 
 				// optimization to avoid query search on patient id
-				if (!c.equals(Patient.class)) {
+				if (false//XXX
+						&& !c.equals(Patient.class)) {
 					fhirQuery = fhirQuery.replaceAll("\\?patient=(\\d+)", "");
 					fhirQuery = fhirQuery.replaceAll("\\?subject=(\\d+)", "");
 					logger.trace("bypassing sophisticated query");
@@ -234,7 +235,7 @@ public class I2b2FhirWS {
 	}
 
 
-	//POOST version of getQueryResult using _search
+	//POST version of getQueryResult using _search
 	@POST
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/_search")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",

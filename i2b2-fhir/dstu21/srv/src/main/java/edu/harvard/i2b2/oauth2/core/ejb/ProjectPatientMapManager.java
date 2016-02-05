@@ -103,26 +103,36 @@ public class ProjectPatientMapManager {
 		try {
 			logger.trace("fetching all Patients for project:" + projectId);
 			String i2b2Xml=null;
+			Bundle b= new Bundle();
+			ArrayList<String> list =null;
+			
 			if(serverConfigs.GetString(ConfigParameter.patientFetchMin)!=null
 					&& serverConfigs.GetString(ConfigParameter.patientFetchMin).equals("true") ){
+				logger.debug("min call");
 				i2b2Xml = I2b2Util.getAllPatientsMin(i2b2User, i2b2Token,
 					i2b2Url, i2b2Domain, projectId);
+				
+				list= I2b2Util.getAllPatientsAsList(i2b2Xml);
+				
+				for(String id:list){
+					Patient p=new Patient();
+					p=(Patient) FhirUtil.setId(p, id);
+					BundleEntry be=new BundleEntry();
+					be.setResource(FhirUtil.getResourceContainer(p));
+					b.getEntry().add(be);
+				}
+				
+				
 			}else{
+				logger.debug("max call");
 				i2b2Xml = I2b2Util.getAllPatients(i2b2User, i2b2Token,
 						i2b2Url, i2b2Domain, projectId);
+				list= I2b2Util.getAllPatientsAsList(i2b2Xml);
+				b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
 			}
-			//Bundle b=I2b2Util.getAllPatientsAsFhirBundle(i2b2Xml);
 			
 			
-			ArrayList<String> list = I2b2Util.getAllPatientsAsList(i2b2Xml);
-			Bundle b= new Bundle();
-			for(String id:list){
-				Patient p=new Patient();
-				p=(Patient) FhirUtil.setId(p, id);
-				BundleEntry be=new BundleEntry();
-				be.setResource(FhirUtil.getResourceContainer(p));
-				b.getEntry().add(be);
-			}
+			
 			String bundleXml=JAXBUtil.toXml(b);
 			service.put(projectId, list, bundleXml);
 		} catch (Exception e) {
