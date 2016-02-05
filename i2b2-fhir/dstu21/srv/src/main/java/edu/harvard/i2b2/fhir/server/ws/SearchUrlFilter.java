@@ -44,7 +44,7 @@ public class SearchUrlFilter implements ContainerRequestFilter {
  			UriInfo uriInfo=context.getUriInfo();
 		String pathStr=uriInfo.getAbsolutePath().toString();
 		logger.info("got uri::"+pathStr);
-		pathStr=pathStr.replace("/_search", "");
+		//pathStr=pathStr.replace("/_search", "");
 	//	pathStr="http://localhost:8080/srv-dstu1-0.2/api/Patient";
 		URI uri=null;
 		try {

@@ -132,7 +132,10 @@ public class I2b2FhirWS {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	
+	
 	@GET
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
@@ -231,6 +234,25 @@ public class I2b2FhirWS {
 	}
 
 
+	//POOST version of getQueryResult using _search
+	@POST
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/_search")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response getQueryResult_search(@PathParam("resourceName") String resourceName,
+			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
+			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException {
+			
+			return getQueryResult( resourceName,
+					 includeResources,  filterf,
+					acceptHeader,  headers,
+					 request, servletContext);
+		
+	}
+	
+	
+	
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
