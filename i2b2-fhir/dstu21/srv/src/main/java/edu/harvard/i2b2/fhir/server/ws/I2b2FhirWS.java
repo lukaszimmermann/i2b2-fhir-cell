@@ -143,17 +143,34 @@ public class I2b2FhirWS {
 	public Response getQueryResult(@PathParam("resourceName") String resourceName,
 			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
-			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException {
+			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException, URISyntaxException {
 
-		HttpSession session = null;
+		
+		HttpSession session = request.getSession();
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+		String basePath = fhirBase.toString();
+		
+		return getQueryResultCore( resourceName, basePath, request.getRequestURI(), request.getQueryString(),
+				 includeResources, filterf,
+				 acceptHeader,  headers,
+				session) ;
+		
+	}
+	
+	
+	public Response getQueryResultCore( String resourceName, String basePath,String requestUri,String queryString,
+			List<String> includeResources, String filterf,
+			 String acceptHeader,  HttpHeaders headers,
+			HttpSession session) throws IOException {
+
 		String msg = null;
 		String mediaType = null;
 		MetaResourceDb md = new MetaResourceDb();
 
-		logger.debug("got request " + request.getPathInfo() + "?" + request.getQueryString());
+		logger.debug("got request parts: " + requestUri + "?" + queryString);
 
 		try {
-			logger.info("Query param:" + request.getParameterMap().keySet().toString());
+			logger.info("Query string:" + queryString);
 
 			String head = "";
 			for (String h : headers.getRequestHeaders().keySet()) {
@@ -166,17 +183,14 @@ public class I2b2FhirWS {
 
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
-			session = request.getSession();
 			// String basePath =
 			// request.getRequestURL().toString().split(resourceName)[0];
-			URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
-			String basePath = fhirBase.toString();
 			logger.debug("session id:" + session.getId());
 
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 					session);
 
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, c.getSimpleName(), service, ppmMgr, null);
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, requestUri,queryString, c.getSimpleName(), service, ppmMgr, null);
 
 			if(FhirHelper.isPatientDependentResource(c)){
 				md.addBundle(s);
@@ -186,10 +200,10 @@ public class I2b2FhirWS {
 			logger.info("running filter...");
 			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
 
-			logger.info("running sophisticated query for:" + request.getQueryString());
+			logger.info("running sophisticated query for:" +queryString);
 
-			if (request.getQueryString() != null) {
-				String fhirQuery = c.getSimpleName() + "?" + request.getQueryString();
+			if (queryString != null) {
+				String fhirQuery = c.getSimpleName() + "?" + queryString;
 
 				// optimization to avoid query search on patient id
 				if (false//XXX
@@ -243,13 +257,15 @@ public class I2b2FhirWS {
 	public Response getQueryResult_search(@PathParam("resourceName") String resourceName,
 			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
-			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException {
+			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException, URISyntaxException {
 			
-			return getQueryResult( resourceName,
-					 includeResources,  filterf,
-					acceptHeader,  headers,
-					 request, servletContext);
-		
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+		String basePath = fhirBase.toString();
+		HttpSession session = request.getSession();
+		return getQueryResultCore( resourceName, basePath, request.getRequestURI().replace("/_search",""), request.getQueryString(),
+				 includeResources, filterf,
+				 acceptHeader,  headers,
+				session) ;
 	}
 	
 	
@@ -314,7 +330,7 @@ public class I2b2FhirWS {
 			throw new RuntimeException("class not found for resource:" + resourceName);
 		
 		if(FhirHelper.isPatientDependentResource(c)){
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request, resourceName, service, ppmMgr, id);
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request.getRequestURI(),request.getQueryString(), resourceName, service, ppmMgr, id);
 			md.addBundle(s);
 		}else{
 			FhirHelper.loadTestResources(md);

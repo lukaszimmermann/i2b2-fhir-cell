@@ -83,7 +83,7 @@ public class I2b2Helper {
 	}
 
 	static Bundle parsePatientIdToFetchPDO(HttpSession session,
-			HttpServletRequest request, String resourceName,
+			String requestUri, String queryString,String resourceName,
 			PatientBundleManager service,
 			ProjectPatientMapManager ppmservice, String patientId) throws XQueryUtilException,
 			JAXBException, IOException, AuthenticationFailure,
@@ -92,12 +92,11 @@ public class I2b2Helper {
 		
 		//if not specified in call extract from Url
 		if(patientId==null){
-			patientId= FhirUtil.extractPatientId(request.getQueryString());
+			patientId= FhirUtil.extractPatientId(queryString);
 		}
 		//if also not found in url 
 		if (patientId == null)
-			patientId = FhirUtil.extractPatientIdFromRequestById(request.getRequestURL()
-					.toString(), resourceName);
+			patientId = FhirUtil.extractPatientIdFromRequestById(requestUri, resourceName);
 		logger.info("PatientId:" + patientId);
 		
 		if (patientId != null) {
