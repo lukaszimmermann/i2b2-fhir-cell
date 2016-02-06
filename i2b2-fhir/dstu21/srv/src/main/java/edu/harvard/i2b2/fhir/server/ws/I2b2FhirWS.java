@@ -49,6 +49,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
+import org.hl7.fhir.BundleLink;
 import org.hl7.fhir.Code;
 import org.hl7.fhir.Conformance;
 import org.hl7.fhir.ConformanceInteraction;
@@ -223,6 +224,15 @@ public class I2b2FhirWS {
 				logger.trace("includedListsize:" + list.size());
 				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
+			
+			BundleLink bl= new BundleLink();
+			Uri blUri=new Uri();
+			blUri.setValue(basePath+requestUri.substring(1)+"?"+queryString);
+			bl.setUrl(blUri);
+			org.hl7.fhir.String rs= new org.hl7.fhir.String();
+			rs.setValue("self");
+			bl.setRelation(rs);
+			s.getLink().add(bl);
 
 			// logger.info("getting bundle string..."+JAXBUtil.toXml(s));
 			// logger.info("size of db:" + md.getSize());
