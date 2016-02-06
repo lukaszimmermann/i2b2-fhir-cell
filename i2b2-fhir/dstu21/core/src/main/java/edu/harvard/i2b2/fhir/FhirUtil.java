@@ -41,6 +41,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -66,6 +67,8 @@ import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 import javax.tools.JavaFileManager.Location;
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.io.IOUtils;
@@ -75,10 +78,12 @@ import org.hl7.fhir.BundleType;
 import org.hl7.fhir.BundleTypeList;
 import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.Id;
+import org.hl7.fhir.Instant;
 import org.hl7.fhir.Medication;
 import org.hl7.fhir.MedicationDispense;
 import org.hl7.fhir.MedicationOrder;
 import org.hl7.fhir.MedicationStatement;
+import org.hl7.fhir.Meta;
 import org.hl7.fhir.Observation;
 import org.hl7.fhir.Patient;
 import org.hl7.fhir.Condition;
@@ -494,12 +499,15 @@ public class FhirUtil {
 		return s2;
 	}
 
-	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url) {
+	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url)  {
 		Bundle b = new Bundle();
 		for (Resource r : s) {
+			if(r.getMeta()==null){
+				r.setMeta(FhirUtil.createMeta());
+			}
 			BundleEntry be = FhirUtil.newBundleEntryForResource(r);
 			b.getEntry().add(be);
-
+			
 		}
 		
 		BundleType value=new BundleType();
@@ -511,8 +519,32 @@ public class FhirUtil {
 
 		Uri u = new Uri();
 		u.setValue(basePath);
+		
+		FhirUtil.setId(b, Long.toHexString(new Random().nextLong()));
+		
+		
+		b.setMeta(FhirUtil.createMeta());
+		
 		// b.setBase(u);
 		return b;
+	}
+
+	private static Meta createMeta() {
+		Meta meta= new Meta();
+		Id vId = new Id();
+		vId.setValue("1");
+		meta.setVersionId(vId);
+		Instant instantVal= new Instant();
+		XMLGregorianCalendar xmlGregvalue;
+		try {
+			xmlGregvalue = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
+		} catch (DatatypeConfigurationException e) {
+			logger.error(e.getMessage(),e);
+			throw new RuntimeException(e);
+		}
+		instantVal.setValue(xmlGregvalue);
+		meta.setLastUpdated(instantVal);
+		return meta;
 	}
 
 	static BundleEntry newBundleEntryForResource(Resource r) {
