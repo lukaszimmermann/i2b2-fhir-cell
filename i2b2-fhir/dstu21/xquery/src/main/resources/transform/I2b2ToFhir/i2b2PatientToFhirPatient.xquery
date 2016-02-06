@@ -118,6 +118,7 @@ let $maritalStatusDisplay:=local:fnMaritalStatusDisplay($marital_status)
 return 
 <Patient  namespace="http://hl7.org/fhir"  >
   <id value="{$id}"/>
+  
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -137,6 +138,10 @@ return
     </div>
   </text>
   
+  <meta>
+        <versionId value="1"/>
+        <lastUpdated value="{current-dateTime()}"/>
+    </meta>
   <name>
     <use value="anonymous"/>
     <family value="anonymous"/>
