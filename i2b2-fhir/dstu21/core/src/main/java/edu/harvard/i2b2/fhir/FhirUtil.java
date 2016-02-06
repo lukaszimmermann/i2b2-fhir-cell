@@ -71,6 +71,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
+import org.hl7.fhir.BundleType;
+import org.hl7.fhir.BundleTypeList;
 import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Medication;
@@ -499,6 +501,10 @@ public class FhirUtil {
 			b.getEntry().add(be);
 
 		}
+		
+		BundleType value=new BundleType();
+		value.setValue(BundleTypeList.SEARCHSET);
+		b.setType(value);
 		UnsignedInt total = new UnsignedInt();
 		total.setValue(BigInteger.valueOf(s.size()));
 		b.setTotal(total);
