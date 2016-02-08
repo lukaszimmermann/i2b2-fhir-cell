@@ -303,6 +303,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?,$doseQuan
     {$doseQuantityFhir}
   </dosageInstruction>
 
+  <status value="completed"/>
   
 </MedicationStatement>
  
@@ -422,7 +423,7 @@ let $medication_id:=concat("",$pid,"-",$count)
 let $dose :=  $refObs/nval_num/text()   
 let $doseUnit :=  $refObs/units_cd/text() 
 let $doseQuantityFhir:=local:fnDoseFhir($dose,$doseUnit)
-let $instr:=""
+let $instr:="refer to medication resource"
 
 let $fhirMedicationPrescription:=local:fnFhirMedicationStatement($count,$doseQuantityFhir,$medication_id,$sd,$ed,$pid,$instr)
 

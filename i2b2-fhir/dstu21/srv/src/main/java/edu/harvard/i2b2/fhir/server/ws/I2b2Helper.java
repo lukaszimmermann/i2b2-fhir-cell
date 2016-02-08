@@ -61,6 +61,7 @@ public class I2b2Helper {
 
 	private static Bundle getPdo(AccessToken accessTok, String patientId,
 			PatientBundleManager pBundleMgr,ProjectPatientMapManager projPatMapMgr) throws FhirServerException {
+		
 		if(projPatMapMgr.hasAccessToPatient(accessTok,patientId)){
 			return pBundleMgr.getPatientBundle(accessTok, patientId);
 		}else{
@@ -94,6 +95,8 @@ public class I2b2Helper {
 		if(patientId==null){
 			patientId= FhirUtil.extractPatientId(queryString);
 		}
+		
+		logger.info("PatientId:" + patientId);
 		//if also not found in url 
 		if (patientId == null)
 			patientId = FhirUtil.extractPatientIdFromRequestById(requestUri, resourceName);

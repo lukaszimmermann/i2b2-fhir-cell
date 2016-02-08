@@ -254,6 +254,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
       <p>{$instr}  </p>
+      <p> refer to Medication Resource</p>
      </div>
   </text>
   
@@ -273,7 +274,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
     <reference value="Medication/{$medication_id}"/> 
   </medicationReference>
     
-
+<status value="completed"/>
 
   <dosageInstruction>
   {$timingScheduleFhir}

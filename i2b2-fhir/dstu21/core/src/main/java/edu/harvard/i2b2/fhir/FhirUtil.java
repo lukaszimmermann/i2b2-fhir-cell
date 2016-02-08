@@ -821,6 +821,7 @@ public class FhirUtil {
 		}
 		if (id.equals(resourceName))
 			id = null;
+		
 		return id;
 	}
 
