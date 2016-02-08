@@ -190,6 +190,7 @@ public class ConformanceStatement {
 				put("birthdate", "date");
 				put("family", "string");
 				put("given", "string");
+				put("name", "string");
 				put("identifier", "string");
 			}
 		}));
