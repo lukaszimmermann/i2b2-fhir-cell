@@ -191,6 +191,7 @@ public class ConformanceStatement {
 				put("family", "string");
 				put("given", "string");
 				put("name", "string");
+				put("ethnicity", "string");
 				put("identifier", "string");
 			}
 		}));
