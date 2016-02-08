@@ -313,7 +313,7 @@ public class I2b2FhirWS {
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
 
 	@GET
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}")
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9|-]+}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
 	public Response getParticularResourceWrapper(@PathParam("resourceName") String resourceName,
@@ -358,6 +358,8 @@ public class I2b2FhirWS {
 		Resource r = null;
 		Bundle s = null;
 		String mediaType = null;
+		
+		
 		HttpSession session = request.getSession();
 		authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
 				session);
@@ -369,7 +371,11 @@ public class I2b2FhirWS {
 			throw new RuntimeException("class not found for resource:" + resourceName);
 		
 		if(FhirHelper.isPatientDependentResource(c)){
-			s = I2b2Helper.parsePatientIdToFetchPDO(session, request.getRequestURI(),request.getQueryString(), resourceName, service, ppmMgr, id);
+			
+			String patientId=id;
+			if(patientId.contains("-")) patientId=patientId.split("-")[0];
+			
+			s = I2b2Helper.parsePatientIdToFetchPDO(session, request.getRequestURI(),request.getQueryString(), resourceName, service, ppmMgr, patientId);
 			md.addBundle(s);
 		}else{
 			FhirHelper.loadTestResources(md);
