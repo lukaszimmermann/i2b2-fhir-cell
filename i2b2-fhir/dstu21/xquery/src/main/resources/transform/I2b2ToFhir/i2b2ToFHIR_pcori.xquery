@@ -4,7 +4,7 @@ declare namespace functx = "http://www.functx.com";
  
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
 let $x :=fn:replace($r,'.000Z$','') 
-return $x
+return fn:concat($x,'05:00')
 };
  
 declare function local:fnDoseFhir($dose as xs:string?,$unit as xs:string?) as node()?
@@ -280,7 +280,8 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?,$doseQuan
   <MedicationStatement xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
  
-  <dateWritten value="{$sd}"/>
+   <identifier value="MedicationStatement/{$pid}-{$count}"/>
+   <effectiveDateTime value="{$sd}"/>
    
   <text>
     <status value="generated"/>
