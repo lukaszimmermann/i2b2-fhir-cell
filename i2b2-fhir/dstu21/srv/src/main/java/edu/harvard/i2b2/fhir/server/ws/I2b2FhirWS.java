@@ -57,7 +57,10 @@ import org.hl7.fhir.ConformanceResource;
 import org.hl7.fhir.ConformanceRest;
 import org.hl7.fhir.ConformanceSearchParam;
 import org.hl7.fhir.ConformanceSecurity;
+import org.hl7.fhir.ConformanceStatementKind;
+import org.hl7.fhir.ConformanceStatementKindList;
 import org.hl7.fhir.Extension;
+import org.hl7.fhir.Id;
 import org.hl7.fhir.IssueSeverity;
 import org.hl7.fhir.IssueSeverityList;
 import org.hl7.fhir.IssueType;
@@ -71,6 +74,8 @@ import org.hl7.fhir.ParametersParameter;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.TypeRestfulInteraction;
 import org.hl7.fhir.TypeRestfulInteractionList;
+import org.hl7.fhir.UnknownContentCode;
+import org.hl7.fhir.UnknownContentCodeList;
 import org.hl7.fhir.Uri;
 import org.json.JSONException;
 import org.slf4j.Logger;
@@ -134,7 +139,31 @@ public class I2b2FhirWS {
 		}
 	}
 	
-	
+	//compartment
+	@GET
+	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}/{compartmentName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response compartmentWrapper(@PathParam("resourceName") String resourceName,
+			@PathParam("compartmentName") String compartmentName,
+			@PathParam("resourceId") String resourceId,
+			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
+			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request, @Context ServletContext servletContext) throws IOException, URISyntaxException {
+
+		
+		HttpSession session = request.getSession();
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+		String basePath = fhirBase.toString();
+		
+		String queryString=resourceName+"="+resourceId;
+		String requestUri=compartmentName+"/";
+		return getQueryResultCore( resourceName, basePath, requestUri, queryString,
+				 includeResources, filterf,
+				 acceptHeader,  headers,
+				session) ;
+		
+	}
 	
 	
 	@GET
@@ -408,8 +437,30 @@ public class I2b2FhirWS {
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 
 		Conformance c = ConformanceStatement.getStatement(fhirBase);
+		
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
+		
+		c.setId(FhirUtil.generateId(Integer.toString(request.getRequestURI().hashCode())));
+		ConformanceStatementKind kindValue= new ConformanceStatementKind() ;
+		kindValue.setValue(ConformanceStatementKindList.INSTANCE);
+		c.setKind(kindValue);
+		c.setFhirVersion(FhirUtil.generateId("1.2.0"));
+		
+		UnknownContentCode uccValue=new UnknownContentCode();
+		uccValue.setValue(UnknownContentCodeList.NO);
+		c.setAcceptUnknown(uccValue);
+		
+		Code fc1= new Code();
+		fc1.setValue("xml");
+		c.getFormat().add(fc1);
+		
+		Code fc2= new Code();
+		fc2.setValue("json");
+		c.getFormat().add(fc2);
+		
+		
+		request.getRequestURI().hashCode();
 		
 		return generateResponse(acceptHeader, request, c);
 		
@@ -520,7 +571,7 @@ public class I2b2FhirWS {
 		}
 		outTxt = I2b2Helper.removeSpace(outTxt);
 		logger.info("acceptHeader:" + acceptHeader);
-
+		
 		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
 
 	}

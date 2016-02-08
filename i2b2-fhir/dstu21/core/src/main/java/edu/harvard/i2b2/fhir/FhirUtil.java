@@ -836,4 +836,10 @@ public class FhirUtil {
 
 	}
 
+	public static Id generateId(String idString) {
+		Id id= new Id();
+		id.setValue(idString);
+		return id;
+	}
+
 }

@@ -33,6 +33,8 @@ public class ConformanceStatement {
 
 	private static ConformanceResource getReadOnlyConformanceResource(String name, HashMap<String, String> hm) {
 		ConformanceResource p = new ConformanceResource();
+		
+		
 		Code value2 = new Code();
 		value2.setValue(name);
 		p.setType(value2);
