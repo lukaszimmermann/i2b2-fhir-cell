@@ -205,6 +205,7 @@ public class ConformanceStatement {
 				put("name", "string");
 				put("identifier", "token");
 				put("effectivedate", "date");
+				put("status", "token");
 				
 			}
 		}));
