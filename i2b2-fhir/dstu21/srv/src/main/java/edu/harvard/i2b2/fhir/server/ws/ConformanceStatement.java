@@ -204,7 +204,7 @@ public class ConformanceStatement {
 				put("medication", "reference");
 				put("name", "string");
 				put("identifier", "token");
-				put("effective", "date");
+				put("effectivedate", "date");
 				
 			}
 		}));
