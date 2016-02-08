@@ -190,6 +190,7 @@ public class ConformanceStatement {
 				put("birthdate", "date");
 				put("family", "string");
 				put("given", "string");
+				put("identifier", "string");
 			}
 		}));
 		rest.getResource().add(getReadOnlyConformanceResource("MedicationOrder", new HashMap<String, String>() {
