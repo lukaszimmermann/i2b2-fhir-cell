@@ -196,7 +196,7 @@ public class ConformanceStatement {
 				put("identifier", "string");
 			}
 		}));
-		rest.getResource().add(getReadOnlyConformanceResource("MedicationOrder", new HashMap<String, String>() {
+		rest.getResource().add(getReadOnlyConformanceResource("MedicationStatement", new HashMap<String, String>() {
 			{
 				put("_id", "token");
 				put("patient", "token");
