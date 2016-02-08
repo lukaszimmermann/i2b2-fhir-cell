@@ -4,7 +4,7 @@ declare namespace functx = "http://www.functx.com";
  
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
 let $x :=fn:replace($r,'.000Z$','') 
-return $x
+return fn:concat($x,'+05:00')
 };
  
 declare function local:fnDoseFhir($dose as xs:string?,$unit as xs:string?) as node()?
@@ -394,8 +394,8 @@ let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
 let $cn := $refObs/concept_cd/@name/string()
 let $oid := $refObs/observer_cd
-let $sd := local:fnI2b2TimeToFhirTime($refObs/start_date/text())
-let $ed := local:fnI2b2TimeToFhirTime($refObs/end_date/text())
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
 
 let $fhirMedication:=local:fnFhirMedication($count,$cn, $cid,$pid)
 let $medication_id:=concat("",$pid,"-",$count)
@@ -442,12 +442,12 @@ let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
 let $cn := $refObs/concept_cd/@name/string()
 let $oid := $refObs/observer_cd
-let $sd := local:fnI2b2TimeToFhirTime($refObs/start_date/text())
-let $ed := local:fnI2b2TimeToFhirTime($refObs/end_date/text())
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
 let $sourceSystem := $refObs/@sourcesystem_cd/string()
-let $importDate := local:fnI2b2TimeToFhirTime($refObs/@import_date/string())
-let $downloadDate := local:fnI2b2TimeToFhirTime($refObs/@download_date/string())
-let $updateDate := local:fnI2b2TimeToFhirTime($refObs/@update_date/string())
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
 
 
 let $valType:= $refObs/valuetype_cd/text()
@@ -506,12 +506,12 @@ let $cid := fn:replace($refObs/concept_cd/text(),"ICD9:","")
 
 
 let $oid := $refObs/observer_cd
-let $sd := local:fnI2b2TimeToFhirTime($refObs/start_date/text())
-let $ed := local:fnI2b2TimeToFhirTime($refObs/end_date/text())
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
 let $sourceSystem := $refObs/@sourcesystem_cd/string()
-let $importDate := local:fnI2b2TimeToFhirTime($refObs/@import_date/string())
-let $downloadDate := local:fnI2b2TimeToFhirTime($refObs/@download_date/string())
-let $updateDate := local:fnI2b2TimeToFhirTime($refObs/@update_date/string())
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
 
 let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
 
@@ -549,12 +549,12 @@ let $raw_cid := $refObs/concept_cd/text()
 let $textContent :=  $refObs//observation_blob/text()
 
 let $oid := $refObs/observer_cd
-let $sd := local:fnI2b2TimeToFhirTime($refObs/start_date/text())
-let $ed := local:fnI2b2TimeToFhirTime($refObs/end_date/text())
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
 let $sourceSystem := $refObs/@sourcesystem_cd/string()
-let $importDate := local:fnI2b2TimeToFhirTime($refObs/@import_date/string())
-let $downloadDate := local:fnI2b2TimeToFhirTime($refObs/@download_date/string())
-let $updateDate := local:fnI2b2TimeToFhirTime($refObs/@update_date/string())
+let $importDate := $refObs/@import_date/string()
+let $downloadDate := $refObs/@download_date/string()
+let $updateDate := $refObs/@update_date/string()
 
 let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
 
