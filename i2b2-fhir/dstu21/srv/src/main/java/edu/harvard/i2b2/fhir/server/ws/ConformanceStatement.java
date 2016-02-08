@@ -18,6 +18,8 @@ import org.hl7.fhir.ConformanceSecurity;
 import org.hl7.fhir.Extension;
 import org.hl7.fhir.Narrative;
 import org.hl7.fhir.NarrativeStatusList;
+import org.hl7.fhir.RestfulConformanceMode;
+import org.hl7.fhir.RestfulConformanceModeList;
 import org.hl7.fhir.TypeRestfulInteraction;
 import org.hl7.fhir.TypeRestfulInteractionList;
 import org.hl7.fhir.Uri;
@@ -175,6 +177,9 @@ public class ConformanceStatement {
 		OAuthext.getExtension().add(tokenExt);
 
 		rest.setSecurity(security);
+		RestfulConformanceMode rcmValue= new RestfulConformanceMode();
+		rcmValue.setValue(RestfulConformanceModeList.SERVER);
+		rest.setMode(rcmValue);
 
 		// Patient
 
@@ -182,6 +187,9 @@ public class ConformanceStatement {
 			{
 				put("_id", "token");
 				put("gender", "token");
+				put("birthdate", "date");
+				put("family", "string");
+				put("given", "string");
 			}
 		}));
 		rest.getResource().add(getReadOnlyConformanceResource("MedicationOrder", new HashMap<String, String>() {
