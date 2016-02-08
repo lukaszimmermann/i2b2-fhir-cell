@@ -440,6 +440,9 @@ public class I2b2FhirWS {
 		
 		logger.trace("conf:" + JAXBUtil.toXml(c));
 
+		Code statusCode= new Code();
+		statusCode.setValue("active");
+		c.setStatus(statusCode);
 		
 		c.setId(FhirUtil.generateId(Integer.toString(request.getRequestURI().hashCode())));
 		ConformanceStatementKind kindValue= new ConformanceStatementKind() ;
