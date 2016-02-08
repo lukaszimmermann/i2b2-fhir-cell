@@ -280,7 +280,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?,$doseQuan
   <MedicationStatement xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
  
-   <identifier value="MedicationStatement/{$pid}-{$count}"/>
+   <identifier value="1234"/>
    <effectiveDateTime value="{$sd}"/>
    
   <text>

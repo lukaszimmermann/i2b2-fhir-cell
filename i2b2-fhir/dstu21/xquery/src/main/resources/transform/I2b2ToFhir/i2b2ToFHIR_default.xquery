@@ -247,7 +247,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
  <id value="{$pid}-{$count}"/>
  
   
-   <identifier value="MedicationStatement/{$pid}-{$count}"/>
+  
    <effectiveDateTime value="{$sd}"/>
    
    <text>
