@@ -97,7 +97,9 @@ then echo "pulling from git repo";
 cd i2b2-fhir; git --git-dir=.git pull; cd ..;
 else echo "cloning from git repo";
 
-git clone "https://github.com/waghsk/i2b2-fhir"; git --git-dir=.git checkout "$BRANCH";
+git clone "https://github.com/waghsk/i2b2-fhir";
+cd i2b2-fhir;
+ git --git-dir=.git checkout "$BRANCH";
 cd ..;
 #fi;
 

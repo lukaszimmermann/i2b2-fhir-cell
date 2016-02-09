@@ -141,10 +141,10 @@ public class I2b2FhirWS {
 	
 	//compartment
 	@GET
-	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}/{compartmentName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
+	@Path("Patient/{resourceId:[0-9a-zA-Z|-]+}/{compartmentName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response compartmentWrapper(@PathParam("resourceName") String resourceName,
+	public Response compartmentWrapper(
 			@PathParam("compartmentName") String compartmentName,
 			@PathParam("resourceId") String resourceId,
 			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
@@ -156,9 +156,9 @@ public class I2b2FhirWS {
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString();
 		
-		String queryString=resourceName+"="+resourceId;
-		String requestUri=compartmentName+"/";
-		return getQueryResultCore( resourceName, basePath, requestUri, queryString,
+		String queryString="patient="+resourceId;
+		String requestUri=compartmentName;
+		return getQueryResultCore( compartmentName, basePath, requestUri, queryString,
 				 includeResources, filterf,
 				 acceptHeader,  headers,
 				session) ;
