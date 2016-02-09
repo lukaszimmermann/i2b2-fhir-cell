@@ -63,7 +63,8 @@ public class QueryDate extends Query {
 	
 	protected void init() throws QueryValueException, QueryParameterException{
 		this.type = QueryType.DATE;
-		reEncodedValue=this.getRawValue().replace("%3E", ">").replace("%3C", "<").replace("%3D", "=");
+		reEncodedValue=this.getRawValue().replace("%3E", ">").replace("%3C", "<").replace("%3D", "=")
+				.replace("gt", ">").replace("lt", "<");
 		Pattern p = Pattern.compile("^([<=>]*)[^\\s<=>]+");
 		Matcher m = p.matcher(reEncodedValue);
 		this.operator = m.matches() ? m.group(1) : "";

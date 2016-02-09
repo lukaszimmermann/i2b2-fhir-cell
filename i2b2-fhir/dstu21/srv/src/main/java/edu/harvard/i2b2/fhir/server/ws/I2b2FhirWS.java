@@ -156,11 +156,11 @@ public class I2b2FhirWS {
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString().split("patient")[0];
 		//basePath=(new URI(basePath)).toString();
-		
+		logger.trace("basePath:"+basePath);
 		String queryString="patient="+resourceId;
 		String requestUri=compartmentName;
-		String rawRequest=request.getRequestURI();
-		return getQueryResultCore( compartmentName, basePath, requestUri, queryString, rawRequest,
+		String rawRequest=basePath+request.getRequestURI();
+		return getQueryResultCore( compartmentName, basePath, requestUri, queryString, request.getRequestURL().toString(),
 				 includeResources, filterf,
 				 acceptHeader,  headers,
 				session) ;
