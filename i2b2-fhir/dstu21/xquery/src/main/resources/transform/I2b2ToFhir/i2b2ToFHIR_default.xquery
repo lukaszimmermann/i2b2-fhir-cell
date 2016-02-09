@@ -118,10 +118,9 @@ return
     </coding>
 </code>
   
-  <effectivePeriod>
-    <start value="{$sd}"/>
-    {$endDateString}
-  </effectivePeriod>
+  <effectiveDateTime value="{$sd}"/>
+   
+  
   
     {$valueFhir}
   <!--   the mandatory quality flags:   -->
