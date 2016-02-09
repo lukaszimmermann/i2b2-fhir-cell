@@ -88,9 +88,10 @@ else "unknown"
 };
 
 declare function local:fnMetaData($last_updated as xs:string? ) as node(){
-<MetaData>
-    <lastUpdated>{$last_updated}</lastUpdated>
-</MetaData>
+ <meta>
+      <versionId value="1"/>
+      <lastUpdated>{$last_updated}</lastUpdated>
+ </meta>
 };
 
 declare function local:fnTxt($label as xs:string,$x as xs:string?){
@@ -111,14 +112,15 @@ declare function local:fnPatient($zip as xs:string?,
                                  $birthdate as xs:string?,
                                  $marital_status as xs:string?,
                                  $marital_status_raw as xs:string?,
-                                 $race_code as xs:string?
+                                 $race_code as xs:string?,
+                                 $updateDate as xs:string?
 ) as node()?{
 let $birthdateDate:=local:fnGetDate($birthdate)
 let $maritalStatusDisplay:=local:fnMaritalStatusDisplay($marital_status)
 return 
 <Patient  namespace="http://hl7.org/fhir"  >
   <id value="{$id}"/>
-  
+  {local:fnMetaData($updateDate)}
   <text>
     <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
@@ -138,17 +140,14 @@ return
     </div>
   </text>
   
-  <meta>
-        <versionId value="1"/>
-        <lastUpdated value="{current-dateTime()}"/>
-    </meta>
+  
   <name>
     <use value="anonymous"/>
     <family value="anonymous"/>
     <given value="anonymous"/>
   </name>
   
-<!--  {$local:getIdentifier()}-->
+<!--  {local:getIdentifier()}-->
  
 <identifier>
     <use value="usual"/>
@@ -223,7 +222,7 @@ let $updateDate := local:fnI2b2TimeToFhirTime($p/@update_date)
 return 
 <entry  xmlns="http://hl7.org/fhir">
     <resource>
-{local:fnPatient($zip, $id,$gender,$gender_expanded,$birthdate,$marital_status,$marital_status_raw,$race_code )}
+{local:fnPatient($zip, $id,$gender,$gender_expanded,$birthdate,$marital_status,$marital_status_raw,$race_code,$updateDate )}
     </resource>
 </entry>
 
