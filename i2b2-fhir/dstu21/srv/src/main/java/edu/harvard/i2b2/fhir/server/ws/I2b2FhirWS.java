@@ -154,11 +154,13 @@ public class I2b2FhirWS {
 		
 		HttpSession session = request.getSession();
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
-		String basePath = fhirBase.toString();
+		String basePath = fhirBase.toString().split("patient")[0];
+		//basePath=(new URI(basePath)).toString();
 		
 		String queryString="patient="+resourceId;
 		String requestUri=compartmentName;
-		return getQueryResultCore( compartmentName, basePath, requestUri, queryString,
+		String rawRequest=request.getRequestURI();
+		return getQueryResultCore( compartmentName, basePath, requestUri, queryString, rawRequest,
 				 includeResources, filterf,
 				 acceptHeader,  headers,
 				session) ;
@@ -181,6 +183,7 @@ public class I2b2FhirWS {
 		String basePath = fhirBase.toString();
 		
 		return getQueryResultCore( resourceName, basePath, request.getRequestURI(), request.getQueryString(),
+				request.getRequestURI()+"?"+ request.getQueryString(),
 				 includeResources, filterf,
 				 acceptHeader,  headers,
 				session) ;
@@ -188,7 +191,7 @@ public class I2b2FhirWS {
 	}
 	
 	
-	public Response getQueryResultCore( String resourceName, String basePath,String requestUri,String queryString,
+	public Response getQueryResultCore( String resourceName, String basePath,String requestUri,String queryString,String rawRequestUrl,
 			List<String> includeResources, String filterf,
 			 String acceptHeader,  HttpHeaders headers,
 			HttpSession session) throws IOException {
@@ -213,8 +216,8 @@ public class I2b2FhirWS {
 
 			Class c = FhirUtil.getResourceClass(resourceName);
 			Bundle s = null;
-			// String basePath =
-			// request.getRequestURL().toString().split(resourceName)[0];
+			logger.trace("rawRequestUrl:"+rawRequestUrl);
+			//String basePath =rawRequestUrl.split(resourceName)[0];
 			logger.debug("session id:" + session.getId());
 
 			authService.authenticateSession(headers.getRequestHeader(AuthenticationFilter.AUTHENTICATION_HEADER).get(0),
@@ -256,7 +259,8 @@ public class I2b2FhirWS {
 			
 			BundleLink bl= new BundleLink();
 			Uri blUri=new Uri();
-			blUri.setValue(basePath+requestUri.substring(1)+"?"+queryString);
+			
+			blUri.setValue(rawRequestUrl);
 			bl.setUrl(blUri);
 			org.hl7.fhir.String rs= new org.hl7.fhir.String();
 			rs.setValue("self");
@@ -302,6 +306,7 @@ public class I2b2FhirWS {
 		String basePath = fhirBase.toString();
 		HttpSession session = request.getSession();
 		return getQueryResultCore( resourceName, basePath, request.getRequestURI().replace("/_search",""), request.getQueryString(),
+				request.getRequestURI()+"?"+request.getQueryString(),
 				 includeResources, filterf,
 				 acceptHeader,  headers,
 				session) ;
