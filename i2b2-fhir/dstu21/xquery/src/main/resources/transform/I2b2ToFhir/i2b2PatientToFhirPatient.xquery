@@ -205,7 +205,7 @@ return
 </Patient>
 };
 
-let $I:=root()(:doc('/Users/kbw19/git/res/i2b2-fhir/dstu2/xquery-2/src/main/resources/example/i2b2/AllPatients.xml'):)
+let $I:=root()(:doc('/Users/kbw19/git/i2b2-fhir/i2b2-fhir/dstu21/xquery/src/main/resources/example/i2b2/AllPatients2.xml'):)
 
 let $O:=
 for $p in  $I//ns2:patient_set/patient

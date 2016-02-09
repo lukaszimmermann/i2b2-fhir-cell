@@ -71,7 +71,7 @@
 
 </filter_list>
 <output_option>
-	<patient_set select="using_input_list" onlykeys="false"/>
+	<patient_set select="using_input_list" onlykeys="false" techdata = "true" blob="true"/>
   <observation_set withmodifiers="true"
 blob="true" onlykeys="false" techdata = "true"/>
 <modifier_set_using_filter_list select="using_filter_list"

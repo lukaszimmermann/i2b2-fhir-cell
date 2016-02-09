@@ -149,7 +149,7 @@ public class I2b2UtilByCategory {
 
 			String finalBundleXml = "<Bundle xmlns=\"http://hl7.org/fhir\">\n" + entryXmlCumulative + "</Bundle>";
 			Bundle b = JAXBUtil.fromXml(finalBundleXml, Bundle.class);
-
+			
 			b.getEntry().add(FhirUtil.newBundleEntryForResource(p));
 
 			logger.trace("returing bundle of size:" + b.getEntry().size());
