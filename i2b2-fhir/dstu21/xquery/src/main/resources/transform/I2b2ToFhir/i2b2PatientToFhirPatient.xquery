@@ -8,7 +8,7 @@ return $x
 };
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
 let $x :=fn:replace($r,'.000Z$','') 
-return fn:concat($x,'+05:00')
+return fn:concat($x,'-05:00')
 };
 
 declare function local:getIdentifier() as node(){ 
@@ -90,7 +90,7 @@ else "unknown"
 declare function local:fnMetaData($last_updated as xs:string? ) as node(){
  <meta>
       <versionId value="1"/>
-      <lastUpdated>{$last_updated}</lastUpdated>
+      <lastUpdated value="{$last_updated}"/>
  </meta>
 };
 
