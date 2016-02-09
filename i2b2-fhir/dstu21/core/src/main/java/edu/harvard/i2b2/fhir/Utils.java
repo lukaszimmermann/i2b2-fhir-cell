@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -63,11 +65,9 @@ public class Utils {
 
 		String result = "";
 
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		try {
-			result = IOUtils
-					.toString(classLoader.getResourceAsStream(fileName));
+			result = IOUtils.toString(classLoader.getResourceAsStream(fileName));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,8 +80,7 @@ public class Utils {
 
 		String result = "";
 
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		result = classLoader.getResource(fileName).getPath();
 
 		return result;
@@ -98,8 +97,6 @@ public class Utils {
 			return null;
 		}
 	}
-
-
 
 	/*
 	 * public String convert(String input) throws ParserConfigurationException,
@@ -121,8 +118,7 @@ public class Utils {
 	 * 
 	 * }
 	 */
-	public static Document xmltoDOM(String xmlStr)
-			throws ParserConfigurationException, SAXException, IOException {
+	public static Document xmltoDOM(String xmlStr) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFac = DocumentBuilderFactory.newInstance();
 		dbFac.setIgnoringElementContentWhitespace(true);
 		DocumentBuilder db = dbFac.newDocumentBuilder();
@@ -146,9 +142,7 @@ public class Utils {
 			int indent = 2;
 			if (indent > 0) {
 				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-				transformer.setOutputProperty(
-						"{http://xml.apache.org/xslt}indent-amount",
-						Integer.toString(indent));
+				transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(indent));
 			}
 			//
 
@@ -161,40 +155,37 @@ public class Utils {
 	}
 
 	public static InputStream getInputStream(String fileName) {
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		return classLoader.getResourceAsStream(fileName);
-		
-	}
-	
-	public static int countLines(String fileName) throws IOException {
-		ClassLoader classLoader = Thread.currentThread()
-				.getContextClassLoader();
-		
-	    InputStream is = new BufferedInputStream(new FileInputStream(fileName));
-	    try {
-	        byte[] c = new byte[1024];
-	        int count = 0;
-	        int readChars = 0;
-	        boolean empty = true;
-	        while ((readChars = is.read(c)) != -1) {
-	            empty = false;
-	            for (int i = 0; i < readChars; ++i) {
-	                if (c[i] == '\n') {
-	                    ++count;
-	                }
-	            }
-	        }
-	        return (count == 0 && !empty) ? 1 : count;
-	    } finally {
-	        is.close();
-	    }
-	}
-	
-	public static String fileToString(String filePath) throws IOException{
-		return IOUtils
-		.toString(Utils.class
-				.getResourceAsStream(filePath));
+
 	}
 
+	public static int countLines(String fileName) throws IOException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+		InputStream is = new BufferedInputStream(new FileInputStream(fileName));
+		try {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean empty = true;
+			while ((readChars = is.read(c)) != -1) {
+				empty = false;
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n') {
+						++count;
+					}
+				}
+			}
+			return (count == 0 && !empty) ? 1 : count;
+		} finally {
+			is.close();
+		}
+	}
+
+	public static String fileToString(String filePath) throws IOException {
+		return IOUtils.toString(Utils.class.getResourceAsStream(filePath));
+	}
+
+	
 }

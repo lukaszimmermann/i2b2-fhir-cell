@@ -31,6 +31,7 @@
  */
 package edu.harvard.i2b2.fhir.query;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -45,8 +46,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.MetaResourceDb;
+import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import javassist.bytecode.analysis.Util;
 
 public class QueryDate extends Query {
 	static Logger logger = LoggerFactory.getLogger(QueryDate.class);
@@ -54,6 +57,10 @@ public class QueryDate extends Query {
 	String dateValue;
 	GregorianCalendar dateValueExpected;
 	String reEncodedValue;
+	//the considerX flags are to zoom in/out the granularity of matching in accordance 
+	//with the granularity of the provided date argument
+	boolean considerMonth;
+	boolean considerDay;
 
 	public QueryDate(Class resourceClass, String parameter, String value)
 			throws QueryParameterException, QueryValueException, FhirCoreException, QueryException {
@@ -77,10 +84,18 @@ public class QueryDate extends Query {
 			this.dateValueExpected = DatatypeFactory.newInstance()
 					.newXMLGregorianCalendar(this.dateValue)
 					.toGregorianCalendar();
+			
+			considerDay=false;//default
+			considerMonth=false;//default
+			if(this.dateValue.matches("\\d{4}-\\d{2}-\\d{2}")) {considerDay=true;considerMonth=true;}
+			if(this.dateValue.matches("\\d{4}-\\d{2}.*")) {considerMonth=true;}
+			
 		} catch (DatatypeConfigurationException e) {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	
 
 	@Override	
 	public boolean match(String resourceXml,Resource r, List<Resource>s) throws XQueryUtilException  {
@@ -92,12 +107,22 @@ public class QueryDate extends Query {
 			GregorianCalendar dateValueFound;
 			logger.info("matching:"+ this.getRawParameter()+"="+this.getRawValue());
 			
+			
+			
 			try {
 				dateValueFound = DatatypeFactory.newInstance()
 						.newXMLGregorianCalendar(v).toGregorianCalendar();
 			} catch (DatatypeConfigurationException e) {
 				throw new RuntimeException(e);
 			}
+			if(considerDay==false) {dateValueFound.set(GregorianCalendar.DAY_OF_MONTH, 1);}
+			if(considerMonth==false) {dateValueFound.set(GregorianCalendar.DAY_OF_MONTH, 1);
+			dateValueFound.set(GregorianCalendar.MONTH, 0);}
+			
+			logger.trace("expected:"+((new SimpleDateFormat("yyyy-MM-dd")).format(dateValueExpected.getTime()))
+					+ " found:"+((new SimpleDateFormat("yyyy-MM-dd")).format(dateValueFound.getTime()))
+					+" monthflag:"+considerMonth+" dayFlag:"+considerDay);
+			
 			
 			if (operator.contains("=")||operator.equals("")) {
 				if (dateValueFound.equals(this.dateValueExpected)){
