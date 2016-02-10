@@ -1,7 +1,8 @@
-
+The FHIR cell serves data from i2b2 instance, in FHIR format on per patient basis. 
 
 Installation
-Note: BRANCH is the name of the github dstu branch (e.g. dstu21)
+
+Note: BRANCH is the name of the github dstu branch (e.g. dstu21, master)
 
 mkdir BRANCH
 
