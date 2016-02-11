@@ -1,18 +1,10 @@
 The FHIR cell serves data from i2b2 instance, in FHIR format on per patient basis. 
 
-Installation
 
-Note: BRANCH is the name of the github dstu branch (e.g. dstu21, master)
+Installation on amazon web instance. ssh as ec2-user and run the following:
 
-mkdir BRANCH
 
-wget https://raw.githubusercontent.com/waghsk/i2b2-fhir/BRANCH/i2b2-fhir/install.sh
+wget https://raw.githubusercontent.com/i2b2plugins/cell-i2b2-fhir/master/i2b2-fhir/first_run.sh
 
-sh install.sh BRANCH
-
-cd BRANCH/i2b2-fhir-cell/i2b2-fhir-branch/
-
-sudo sh sudo-install.sh
-
-sh install.sh BRANCH
+sudo sh first_run.sh
 
