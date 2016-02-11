@@ -1,8 +1,11 @@
 export INSTALL_DIR=i2b2-fhir-installdir
 export GIT_NAME=cell-i2b2-fhir  #REPONAME
 export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
+<<<<<<< HEAD
 #ABSOLUTE PATH TO INSTALL DIR
 export AID=$PWD/$INSTALL_DIR
+=======
+>>>>>>> ce6db42ea3d321475026a115528c99bf10760043
 
 mkdir $INSTALL_DIR
 cd $INSTALL_DIR
@@ -91,10 +94,16 @@ else
 	mkdir -p $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main
 	wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
 	mv mysql-connector-java-5.1.9.jar $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/
+<<<<<<< HEAD
 	
 	cp $AID/$GIT_NAME/i2b2-fhir/install/standalone-with-dbs/standalone.xml $WILDFLY_DIR/standalone/configuration/
 	cp $AID/$GIT_NAME/i2b2-fhir/install/standalone-with-dbs/server.keystore $WILDFLY_DIR/standalone/configuration/
 	cp $AID/$GIT_NAME/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
+=======
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/standalone.xml $WILDFLY_DIR/standalone/configuration/
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/server.keystore $WILDFLY_DIR/standalone/configuration/
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
+>>>>>>> ce6db42ea3d321475026a115528c99bf10760043
 fi
 
 cd "$INSTALL_DIR"
