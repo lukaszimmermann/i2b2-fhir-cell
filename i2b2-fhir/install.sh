@@ -1,4 +1,7 @@
-export INSTALL_DIR=i2b2-fhir-cell
+export INSTALL_DIR=i2b2-fhir-installdir
+export GIT_NAME=cell-i2b2-fhir  #REPONAME
+export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
+
 mkdir $INSTALL_DIR
 cd $INSTALL_DIR
 
@@ -86,39 +89,25 @@ else
 	mkdir -p $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main
 	wget http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.9/mysql-connector-java-5.1.9.jar
 	mv mysql-connector-java-5.1.9.jar $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/standalone.xml $WILDFLY_DIR/standalone/configuration/
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/server.keystore $WILDFLY_DIR/standalone/configuration/
+	cp $GIT_NAME/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
 fi
 
 cd "$INSTALL_DIR"
 echo "Installing source code from githib repository"
 echo ">PWD:$PWD"
 
-if [ -d i2b2-fhir ]
+if [ -d $GIT_NAME ]
 then echo "pulling from git repo";
-cd i2b2-fhir; git --git-dir=.git pull; cd ..;
+cd $GIT_NAME; git --git-dir=.git pull; cd ..;
+
 else echo "cloning from git repo";
 
-git clone "https://github.com/waghsk/i2b2-fhir";
-cd i2b2-fhir;
+git clone $GIT_URL;
+cd $GIT_NAME;
  git --git-dir=.git checkout "$BRANCH";
 cd ..;
-#fi;
-
-#if [ -f branch.zip ]
-#then echo ""
-#else
-#	wget "https://github.com/waghsk/i2b2-fhir/archive/$BRANCH.zip" 
-#        mv "$BRANCH.zip" branch.zip
-#        unzip branch.zip
-#fi
-
-#echo PWD:$PWD
-#if [ -d i2b2-fhir ]
-#then echo ""
-#else
-        #mv "i2b2-fhir-$BRANCH/" i2b2-fhir-branch/
-	#cp i2b2-fhir-branch/i2b2-fhir/install/persistence/exampleDS/persistence.xml  i2b2-fhir-branch/i2b2-fhir/dstu2/srv-2/src/main/webapp/WEB-INF/classes/META-INF/
-	cp i2b2-fhir/i2b2-fhir/install/standalone-with-dbs/standalone.xml wildfly-9.0.1.Final/standalone/configuration/
-	cp i2b2-fhir/i2b2-fhir/install/standalone-with-dbs/module.xml $WILDFLY_DIR/modules/system/layers/base/com/mysql/driver/main/ 
 fi
 
 alias mvn=$MVN
@@ -126,10 +115,10 @@ alias mvn=$MVN
 echo "Compiling and deploying war"
 
 export PATH="$PATH:$MAVEN_HOME/bin:$JAVA_HOME/bin"
-cd i2b2-fhir/i2b2-fhir/;
+cd $GIT_NAME/i2b2-fhir;
 mvn clean install -Dmaven.test.skip=true; 
 #echo PWD:$PWD
-cd $BRANCH ;
+cd dstu21 ;
 mvn install:install-file -DartifactId=validator -DgroupId=org.hl7.fhir.tools -Dfile=core/src/main/resources/org.hl7.fhir.validator.jar -Dversion=1.0 -Dpackaging=jar
 mvn clean install -Dmaven.test.skip=true; 
 
