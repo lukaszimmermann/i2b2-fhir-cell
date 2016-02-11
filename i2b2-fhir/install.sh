@@ -106,12 +106,8 @@ if [ -d $GIT_NAME ]
 then echo "pulling from git repo";
 cd $GIT_NAME; git --git-dir=.git pull; cd ..;
 
-else echo "cloning from git repo";
+else echo "ERROR: repository not cloned in first install/run"; exit 1
 
-git clone $GIT_URL;
-cd $GIT_NAME;
- git --git-dir=.git checkout "$BRANCH";
-cd ..;
 fi
 
 alias mvn=$MVN
