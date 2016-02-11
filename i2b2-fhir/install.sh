@@ -1,6 +1,7 @@
 export INSTALL_DIR=i2b2-fhir-installdir
 export GIT_NAME=cell-i2b2-fhir  #REPONAME
 export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
+
 #ABSOLUTE PATH TO INSTALL DIR
 export AID=$PWD/$INSTALL_DIR
 
