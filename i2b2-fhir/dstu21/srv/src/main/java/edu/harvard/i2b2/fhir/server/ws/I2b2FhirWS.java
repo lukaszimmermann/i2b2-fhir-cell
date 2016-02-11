@@ -283,7 +283,7 @@ public class I2b2FhirWS {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error("", e);
+			logger.error(e.getMessage(), e);
 			return Response.ok(FhirHelper.generateOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION, IssueSeverityList.FATAL))
 					.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
 

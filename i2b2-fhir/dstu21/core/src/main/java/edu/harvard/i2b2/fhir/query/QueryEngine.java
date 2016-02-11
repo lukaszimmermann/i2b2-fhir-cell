@@ -66,11 +66,14 @@ public class QueryEngine {
 	// url format:[resource][;jession=123]?[par1=val1]&[par2=val2]
 	public QueryEngine(String queryUrl) throws QueryParameterException,
 			QueryValueException, FhirCoreException {
+		queryUrl=queryUrl.replace("+", "PLUS").replace("-", "MINUS");
+		logger.debug("queryUrl before decode:" + queryUrl);
 		try {
 			queryUrl = URLDecoder.decode(queryUrl, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			throw new FhirCoreException("Error", e);
 		}
+		queryUrl=queryUrl.replace( "PLUS","+").replace("MINUS","-");
 		logger.debug("queryUrl:" + queryUrl);
 		this.db = db;
 		queryList = new ArrayList<Query>();
