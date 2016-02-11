@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export INSTALL_DIR=i2b2-fhir-installdir
 export GIT_NAME=cell-i2b2-fhir  #REPONAME
 export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
@@ -5,10 +6,13 @@ export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
 export ABS_INSTALL_DIR=$PWD/$INSTALL_DIR
 export CELL_PATH=$ABS_INSTALL_DIR/$GIT_NAME
 
+=======
+>>>>>>> ce6db42ea3d321475026a115528c99bf10760043
 sudo -u nobody bash -c : && RUNAS="sudo -u ec2-user"
 
 echo "$USER"
 #wget https://raw.githubusercontent.com/i2b2plugins/cell-i2b2-fhir/master/i2b2-fhir/install.sh 
+<<<<<<< HEAD
 
 
 #GET GIT_REPO
@@ -46,5 +50,17 @@ $RUNAS bash << _
 echo \$USER
 cd $ABS_INSTALL_DIR/../
 sh $CELL_PATH/i2b2-fhir/install.sh master
+=======
+wget https://raw.githubusercontent.com/i2b2plugins/cell-i2b2-fhir/master/i2b2-fhir/sudo-install.sh 
+sh sudo-install.sh
+
+
+ 
+sudo echo "Hi" > /etc/hi
+
+$RUNAS bash << _
+echo \$USER
+sh install.sh
+>>>>>>> ce6db42ea3d321475026a115528c99bf10760043
 _
 echo "$USER"
