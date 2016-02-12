@@ -181,10 +181,8 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
      <reference value="Patient/{$pid}"/>
   </patient>
   
-   <onsetPeriod>
-    <start value="{$sd}"/>
-    {$endDateString}
-  </onsetPeriod>
+  <onsetDateTime value="{$sd}"/>
+  
   <code>
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
