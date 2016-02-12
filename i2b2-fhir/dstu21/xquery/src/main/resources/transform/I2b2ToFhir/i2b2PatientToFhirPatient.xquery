@@ -182,6 +182,16 @@ return
       </coding>
     </valueCodeableConcept>
   </extension>
+  
+  <extension url="http://hl7.org/fhir/StructureDefinition/us-core-ethnicity">
+    <valueCodeableConcept>
+      <coding>
+        <system value="http://hl7.org/fhir/v3/Ethnicity"/>
+        <code value="UNK"/>
+        <primary value="true"/>
+      </coding>
+    </valueCodeableConcept>
+  </extension>
   <address>
     <use value="home"/>
     <zip value="{$zip}"/>

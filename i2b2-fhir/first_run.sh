@@ -4,7 +4,15 @@ export GIT_URL=https://github.com/i2b2plugins/$GIT_NAME
 
 export ABS_INSTALL_DIR=$PWD/$INSTALL_DIR
 export CELL_PATH=$ABS_INSTALL_DIR/$GIT_NAME
+export BRANCH=master
 
+if [ $# -eq 0 ]
+  then
+    echo "No arguments suppiled. Using default master branch"
+  else
+    export BRANCH=$1
+    echo "using branch $BRANCH"
+fi
 
 sudo -u nobody bash -c : && RUNAS="sudo -u $SUDO_USER"
 
@@ -57,6 +65,6 @@ fi
 $RUNAS bash << _
 echo \$USER
 cd $ABS_INSTALL_DIR/../
-sh $CELL_PATH/i2b2-fhir/install.sh master
+sh $CELL_PATH/i2b2-fhir/install.sh $BRANCH
 _
 echo "$USER"
