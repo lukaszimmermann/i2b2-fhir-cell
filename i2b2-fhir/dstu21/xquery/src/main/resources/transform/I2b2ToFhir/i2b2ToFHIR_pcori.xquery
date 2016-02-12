@@ -188,7 +188,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
-      <display value="-"/>
+      <display value="{$cid}"/>
     </coding>/
   </code>
   <category>
