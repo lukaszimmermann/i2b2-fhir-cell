@@ -75,21 +75,23 @@ return
 
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
- let $cn_display:=
+ let $cn_display_str:=
   if(fn:empty($cn)) then ""
         else   <display value="{$cn}"/> 
 
-<Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <text>
         <status value="generated"/>
-        <div xmlns="http://www.w3.org/1999/xhtml"><p>{$cn}</p></div>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Name:{$cn}</p>
+        <p>Code:{$cid}</p></div>
     </text>
   <code>
     <coding>
       <system value="http://../NDC"/>
       <code value="{$cid}"/>
-      <display value="{$cn_display}"/>
+      {$cn_display_str}
       <primary value="true"/>
     </coding>
   </code>
@@ -163,7 +165,7 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 };
 
 
-declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string) as node(){           
+declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?,$cn as xs:string?, $pid as xs:string) as node(){           
   let $endDateString:=
     if($ed != "") then
     <end value="{$ed}"/>
@@ -505,6 +507,7 @@ let $cid := fn:replace($refObs/concept_cd/text(),"ICD9:","")
 let $oid := $refObs/observer_cd
 let $sd := $refObs/start_date/text()
 let $ed := $refObs/end_date/text()
+let $cn := $refObs/concept_cd/@name/string()
 let $sourceSystem := $refObs/@sourcesystem_cd/string()
 let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()
@@ -513,7 +516,7 @@ let $updateDate := $refObs/@update_date/string()
 let $modifier_cd:=$A/observation[id =$id ]/modifier_cd/text()
 
 
-let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid, $pid )
+let $fhirDiagCondition:=local:fnFhirDiagCondition($sd , $ed ,$count , $cid,$cn, $pid )
 
 return 
  <set>

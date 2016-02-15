@@ -79,21 +79,23 @@ return
 
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string*, $cid as xs:string, $pid as xs:string, $sys as xs:string*) as node(){           
-  let $cn_display:=
+  let $cn_display_str:=
   if(fn:empty($cn)) then ""
         else   <display value="{$cn}"/> 
 
-<Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <text>
         <status value="generated"/>
-        <div xmlns="http://www.w3.org/1999/xhtml"><p>{$cn}</p></div>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Name:{$cn}</p>
+        <p>Code:{$cid}</p></div>
     </text>
   <code>
     <coding>
       <system value="http://../NDC"/>
       <code value="{$cid}"/>
-      <display value="{$cn_display}"/>
+      {$cn_display_str}
       <primary value="true"/>
     </coding>
   </code>
