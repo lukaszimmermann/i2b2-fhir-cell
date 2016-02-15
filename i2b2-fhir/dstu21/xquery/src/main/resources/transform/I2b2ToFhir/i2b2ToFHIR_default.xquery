@@ -75,20 +75,25 @@ return
 
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
-  <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+ let $cn_display:=
+  if(fn:empty($cn)) then ""
+        else   <display value="{$cn}"/> 
+
+<Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <text>
         <status value="generated"/>
-        <ns2:div>{$cn}</ns2:div>
+        <div xmlns="http://www.w3.org/1999/xhtml"><p>{$cn}</p></div>
     </text>
   <code>
     <coding>
       <system value="http://../NDC"/>
       <code value="{$cid}"/>
-      <display value="{$cn}"/>
+      <display value="{$cn_display}"/>
       <primary value="true"/>
     </coding>
   </code>
+  
 
   </Medication>
   
@@ -106,22 +111,21 @@ return
  <id value="{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
-        <ns2:div>{$cn}</ns2:div>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>{$cn}</p>
+        </div>
     </text>
   
     <code>  
-    <coding>
-      <system value="http://loinc.org"/>
-      <code value="{$cid}"/>
-      <display value="{$cn}"/>
-      <primary value="true"/>
-    </coding>
-</code>
+        <coding>
+           <system value="http://loinc.org"/>
+           <code value="{$cid}"/>
+           <display value="{$cn}"/>
+           <primary value="true"/>
+        </coding>
+    </code>
   
-  <effectiveDateTime value="{$sd}"/>
-   
-  
-  
+ <effectiveDateTime value="{$sd}"/>
     {$valueFhir}
   <!--   the mandatory quality flags:   -->
   <status value="final"/>
@@ -137,22 +141,14 @@ return
 
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
-       if($unit="") then ""
+       if(fn:empty($unit)) then ""
         else   <units value="{$unit}"/> 
  
-
-let $codeStr:=
-       if($unit="") then ""
-        else    <code value="{$unit}"/>  
- return    
-
-<valueQuantity>
+return <valueQuantity>
     <value value="{$val}"/>    
-   
     <system value="http://unitsofmeasure.org"/>
-    
     {$unitStr}
-    {$codeStr}
+    
   </valueQuantity>
 };
 
@@ -178,23 +174,24 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
 <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <status value="generated"/>
-  <text>
-        <status value="generated"/>
-        <ns2:div>{$cid}</ns2:div>
-    </text>
+  <text>   
+  <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+  <p>{$cn}</p>
+  </div>
+  </text>
   <patient>
      <reference value="Patient/{$pid}"/>
   </patient>
   
   <onsetdateTime value="{$sd}"/>
   <verificationStatus value="confirmed"/>
-  
-  
+ 
   <code>
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
-  	  <display value="{$cid}"/>
+      <display value="{$cn}"/>
     </coding>/
   </code>
   <category>
@@ -205,7 +202,6 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
     </coding>
   </category>
   <clinicalStatus value="active"/>
-  
   </Condition>
 };
 

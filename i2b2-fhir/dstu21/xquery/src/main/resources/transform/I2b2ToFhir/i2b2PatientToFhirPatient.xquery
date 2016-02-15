@@ -8,7 +8,11 @@ return $x
 };
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
 let $x :=fn:replace($r,'.000Z$','') 
-return fn:concat($x,'-05:00')
+let $y:=
+if(fn:contains($x,'-')) then $x
+else if(fn:contains($x,'+')) then $x
+else fn:concat($x,'05:00')
+return $y
 };
 
 declare function local:getIdentifier() as node(){ 

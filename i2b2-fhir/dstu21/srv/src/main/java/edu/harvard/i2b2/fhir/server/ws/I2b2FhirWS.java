@@ -484,8 +484,8 @@ public class I2b2FhirWS {
 
 	
 
-	// URL: [base]/Resource/$validate
-	// URL: [base]/Resource/[id]/$validate
+	// URL: [base]/Resource/$Validate
+	// URL: [base]/Resource/[id]/$Validate
 
 	@POST
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}/$validate")
