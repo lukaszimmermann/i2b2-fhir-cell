@@ -113,6 +113,9 @@ declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$
     if($ed != "") then
     <end value="{$ed}"/>
   else ()
+   let $cn_display_str:=
+  if(local:all-whitespace($cn)) then ""
+   else   <display value="{$cn}"/> 
 
 return
   <Observation xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
@@ -120,7 +123,8 @@ return
     <text>
         <status value="generated"/>
         <div xmlns="http://www.w3.org/1999/xhtml">
-        <p>{$cn}</p>
+        <p>name:{$cn}</p>
+        <p>code:{$cid}</p>
         </div>
     </text>
   
@@ -128,7 +132,7 @@ return
         <coding>
            <system value="http://loinc.org"/>
            <code value="{$cid}"/>
-           <display value="{$cn}"/>
+           {$cn_display_str}
            <primary value="true"/>
         </coding>
     </code>

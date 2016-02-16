@@ -86,7 +86,9 @@ public final class XQueryUtil {
 					resList.add(r);
 				}
 			} catch (QueryException | QueryIOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error(e.getMessage(),e);
+				throw  new XQueryUtilException(e);
 			}
 
 			// System.out.println("\n* Drop the database.");
@@ -104,6 +106,8 @@ public final class XQueryUtil {
 		context.close();
 		return resList;
 	}
+
+
 
 	public static String processXQuery(String query, String input) throws XQueryUtilException {
 		String result = null;
