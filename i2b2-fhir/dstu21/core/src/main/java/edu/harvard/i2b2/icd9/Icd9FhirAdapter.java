@@ -72,7 +72,7 @@ public class Icd9FhirAdapter {
 	public void addIcd9Name(Condition ob) throws JAXBException {
 		for (Coding coding : ob.getCode().getCoding()) {
 			String systemVal = coding.getSystem().getValue().toString();
-			if (systemVal.equals("http://hl7.org/fhir/sid/icd-9")
+			if (systemVal.equals("http://hl7.org/fhir/sid/icd-9-cm")
 					) {
 				
 				String Icd9Number=coding.getCode().getValue().replace("Icd9:", "");

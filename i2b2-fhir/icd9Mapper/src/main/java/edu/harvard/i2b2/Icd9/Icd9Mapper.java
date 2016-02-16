@@ -28,13 +28,14 @@ public class Icd9Mapper {
 	static Logger logger = LoggerFactory.getLogger(Icd9Mapper.class);
 
 
-	HashMap<String, String> Icd9CodeToNameMap;
+	static HashMap<String, String> Icd9CodeToNameMap;
 
 	public Icd9Mapper() throws IOException {
 		init();
 	}
 
 	private void init() throws IOException {
+		if(Icd9CodeToNameMap==null)
 		Icd9CodeToNameMap=BinResourceFromIcd9Data.deSerializeIcd9CodeToNameMap();
 	}
 

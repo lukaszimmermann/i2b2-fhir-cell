@@ -84,6 +84,7 @@ import org.w3._1999.xhtml.Div;
 import org.xml.sax.SAXException;
 
 import ca.uhn.fhir.model.dstu2.resource.Patient;
+import edu.harvard.i2b2.Icd9.Icd9Mapper;
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
@@ -95,6 +96,7 @@ import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
+import edu.harvard.i2b2.rxnorm.NdcToRxNormMapper;
 
 /*
  * to use accessToken for authentication
@@ -598,6 +600,9 @@ public class I2b2FhirWS {
 	}
 	
 	//GET [base]/ValueSet/$lookup?system=http://loinc.org&code=1963-8
+	//GET ValueSet/$lookup?system=http://hl7.org/fhir/sid/icd-9-cm&code=174.9
+	//GET ValueSet/$lookup?system=http://www.nlm.nih.gov/research/umls/rxnorm&code=1191
+	
 	@GET
 	@Path("ValueSet/$lookup")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
@@ -612,11 +617,22 @@ public class I2b2FhirWS {
 		if(system.equals("http://loinc.org")){
 			LoincMapper loincMapper=new LoincMapper();
 			String display=loincMapper.getLoincName(code);
+			if(display!=null)
 			r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		}else if(system.equals("http://hl7.org/fhir/sid/icd-9-cm")){
+			Icd9Mapper icd9Mapper=new Icd9Mapper();
+			String display=icd9Mapper.getIcd9Name(code);
+			if(display!=null)r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		}else if(system.equals("http://www.nlm.nih.gov/research/umls/rxnorm")){
+			NdcToRxNormMapper rxMapper=new NdcToRxNormMapper();
+			String display=rxMapper.getRxCuiName(code);
+			if(display!=null)r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
 		}else{
 			r=FhirHelper.generateOperationOutcome("lookup not implemented for code system:" +system ,
 					IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
 		}
+		if(r==null) r=FhirHelper.generateOperationOutcome("code:"+code+" is invalid for system:" +system ,
+				IssueTypeList.NOT_FOUND, IssueSeverityList.ERROR);
 		return generateResponse(acceptHeader, request, r);
 
 	}
