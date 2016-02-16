@@ -204,7 +204,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
  
   <code>
     <coding>
-      <system value="http://hl7.org/fhir/sid/icd-9"/>
+      <system value="http://hl7.org/fhir/sid/icd-9-cm"/>
       <code value="{$cid}"/>
       {$cn_display_str}
     </coding>/
@@ -216,6 +216,15 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
       <display value="Diagnosis"/>
     </coding>
   </category>
+  
+  <severity>
+        <coding>
+            <system value="http://snomed.info/sct"/>
+            <code value="6736007"/>
+            <display value="Moderate"/>
+        </coding>
+    </severity>
+    
   <clinicalStatus value="active"/>
   </Condition>
 };
