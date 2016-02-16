@@ -1,6 +1,7 @@
 package edu.harvard.i2b2.fhir.server.ws;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -11,6 +12,8 @@ import org.hl7.fhir.IssueType;
 import org.hl7.fhir.IssueTypeList;
 import org.hl7.fhir.OperationOutcome;
 import org.hl7.fhir.OperationOutcomeIssue;
+import org.hl7.fhir.Parameters;
+import org.hl7.fhir.ParametersParameter;
 
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
@@ -36,6 +39,56 @@ public class FhirHelper {
 		o.getIssue().add(i);
 
 		return o;
+	}
+
+	static public Parameters generateConceptLookUpOutput(String name, String version, String display, boolean abstractF,
+			String use, String value) {
+		Parameters prms = new Parameters();
+
+		if (name != null) {
+			ParametersParameter pName = new ParametersParameter();
+			pName.setName(FhirUtil.generateFhirString("name"));
+			pName.setValueString(FhirUtil.generateFhirString(name));
+			prms.getParameter().add(pName);
+		}
+		if (version != null) {
+			ParametersParameter pVersion = new ParametersParameter();
+			pVersion.setName(FhirUtil.generateFhirString("version"));
+			pVersion.setValueString(FhirUtil.generateFhirString(version));
+			prms.getParameter().add(pVersion);
+		}
+		if (display != null) {
+			ParametersParameter pDisplay = new ParametersParameter();
+			pDisplay.setName(FhirUtil.generateFhirString("display"));
+			pDisplay.setValueString(FhirUtil.generateFhirString(display));
+			prms.getParameter().add(pDisplay);
+		}
+		if (value != null) {
+			ParametersParameter pValue = new ParametersParameter();
+			pValue.setName(FhirUtil.generateFhirString("value"));
+			pValue.setValueString(FhirUtil.generateFhirString(value));
+			prms.getParameter().add(pValue);
+		}
+		/*
+		 * name 1..1 string A display name for the code system
+		 * 
+		 * version 0..1 string The version that these details are based on
+		 * 
+		 * display 1..1 string The preferred display for this concept
+		 * 
+		 * abstract 0..1 boolean Whether this code is an abstract concept
+		 * 
+		 * designation 0..* Additional representations for this concept
+		 * 
+		 * designation.language 0..1 code The language this designation is
+		 * defined for
+		 * 
+		 * designation.use 0..1 Coding A code that details how this designation
+		 * would be used
+		 * 
+		 * designation.value 1..1 string The text value for this designation
+		 */
+		return prms;
 	}
 
 	static boolean isPatientDependentResource(Class c) {

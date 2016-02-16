@@ -90,6 +90,7 @@ import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
 import edu.harvard.i2b2.fhir.server.ws.operation.Validate;
+import edu.harvard.i2b2.loinc.LoincMapper;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
@@ -595,6 +596,30 @@ public class I2b2FhirWS {
 		return generateResponse(acceptHeader, request, outR);
 
 	}
+	
+	//GET [base]/ValueSet/$lookup?system=http://loinc.org&code=1963-8
+	@GET
+	@Path("ValueSet/$lookup")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response valueSetLookup(
+			@QueryParam("code") String code,
+			@QueryParam("system") String system,
+			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request)
+					throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException {
+		Resource r=null;
+		if(system.equals("http://loinc.org")){
+			LoincMapper loincMapper=new LoincMapper();
+			String display=loincMapper.getLoincName(code);
+			r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		}else{
+			r=FhirHelper.generateOperationOutcome("lookup not implemented for code system:" +system ,
+					IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
+		}
+		return generateResponse(acceptHeader, request, r);
+
+	}
 
 	public Response generateResponse(@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request,
 			Resource r) throws JAXBException, IOException, ParserConfigurationException, SAXException {
@@ -616,6 +641,9 @@ public class I2b2FhirWS {
 		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
 
 	}
+	
+	
+		
 
 	// [base]/$meta
 	// GET /fhir/Patient/$meta
