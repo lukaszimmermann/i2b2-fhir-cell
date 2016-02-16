@@ -1,6 +1,12 @@
 xquery version "1.0";
 declare namespace functx = "http://www.functx.com";
  
+
+declare function local:all-whitespace
+  ( $arg as xs:string? )  as xs:boolean {
+
+   normalize-space($arg) = ''
+ } ; 
  
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
 let $x :=fn:replace($r,'.000Z$','') 
@@ -76,7 +82,7 @@ return
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string, $cid as xs:string, $pid as xs:string) as node(){           
  let $cn_display_str:=
-  if(fn:empty($cn)) then ""
+  if(local:all-whitespace($cn)) then ""
         else   <display value="{$cn}"/> 
 
 return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
@@ -143,7 +149,7 @@ return
 
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
-       if(fn:empty($unit)) then ""
+       if(local:all-whitespace($unit)) then ""
         else   <units value="{$unit}"/> 
  
 return <valueQuantity>
@@ -167,19 +173,22 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 
 declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?,$cn as xs:string?, $pid as xs:string) as node(){           
   let $endDateString:=
-    if($ed != "") then
-    <end value="{$ed}"/>
-  else ()
- 
- return
+       if(local:all-whitespace($ed )) then()
+    else <end value="{$ed}"/>
+ let $cn_display_str:=
+   if(local:all-whitespace($cn)) then ()
+ else   <display value="{$cn}"/> 
+ return        
+
 
 <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
- <id value="{$pid}-{$count}"/>
+  <id value="{$pid}-{$count}"/>
    <status value="generated"/>
   <text>   
   <status value="generated"/>
     <div xmlns="http://www.w3.org/1999/xhtml">
-  <p>{$cn}</p>
+  <p>Name:{$cn}</p>
+  <p>Code:{$cid}</p>
   </div>
   </text>
   <patient>
@@ -193,7 +202,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
-      <display value="{$cn}"/>
+      {$cn_display_str}
     </coding>/
   </code>
   <category>

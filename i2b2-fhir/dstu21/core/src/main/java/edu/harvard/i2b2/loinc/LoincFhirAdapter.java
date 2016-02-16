@@ -74,9 +74,13 @@ public class LoincFhirAdapter {
 					) {
 				
 				String loincNumber=coding.getCode().getValue().replace("LOINC:", "");
+				if(loincNumber==null || loincNumber.length()==0) continue;
+				
+				String display=loincMapper.getLoincName(loincNumber);
+				if (display==null || display.length()==0) continue;
 				logger.trace("loincNum:"+loincNumber);
 				org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-				displayValue.setValue(loincMapper.getLoincName(loincNumber));
+				displayValue.setValue(display);
 				coding.setDisplay(displayValue);
 			}
 		}

@@ -7,11 +7,11 @@ let $x :=substring-before($r,'T')
 return $x
 };
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
-let $x :=fn:replace($r,'.000Z$','') 
+let $x :=fn:replace($r,'.000Z$','Z') 
 let $y:=
 if(fn:contains($x,'-')) then $x
 else if(fn:contains($x,'+')) then $x
-else fn:concat($x,'05:00')
+else $x
 return $y
 };
 

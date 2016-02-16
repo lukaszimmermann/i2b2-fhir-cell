@@ -491,14 +491,15 @@ public class I2b2FhirWS {
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/{id:[0-9a-zA-Z|-]+}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response validate1(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+	public Response validateWrapper(@PathParam("resourceName") String resourceName, @PathParam("id") String id,
+			@QueryParam("profile") String profile,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request, String inTxt) throws IOException, JAXBException, URISyntaxException,
 					XQueryUtilException, AuthenticationFailure, FhirServerException, InterruptedException, ParserConfigurationException, SAXException {
 		Resource r = getParticularResource(request, resourceName, id, headers);
 		inTxt = JAXBUtil.toXml(r);
 
-		return validate2(resourceName, acceptHeader, request, inTxt);
+		return validate(resourceName, acceptHeader, request, inTxt,profile);
 
 	}
 
@@ -506,8 +507,8 @@ public class I2b2FhirWS {
 	@Path("{resourceName:" + FhirUtil.RESOURCE_LIST_REGEX + "}/$validate")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response validate2(@PathParam("resourceName") String resourceName,
-			@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request, String inTxt)
+	public Response validate(@PathParam("resourceName") String resourceName,
+			@HeaderParam("accept") String acceptHeader, @Context HttpServletRequest request, String inTxt, String profile)
 					throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException {
 		HttpSession session = request.getSession();
 		String mediaType;
@@ -537,7 +538,7 @@ public class I2b2FhirWS {
 			if (ps == null) {
 				try {
 					//TODO move most of the code here(Param check into Validate class)
-					outTxt = Validate.runValidate(inTxt);
+					outTxt = Validate.runValidate(inTxt,profile);
 				} catch (JAXBException e) {
 				}
 			}
