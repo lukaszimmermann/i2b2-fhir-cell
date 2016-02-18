@@ -154,7 +154,7 @@ public class I2b2FhirWS {
 					throws IOException, URISyntaxException {
 
 		HttpSession session = request.getSession();
-		URI fhirBase = HttpHelper.getBasePath(request);
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString().split("patient")[0];
 		// basePath=(new URI(basePath)).toString();
 		logger.trace("basePath:" + basePath);
@@ -177,7 +177,7 @@ public class I2b2FhirWS {
 					throws IOException, URISyntaxException {
 
 		HttpSession session = request.getSession();
-		URI fhirBase = HttpHelper.getBasePath(request);
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString();
 
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI(), request.getQueryString(),
@@ -299,7 +299,7 @@ public class I2b2FhirWS {
 			@Context HttpServletRequest request, @Context ServletContext servletContext)
 					throws IOException, URISyntaxException {
 
-		URI fhirBase = HttpHelper.getBasePath(request);
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString();
 		HttpSession session = request.getSession();
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI().replace("/_search", ""),
@@ -438,7 +438,7 @@ public class I2b2FhirWS {
 			@Context HttpServletRequest request) throws JAXBException, JSONException, IOException,
 					ParserConfigurationException, SAXException, URISyntaxException {
 
-		URI fhirBase = HttpHelper.getBasePath(request);
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 
 		Conformance c = ConformanceStatement.getStatement(fhirBase);
 

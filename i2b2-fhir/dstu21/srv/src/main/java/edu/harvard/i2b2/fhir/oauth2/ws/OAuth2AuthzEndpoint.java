@@ -389,7 +389,7 @@ public class OAuth2AuthzEndpoint {
 		}
 		URI fhirBase = HttpHelper.getBasePath(request);
 		String uri=fhirBase.toString();
-		uri = uri.substring(0, uri.length()-1);//chopping of last / 
+		uri = uri.substring(0, uri.length()-1);//chopping of last /
 		uri = uri.substring(0, uri.lastIndexOf('/')) + "/"; 
 		OAuthResponse Oresponse = builder.location(redirectURI).setParam("aud",uri)
 				.buildQueryMessage();
