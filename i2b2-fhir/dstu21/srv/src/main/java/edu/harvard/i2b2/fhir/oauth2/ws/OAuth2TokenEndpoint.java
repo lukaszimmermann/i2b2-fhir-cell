@@ -68,7 +68,7 @@ public class OAuth2TokenEndpoint {
 	ClientService clientService;
 	
 	@Inject
-	ServerConfigs serverConfig;
+	ServerConfigs serverConfigs;
 	
 
 	/*
@@ -140,7 +140,7 @@ public class OAuth2TokenEndpoint {
 
 			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
-			URI fhirBase = HttpHelper.getBasePath(request);
+			URI fhirBase = HttpHelper.getBasePath(request,serverConfigs);
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
 					.setAccessToken(accessToken.getTokenString()).setExpiresIn("3600")
@@ -202,7 +202,7 @@ public class OAuth2TokenEndpoint {
 
 	private boolean checkClientSecret(String clientSecret) {
 		//for open open client
-		if(serverConfig.GetString(ConfigParameter.openClientId)!=null && serverConfig.GetString(ConfigParameter.openClientId).equals(client.getClientId())) return true;
+		if(serverConfigs.GetString(ConfigParameter.openClientId)!=null && serverConfigs.GetString(ConfigParameter.openClientId).equals(client.getClientId())) return true;
 		
 		boolean res= client.getClientSecret().equals(clientSecret)?true:false;
 		if (res==false) logger.warn("client secret is invalid");
