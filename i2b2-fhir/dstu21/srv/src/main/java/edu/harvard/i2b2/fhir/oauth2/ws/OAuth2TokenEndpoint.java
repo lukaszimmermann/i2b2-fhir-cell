@@ -140,7 +140,7 @@ public class OAuth2TokenEndpoint {
 
 			AccessToken accessToken=accessTokenBean.createAccessTokenAndDeleteAuthToken(authToken);
 			
-			URI fhirBase = HttpHelper.getBasePath(request,serverConfig);
+			URI fhirBase = HttpHelper.getBasePath(request);
 			OAuthResponse response = OAuthASResponse
 					.tokenResponse(HttpServletResponse.SC_OK)
 					.setAccessToken(accessToken.getTokenString()).setExpiresIn("3600")
