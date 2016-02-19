@@ -11,7 +11,7 @@ public class Validate {
 	static Logger logger = LoggerFactory.getLogger(Validate.class);
 	
 	//TODO validate against profiles
-	public static String runValidate(String inTxt) throws JAXBException {
+	public static String runValidate(String inTxt,String profile) throws JAXBException {
 		String outTxt = "-";
 		/*
 		 * Resource r = JAXBUtil.fromXml(inTxt, Resource.class); Class c =
@@ -20,7 +20,8 @@ public class Validate {
 		 * 
 		 * Bundle s = null; if (Bundle.class.isInstance(r)) { s = (Bundle) r; }
 		 */
-		String ooTxt = FhirUtil.getValidatorErrorMessage(inTxt);
+		//String ooTxt = FhirUtil.getValidatorErrorMessage(inTxt);
+		String ooTxt = FhirUtil.getValidatorErrorMessageForProfile(inTxt,profile);
 		outTxt = ooTxt;
 	
 		logger.trace("ooTxt:" + ooTxt);

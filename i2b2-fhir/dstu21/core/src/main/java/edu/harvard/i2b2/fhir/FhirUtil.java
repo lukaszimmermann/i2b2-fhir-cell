@@ -173,8 +173,7 @@ public class FhirUtil {
 		return resourceClassList;
 	}
 
-	public static String getValidatorErrorMessage(String input) {
-
+	public static String getValidatorErrorMessageForProfile(String input,String profile) {
 		String msg = "";
 		logger.trace("running validator for input:" + input);
 		try {
@@ -188,8 +187,8 @@ public class FhirUtil {
 			logger.trace("tmp file:" + new Scanner(temp).useDelimiter("\\Z").next());// temp.getAbsolutePath());
 
 			v.setSource(temp.getPath());
-			// v.setProfile("");
-			logger.trace("source" + v.getSource());
+			v.setProfile(profile);
+			logger.trace("source" + v.getSource() +" \n profile:"+profile);
 			v.process();
 
 			temp.delete();
@@ -201,6 +200,10 @@ public class FhirUtil {
 		}
 		return msg;
 
+	}
+		
+	public static String getValidatorErrorMessage(String input) {
+		return getValidatorErrorMessageForProfile(input,null);
 	}
 
 	public static boolean isValid(String xml) {
@@ -240,6 +243,8 @@ public class FhirUtil {
 		}
 
 	}
+	
+	
 
 	public List<Class> getResourceClasses() {
 		List<Class> classList = new ArrayList<Class>();

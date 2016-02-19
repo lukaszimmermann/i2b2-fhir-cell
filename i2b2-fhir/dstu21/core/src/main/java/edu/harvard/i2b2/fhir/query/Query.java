@@ -209,7 +209,7 @@ public abstract class Query {
 
 		String msg = XQueryUtil.processXQuery(xqueryStr, xml);
 
-		logger.trace("msg:" + msg.toString());
+		logger.trace("result:" + msg.toString());
 		return msg;
 	}
 
@@ -264,10 +264,12 @@ public abstract class Query {
 
 	protected String getLastElementOfParameterPath() {
 		String s = this.getParameterPath();
-		Pattern p = Pattern.compile(".*//*([^//]+)$");
+		/*Pattern p = Pattern.compile(".*//*([^//]+)$");
 		Matcher m = p.matcher(s);
 		if (m.matches())
 			s = m.group(1);
+	*/
+		if(s.contains("/")) s=s.substring(s.indexOf("/"));
 		return s;
 	}
 

@@ -1,10 +1,20 @@
 xquery version "1.0";
 declare namespace functx = "http://www.functx.com";
  
- 
+
+declare function local:all-whitespace
+  ( $arg as xs:string? )  as xs:boolean {
+
+   normalize-space($arg) = ''
+ } ; 
+  
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
-let $x :=fn:replace($r,'.000Z$','') 
-return fn:concat($x,'05:00')
+let $x :=fn:replace($r,'.000Z$','')
+let $y:=
+if(fn:contains($x,'-')) then $x
+else if(fn:contains($x,'+')) then $x
+else fn:concat($x,'05:00')
+return $y
 };
  
 declare function local:fnDoseFhir($dose as xs:string?,$unit as xs:string?) as node()?
@@ -75,20 +85,27 @@ return
 
 
 declare function local:fnFhirMedication($count as xs:integer,$cn as xs:string*, $cid as xs:string, $pid as xs:string, $sys as xs:string*) as node(){           
-  <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+  let $cn_display_str:=
+  if(local:all-whitespace($cn)) then ""
+        else   <display value="{$cn}"/> 
+
+return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
    <text>
         <status value="generated"/>
-        <ns2:div>{$cn}</ns2:div>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>Name:{$cn}</p>
+        <p>Code:{$cid}</p></div>
     </text>
   <code>
     <coding>
-      <system value="{$sys}"/>
+      <system value="http://../NDC"/>
       <code value="{$cid}"/>
-      <display value="{$cn}"/>
+      {$cn_display_str}
       <primary value="true"/>
     </coding>
   </code>
+  
 
   </Medication>
   
@@ -106,7 +123,9 @@ return
  <id value="{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
-        <ns2:div>{$cn}</ns2:div>
+        <div xmlns="http://www.w3.org/1999/xhtml">
+        <p>{$cn}</p>
+        </div>
     </text>
   
     <code>  
@@ -134,22 +153,14 @@ return
 
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
-       if($unit="") then ""
+       if(local:all-whitespace($unit)) then ""
         else   <units value="{$unit}"/> 
  
-
-let $codeStr:=
-       if($unit="") then ""
-        else    <code value="{$unit}"/>  
- return    
-
-<valueQuantity>
+return <valueQuantity>
     <value value="{$val}"/>    
-   
     <system value="http://unitsofmeasure.org"/>
-    
     {$unitStr}
-    {$codeStr}
+    
   </valueQuantity>
 };
 
@@ -166,29 +177,38 @@ declare function local:fnFhirValueCodeableConcept($val as xs:string?) as node(){
 
 declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,$count as xs:integer, $cid as xs:string?, $pid as xs:string,$cn as xs:string?) as node(){           
    let $endDateString:=
-    if($ed != "") then
-    <end value="{$ed}"/>
-  else ()
+    if(local:all-whitespace($ed )) then()
+    else <end value="{$ed}"/>
  
- return
-   
-   <Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+ let $cn_display_str:=
+ if(local:all-whitespace($cn)) then ()
+     else   <display value="{$cn}"/> 
+ return        
+
+
+<Condition xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
+
  <id value="{$pid}-{$count}"/>
    <status value="generated"/>
   <text>   
+  <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+  <p>Name:{$cn}</p>
+  <p>Code:{$cid}</p>
+  </div>
   </text>
   <patient>
      <reference value="Patient/{$pid}"/>
   </patient>
   
-   <onsetPeriod>
-    <start value="{$sd}"/>
-    {$endDateString}
-  </onsetPeriod>
+  <onsetdateTime value="{$sd}"/>
+  <verificationStatus value="confirmed"/>
+ 
   <code>
     <coding>
       <system value="http://hl7.org/fhir/sid/icd-9"/>
       <code value="{$cid}"/>
+      {$cn_display_str}
     </coding>/
   </code>
   <category>
@@ -520,8 +540,8 @@ let $pid := $refObs/patient_id/text()
 let $cid := fn:replace($refObs/concept_cd/text(),"NDC:","")
 
 let $oid := $refObs/observer_cd
-let $sd := $refObs/start_date/text())
-let $ed := $refObs/end_date/text())
+let $sd := $refObs/start_date/text()
+let $ed := $refObs/end_date/text()
 let $sourceSystem := $refObs/@sourcesystem_cd/string()
 let $importDate := $refObs/@import_date/string()
 let $downloadDate := $refObs/@download_date/string()

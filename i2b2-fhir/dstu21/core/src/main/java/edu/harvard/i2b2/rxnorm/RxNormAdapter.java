@@ -134,8 +134,10 @@ public class RxNormAdapter {
 	public void addRxCui(Medication m) throws JAXBException {
 	String ndcString = getNDCCodeString(m);
 		String rxCui = getRxCui(ndcString);
+		if(rxCui==null || rxCui.length()==0) return;
 		String rxCuiName = getRxCuiName(rxCui);
 
+		
 		if (getRxNormCoding(m) != null) {
 			logger.trace("already contains rxnorm code");
 			return;
@@ -151,11 +153,13 @@ public class RxNormAdapter {
 		logger.trace("rxCui:"+rxCui);
 		cd.setValue(rxCui);
 		c.setCode(cd);
-		org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-		displayValue.setValue(rxCuiName);
-		c.setDisplay(displayValue);
+		if(rxCuiName!=null && rxCuiName.length()>0){
+			org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
+			displayValue.setValue(rxCuiName);
+			c.setDisplay(displayValue);
+		}
 		m.getCode().getCoding().add(c);
-
+		
 		logger.trace(JAXBUtil.toXml(m));
 	}
 

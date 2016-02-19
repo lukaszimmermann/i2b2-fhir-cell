@@ -7,8 +7,12 @@ let $x :=substring-before($r,'T')
 return $x
 };
 declare function local:fnI2b2TimeToFhirTime($r as xs:string?) as xs:string{ 
-let $x :=fn:replace($r,'.000Z$','') 
-return fn:concat($x,'-05:00')
+let $x :=fn:replace($r,'.000Z$','Z') 
+let $y:=
+if(fn:contains($x,'-')) then $x
+else if(fn:contains($x,'+')) then $x
+else $x
+return $y
 };
 
 declare function local:getIdentifier() as node(){ 
@@ -178,6 +182,16 @@ return
       <coding>
         <system value="http://hl7.org/fhir/v3/Race"/>
         <code value="{$race_code}"/>
+        <primary value="true"/>
+      </coding>
+    </valueCodeableConcept>
+  </extension>
+  
+  <extension url="http://hl7.org/fhir/StructureDefinition/us-core-ethnicity">
+    <valueCodeableConcept>
+      <coding>
+        <system value="http://hl7.org/fhir/v3/Ethnicity"/>
+        <code value="UNK"/>
         <primary value="true"/>
       </coding>
     </valueCodeableConcept>
