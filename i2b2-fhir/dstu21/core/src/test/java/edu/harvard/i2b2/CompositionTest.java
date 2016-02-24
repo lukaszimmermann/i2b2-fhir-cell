@@ -29,6 +29,7 @@ static Logger logger = LoggerFactory.getLogger(CompositionTest.class);
 			Bundle obsB=JAXBUtil.fromXml(Utils.fileToString("/example/fhir/dstu21/ObservationBundle.xml"),Bundle.class);
 			Bundle diagRepB=Composition.DiagnositicReportBundleFromObservationBundle(obsB);
 			logger.trace(JAXBUtil.toXml(diagRepB));
+			logger.trace("#of diagreports:"+diagRepB.getTotal().getValue());
 			
 		} catch (FhirCoreException | JAXBException | IOException e) {
 			logger.error(e.getMessage(),e);

@@ -76,6 +76,9 @@ import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.BundleType;
 import org.hl7.fhir.BundleTypeList;
+import org.hl7.fhir.Code;
+import org.hl7.fhir.CodeableConcept;
+import org.hl7.fhir.Coding;
 import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Instant;
@@ -173,7 +176,7 @@ public class FhirUtil {
 		return resourceClassList;
 	}
 
-	public static String getValidatorErrorMessageForProfile(String input,String profile) {
+	public static String getValidatorErrorMessageForProfile(String input, String profile) {
 		String msg = "";
 		logger.trace("running validator for input:" + input);
 		try {
@@ -188,7 +191,7 @@ public class FhirUtil {
 
 			v.setSource(temp.getPath());
 			v.setProfile(profile);
-			logger.trace("source" + v.getSource() +" \n profile:"+profile);
+			logger.trace("source" + v.getSource() + " \n profile:" + profile);
 			v.process();
 
 			temp.delete();
@@ -201,9 +204,9 @@ public class FhirUtil {
 		return msg;
 
 	}
-		
+
 	public static String getValidatorErrorMessage(String input) {
-		return getValidatorErrorMessageForProfile(input,null);
+		return getValidatorErrorMessageForProfile(input, null);
 	}
 
 	public static boolean isValid(String xml) {
@@ -243,8 +246,6 @@ public class FhirUtil {
 		}
 
 	}
-	
-	
 
 	public List<Class> getResourceClasses() {
 		List<Class> classList = new ArrayList<Class>();
@@ -504,18 +505,18 @@ public class FhirUtil {
 		return s2;
 	}
 
-	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url)  {
+	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url) {
 		Bundle b = new Bundle();
 		for (Resource r : s) {
-			if(r.getMeta()==null){
+			if (r.getMeta() == null) {
 				r.setMeta(FhirUtil.createMeta());
 			}
 			BundleEntry be = FhirUtil.newBundleEntryForResource(r);
 			b.getEntry().add(be);
-			
+
 		}
-		
-		BundleType value=new BundleType();
+
+		BundleType value = new BundleType();
 		value.setValue(BundleTypeList.SEARCHSET);
 		b.setType(value);
 		UnsignedInt total = new UnsignedInt();
@@ -524,27 +525,26 @@ public class FhirUtil {
 
 		Uri u = new Uri();
 		u.setValue(basePath);
-		
+
 		FhirUtil.setId(b, Long.toHexString(new Random().nextLong()));
-		
-		
+
 		b.setMeta(FhirUtil.createMeta());
-		
+
 		// b.setBase(u);
 		return b;
 	}
 
 	private static Meta createMeta() {
-		Meta meta= new Meta();
+		Meta meta = new Meta();
 		Id vId = new Id();
 		vId.setValue("1");
 		meta.setVersionId(vId);
-		Instant instantVal= new Instant();
+		Instant instantVal = new Instant();
 		XMLGregorianCalendar xmlGregvalue;
 		try {
 			xmlGregvalue = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
 		} catch (DatatypeConfigurationException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 		instantVal.setValue(xmlGregvalue);
@@ -706,8 +706,9 @@ public class FhirUtil {
 		try {
 			Class parentClass = FhirUtil.getResourceClass(p);
 			Class childClass = FhirUtil.getResourceClass(c);
-			
-			if(childClass==null || parentClass==null) throw new RuntimeException("unknown resource class for child or parent");
+
+			if (childClass == null || parentClass == null)
+				throw new RuntimeException("unknown resource class for child or parent");
 
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
@@ -716,13 +717,12 @@ public class FhirUtil {
 			// p = JAXBUtil.fromXml(xml, parentClass);
 			logger.trace(
 					"getting path to parent:" + parentClass + "\nchild:" + childClass.getSimpleName().toLowerCase());
-			
-			//get path from profile
-			
+
+			// get path from profile
+
 			String path = new SearchParameterMap().getParameterPath(parentClass,
 					childClass.getSimpleName().toLowerCase());
-			
-			
+
 			logger.trace("SEARCH PATH:" + path);
 			String childPath = path.replaceAll("^" + parentClass.getSimpleName() + "/", "");
 			logger.trace("MchildPath:" + childPath);
@@ -826,7 +826,7 @@ public class FhirUtil {
 		}
 		if (id.equals(resourceName))
 			id = null;
-		
+
 		return id;
 	}
 
@@ -843,21 +843,45 @@ public class FhirUtil {
 	}
 
 	public static Id generateId(String idString) {
-		Id id= new Id();
+		Id id = new Id();
 		id.setValue(idString);
 		return id;
 	}
-	
-	public static Bundle createBundle(List<Object> list){
-		Bundle b= new Bundle();
-		
-		for(Object o:list){
-			Resource r=(Resource) o;
+
+	public static Bundle createBundle(List<Object> list) {
+		Bundle b = new Bundle();
+
+		for (Object o : list) {
+			Resource r = (Resource) o;
 			b.getEntry().add(FhirUtil.newBundleEntryForResource(r));
 		}
-		
+
+		UnsignedInt ustotal= new UnsignedInt();
+		BigInteger bigInt= new BigInteger(Integer.toString(list.size()));
+		ustotal.setValue(bigInt);
+		b.setTotal(ustotal);
 		return b;
-		
+
+	}
+
+	public static CodeableConcept generateCodeableConcept(String code, String codeSystem, String display) {
+
+		Code ccode = new Code();
+		ccode.setValue(code);
+
+		Coding coding = new Coding();
+		coding.setCode(ccode);
+
+		Uri uri = new Uri();
+		uri.setValue(codeSystem);
+		coding.setSystem(uri);
+
+		if (display != null) {
+			coding.setDisplay(FhirUtil.generateFhirString(display));
+		}
+		CodeableConcept codeableConcept = new CodeableConcept();
+		codeableConcept.getCoding().add(coding);
+		return codeableConcept;
 	}
 
 }
