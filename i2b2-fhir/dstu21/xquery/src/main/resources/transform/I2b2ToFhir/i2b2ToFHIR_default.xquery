@@ -116,6 +116,8 @@ declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$
    let $cn_display_str:=
   if(local:all-whitespace($cn)) then ""
    else   <display value="{$cn}"/> 
+   
+   let $cid:=fn:replace($cid,"LOINC:","")
 
 return
   <Observation xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">

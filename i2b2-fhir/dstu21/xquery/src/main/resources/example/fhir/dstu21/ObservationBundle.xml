@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Bundle xmlns="http://hl7.org/fhir" xmlns:ns2="http://www.w3.org/1999/xhtml">
+    <id value="fdcaa126d28553cf"/>
+    <meta>
+        <versionId value="1"/>
+        <lastUpdated value="2016-02-24T10:42:01.972-05:00"/>
+    
+    </meta>
+    <type value="searchset"/>
+    <total value="206"/>
+    <link>
+        <relation value="self"/>
+        <url value="/srv-dstu21-0.3/api/open/Observation?patient=1000000005"/>
+    
+    </link>
+     <entry>
+        <resource>
+            <Observation>
+                <id value="1000000005-206"/>
+                <meta>
+                    <versionId value="1"/>
+                    <lastUpdated value="2016-02-24T10:41:57.133-05:00"/>
+                
+                </meta>
+                <text>
+                    <status value="generated"/>
+                    <ns2:div>
+                        <ns2:p>name:</ns2:p>
+                        <ns2:p>code:2951-2</ns2:p>
+        
+                    </ns2:div>
+                
+                </text>
+                <status value="final"/>
+                <code>
+                    <coding>
+                        <system value="http://loinc.org"/>
+                        <code value="2951-2"/>
+                        <display value="Sodium"/>
+                    
+                    </coding>
+                
+                </code>
+                <subject>
+                    <reference value="Patient/1000000005"/>
+                
+                </subject>
+                <effectiveDateTime value="2009-09-17T00:00:00+05:00"/>
+                <valueQuantity>
+                    <value value="130"/>
+                    <system value="http://unitsofmeasure.org"/>
+                	
+                </valueQuantity>
+            
+            </Observation>
+        
+        </resource>
+    
+    </entry>
+</Bundle>

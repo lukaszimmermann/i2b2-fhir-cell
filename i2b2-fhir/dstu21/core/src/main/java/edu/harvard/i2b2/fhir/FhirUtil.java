@@ -847,5 +847,17 @@ public class FhirUtil {
 		id.setValue(idString);
 		return id;
 	}
+	
+	public static Bundle createBundle(List<Object> list){
+		Bundle b= new Bundle();
+		
+		for(Object o:list){
+			Resource r=(Resource) o;
+			b.getEntry().add(FhirUtil.newBundleEntryForResource(r));
+		}
+		
+		return b;
+		
+	}
 
 }

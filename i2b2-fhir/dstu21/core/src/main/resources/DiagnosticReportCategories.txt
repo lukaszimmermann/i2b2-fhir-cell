@@ -1,0 +1,28 @@
+{"categories":
+	
+	[
+	{
+	
+	"category": {
+	  	"coding": [{
+  	  "system": "http://hl7.org/fhir/v2/0074",
+    "code": "CH",
+    "display": "Chemistry"}]
+	},
+
+	"code": {
+  "coding": [{
+    "system": "http://loinc.org",
+    "code": "24323-8",
+    "display": "Comprehensive metabolic 2000 panel - Serum or Plasma"}]
+	},
+	"tests":[
+		"2951-2","2823-3","2075-0","2028-9","3094-0","2160-0","2345-7","17861-6","2885-2","1751-7","1975-2","6768-6","1742-6","1920-8"
+	]
+	
+	
+	}
+	]
+	
+
+}
