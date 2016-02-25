@@ -493,8 +493,10 @@ public class FhirUtil {
 
 	public static Reference getReference(Resource r) {
 		Reference pRef = new Reference();
+		Class resourceClass=FhirUtil.getResourceClass(r);
 		org.hl7.fhir.String str1 = new org.hl7.fhir.String();
-		str1.setValue(r.getId().getValue());
+		//str1.setValue(r.getId().getValue());
+		str1.setValue(resourceClass.getSimpleName()+"/"+r.getId().getValue());
 		pRef.setReference(str1);
 		return pRef;
 	}
@@ -862,6 +864,34 @@ public class FhirUtil {
 		b.setTotal(ustotal);
 		return b;
 
+	}
+	
+	static public Bundle addResourceToBundle(Bundle b, Resource r) {
+		BundleEntry  be=FhirUtil.newBundleEntryForResource(r);
+		b.getEntry().add( be);
+		setBundleTotal(b);
+		return b;
+	}
+	
+	static public Bundle setBundleTotal(Bundle b){
+		int tot=0;
+		if(b.getEntry()!=null ){
+			tot=b.getEntry().size();
+		}
+		UnsignedInt ustotal= new UnsignedInt();
+		BigInteger bigInt= new BigInteger(Integer.toString(tot));
+		ustotal.setValue(bigInt);
+		b.setTotal(ustotal);
+		return b;
+	}
+	
+	public static Bundle addBundles(Bundle b1,Bundle b2) {
+		Bundle b = new Bundle();
+		List<Resource> list1 = FhirUtil.getResourceListFromBundle(b1);
+		List<Resource> list2 = FhirUtil.getResourceListFromBundle(b2);
+		for (Resource r : list1) FhirUtil.addResourceToBundle(b, r);
+		for (Resource r : list2) FhirUtil.addResourceToBundle(b, r);
+		return b;
 	}
 
 	public static CodeableConcept generateCodeableConcept(String code, String codeSystem, String display) {

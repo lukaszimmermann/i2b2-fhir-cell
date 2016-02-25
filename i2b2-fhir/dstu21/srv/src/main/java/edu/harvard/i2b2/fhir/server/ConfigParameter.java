@@ -23,5 +23,7 @@ public enum  ConfigParameter {
 	patientBundleTimeOut,
 	enrichEnabled, 
 	fhirbaseSSL, 
-	patientFetchMin
+	patientFetchMin,
+	createDiagnosticReportsFromObservations
+	
 }

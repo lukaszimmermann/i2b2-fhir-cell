@@ -23,6 +23,7 @@ import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.DiagnosticReportStatus;
 import org.hl7.fhir.DiagnosticReportStatusList;
 import org.hl7.fhir.Observation;
+import org.hl7.fhir.Patient;
 import org.hl7.fhir.Reference;
 import org.hl7.fhir.Resource;
 import org.slf4j.Logger;
@@ -30,10 +31,38 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
-public class Composition {
-	static Logger logger = LoggerFactory.getLogger(Composition.class);
+public class DiagnosticReportGenerator {
+	static Logger logger = LoggerFactory.getLogger(DiagnosticReportGenerator.class);
 
-	static public Bundle DiagnositicReportBundleFromObservationBundle(Bundle obsBundle) throws FhirCoreException {
+	static public Bundle generateAndAddDiagnosticReports(Bundle b) throws FhirCoreException {
+
+		Bundle observationBundle = new Bundle();
+		Resource patient = null;
+		for (Resource r : FhirUtil.getResourceListFromBundle(b)) {
+			if (Observation.class.isInstance(r))
+				FhirUtil.addResourceToBundle(observationBundle, r);
+			if (Patient.class.isInstance(r))
+				patient = r;
+		}
+
+		if (patient == null)
+			throw new FhirCoreException("patient not found in ");
+
+		Bundle diagReportBundle = DiagnositicReportBundleFromObservationBundle(observationBundle, patient);
+		Bundle totalBundle = FhirUtil.addBundles(b, diagReportBundle);
+
+		try {
+			logger.trace("diagReportBundle:" + JAXBUtil.toXml(diagReportBundle));
+			logger.trace("diagReportBundle:" + JAXBUtil.toXml(totalBundle));
+		} catch (JAXBException e) {
+			throw new FhirCoreException(e);
+		}
+		b=totalBundle;
+		return totalBundle;
+	}
+
+	static public Bundle DiagnositicReportBundleFromObservationBundle(Bundle obsBundle, Resource patient)
+			throws FhirCoreException {
 		Bundle diagRepB = new Bundle();
 		Reader is = null;
 		try {
@@ -78,7 +107,8 @@ public class Composition {
 							String codeExpected = tests.getString(i);
 							if (codeExpected.equals(codeFound)) {
 								logger.trace("code Found+++:" + codeFound);
-								addObservationToDiagnosticReport(diagRep, ob);
+								//addObservationToDiagnosticReport(diagRep, ob);
+								diagRep.getResult().add(FhirUtil.getReference(ob));
 								break;
 							}
 						}
@@ -87,7 +117,7 @@ public class Composition {
 				}
 
 				if (diagRep.getResult().size() > 0) {
-					FhirUtil.setId(diagRep, "diagRep.getSubject().getId()" + "-" + (diagRepArr.size() + 1));
+					FhirUtil.setId(diagRep, patient.getId().getValue() + "-" + (diagRepArr.size() + 1));
 					// set status
 					DiagnosticReportStatus status = new DiagnosticReportStatus();
 					status.setValue(DiagnosticReportStatusList.FINAL);
@@ -105,28 +135,32 @@ public class Composition {
 					diagRep.setCode(FhirUtil.generateCodeableConcept(coding.getString("code"),
 							coding.getString("system"), coding.getString("display")));
 
+					// set EffectiveDateTime
 					DateTime dt = new DateTime();
 					dt.setValue(dateTime);
 					diagRep.setEffectiveDateTime(dt);
-					// set EffectiveDateTime
+
+					// add subject
+					diagRep.setSubject(FhirUtil.getReference(patient));
 
 					// add report to array
+					try {
+						logger.trace("created diag report:" + JAXBUtil.toXml(diagRep));
+					} catch (JAXBException e) {
+						throw new FhirCoreException(e);
+					}
 					diagRepArr.add(diagRep);
 
 				}
 			}
 		}
+
 		diagRepB = FhirUtil.createBundle(diagRepArr);
 
 		return diagRepB;
 	}
 
-	static public void addObservationToDiagnosticReport(DiagnosticReport diagReport, Observation obs) {
-		// logger.trace("adding obs ref to DiagBundle");
-		Reference r = new Reference();
-		r.setReference(FhirUtil.getFhirString(obs.getId().getValue()));
-		diagReport.getResult().add(r);
-	}
+	
 
 	static HashMap<String, List<Resource>> groupByEffectiveDateTime(Bundle b) throws FhirCoreException {
 		HashMap<String, List<Resource>> hm = new HashMap();

@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ranges.RangeException;
 
+import edu.harvard.i2b2.fhir.DiagnosticReportGenerator;
 import edu.harvard.i2b2.fhir.FhirEnrich;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
@@ -90,10 +91,11 @@ public class PatientBundleManager {
 			if (tok == null)
 				logger.error("AccessToken is null");
 			ServerConfigs sConfig = new ServerConfigs();
-			logger.trace("fetching PDO for pid:" + pid + " and tok" + tok+" for categories:"+sConfig.GetString(ConfigParameter.resourceCategoriesList));
-			
+			logger.trace("fetching PDO for pid:" + pid + " and tok" + tok + " for categories:"
+					+ sConfig.GetString(ConfigParameter.resourceCategoriesList));
+
 			HashMap<String, String> map = new HashMap<String, String>();
-			
+
 			for (String cat : Arrays.asList(sConfig.GetString(ConfigParameter.resourceCategoriesList).split("-"))) {
 				switch (cat) {
 				case "medications":
@@ -114,7 +116,16 @@ public class PatientBundleManager {
 					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map,
 					serverConfig.GetString(ConfigParameter.ontologyType));
 
-			if(sConfig.GetString(ConfigParameter.enrichEnabled).equals("true")){FhirEnrich.enrich(b);}
+			if (sConfig.GetString(ConfigParameter.enrichEnabled).equals("true")) {
+				FhirEnrich.enrich(b);
+			}
+			if(sConfig.GetString(ConfigParameter.createDiagnosticReportsFromObservations).equals("true")) {
+				logger.trace("createDiagnosticReportsFromObservations");
+				b=DiagnosticReportGenerator.generateAndAddDiagnosticReports(b);
+			}else{
+				logger.trace("createDiagnosticReportsFromObservations is false");
+			}
+			//	logger.trace("bundlexML:"+JAXBUtil.toXml(b));
 			logger.trace("fetched bundle of size:" + b.getEntry().size());
 
 		} catch (Exception e) {

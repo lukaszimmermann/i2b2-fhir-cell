@@ -13,13 +13,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.Composition;
+import edu.harvard.i2b2.fhir.DiagnosticReportGenerator;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
-public class CompositionTest {
-static Logger logger = LoggerFactory.getLogger(CompositionTest.class);
+public class DiagnosticReportGeneratorTest {
+static Logger logger = LoggerFactory.getLogger(DiagnosticReportGeneratorTest.class);
 	@Test
 	public void test() {
 		//fail("Not yet implemented");
@@ -27,7 +27,7 @@ static Logger logger = LoggerFactory.getLogger(CompositionTest.class);
 		logger.trace("loaded");
 		try {
 			Bundle obsB=JAXBUtil.fromXml(Utils.fileToString("/example/fhir/dstu21/ObservationBundle.xml"),Bundle.class);
-			Bundle diagRepB=Composition.DiagnositicReportBundleFromObservationBundle(obsB);
+			Bundle diagRepB=DiagnosticReportGenerator.DiagnositicReportBundleFromObservationBundle(obsB);
 			logger.trace(JAXBUtil.toXml(diagRepB));
 			logger.trace("#of diagreports:"+diagRepB.getTotal().getValue());
 			
@@ -41,7 +41,7 @@ static Logger logger = LoggerFactory.getLogger(CompositionTest.class);
 static {
 	Properties props = new Properties();
 	try {
-		props.load(CompositionTest.class.getResourceAsStream("/log4j.properties"));
+		props.load(DiagnosticReportGeneratorTest.class.getResourceAsStream("/log4j.properties"));
 	} catch (IOException e) {
 		e.printStackTrace();
 		logger.error(e.getMessage(),e);
