@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
-import edu.harvard.i2b2.fhir.Utils;
+
 import edu.harvard.i2b2.fhir.server.ws.FhirHelper;
 
 public class DSSEvaluate {
@@ -144,7 +144,7 @@ public class DSSEvaluate {
 
 	public static void loadDSSModules(MetaResourceDb md) throws JAXBException, IOException {
 		DecisionSupportServiceModule d = JAXBUtil.fromXml(
-				Utils.fileToString("/example/fhir/dstu21/decisionsupportservicemodule-example.xml"),
+				 edu.harvard.i2b2.fhir.Utils.fileToString("/example/fhir/dstu21/decisionsupportservicemodule-example.xml"),
 				DecisionSupportServiceModule.class);
 		md.addResource(d);
 
@@ -170,7 +170,7 @@ public class DSSEvaluate {
 			Reference ref = new Reference();
 			ref.setReference(FhirUtil.generateFhirString("OperationOutcome/" + oo.getId().getValue()));
 			g.getEvaluationMessage().add(ref);
-			g = (GuidanceResponse) FhirUtil.containResource(g, oo);
+			g = (GuidanceResponse) FhirUtil.containResource(g, oo,oo.toString());
 			logger.trace("called contain");
 		}
 		return g;

@@ -156,13 +156,14 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString().split("patient")[0];
+		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
 		// basePath=(new URI(basePath)).toString();
 		logger.trace("basePath:" + basePath);
 		String queryString = "patient=" + resourceId;
 		String requestUri = compartmentName;
 		String rawRequest = basePath + request.getRequestURI();
 		return getQueryResultCore(compartmentName, basePath, requestUri, queryString,
-				request.getRequestURL().toString(), includeResources, filterf, acceptHeader, headers, session);
+				request.getRequestURL().toString(), includeResources, filterf, acceptHeader, headers, session,serverUriPath);
 
 	}
 
@@ -179,23 +180,26 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString();
+		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
+		logger.trace("basePath:"+basePath);
 
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI(), request.getQueryString(),
 				request.getRequestURI() + "?" + request.getQueryString(), includeResources, filterf, acceptHeader,
-				headers, session);
+				headers, session,serverUriPath);
 
 	}
 
 	public Response getQueryResultCore(String resourceName, String basePath, String requestUri, String queryString,
 			String rawRequestUrl, List<String> includeResources, String filterf, String acceptHeader,
-			HttpHeaders headers, HttpSession session) throws IOException {
+			HttpHeaders headers, HttpSession session,String serverUriPath) throws IOException {
 
 		String msg = null;
 		String mediaType = null;
 		MetaResourceDb md = new MetaResourceDb();
 
 		logger.debug("got request parts: " + requestUri + "?" + queryString);
-
+		logger.trace("basePath:"+basePath);
+		
 		try {
 			logger.info("Query string:" + queryString);
 
@@ -249,13 +253,14 @@ public class I2b2FhirWS {
 				List<Resource> list = md.getIncludedResources(c, FhirUtil.getResourceListFromBundle(s),
 						includeResources);
 				logger.trace("includedListsize:" + list.size());
+				logger.trace("basePath:"+basePath);
 				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
 
 			BundleLink bl = new BundleLink();
 			Uri blUri = new Uri();
 
-			blUri.setValue(rawRequestUrl);
+			blUri.setValue(serverUriPath+requestUri+"?"+queryString);
 			bl.setUrl(blUri);
 			org.hl7.fhir.String rs = new org.hl7.fhir.String();
 			rs.setValue("self");
@@ -300,11 +305,12 @@ public class I2b2FhirWS {
 					throws IOException, URISyntaxException {
 
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
 		String basePath = fhirBase.toString();
 		HttpSession session = request.getSession();
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI().replace("/_search", ""),
 				request.getQueryString(), request.getRequestURI() + "?" + request.getQueryString(), includeResources,
-				filterf, acceptHeader, headers, session);
+				filterf, acceptHeader, headers, session,serverUriPath);
 	}
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
