@@ -51,12 +51,12 @@ public class DiagnosticReportGenerator {
 		Bundle diagReportBundle = DiagnositicReportBundleFromObservationBundle(observationBundle, patient);
 		Bundle totalBundle = FhirUtil.addBundles(b, diagReportBundle);
 
-		try {
+		/*try {
 			logger.trace("diagReportBundle:" + JAXBUtil.toXml(diagReportBundle));
 			logger.trace("diagReportBundle:" + JAXBUtil.toXml(totalBundle));
 		} catch (JAXBException e) {
 			throw new FhirCoreException(e);
-		}
+		}*/
 		b=totalBundle;
 		return totalBundle;
 	}
@@ -144,11 +144,7 @@ public class DiagnosticReportGenerator {
 					diagRep.setSubject(FhirUtil.getReference(patient));
 
 					// add report to array
-					try {
-						logger.trace("created diag report:" + JAXBUtil.toXml(diagRep));
-					} catch (JAXBException e) {
-						throw new FhirCoreException(e);
-					}
+					
 					diagRepArr.add(diagRep);
 
 				}
