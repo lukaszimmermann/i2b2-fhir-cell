@@ -59,7 +59,7 @@ public class FhirUtilTest {
 			// logger.info("MP:"+JAXBUtil.toXml(m));
 
 			logger.info("after containing:"
-					+ JAXBUtil.toXml(FhirUtil.containResource(mp, m)));
+					+ JAXBUtil.toXml(FhirUtil.containResource(mp, m,m.toString())));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

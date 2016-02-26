@@ -115,6 +115,8 @@ public class FhirUtil {
 	// final public static String RESOURCE_LIST_REGEX =
 	// "("+FhirUtil.getResourceList().toString().replace(",", "|")
 	// .replaceAll("[\\s\\[\\]]+", "")+")";
+	
+	
 
 	final public static String RESOURCE_LIST_REGEX = "(Bundle|Condition|Medication|MedicationStatement|MedicationDispense|MedicationOrder|Observation|Patient|DiagnosticReport|DiagnosticOrder|DecisionSupportServiceModule|Parameters|Order|OperationOutcome|GuidanceResponse)";
 	private static ArrayList<Class> resourceClassList = null;

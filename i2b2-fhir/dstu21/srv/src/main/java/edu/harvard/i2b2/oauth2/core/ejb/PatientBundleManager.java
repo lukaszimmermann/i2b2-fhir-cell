@@ -24,6 +24,7 @@ import edu.harvard.i2b2.fhir.FhirEnrich;
 import edu.harvard.i2b2.fhir.I2b2Util;
 import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.fhir.ObservationCategoryGenerator;
 import edu.harvard.i2b2.fhir.core.CoreConfig;
 import edu.harvard.i2b2.fhir.server.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
@@ -118,7 +119,9 @@ public class PatientBundleManager {
 
 			if (sConfig.GetString(ConfigParameter.enrichEnabled).equals("true")) {
 				FhirEnrich.enrich(b);
+				b=ObservationCategoryGenerator.addObservationCategoryToObservationBundle(b);
 			}
+			
 			if(sConfig.GetString(ConfigParameter.createDiagnosticReportsFromObservations).equals("true")) {
 				logger.trace("createDiagnosticReportsFromObservations");
 				b=DiagnosticReportGenerator.generateAndAddDiagnosticReports(b);
