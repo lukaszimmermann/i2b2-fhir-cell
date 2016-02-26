@@ -87,9 +87,9 @@ public class MetaResourceDb {
 		Class c = FhirUtil.getResourceClass(r);
 		List<Resource> resourceList = getResourceListCreateIfAbsent(c);
 
-		logger.trace("EJB Putting resource:" + c.getSimpleName());
+		//logger.trace("EJB Putting resource:" + c.getSimpleName());
 		try {
-			logger.trace("EJB Put Resource:" + c.cast(r).getClass().getSimpleName());
+			//logger.trace("EJB Put Resource:" + c.cast(r).getClass().getSimpleName());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -292,10 +292,10 @@ public class MetaResourceDb {
 
 		for (String ir : includeResources) {
 			String paramterPath = new SearchParameterMap().getParameterPath(c, ir);
-			logger.trace("paramterPath:" + paramterPath);
+			//logger.trace("paramterPath:" + paramterPath);
 			String[] set = paramterPath.split("/");
 			String methodName = set[set.length - 1];
-			logger.trace("MethodName:" + methodName);
+			//logger.trace("MethodName:" + methodName);
 
 			outList = new ArrayList<Resource>();
 			for (Resource r : inputSet) {
@@ -342,10 +342,10 @@ public class MetaResourceDb {
 
 		for (String ir : includeResources) {
 			String paramterPath = new SearchParameterMap().getParameterPath(c, ir);
-			logger.trace("paramterPath:" + paramterPath);
+			//logger.trace("paramterPath:" + paramterPath);
 			String[] set = paramterPath.split("/");
 			String methodName = set[set.length - 1];
-			logger.trace("MethodName:" + methodName);
+			//logger.trace("MethodName:" + methodName);
 
 			// String id = ((Reference)this.getFirstLevelChild(r, c,
 			// methodName)).getId();
@@ -356,7 +356,7 @@ public class MetaResourceDb {
 			String id = rawid.split("/")[1];
 			Class depClass = FhirUtil.getResourceClass(rawid.split("/")[0]);
 
-			logger.trace("Found dep:<" + id + ">");
+			//logger.trace("Found dep:<" + id + ">");
 			Resource depMr = searchById(id, depClass);
 			if (depMr != null) {
 				// logger.trace("dependent Res:"+JAXBUtil.toXml(depMr));

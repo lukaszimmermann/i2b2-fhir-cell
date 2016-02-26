@@ -102,11 +102,11 @@ public class DiagnosticReportGenerator {
 					if (Observation.class.isInstance(r)) {
 						Observation ob = (Observation) r;
 						String codeFound = ob.getCode().getCoding().get(0).getCode().getValue();
-						logger.trace("code Found:" + codeFound);
+						//logger.trace("code Found:" + codeFound);
 						for (int i = 0; i < tests.size(); i++) {
 							String codeExpected = tests.getString(i);
 							if (codeExpected.equals(codeFound)) {
-								logger.trace("code Found+++:" + codeFound);
+								//logger.trace("code Found+++:" + codeFound);
 								//addObservationToDiagnosticReport(diagRep, ob);
 								diagRep.getResult().add(FhirUtil.getReference(ob));
 								break;

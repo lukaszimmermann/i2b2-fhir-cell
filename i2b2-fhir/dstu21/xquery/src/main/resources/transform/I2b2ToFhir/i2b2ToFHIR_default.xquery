@@ -156,12 +156,14 @@ return
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
        if(local:all-whitespace($unit)) then ""
-        else   <units value="{$unit}"/> 
+        else $unit
  
 return <valueQuantity>
     <value value="{$val}"/>    
     <system value="http://unitsofmeasure.org"/>
-    {$unitStr}
+    <unit value="{$unitStr}"/>  
+    <code value="{$unitStr}"/> 
+    
     
   </valueQuantity>
 };
@@ -611,8 +613,7 @@ return <Bundle xmlns="http://hl7.org/fhir" >
 let $I:=root()(:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu2/xquery-2/src/main/resources/example/i2b2/reportsForAPatient.xml'):)
 (:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/diagnosisForAPatient.xml'):)
 (:root()doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsForAPatientSimple.xml'):)
-(:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu1/xquery-1/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml')
-root():)
+(:doc('/Users/kbw19/tmp/new_git/res/i2b2-fhir/dstu21/xquery/src/main/resources/example/i2b2/labsAndMedicationsForAPatient.xml'):)
   
 let $distObs:=local:distinctObservations($I)
 

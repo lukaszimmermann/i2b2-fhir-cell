@@ -157,12 +157,14 @@ return
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
        if(local:all-whitespace($unit)) then ""
-        else   <units value="{$unit}"/> 
+        else $unit
  
 return <valueQuantity>
     <value value="{$val}"/>    
     <system value="http://unitsofmeasure.org"/>
-    {$unitStr}
+    <unit value="{$unitStr}"/>  
+    <code value="{$unitStr}"/> 
+    
     
   </valueQuantity>
 };
