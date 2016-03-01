@@ -25,5 +25,4 @@ public enum  ConfigParameter {
 	fhirbaseSSL, 
 	patientFetchMin,
 	createDiagnosticReportsFromObservations
-	
 }
