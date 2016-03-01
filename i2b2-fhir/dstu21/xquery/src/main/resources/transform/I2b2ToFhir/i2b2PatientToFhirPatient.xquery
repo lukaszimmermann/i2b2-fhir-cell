@@ -121,6 +121,14 @@ declare function local:fnPatient($zip as xs:string?,
 ) as node()?{
 let $birthdateDate:=local:fnGetDate($birthdate)
 let $maritalStatusDisplay:=local:fnMaritalStatusDisplay($marital_status)
+
+let $marital_status_codeSystem:=
+if ($marital_status="UNK") then "http://hl7.org/fhir/v3/NullFlavor"
+else "http://hl7.org/fhir/v3/MaritalStatus"
+
+let $ethnicity_codeSystem:="http://hl7.org/fhir/v3/NullFlavor"
+(: "http://hl7.org/fhir/v3/Ethnicity":)
+
 return 
 <Patient  namespace="http://hl7.org/fhir"  >
   <id value="{$id}"/>
@@ -190,7 +198,7 @@ return
   <extension url="http://hl7.org/fhir/StructureDefinition/us-core-ethnicity">
     <valueCodeableConcept>
       <coding>
-        <system value="http://hl7.org/fhir/v3/Ethnicity"/>
+        <system value="{$ethnicity_codeSystem}"/>
         <code value="UNK"/>
         <primary value="true"/>
       </coding>
@@ -207,7 +215,7 @@ return
   
   <maritalStatus>
     <coding>
-      <system value="http://hl7.org/fhir/v3/MaritalStatus"/>
+      <system value= "{$marital_status_codeSystem}"/>
       <code value="{$marital_status}"/>
       <display value="{$maritalStatusDisplay}"/>
     </coding>

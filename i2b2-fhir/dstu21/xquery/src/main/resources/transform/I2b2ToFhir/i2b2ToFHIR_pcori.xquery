@@ -206,7 +206,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
      <reference value="Patient/{$pid}"/>
   </patient>
   
-  <dateRecorded value="{$sd}"/>
+  <onsetDateTime value="{$sd}"/>
   <verificationStatus value="confirmed"/>
  
   <code>
