@@ -140,6 +140,8 @@ public class PatientBundleManager {
 		status.markComplete(pid);
 	}
 
+	
+	
 	private Bundle getPatientBundleLocking(String pid) {
 		Bundle b = service.get(pid);
 		try {
@@ -150,4 +152,8 @@ public class PatientBundleManager {
 		return b;
 	}
 
+	public void resetCache() {
+		service.deleteAll();
+		status.resetAll();
+	}
 }

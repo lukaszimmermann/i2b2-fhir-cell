@@ -431,6 +431,13 @@ public class I2b2FhirWS {
 	}
 
 	@GET
+	@Path("reset_cache")
+	public Response resetCache() throws IOException {
+		service.resetCache();
+		ppmMgr.resetCache();
+	return Response.ok().entity("Cache has been reset").build();
+	}
+	@GET
 	@Path("smartstyleuri")
 	public Response smartStyleUri() throws IOException {
 		return Response.ok().entity(Utils.fileToString("/smartStyleUri.json")).build();

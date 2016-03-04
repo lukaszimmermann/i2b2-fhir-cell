@@ -160,5 +160,9 @@ public class ProjectPatientMapManager {
 			return (list.contains(patientId))?true:false;
 			
 	}
+	
+	public void resetCache() {
+		service.deleteAll();
+	}
 
 }

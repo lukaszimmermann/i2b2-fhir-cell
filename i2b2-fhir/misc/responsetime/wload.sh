@@ -11,7 +11,8 @@ do
   #export p="http://localhost:8080/srv-dstu21-0.3/api/open/Observation/10000000$i-1"
   export p="http://localhost:8080/srv-dstu21-0.3/api/open/Observation?patient=10000000$i"
   #echo $p
-  sh getpage.sh $p &	
+  sleep $3	
+  sh getpage.sh $p $3 &
  #/usr/local/bin/wget -o /dev/null -q $p & 
 done 
 wait 

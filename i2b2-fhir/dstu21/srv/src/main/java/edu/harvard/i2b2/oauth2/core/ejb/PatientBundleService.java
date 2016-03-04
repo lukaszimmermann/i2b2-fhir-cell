@@ -1,5 +1,8 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -16,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.oauth2.core.entity.PatientBundleRecord;
+import edu.harvard.i2b2.oauth2.register.entity.User;
 
 @Singleton
 @Startup
@@ -55,8 +59,7 @@ public class PatientBundleService {
 		} catch (JAXBException e) {
 			logger.error(e.getMessage(), e);
 		}
-		logger.trace("found PatientBundleRecord:" + r.toString() + "\n"
-				+ b.getEntry().size());
+		logger.trace("found PatientBundleRecord:" + r.toString() + "\n" + b.getEntry().size());
 		return b;
 	}
 
@@ -68,8 +71,9 @@ public class PatientBundleService {
 	}
 
 	@Remove
-	public void remove() {
-		// patientBundleHm=null;
+	public void remove(PatientBundleRecord r) {
+		em.remove(em.contains(r) ? r : em.merge(r));
+		logger.info("removed client");
 	}
 
 	@Lock
@@ -87,4 +91,23 @@ public class PatientBundleService {
 		return r;
 	}
 
+	@Lock
+	public List<String> getIdList() {
+		List<String> idList = new ArrayList<String>();
+		List<PatientBundleRecord> pbList = em.createQuery(" SELECT s FROM PatientBundleRecord s").getResultList();
+		String msg = "";
+		for (Object x : pbList) {
+			idList.add(((PatientBundleRecord) x).getPatientId());
+		}
+
+		return idList;
+	}
+
+	@Lock
+	public void deleteAll() {
+		for (String patientId : getIdList()) {
+			PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
+			remove(r);
+		}
+	}
 }

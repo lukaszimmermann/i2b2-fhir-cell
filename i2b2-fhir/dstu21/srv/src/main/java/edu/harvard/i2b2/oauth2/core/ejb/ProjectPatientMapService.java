@@ -14,9 +14,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.xml.bind.JAXBException;
 
+import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.JAXBUtil;
+import edu.harvard.i2b2.oauth2.core.entity.PatientBundleRecord;
 import edu.harvard.i2b2.oauth2.core.entity.ProjectPatientMap;
 
 @Singleton
@@ -74,4 +77,34 @@ public class ProjectPatientMapService {
 		return r;
 	}
 
+	
+	
+	@Remove
+	public void remove(ProjectPatientMap  r) {
+		em.remove(em.contains(r) ? r : em.merge(r));
+		logger.info("removed client");
+	}
+
+	
+
+	@Lock
+	public List<String> getIdList() {
+		List<String> idList = new ArrayList<String>();
+		List<PatientBundleRecord> pbList = em.createQuery(" SELECT s FROM ProjectPatientMap s").getResultList();
+		String msg = "";
+		for (Object x : pbList) {
+			idList.add(((ProjectPatientMap ) x).getProjectId());
+		}
+
+		return idList;
+	}
+
+
+	@Lock
+	public void deleteAll() {
+		for (String projectId : getIdList()) {
+			ProjectPatientMap  r = em.find(ProjectPatientMap.class, projectId);
+			remove(r);
+		}
+	}
 }
