@@ -1,3 +1,4 @@
+#!/bin/sh
 if [[ $# < 1 ]]; then  
         echo "Usage: wload #start #end" 
         exit 
@@ -9,7 +10,7 @@ do
  #echo $i
   #export p="http://fhir.i2b2.org/srv-dstu21-0.3/api/open/Patient/10000000$i"
   #export p="http://localhost:8080/srv-dstu21-0.3/api/open/Observation/10000000$i-1"
-  export p="http://localhost:8080/srv-dstu21-0.3/api/open/Observation?patient=10000000$i"
+  export p="http://52.3.50.52/srv-dstu21-0.3/api/open/Observation?patient=10000000$i"
   #echo $p
   sleep $3	
   sh getpage.sh $p $3 &
