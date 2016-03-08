@@ -142,11 +142,13 @@ return
             <td>Id</td>
             <td>{$id}</td>
           </tr>
-          {local:fnTxt('Zip',$zip)}
           {local:fnTxt('Gender',$gender_expanded)}
-          {local:fnTxt('BirthDate',$birthdate)}
+         
+           <!--  {local:fnTxt('Zip',$zip)}
           {local:fnTxt('Marital Status',$maritalStatusDisplay)}
-   
+   		-->
+   {local:fnTxt('BirthDate',$birthdate)}
+          
         </tbody>
       </table>
     </div>
@@ -185,6 +187,7 @@ return
   </birthDate>
   <deceasedBoolean value="false"/>
   
+  <!--
   <extension url="http://hl7.org/fhir/StructureDefinition/us-core-race">
     <valueCodeableConcept>
       <coding>
@@ -208,10 +211,6 @@ return
     <use value="home"/>
     <zip value="{$zip}"/>
   </address>
-
-  <managingOrganization>
-    <reference value="Organization/1"/>
-  </managingOrganization>
   
   <maritalStatus>
     <coding>
@@ -220,6 +219,14 @@ return
       <display value="{$maritalStatusDisplay}"/>
     </coding>
    </maritalStatus>
+  
+  -->
+
+  <managingOrganization>
+    <reference value="Organization/1"/>
+  </managingOrganization>
+  
+  
    
    
   <active value="true"/>
