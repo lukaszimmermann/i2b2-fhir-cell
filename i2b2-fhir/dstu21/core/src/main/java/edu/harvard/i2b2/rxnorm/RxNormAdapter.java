@@ -83,8 +83,8 @@ public class RxNormAdapter {
 		 * preference to longer name Integer cuiCode = Integer.parseInt(arr[0]);
 		 * String oldName = rxCuiMap.get(cuiCode); if (oldName == null ||
 		 * oldName.length() < name.length()) { rxCuiMap.put(cuiCode, name); } //
-		 * System.out.println(Ndc2CuiMap.get(arr[1])); //
-		 * logger.trace("read line:"+arr[0]); line = reader.readLine();
+		 * System.out.println(Ndc2CuiMap.get(arr[1])); // logger.trace(
+		 * "read line:"+arr[0]); line = reader.readLine();
 		 * 
 		 * } } catch (Exception e) {
 		 * 
@@ -104,8 +104,8 @@ public class RxNormAdapter {
 		 * 
 		 * String[] arr = line.split("\\|"); Ndc2CuiMap.put(arr[1],
 		 * Integer.parseInt(arr[0])); //
-		 * System.out.println(Ndc2CuiMap.get(arr[1])); //
-		 * logger.trace("read line:"+arr[0]); line = reader.readLine();
+		 * System.out.println(Ndc2CuiMap.get(arr[1])); // logger.trace(
+		 * "read line:"+arr[0]); line = reader.readLine();
 		 * 
 		 * } } catch (Exception e) {
 		 * 
@@ -131,42 +131,48 @@ public class RxNormAdapter {
 		}
 	}
 
-	public void addRxCui(Medication m) throws JAXBException {
-	String ndcString = getNDCCodeString(m);
+	public void translateNdcToRxNorm(Medication m) throws JAXBException {
+		String ndcString = getNDCCodeString(m);
 		String rxCui = getRxCui(ndcString);
-		if(rxCui==null || rxCui.length()==0) return;
+		if (rxCui == null || rxCui.length() == 0)
+			return;
 		String rxCuiName = getRxCuiName(rxCui);
 
-		
-		if (getRxNormCoding(m) != null) {
-			logger.trace("already contains rxnorm code");
-			return;
+		if (getRxNormCoding(m) == null) {
+
+			Coding c = new Coding();
+			Uri uri = new Uri();
+			uri.setValue("http://www.nlm.nih.gov/research/umls/rxnorm");
+
+			c.setSystem(uri);
+
+			Code cd = new Code();
+			logger.trace("rxCui:" + rxCui);
+			cd.setValue(rxCui);
+			c.setCode(cd);
+			m.getCode().getCoding().add(c);
+		} else {
+			logger.trace("rxNormCode already present");
 		}
 
-		Coding c = new Coding();
-		Uri uri = new Uri();
-		uri.setValue("http://www.nlm.nih.gov/research/umls/rxnorm");
-
-		c.setSystem(uri);
-
-		Code cd = new Code();
-		logger.trace("rxCui:"+rxCui);
-		cd.setValue(rxCui);
-		c.setCode(cd);
-		if(rxCuiName!=null && rxCuiName.length()>0){
-			org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-			displayValue.setValue(rxCuiName);
-			c.setDisplay(displayValue);
-		}
-		m.getCode().getCoding().add(c);
-		
 		logger.trace(JAXBUtil.toXml(m));
+	}
+
+	
+	
+	
+	public void addRxNormDisplayName(Medication m) throws JAXBException {
+		Coding c = this.getRxNormCoding(m);
+		String rxCuiName = this.getRxCuiName(c.getCode().getValue());
+		org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
+		displayValue.setValue(rxCuiName);
+		c.setDisplay(displayValue);
 	}
 
 	public String getNDCCodeString(Medication m) throws JAXBException {
 		for (Coding coding : m.getCode().getCoding()) {
 			Uri s = coding.getSystem();
-			if (s.getValue().contains("NDC")) {
+			if (s.getValue().contains("http://hl7.org/fhir/sid/ndc")) {
 				Code code = coding.getCode();
 				if (code != null) {
 					return coding.getCode().getValue();
@@ -180,7 +186,7 @@ public class RxNormAdapter {
 	public Coding getRxNormCoding(Medication m) throws JAXBException {
 		for (Coding coding : m.getCode().getCoding()) {
 			Uri s = coding.getSystem();
-			if (s.getValue().contains("rxnorm")) {
+			if (s.getValue().equals("http://www.nlm.nih.gov/research/umls/rxnorm")) {
 				return coding;
 			}
 		}

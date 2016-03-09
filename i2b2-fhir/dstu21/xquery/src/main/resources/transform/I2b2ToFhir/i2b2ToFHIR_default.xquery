@@ -273,7 +273,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?, $timingS
  
   
   
-   <effectivedateTime value="{$sd}"/>
+   <effectiveDateTime value="{$sd}"/>
    
    <text>
     <status value="generated"/>

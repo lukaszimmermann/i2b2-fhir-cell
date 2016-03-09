@@ -71,7 +71,8 @@ public class FhirEnrich {
 		// Medication rxnorm
 		if (Medication.class.isInstance(r)) {
 			Medication m = Medication.class.cast(r);
-			rxNormAdapter.addRxCui(m);
+			rxNormAdapter.translateNdcToRxNorm(m);
+			rxNormAdapter.addRxNormDisplayName(m);
 
 		}
 
