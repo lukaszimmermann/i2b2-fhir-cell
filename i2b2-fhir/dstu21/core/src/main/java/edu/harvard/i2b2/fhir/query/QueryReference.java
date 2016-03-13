@@ -74,7 +74,7 @@ public class QueryReference extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml,Resource r,List<Resource> s) throws XQueryUtilException {
+	public boolean match(String resourceXml,Resource r,List<Resource> s, MetaResourceDb db) throws XQueryUtilException {
 		//logger.trace("xml:"+resourceXml);
 		String rawId;
 			rawId = getXmlFromParameterPath(resourceXml,  getParameterPath()+"/reference/@value/string()");

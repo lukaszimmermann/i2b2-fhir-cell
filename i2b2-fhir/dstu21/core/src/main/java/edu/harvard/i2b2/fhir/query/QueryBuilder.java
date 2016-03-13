@@ -130,7 +130,7 @@ public class QueryBuilder {
 		}
 
 		logger.trace("queryTypeStr:"+this.queryTypeStr);
-		if(this.queryTypeStr==null){this.queryTypeStr="";}
+		if(this.queryTypeStr==null){this.queryTypeStr="chain";}
 		switch (this.queryTypeStr.toLowerCase()) {
 		case "date":
 			q = new QueryDate(resourceClass, rawParameter, rawValue);
@@ -161,7 +161,7 @@ public class QueryBuilder {
 			logger.info("created query:" + (QueryId) q);
 
 			break;
-		default:
+		case "chain":
 			q = new QueryChained(resourceClass, rawParameter, rawValue);
 			logger.info("created query:" + (QueryChained) q);
 			break;

@@ -142,6 +142,31 @@ public class I2b2FhirWS {
 		}
 	}
 
+	// everything
+	@GET
+	@Path("Patient/{resourceId:[0-9a-zA-Z|-]+}/$everything")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response everythingWrapper(@PathParam("compartmentName") String compartmentName,
+			@PathParam("resourceId") String resourceId, @QueryParam("_include") List<String> includeResources,
+			@QueryParam("filterf") String filterf, @HeaderParam("accept") String acceptHeader,
+			@Context HttpHeaders headers, @Context HttpServletRequest request, @Context ServletContext servletContext)
+					throws IOException, URISyntaxException {
+
+		HttpSession session = request.getSession();
+		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
+		String basePath = fhirBase.toString().split("patient")[0];
+		String serverUriPath = HttpHelper.getServerUri(request, serverConfigs).toString();
+		// basePath=(new URI(basePath)).toString();
+		logger.trace("basePath:" + basePath);
+		String queryString = "patient=" + resourceId;
+		String requestUri = compartmentName;
+		String rawRequest = basePath + request.getRequestURI();
+		return getQueryResultCore("everything", basePath, requestUri, queryString, request.getRequestURL().toString(),
+				includeResources, filterf, acceptHeader, headers, session, serverUriPath);
+
+	}
+
 	// compartment
 	@GET
 	@Path("Patient/{resourceId:[0-9a-zA-Z|-]+}/{compartmentName:" + FhirUtil.RESOURCE_LIST_REGEX + "}")
@@ -156,14 +181,15 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString().split("patient")[0];
-		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
+		String serverUriPath = HttpHelper.getServerUri(request, serverConfigs).toString();
 		// basePath=(new URI(basePath)).toString();
 		logger.trace("basePath:" + basePath);
 		String queryString = "patient=" + resourceId;
 		String requestUri = compartmentName;
 		String rawRequest = basePath + request.getRequestURI();
 		return getQueryResultCore(compartmentName, basePath, requestUri, queryString,
-				request.getRequestURL().toString(), includeResources, filterf, acceptHeader, headers, session,serverUriPath);
+				request.getRequestURL().toString(), includeResources, filterf, acceptHeader, headers, session,
+				serverUriPath);
 
 	}
 
@@ -180,26 +206,26 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
 		String basePath = fhirBase.toString();
-		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
-		logger.trace("basePath:"+basePath);
+		String serverUriPath = HttpHelper.getServerUri(request, serverConfigs).toString();
+		logger.trace("basePath:" + basePath);
 
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI(), request.getQueryString(),
 				request.getRequestURI() + "?" + request.getQueryString(), includeResources, filterf, acceptHeader,
-				headers, session,serverUriPath);
+				headers, session, serverUriPath);
 
 	}
 
 	public Response getQueryResultCore(String resourceName, String basePath, String requestUri, String queryString,
 			String rawRequestUrl, List<String> includeResources, String filterf, String acceptHeader,
-			HttpHeaders headers, HttpSession session,String serverUriPath) throws IOException {
+			HttpHeaders headers, HttpSession session, String serverUriPath) throws IOException {
 
 		String msg = null;
 		String mediaType = null;
 		MetaResourceDb md = new MetaResourceDb();
 
 		logger.debug("got request parts: " + requestUri + "?" + queryString);
-		logger.trace("basePath:"+basePath);
-		
+		logger.trace("basePath:" + basePath);
+
 		try {
 			logger.info("Query string:" + queryString);
 
@@ -224,14 +250,16 @@ public class I2b2FhirWS {
 			s = I2b2Helper.parsePatientIdToFetchPDO(session, requestUri, queryString, c.getSimpleName(), service,
 					ppmMgr, null);
 
-			if (FhirHelper.isPatientDependentResource(c)) {
-				md.addBundle(s);
-			} else {
-				FhirHelper.loadTestResources(md);
-			}
-			logger.info("running filter...");
-			s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
+			if (!(c.equals("$everything"))) {
 
+				if (FhirHelper.isPatientDependentResource(c)) {
+					md.addBundle(s);
+				} else {
+					FhirHelper.loadTestResources(md);
+				}
+				logger.info("running filter...");
+				s = FhirUtil.getResourceBundle(md.getAll(c), basePath, "url");
+			}
 			logger.info("running sophisticated query for:" + queryString);
 
 			if (queryString != null) {
@@ -253,14 +281,14 @@ public class I2b2FhirWS {
 				List<Resource> list = md.getIncludedResources(c, FhirUtil.getResourceListFromBundle(s),
 						includeResources);
 				logger.trace("includedListsize:" + list.size());
-				logger.trace("basePath:"+basePath);
+				logger.trace("basePath:" + basePath);
 				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
 
 			BundleLink bl = new BundleLink();
 			Uri blUri = new Uri();
 
-			blUri.setValue(serverUriPath+requestUri+"?"+queryString);
+			blUri.setValue(serverUriPath + requestUri + "?" + queryString);
 			bl.setUrl(blUri);
 			org.hl7.fhir.String rs = new org.hl7.fhir.String();
 			rs.setValue("self");
@@ -305,12 +333,12 @@ public class I2b2FhirWS {
 					throws IOException, URISyntaxException {
 
 		URI fhirBase = HttpHelper.getBasePath(request, serverConfigs);
-		String serverUriPath=HttpHelper.getServerUri(request,serverConfigs).toString();
+		String serverUriPath = HttpHelper.getServerUri(request, serverConfigs).toString();
 		String basePath = fhirBase.toString();
 		HttpSession session = request.getSession();
 		return getQueryResultCore(resourceName, basePath, request.getRequestURI().replace("/_search", ""),
 				request.getQueryString(), request.getRequestURI() + "?" + request.getQueryString(), includeResources,
-				filterf, acceptHeader, headers, session,serverUriPath);
+				filterf, acceptHeader, headers, session, serverUriPath);
 	}
 
 	// http://localhost:8080/fhir-server-api-mvn/resources/i2b2/MedicationStatement/1000000005-1
@@ -435,8 +463,9 @@ public class I2b2FhirWS {
 	public Response resetCache() throws IOException {
 		service.resetCache();
 		ppmMgr.resetCache();
-	return Response.ok().entity("Cache has been reset").build();
+		return Response.ok().entity("Cache has been reset").build();
 	}
+
 	@GET
 	@Path("smartstyleuri")
 	public Response smartStyleUri() throws IOException {
@@ -526,7 +555,7 @@ public class I2b2FhirWS {
 		HttpSession session = request.getSession();
 		String mediaType;
 		Parameters ps = null;
-		String resourceTxt=null;
+		String resourceTxt = null;
 		Resource r = null;
 		String outTxt = "-";
 		logger.trace("will run validator");
@@ -545,46 +574,46 @@ public class I2b2FhirWS {
 				}
 			} catch (ClassCastException e) {
 			}
-			
-			if (ps == null) {
-				resourceTxt=inTxt;
-				try{
-					r = JAXBUtil.fromXml(resourceTxt, resourceClass);
-				}catch(JAXBException e){
-					
-					Throwable e2 = e.getLinkedException();
-					throw new FhirServerException(e2.getMessage(),e2);
-				}
-				logger.trace("could transform to" + resourceClass.getSimpleName() + "\n" + r.getClass().getSimpleName());
 
-			}else{
+			if (ps == null) {
+				resourceTxt = inTxt;
+				try {
+					r = JAXBUtil.fromXml(resourceTxt, resourceClass);
+				} catch (JAXBException e) {
+
+					Throwable e2 = e.getLinkedException();
+					throw new FhirServerException(e2.getMessage(), e2);
+				}
+				logger.trace(
+						"could transform to" + resourceClass.getSimpleName() + "\n" + r.getClass().getSimpleName());
+
+			} else {
 				for (ParametersParameter p : ps.getParameter()) {
 					logger.trace("getting pname:" + p.getName().getValue());
-					if(p.getName().getValue().equals("resource")){
-						r=FhirUtil.getResourceFromContainer(p.getResource());
-						resourceTxt=JAXBUtil.toXml(r);
+					if (p.getName().getValue().equals("resource")) {
+						r = FhirUtil.getResourceFromContainer(p.getResource());
+						resourceTxt = JAXBUtil.toXml(r);
 					}
-					
+
 				}
-				if(r==null) {
-					String msg = "Resource was not specified correctly in the Parameters" ;
+				if (r == null) {
+					String msg = "Resource was not specified correctly in the Parameters";
 					logger.warn(msg);
 					throw new FhirServerException(msg);
 				}
 			}
-			
+
 			if (!r.getClass().getSimpleName().equals(resourceClass.getSimpleName())) {
 				String msg = "The input is not an instance of class:" + resourceClass;
 				logger.warn(msg);
 				throw new FhirServerException(msg);
 			}
 
-
 			outTxt = Validate.runValidate(resourceTxt, profile);
 		} catch (Exception e) {
-			logger.error(e.getLocalizedMessage(),e);
-			return generateResponse(acceptHeader, request, FhirHelper.generateOperationOutcome(e.toString(), IssueTypeList.EXCEPTION,
-					IssueSeverityList.FATAL));
+			logger.error(e.getLocalizedMessage(), e);
+			return generateResponse(acceptHeader, request, FhirHelper.generateOperationOutcome(e.toString(),
+					IssueTypeList.EXCEPTION, IssueSeverityList.FATAL));
 		}
 
 		Resource rOut = JAXBUtil.fromXml(outTxt, OperationOutcome.class);
@@ -611,41 +640,43 @@ public class I2b2FhirWS {
 		return generateResponse(acceptHeader, request, outR);
 
 	}
-	
-	//GET [base]/ValueSet/$lookup?system=http://loinc.org&code=1963-8
-	//GET ValueSet/$lookup?system=http://hl7.org/fhir/sid/icd-9-cm&code=174.9
-	//GET ValueSet/$lookup?system=http://www.nlm.nih.gov/research/umls/rxnorm&code=1191
-	
+
+	// GET [base]/ValueSet/$lookup?system=http://loinc.org&code=1963-8
+	// GET ValueSet/$lookup?system=http://hl7.org/fhir/sid/icd-9-cm&code=174.9
+	// GET
+	// ValueSet/$lookup?system=http://www.nlm.nih.gov/research/umls/rxnorm&code=1191
+
 	@GET
 	@Path("ValueSet/$lookup")
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
 			"application/json+fhir" })
-	public Response valueSetLookup(
-			@QueryParam("code") String code,
-			@QueryParam("system") String system,
+	public Response valueSetLookup(@QueryParam("code") String code, @QueryParam("system") String system,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request)
 					throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException {
-		Resource r=null;
-		if(system.equals("http://loinc.org")){
-			LoincMapper loincMapper=new LoincMapper();
-			String display=loincMapper.getLoincName(code);
-			if(display!=null)
-			r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
-		}else if(system.equals("http://hl7.org/fhir/sid/icd-9-cm")){
-			Icd9Mapper icd9Mapper=new Icd9Mapper();
-			String display=icd9Mapper.getIcd9Name(code);
-			if(display!=null)r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
-		}else if(system.equals("http://www.nlm.nih.gov/research/umls/rxnorm")){
-			NdcToRxNormMapper rxMapper=new NdcToRxNormMapper();
-			String display=rxMapper.getRxCuiName(code);
-			if(display!=null)r=FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
-		}else{
-			r=FhirHelper.generateOperationOutcome("lookup not implemented for code system:" +system ,
+		Resource r = null;
+		if (system.equals("http://loinc.org")) {
+			LoincMapper loincMapper = new LoincMapper();
+			String display = loincMapper.getLoincName(code);
+			if (display != null)
+				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		} else if (system.equals("http://hl7.org/fhir/sid/icd-9-cm")) {
+			Icd9Mapper icd9Mapper = new Icd9Mapper();
+			String display = icd9Mapper.getIcd9Name(code);
+			if (display != null)
+				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		} else if (system.equals("http://www.nlm.nih.gov/research/umls/rxnorm")) {
+			NdcToRxNormMapper rxMapper = new NdcToRxNormMapper();
+			String display = rxMapper.getRxCuiName(code);
+			if (display != null)
+				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
+		} else {
+			r = FhirHelper.generateOperationOutcome("lookup not implemented for code system:" + system,
 					IssueTypeList.EXCEPTION, IssueSeverityList.ERROR);
 		}
-		if(r==null) r=FhirHelper.generateOperationOutcome("code:"+code+" is invalid for system:" +system ,
-				IssueTypeList.NOT_FOUND, IssueSeverityList.ERROR);
+		if (r == null)
+			r = FhirHelper.generateOperationOutcome("code:" + code + " is invalid for system:" + system,
+					IssueTypeList.NOT_FOUND, IssueSeverityList.ERROR);
 		return generateResponse(acceptHeader, request, r);
 
 	}
@@ -670,9 +701,6 @@ public class I2b2FhirWS {
 		return Response.ok().type(mediaType).header("session_id", session.getId()).entity(outTxt).build();
 
 	}
-	
-	
-		
 
 	// [base]/$meta
 	// GET /fhir/Patient/$meta

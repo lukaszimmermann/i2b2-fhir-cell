@@ -84,7 +84,7 @@ public class QueryIdTest {
 		String url="Patient?_id=example";
 		qe = new QueryEngine(url);
 		logger.trace("qe:"+qe);
-		List<Resource> resSet=qe.search(s);
+		List<Resource> resSet=qe.search(s,db);
 		//logger.info("res:"+JAXBUtil.toXml(resSet));	
 		assertTrue(resSet.size()>0);
 		

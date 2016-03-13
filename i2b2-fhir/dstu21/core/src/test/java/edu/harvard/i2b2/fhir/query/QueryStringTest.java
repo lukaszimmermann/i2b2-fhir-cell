@@ -67,10 +67,10 @@ public class QueryStringTest {
 		q = qb.setResourceClass(Patient.class).setRawParameter("name")
 				.setRawValue("pieter").build();
 		// logger.trace("RES:"+q.match(xmlPatient));
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		q = qb.setResourceClass(Patient.class).setRawParameter("name:exact")
 				.setRawValue("Pieter").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 
 		try {
 			q = qb.setResourceClass(Patient.class)
@@ -82,15 +82,15 @@ public class QueryStringTest {
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family")
 				.setRawValue(" van  de").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 
 		q = qb.setResourceClass(Patient.class).setRawParameter("family:exact")
 				.setRawValue("van de Heuvel1").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 
 	}
 	

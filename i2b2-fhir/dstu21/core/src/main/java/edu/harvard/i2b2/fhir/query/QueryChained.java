@@ -65,92 +65,74 @@ public class QueryChained extends Query {
 	String param;
 	Class baseResourceClass;
 	QueryEngine subQe;
-	String subClassName;
+	String subUrl;
+	List<Object> chainObjList;
 
 	public QueryChained(Class resourceClass, String param, String value)
-			throws QueryParameterException, QueryValueException,
-			FhirCoreException, QueryException {
+			throws QueryParameterException, QueryValueException, FhirCoreException, QueryException {
 		super(resourceClass, param, value);
 	}
 
 	@Override
-	protected void init() throws QueryValueException, QueryParameterException,
-			QueryException {
+	protected void init() throws QueryValueException, QueryParameterException, QueryException {
 		this.type = QueryType.CHAINED;
-		Pattern p = Pattern
-				.compile("^([^\\.]+)\\.*(.*)\\.([^\\.]+)\\.([^\\.]+)$");
-		Matcher m = p.matcher(this.getRawParameter());
-		if (m.matches()) {
-			this.className = m.group(1);
-			this.path = m.group(2) + "." + m.group(3);
-			this.path = this.path.replaceAll("^\\.", "");
-			this.subClassName = m.group(3);
-			this.param = m.group(4);
-			baseResourceClass = FhirUtil.getResourceClass(this.className);
-		} else {
-			throw new QueryParameterException(
-					"Parameter does not have form ().().()+"
-							+ this.getRawParameter());
-		}
-		try {
-			String subUrl = this.subClassName + "?" + this.param + "="
-					+ this.getRawValue();
-			logger.trace("subUrl:" + subUrl);
-			subQe = new QueryEngine(subUrl);
-			logger.trace("subQuery:" + subQe);
-		} catch (FhirCoreException e) {
-			throw new QueryException(e);
-		}
+
 	}
 
 	@Override
-	public boolean match(String resourceXml, Resource r, List<Resource> s)
+	public boolean match(String resourceXml, Resource r, List<Resource> s, MetaResourceDb db)
 			throws XQueryUtilException, QueryException {
-		if (!this.baseResourceClass.isInstance(r))
+		if (!this.getResourceClass().isInstance(r))
 			return false;
+		logger.trace("id:" + r.getId().getValue());// +"\nthis.baseResourceClass:"+this.baseResourceClass.getSimpleName());
+		List<Resource> allResInDb = db.getAll();
 
-		String actualValue;
-		List<Object> o = null;
-		try {
-			o = FhirUtil.getChildrenThruChain(r, path, s);
-		} catch (NoSuchMethodException e) {
-			logger.error("", e);
-			throw new QueryException("", e);
-		} catch (SecurityException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		boolean matchF = false;
-		for (Object child : o) {
-			
-			Reference rr = Reference.class.cast(child);
-			Resource r1 = FhirUtil.findResourceById(rr.getReference()
-					.getValue(), s);
+		Pattern p = Pattern
+				// compile("^([^\\.]+)(:[^\\.]+)*\\.([^\\.]+)$");
+				.compile("([^\\.]+)\\.([^\\.]+)$");
+		// subject:Patient.birthDate
+		Matcher m = p.matcher(this.getRawParameter());
+		if (m.matches()) {
+			String chainElemName = m.group(1);
+			subUrl = m.group(2);
+
 			try {
-				logger.trace(">>>>>>>>>runing:"+r1.getId());
-				if (matchF == false
-						&& (subQe.search(r1).size() > 0))
-					matchF = true;
-			} catch (FhirCoreException | JAXBException e) {
-				throw new QueryException(e);
+				logger.trace("chainElemName:" + chainElemName + ", subUrl:" + subUrl + ", rawParam:"
+						+ this.getRawParameter());
+				chainObjList = FhirUtil.getChildrenThruChain(r, chainElemName, allResInDb);
+			} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				logger.error(e.getMessage(), e);
+				throw new XQueryUtilException(e);
 			}
+
+		}
+
+		boolean matchF = false;
+		for (Object child : chainObjList) {
+			logger.trace("child:" + child.toString());
+			Reference rr = Reference.class.cast(child);
+			logger.trace(">>>>searching for :" + rr.getReference().getValue());
+			String chainClassName = rr.getReference().getValue().split("/")[0];
+			String chainClassId = rr.getReference().getValue().split("/")[1];
+			Class chainClass = FhirUtil.getResourceClass(chainClassName);
+
+			Resource r1 = db.getParticularResource(chainClass, chainClassId);
+			logger.trace(">>>>got id :" + r1.getId().getValue());
+			try {
+				subQe = new QueryEngine(chainClassName + "?" + subUrl + "=" + this.getRawValue());
+				if (matchF == false && (subQe.search(r1, db).size() > 0)) {
+					matchF = true;
+					continue;
+				}
+			} catch (QueryParameterException | QueryValueException | FhirCoreException | JAXBException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
 		return matchF;
-		/*
-		 * if(Resource.class.isInstance(o)){ Resource r1=Resource.class.cast(o);
-		 * actualValue=r1.getId(); }else if(String.class.isInstance(o)){
-		 * actualValue=String.class.cast(o); }else{
-		 * logger.trace("class:"+o.getClass()); throw new
-		 * QueryException("Chained query path may be invalid:+"+this.path); }
-		 * 
-		 * logger.trace("actualValue:"+actualValue); if
-		 * (actualValue.equals(this.getRawValue())) {
-		 * logger.info("actualValue:"+actualValue+" matched:" +
-		 * this.getRawParameter() + "=" + this.getRawValue()); return true; }
-		 * 
-		 * return false;
-		 */
+
 	}
 
 	@Override
@@ -165,9 +147,7 @@ public class QueryChained extends Query {
 
 	@Override
 	public String toString() {
-		return "QueryChained " + super.toString() + ", className=" + className
-				+ ", subClassName=" + this.subClassName + ", path=" + path
-				+ "]";
+		return "QueryChained " + super.toString() + ", className=" + className + ", path=" + path + "]";
 	}
 
 }

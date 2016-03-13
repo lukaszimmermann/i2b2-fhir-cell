@@ -75,7 +75,6 @@ public class QueryEngine {
 		}
 		queryUrl=queryUrl.replace( "PLUS","+").replace("MINUS","-");
 		logger.debug("queryUrl:" + queryUrl);
-		this.db = db;
 		queryList = new ArrayList<Query>();
 		this.queryUrl = queryUrl;
 		String fhirClassExp = "("
@@ -146,7 +145,7 @@ public class QueryEngine {
 		}
 	}
 
-	public List<Resource> search(List<Resource> s) throws FhirCoreException,
+	public List<Resource> search(List<Resource> s,MetaResourceDb db) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
 		List<Resource> resultS = new ArrayList<Resource>();
 		logger.trace("running query");
@@ -178,7 +177,7 @@ public class QueryEngine {
 			for (Query q : this.queryList) {
 				
 				//if match fails on a query skip other queries
-				if (matchF == true && (q.match(resourceXml,r,s)==false)){
+				if (matchF == true && (q.match(resourceXml,r,s,db)==false)){
 						matchF = false;
 						
 				}
@@ -200,12 +199,12 @@ public class QueryEngine {
 				+ rawQuery + "]\n";
 	}
 
-	public List<Resource> search(Resource r1) throws FhirCoreException,
+	public List<Resource> search(Resource r1,MetaResourceDb db) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
 		List<Resource> s1 = new ArrayList<Resource>();
 			logger.trace("running subquery");
 			s1.add(r1);
-			return search(s1);
+			return search(s1,db);
 	}
 
 }

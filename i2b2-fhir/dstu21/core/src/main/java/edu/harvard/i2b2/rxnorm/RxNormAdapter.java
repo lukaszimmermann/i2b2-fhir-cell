@@ -42,6 +42,7 @@ import java.util.HashMap;
 
 import javax.xml.bind.JAXBException;
 
+import org.hl7.fhir.Boolean;
 import org.hl7.fhir.Code;
 import org.hl7.fhir.Coding;
 import org.hl7.fhir.Medication;
@@ -133,9 +134,13 @@ public class RxNormAdapter {
 
 	public void translateNdcToRxNorm(Medication m) throws JAXBException {
 		String ndcString = getNDCCodeString(m);
+		if (ndcString == null || ndcString.length() == 0)
+			return;
+
 		String rxCui = getRxCui(ndcString);
 		if (rxCui == null || rxCui.length() == 0)
 			return;
+
 		String rxCuiName = getRxCuiName(rxCui);
 
 		if (getRxNormCoding(m) == null) {
@@ -150,6 +155,9 @@ public class RxNormAdapter {
 			logger.trace("rxCui:" + rxCui);
 			cd.setValue(rxCui);
 			c.setCode(cd);
+			Boolean bo=new Boolean();
+			bo.setValue(false);
+			c.setUserSelected(bo);
 			m.getCode().getCoding().add(c);
 		} else {
 			logger.trace("rxNormCode already present");
@@ -158,9 +166,6 @@ public class RxNormAdapter {
 		logger.trace(JAXBUtil.toXml(m));
 	}
 
-	
-	
-	
 	public void addRxNormDisplayName(Medication m) throws JAXBException {
 		Coding c = this.getRxNormCoding(m);
 		String rxCuiName = this.getRxCuiName(c.getCode().getValue());
