@@ -1,4 +1,5 @@
-package edu.harvard.i2b2.fhir.query;
+package edu.harvard.i2b2.fhir.query.nonx;
+
 
 import static org.junit.Assert.*;
 
@@ -9,23 +10,20 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.hl7.fhir.Bundle;
-import org.hl7.fhir.MedicationStatement;
-import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.MetaResourceDb;
 import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 
-public class MiscTestCases {
-	static Logger logger = LoggerFactory.getLogger(MiscTestCases.class);
+public class QueryTokenTest {
+	static Logger logger = LoggerFactory.getLogger(QueryTokenTest.class);
 
 	QueryBuilder qb;
 	Query q;
@@ -45,18 +43,16 @@ public class MiscTestCases {
 	}
 
 	@Test
-	public void testChain() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException,
+	public void testToken() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException,
 			XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException {
 		
-		  String url =
-		 //"Condition?code:below=http://snomed.info/sct|195967001&patient.birthdate=gt2006&_include=Condition:patient";
-		 //"Observation?subject.birthdate=gt1900";
-		"Condition?code=http://snomed.info/sct|195967001&patient.birthdate=gt1970&_include=Condition:patient";
-			  
+		  String url ="Patient?gender=male";
+		 	  
 					  
-		  //qe = new QueryEngine(url); logger.trace("qe:" + qe); 
+		  qe = new QueryEngine(url); logger.trace("qe:" + qe); 
 		  List<Resource> resSet = qe.search(s,db);
 		 
 	}
+
 }

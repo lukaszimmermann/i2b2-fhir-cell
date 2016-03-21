@@ -1,122 +1,131 @@
 <Bundle xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xmlns="http://hl7.org/fhir">
- <entry>
- <resource>
-            <Patient>
-                <id value="1000000005"/>
-                <meta>
-                    <versionId value="1"/>
-                    <lastUpdated value="2010-11-04T10:43:00Z"/>
-                </meta>
-                <text>
-                    <status value="generated"/>
-                  
-                </text>
-                <identifier>
-                    <use value="usual"/>
-                    <type>
-                        <coding>
-                            <system value="http://hl7.org/fhir/v2/0203"/>
-                            <code value="MR"/>
-                        </coding>
-                    </type>
-                    <system value="http://fhir.i2b2.org"/>
-                    <value value="1000000005"/>
-                    <assigner>
-                        <display value="i2b2"/>
-                    </assigner>
-                </identifier>
-                <active value="true"/>
-                <name>
-                    <use value="anonymous"/>
-                    <family value="anonymous"/>
-                    <given value="anonymous"/>
-                </name>
-                <gender value="female"/>
-                <birthDate value="1973-06-25">
-                    <extension url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
-                        <valueDateTime value="1973-06-25T00:00:00Z"/>
-                    </extension>
-                </birthDate>
-                <deceasedBoolean value="false"/>
-                <managingOrganization>
-                    <reference value="Organization/1"/>
-                </managingOrganization>
-            </Patient>
-        </resource>
-    </entry>
-  <entry>
-    <resource>
-      <Observation xmlns:ns2="http://www.w3.org/1999/xhtml">
-        <id value="1000000005-1"/>
-        <text>
-          <status value="generated"/>
-          <div xmlns="http://www.w3.org/1999/xhtml">
-            <p>name:</p>
-            <p>code:15199-3</p>
-          </div>
-        </text>
-        <code>
-          <coding>
-            <system value="http://loinc.org"/>
-            <code value="15199-3"/>
-            <primary value="true"/>
-          </coding>
-        </code>
-        <effectiveDateTime value="1997-07-22T00:00:00+05:00"/>
-        <valueCodeableConcept>
-          <coding>
-            <system value="http://i2b2.org"/>
-            <code value="+"/>
-            <display value="+"/>
-          </coding>
-        </valueCodeableConcept>
-        <!--   the mandatory quality flags:   -->
-        <status value="final"/>
-        <reliability value="ok"/>
-        <subject>
-          <reference value="Patient/1000000005"/>
-        </subject>
-      </Observation>
-    </resource>
-  </entry>
-  <entry xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
-  <resource>
-    <Condition xmlns:ns2="http://www.w3.org/1999/xhtml">
-      <id value="1000000005-1"/>
-      <status value="generated"/>
-      <text>
-        <status value="generated"/>
-        <div xmlns="http://www.w3.org/1999/xhtml">
-          <p>Name:</p>
-          <p>Code:195967001</p>
-        </div>
-      </text>
-      <patient>
-        <reference value="Patient/1000000005"/>
-      </patient>
-      <onsetDateTime value="2002-11-20T00:00:00+05:00"/>
-      <verificationStatus value="confirmed"/>
-      <code>
-        <coding>
-          <system value="http://snomed.info/sct"/>
-          <code value="195967001"/>
-        </coding>/</code>
-      <category>
-        <coding>
-          <system value="http://hl7.org/fhir/condition-category"/>
-          <code value="diagnosis"/>
-          <display value="Diagnosis"/>
-        </coding>
-      </category>
-      <severity>
-        <coding>
-          <system value="http://snomed.info/sct"/>
-          <code value="6736007"/>
-          <display value="Moderate"/>
-        </coding>
-      </severity>
-      <clinicalStatus value="active"/>
-    </Condition>
-  </resource>
-</entry>
+	<entry>
+		<resource>
+			<Patient>
+				<id value="1000000005" />
+				<meta>
+					<versionId value="1" />
+					<lastUpdated value="2010-11-04T10:43:00Z" />
+				</meta>
+				<text>
+					<status value="generated" />
+
+				</text>
+				<identifier>
+					<use value="usual" />
+					<type>
+						<coding>
+							<system value="http://hl7.org/fhir/v2/0203" />
+							<code value="MR" />
+						</coding>
+					</type>
+					<system value="http://fhir.i2b2.org" />
+					<value value="1000000005" />
+					<assigner>
+						<display value="i2b2" />
+					</assigner>
+				</identifier>
+				<active value="true" />
+				<name>
+					<use value="anonymous" />
+					<family value="anonymous" />
+					<given value="anonymous" />
+				</name>
+				<gender value="female" />
+				<birthDate value="1973-06-25">
+					<extension
+						url="http://hl7.org/fhir/StructureDefinition/patient-birthTime">
+						<valueDateTime value="1973-06-25T00:00:00Z" />
+					</extension>
+				</birthDate>
+				<deceasedBoolean value="false" />
+				<managingOrganization>
+					<reference value="Organization/1" />
+				</managingOrganization>
+			</Patient>
+		</resource>
+	</entry>
+	<entry>
+		<resource>
+			<Observation xmlns:ns2="http://www.w3.org/1999/xhtml">
+				<id value="1000000005-1" />
+				<text>
+					<status value="generated" />
+					<div xmlns="http://www.w3.org/1999/xhtml">
+						<p>name:</p>
+						<p>code:15199-3</p>
+					</div>
+				</text>
+				<code>
+					<coding>
+						<system value="http://loinc.org" />
+						<code value="15199-3" />
+						<primary value="true" />
+					</coding>
+				</code>
+				<effectiveDateTime value="1997-07-22T00:00:00+05:00" />
+				<valueCodeableConcept>
+					<coding>
+						<system value="http://i2b2.org" />
+						<code value="+" />
+						<display value="+" />
+					</coding>
+				</valueCodeableConcept>
+				<!-- the mandatory quality flags: -->
+				<status value="final" />
+				<reliability value="ok" />
+				<subject>
+					<reference value="Patient/1000000005" />
+				</subject>
+			</Observation>
+		</resource>
+	</entry>
+	<entry xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fhir/core">
+		<resource>
+			<Condition xmlns:ns2="http://www.w3.org/1999/xhtml">
+				<id value="1000000005-1" />
+				<status value="generated" />
+				<text>
+					<status value="generated" />
+					<div xmlns="http://www.w3.org/1999/xhtml">
+						<p>Name:</p>
+						<p>Code:195967001</p>
+					</div>
+				</text>
+				<patient>
+					<reference value="Patient/1000000005" />
+				</patient>
+				<onsetDateTime value="2002-11-20T00:00:00+05:00" />
+				<verificationStatus value="confirmed" />
+				<code>
+					<coding>
+						<system value="http://snomed.info/sct" />
+						<code value="195967001" />
+					</coding>
+					/
+				</code>
+				<category>
+					<coding>
+						<system value="http://hl7.org/fhir/condition-category" />
+						<code value="diagnosis" />
+						<display value="Diagnosis" />
+					</coding>
+				</category>
+				<severity>
+					<coding>
+						<system value="http://snomed.info/sct" />
+						<code value="6736007" />
+						<display value="Moderate" />
+					</coding>
+				</severity>
+				<clinicalStatus value="active" />
+			</Condition>
+		</resource>
+	</entry>
+
+	<link>
+		<relation value="self" />
+		<url value="http://example.org/Patient?name=peter" />
+	</link>
+
 </Bundle>

@@ -95,10 +95,10 @@ public class DSSEvaluate {
 		// run evaluate on input to generate guidance response
 		// check that all required data is provided before running evaluate
 
-		// cycle thru input parameters and check if all are present
+		// cycle thru input parameters of Module and check if all are present in the request
 		List<DecisionSupportServiceModuleParameter> notFoundList = new ArrayList<>();
 		for (DecisionSupportServiceModuleParameter p : d.getParameter()) {
-			if (!p.getUse().getValue().equals("in"))
+			if (!(p.getUse().getValue().equals("in")))
 				continue;// ignoring out put parameters
 			logger.trace("required param:" + p.getName().getValue() + " ->" + p.getType().getValue());
 
@@ -134,7 +134,7 @@ public class DSSEvaluate {
 		}
 
 		return genGuidanceResponse(reqParams.getId().getValue(), d.getId().getValue(),
-				GuidanceResponseStatusList.SUCCESS, null);
+				GuidanceResponseStatusList.SUCCESS, oo);
 		/*
 		 * oo = FhirHelper.generateOperationOutcome("Running evaluate",
 		 * IssueTypeList.INFORMATIONAL, IssueSeverityList.INFORMATION); return
@@ -151,7 +151,8 @@ public class DSSEvaluate {
 	}
 
 	static private GuidanceResponse genGuidanceResponse(String requestId, String moduleId,
-			GuidanceResponseStatusList statusValue, OperationOutcome oo) throws JAXBException {
+			GuidanceResponseStatusList statusValue, OperationOutcome oo//,Action a
+			) throws JAXBException {
 
 		GuidanceResponse g = new GuidanceResponse();
 		g.setRequestId(FhirUtil.generateFhirString(requestId));

@@ -49,7 +49,8 @@ public class RxNormAdapterTest {
 	public void test() throws IOException, JAXBException {
 		assertEquals( "104097",rA.getRxCui("00002314530"));
 		Medication  m=JAXBUtil.fromXml(Utils.getFile("example/fhir/Medication.xml"), Medication.class);
-		rA.addRxCui(m);
+		//rA.addRxCui(m);
+		rA.addRxCui();
 		
 		logger.trace(rA.getRxCuiName("753482"));
 	}

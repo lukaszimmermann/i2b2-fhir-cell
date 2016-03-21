@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -89,6 +91,7 @@ import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
 import edu.harvard.i2b2.fhir.server.ServerConfigs;
+import edu.harvard.i2b2.fhir.server.ws.operation.CdsHook;
 import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
 import edu.harvard.i2b2.fhir.server.ws.operation.Validate;
 import edu.harvard.i2b2.loinc.LoincMapper;
@@ -199,6 +202,7 @@ public class I2b2FhirWS {
 			"application/json+fhir" })
 	public Response getQueryResult(@PathParam("resourceName") String resourceName,
 			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
+			@QueryParam("_include") List<String> pageNum,
 			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
 			@Context HttpServletRequest request, @Context ServletContext servletContext)
 					throws IOException, URISyntaxException {
@@ -221,6 +225,7 @@ public class I2b2FhirWS {
 
 		String msg = null;
 		String mediaType = null;
+		
 		MetaResourceDb md = new MetaResourceDb();
 
 		logger.debug("got request parts: " + requestUri + "?" + queryString);
@@ -285,18 +290,22 @@ public class I2b2FhirWS {
 				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
 
-			BundleLink bl = new BundleLink();
-			Uri blUri = new Uri();
-
-			blUri.setValue(serverUriPath + requestUri + "?" + queryString);
-			bl.setUrl(blUri);
-			org.hl7.fhir.String rs = new org.hl7.fhir.String();
-			rs.setValue("self");
-			bl.setRelation(rs);
-			s.getLink().add(bl);
+			s.getLink().add(FhirUtil.createBundleLink("self",serverUriPath + requestUri + "?" + queryString.replaceAll("&page=\\d+","")));
 
 			// logger.info("getting bundle string..."+JAXBUtil.toXml(s));
 			// logger.info("size of db:" + md.getSize());
+			
+			int pageNum=0;
+			Pattern p = Pattern.compile(".*page=(\\d+).*");
+			Matcher m = p.matcher(queryString);
+			if (m.matches()) {
+				String pageNumStr=m.group(1);
+				logger.info("pageNum="+pageNumStr);
+				pageNum = Integer.parseInt(pageNumStr);
+			}
+			
+			if(pageNum>0) s=FhirUtil.pageBundle(s, 20, pageNum);
+			
 			logger.info("returning response..." + JAXBUtil.toXml(s));
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.bundleToJsonString(s);
@@ -641,6 +650,30 @@ public class I2b2FhirWS {
 
 	}
 
+	@POST
+	@Path("$cds-hook")
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, "application/xml+fhir",
+			"application/json+fhir" })
+	public Response cdsHook(@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
+			@Context HttpServletRequest request, String inTxt) {
+		try {
+			Resource outR = null;
+			logger.trace("called cds-hook");
+			Parameters parameters = JAXBUtil.fromXml(inTxt, Parameters.class);
+			if (parameters != null) {
+				outR = (new CdsHook(parameters)).execute();
+			} else {
+				logger.trace("called cds-hook with null parameters");
+				outR = FhirHelper.generateOperationOutcome("cds not (yet) implemented for ", IssueTypeList.EXCEPTION,
+						IssueSeverityList.ERROR);
+			}
+			return generateResponse(acceptHeader, request, outR);
+		} catch (Exception e) {
+			return generateFatalResponse(e, request);
+		}
+
+	}
+
 	// GET [base]/ValueSet/$lookup?system=http://loinc.org&code=1963-8
 	// GET ValueSet/$lookup?system=http://hl7.org/fhir/sid/icd-9-cm&code=174.9
 	// GET
@@ -702,6 +735,14 @@ public class I2b2FhirWS {
 
 	}
 
+	public Response generateFatalResponse(Exception e, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		return Response
+				.ok(FhirHelper.generateOperationOutcome(e.getMessage(), IssueTypeList.EXCEPTION,
+						IssueSeverityList.FATAL))
+				.header("xreason", e.getMessage()).header("session_id", session.getId()).build();
+
+	}
 	// [base]/$meta
 	// GET /fhir/Patient/$meta
 	// GET /fhir/Patient/id/$meta

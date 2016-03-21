@@ -29,7 +29,7 @@
  * Contributors:
  * 		Kavishwar Wagholikar (kavi)
  */
-package edu.harvard.i2b2.fhir.query;
+package edu.harvard.i2b2.fhir.query.nonx;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -103,9 +103,8 @@ public class QueryEngine {
 				String prefix = m.group(1);
 				suffix = m.group(2);
 				if(suffix.length()>0) suffix=suffix.substring(1);//to drop preceding&
-				if ((!prefix.matches("^_id.*") && prefix.matches("^_.*"))||
-						prefix.matches("^page.*")) {
-					logger.info("excluding paramerters (begining with _: except _id:) or page"
+				if (!prefix.matches("^_id.*") && prefix.matches("^_.*")) {
+					logger.info("excluding paramerters begining with _: except _id:"
 							+ prefix);
 				} else {
 					Query q=null ;
@@ -133,7 +132,7 @@ public class QueryEngine {
 		queryList = new ArrayList<Query>();
 
 		for (String k1 : queryParamMap.keySet()) {
-			if (k1.matches("^_") || k1.matches("page")) {
+			if (k1.matches("^_")) {
 				continue;
 			}
 			logger.info("queryParamMap:" + queryParamMap.toString());
