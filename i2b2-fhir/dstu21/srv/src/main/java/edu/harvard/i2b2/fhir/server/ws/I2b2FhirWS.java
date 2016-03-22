@@ -202,9 +202,8 @@ public class I2b2FhirWS {
 			"application/json+fhir" })
 	public Response getQueryResult(@PathParam("resourceName") String resourceName,
 			@QueryParam("_include") List<String> includeResources, @QueryParam("filterf") String filterf,
-			@QueryParam("_include") List<String> pageNum,
-			@HeaderParam("accept") String acceptHeader, @Context HttpHeaders headers,
-			@Context HttpServletRequest request, @Context ServletContext servletContext)
+			@QueryParam("_include") List<String> pageNum, @HeaderParam("accept") String acceptHeader,
+			@Context HttpHeaders headers, @Context HttpServletRequest request, @Context ServletContext servletContext)
 					throws IOException, URISyntaxException {
 
 		HttpSession session = request.getSession();
@@ -225,7 +224,8 @@ public class I2b2FhirWS {
 
 		String msg = null;
 		String mediaType = null;
-		
+		Bundle s = null;
+
 		MetaResourceDb md = new MetaResourceDb();
 
 		logger.debug("got request parts: " + requestUri + "?" + queryString);
@@ -244,7 +244,7 @@ public class I2b2FhirWS {
 			// md = I2b2Helper.getMetaResourceDb(session, sbb);
 
 			Class c = FhirUtil.getResourceClass(resourceName);
-			Bundle s = null;
+
 			logger.trace("rawRequestUrl:" + rawRequestUrl);
 			// String basePath =rawRequestUrl.split(resourceName)[0];
 			logger.debug("session id:" + session.getId());
@@ -290,22 +290,24 @@ public class I2b2FhirWS {
 				s = FhirUtil.getResourceBundle(list, basePath, "url");
 			}
 
-			s.getLink().add(FhirUtil.createBundleLink("self",serverUriPath + requestUri + "?" + queryString.replaceAll("&page=\\d+","")));
+			s.getLink().add(FhirUtil.createBundleLink("self", serverUriPath + requestUri + "?"
+					+ ((queryString != null) ? queryString.replaceAll("&page=\\d+", "") : "")));
 
 			// logger.info("getting bundle string..."+JAXBUtil.toXml(s));
 			// logger.info("size of db:" + md.getSize());
-			
-			int pageNum=1;
-			Pattern p = Pattern.compile(".*page=(\\d+).*");
-			Matcher m = p.matcher(queryString);
-			if (m.matches()) {
-				String pageNumStr=m.group(1);
-				logger.info("pageNum="+pageNumStr);
-				pageNum = Integer.parseInt(pageNumStr);
+
+			int pageNum = 1;
+			if (queryString != null) {
+				Pattern p = Pattern.compile(".*page=(\\d+).*");
+				Matcher m = p.matcher(queryString);
+				if (m.matches()) {
+					String pageNumStr = m.group(1);
+					logger.info("pageNum=" + pageNumStr);
+					pageNum = Integer.parseInt(pageNumStr);
+				}
 			}
-			
-			s=FhirUtil.pageBundle(s, 20, pageNum);
-			
+			s = FhirUtil.pageBundle(s, 20, pageNum);
+
 			logger.info("returning response..." + JAXBUtil.toXml(s));
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
 				msg = FhirUtil.bundleToJsonString(s);

@@ -1031,6 +1031,9 @@ public class FhirUtil {
 	// generates the page for the bundle which includes links for related pages
 	public static Bundle pageBundle(Bundle b, int maxEntries, int pageNum) {
 		Bundle pagedB = new Bundle();
+		FhirUtil.setId(pagedB, Long.toHexString(new Random().nextLong()));
+		pagedB.setMeta(FhirUtil.createMeta());
+		
 		if (maxEntries <= 0)
 			throw new IllegalArgumentException("max Entries should be >0 ");
 		if (pageNum < 1)
@@ -1039,7 +1042,7 @@ public class FhirUtil {
 		int sob = b.getEntry().size();// size of Bundle
 		int lowIdx = maxEntries * (pageNum - 1);// index of lowest entry in
 												// selected page
-		int highIdx = (maxEntries * pageNum) - 1;// index of highest entry in
+		int highIdx = (maxEntries * pageNum) ;// index of highest entry in
 													// selected page
 
 		int lastPageNum = (int) Math.ceil(sob / maxEntries);
@@ -1065,7 +1068,7 @@ public class FhirUtil {
 			if (link.getRelation() != null & link.getRelation().getValue() != null
 					& link.getRelation().getValue().equals("self")
 					& link.getUrl() != null) {
-				baseUrlValue = link.getUrl().getValue();
+				baseUrlValue = link.getUrl().getValue().replaceAll("&{0,1}page=\\d+", "").replaceAll("\\?$","");
 			}
 		}
 
@@ -1074,21 +1077,21 @@ public class FhirUtil {
 		}
 
 		// self
-		pagedB.getLink().add(createBundleLink("self", baseUrlValue + "&page=" + pageNum));
+		pagedB.getLink().add(createBundleLink("self", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+"page=" + pageNum));
 		// first page
-		pagedB.getLink().add(createBundleLink("first", baseUrlValue + "&page=" + 1));
+		pagedB.getLink().add(createBundleLink("first", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + 1));
 
 		// previous
 		if(pageNum>1){
-			pagedB.getLink().add(createBundleLink("previous", baseUrlValue + "&page=" + (pageNum-1)));
+			pagedB.getLink().add(createBundleLink("previous", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + (pageNum-1)));
 		}
 		
 		// next
 		if(pageNum<lastPageNum){
-			pagedB.getLink().add(createBundleLink("next", baseUrlValue + "&page=" + (pageNum+1)));
+			pagedB.getLink().add(createBundleLink("next", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + (pageNum+1)));
 		}
 		// last page
-		pagedB.getLink().add(createBundleLink("last", baseUrlValue + "&page=" + lastPageNum));
+		pagedB.getLink().add(createBundleLink("last", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + lastPageNum));
 		
 
 		return pagedB;
