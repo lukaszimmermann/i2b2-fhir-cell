@@ -295,7 +295,7 @@ public class I2b2FhirWS {
 			// logger.info("getting bundle string..."+JAXBUtil.toXml(s));
 			// logger.info("size of db:" + md.getSize());
 			
-			int pageNum=0;
+			int pageNum=1;
 			Pattern p = Pattern.compile(".*page=(\\d+).*");
 			Matcher m = p.matcher(queryString);
 			if (m.matches()) {
@@ -304,7 +304,7 @@ public class I2b2FhirWS {
 				pageNum = Integer.parseInt(pageNumStr);
 			}
 			
-			if(pageNum>0) s=FhirUtil.pageBundle(s, 20, pageNum);
+			s=FhirUtil.pageBundle(s, 20, pageNum);
 			
 			logger.info("returning response..." + JAXBUtil.toXml(s));
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {

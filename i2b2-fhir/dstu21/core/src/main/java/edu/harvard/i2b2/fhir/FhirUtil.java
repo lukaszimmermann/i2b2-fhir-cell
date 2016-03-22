@@ -949,6 +949,15 @@ public class FhirUtil {
 
 	public static CodeableConcept generateCodeableConcept(String code, String codeSystem, String display) {
 
+		
+		Coding coding = createCoding(code,codeSystem,display);
+		CodeableConcept codeableConcept = new CodeableConcept();
+		codeableConcept.getCoding().add(coding);
+		return codeableConcept;
+	}
+	
+	public static Coding createCoding(String code, String codeSystem, String display) {
+
 		Code ccode = new Code();
 		ccode.setValue(code);
 
@@ -962,9 +971,7 @@ public class FhirUtil {
 		if (display != null) {
 			coding.setDisplay(FhirUtil.generateFhirString(display));
 		}
-		CodeableConcept codeableConcept = new CodeableConcept();
-		codeableConcept.getCoding().add(coding);
-		return codeableConcept;
+		return coding;
 	}
 
 	public static List<Object> getChildrenThruParPath(Resource r, String pathStr, MetaResourceDb db)

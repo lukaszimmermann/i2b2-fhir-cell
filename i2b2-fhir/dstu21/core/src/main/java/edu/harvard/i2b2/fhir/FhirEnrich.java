@@ -85,6 +85,7 @@ public class FhirEnrich {
 		if (Condition.class.isInstance(r)) {
 			Condition cond = Condition.class.cast(r);
 			 icd9Adapter.addIcd9Name(cond);
+			 icd9Adapter.translateIcd9ToSnomedCT(cond);
 		}
 
 		// Labs loinc
