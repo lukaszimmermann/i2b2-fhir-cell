@@ -50,6 +50,8 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.NumberUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleLink;
 import org.hl7.fhir.Code;
@@ -297,25 +299,34 @@ public class I2b2FhirWS {
 			// logger.info("size of db:" + md.getSize());
 
 			int pageNum = 1;
-			int countNum=20;
+			int countNum = 20;
 			if (queryString != null) {
 				Pattern p = Pattern.compile(".*page=(\\d+).*");
 				Matcher m = p.matcher(queryString);
 				if (m.matches()) {
 					String pageNumStr = m.group(1);
 					logger.info("pageNum=" + pageNumStr);
-					pageNum = Integer.parseInt(pageNumStr);
+					try {
+						pageNum = Integer.valueOf(pageNumStr,10);
+					} catch(Exception e) {
+						throw new FhirServerException(
+								"page parameter should be a number: Current value is :" + pageNumStr);
+					}
 				}
-				
+
 				p = Pattern.compile(".*_count=(\\d+).*");
 				m = p.matcher(queryString);
 				if (m.matches()) {
 					String countNumStr = m.group(1);
 					logger.info("countNum=" + countNumStr);
-					countNum = Integer.parseInt(countNumStr);
+					try {
+						countNum = Integer.valueOf(countNumStr,10);
+					} catch(Exception e) {
+						throw new FhirServerException(
+								"count parameter should be a number: Current value is :" + countNumStr);
+					}
 				}
-				
-				
+
 			}
 			s = FhirUtil.pageBundle(s, countNum, pageNum);
 
