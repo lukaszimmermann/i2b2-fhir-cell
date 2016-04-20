@@ -712,6 +712,7 @@ let $medObs:= $distObs//observation[modifier_cd="@" and valuetype_cd="N" and pan
 let $medDis:= $distObs//observation[modifier_cd="@" and valuetype_cd="M" and panel_name="medications"]
 let $diagObs:= $distObs//observation[panel_name="diagnoses"]
 let $reportObs:= $distObs//observation[panel_name="reports"]
+let $vitalObs:= $distObs//observation[panel_name="vitals"]
 
 let $concepts:=$I//concept
 
@@ -722,6 +723,7 @@ return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fh
 {local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
 
 {local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
+{local:processLabObs(<A>{$vitalObs}</A>,<C>{$concepts}</C>)/entry}
 
 {local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
 {local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}

@@ -98,7 +98,7 @@ return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/199
       <system value="http://hl7.org/fhir/sid/ndc"/>
       <code value="{$cid}"/>
       {$cn_display_str}
-      <primary value="true"/>
+      <user_selected value="true"/>
     </coding>
   </code>
   

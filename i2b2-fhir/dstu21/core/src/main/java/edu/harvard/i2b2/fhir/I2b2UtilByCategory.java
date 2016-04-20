@@ -92,6 +92,9 @@ public class I2b2UtilByCategory {
 		case "reports":
 			functionString = "{local:processReportObs(<A>{$reportObs}</A>)/entry}";
 			break;
+		case "vitals":
+			functionString = "{local:processLabObs(<A>{$vitalObs}</A>)/entry}";
+			break;
 
 		default:
 			throw new FhirCoreException("resourceCategory not known:" + resourceCategory);

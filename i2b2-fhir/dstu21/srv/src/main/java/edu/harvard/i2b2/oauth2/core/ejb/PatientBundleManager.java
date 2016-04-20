@@ -100,7 +100,7 @@ public class PatientBundleManager {
 			for (String cat : Arrays.asList(sConfig.GetString(ConfigParameter.resourceCategoriesList).split("-"))) {
 				switch (cat) {
 				case "medications":
-					map.put("medications", sConfig.GetString(ConfigParameter.medicationPath));
+					map.put("medications", sConfig.GetString(ConfigParameter.medicationsPath));
 					break;
 				case "labs":
 					map.put("labs", sConfig.GetString(ConfigParameter.labsPath));
@@ -110,6 +110,8 @@ public class PatientBundleManager {
 					break;
 				case "reports":
 					map.put("reports", sConfig.GetString(ConfigParameter.reportsPath));
+				case "vitals":
+					map.put("vitals", sConfig.GetString(ConfigParameter.vitalsPath));
 					break;
 				}
 			}
