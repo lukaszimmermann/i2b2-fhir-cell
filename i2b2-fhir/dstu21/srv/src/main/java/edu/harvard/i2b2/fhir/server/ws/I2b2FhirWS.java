@@ -297,6 +297,7 @@ public class I2b2FhirWS {
 			// logger.info("size of db:" + md.getSize());
 
 			int pageNum = 1;
+			int countNum=20;
 			if (queryString != null) {
 				Pattern p = Pattern.compile(".*page=(\\d+).*");
 				Matcher m = p.matcher(queryString);
@@ -305,8 +306,18 @@ public class I2b2FhirWS {
 					logger.info("pageNum=" + pageNumStr);
 					pageNum = Integer.parseInt(pageNumStr);
 				}
+				
+				p = Pattern.compile(".*_count=(\\d+).*");
+				m = p.matcher(queryString);
+				if (m.matches()) {
+					String countNumStr = m.group(1);
+					logger.info("countNum=" + countNumStr);
+					countNum = Integer.parseInt(countNumStr);
+				}
+				
+				
 			}
-			s = FhirUtil.pageBundle(s, 20, pageNum);
+			s = FhirUtil.pageBundle(s, countNum, pageNum);
 
 			logger.info("returning response..." + JAXBUtil.toXml(s));
 			if (acceptHeader.contains("application/json") || acceptHeader.contains("application/json+fhir")) {
