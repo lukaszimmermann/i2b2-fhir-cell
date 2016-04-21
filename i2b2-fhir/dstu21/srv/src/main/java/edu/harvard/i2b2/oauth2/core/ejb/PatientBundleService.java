@@ -1,7 +1,18 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipException;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
@@ -52,7 +63,9 @@ public class PatientBundleService {
 		PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
 		if (r == null)
 			return null;
+		logger.debug("r.getBundleXml()" + r.getBundleXml());
 		String bundleXml = r.getBundleXml();
+		
 		Bundle b = null;
 		try {
 			b = JAXBUtil.fromXml(bundleXml, Bundle.class);
@@ -110,4 +123,6 @@ public class PatientBundleService {
 			remove(r);
 		}
 	}
+
+	
 }
