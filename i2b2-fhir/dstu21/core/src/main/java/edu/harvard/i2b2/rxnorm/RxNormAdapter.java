@@ -155,7 +155,7 @@ public class RxNormAdapter {
 			logger.trace("rxCui:" + rxCui);
 			cd.setValue(rxCui);
 			c.setCode(cd);
-			Boolean bo=new Boolean();
+			Boolean bo = new Boolean();
 			bo.setValue(false);
 			c.setUserSelected(bo);
 			m.getCode().getCoding().add(c);
@@ -168,10 +168,15 @@ public class RxNormAdapter {
 
 	public void addRxNormDisplayName(Medication m) throws JAXBException {
 		Coding c = this.getRxNormCoding(m);
-		String rxCuiName = this.getRxCuiName(c.getCode().getValue());
-		org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
-		displayValue.setValue(rxCuiName);
-		c.setDisplay(displayValue);
+		String rxCuiName = null;
+		if (c != null) {
+			rxCuiName = this.getRxCuiName(c.getCode().getValue());
+		}
+		if (rxCuiName != null) {
+			org.hl7.fhir.String displayValue = new org.hl7.fhir.String();
+			displayValue.setValue(rxCuiName);
+			c.setDisplay(displayValue);
+		}
 	}
 
 	public String getNDCCodeString(Medication m) throws JAXBException {

@@ -67,20 +67,20 @@ public class FhirEnrich {
 				Resource re = FhirUtil.getResourceFromContainer(rc);
 				enrich(re);
 			}
-		}
+		}else
 		// Medication rxnorm
 		if (Medication.class.isInstance(r)) {
 			Medication m = Medication.class.cast(r);
 			rxNormAdapter.translateNdcToRxNorm(m);
 			rxNormAdapter.addRxNormDisplayName(m);
 
-		}
+		}else
 
 		if (Observation.class.isInstance(r)) {
 			Observation ob = Observation.class.cast(r);
 			loincAdapter.addLoincName(ob);
 			
-		}
+		}else 
 		
 		if (Condition.class.isInstance(r)) {
 			Condition cond = Condition.class.cast(r);
