@@ -124,7 +124,8 @@ public class PatientBundleManager {
 				b=ObservationCategoryGenerator.addObservationCategoryToObservationBundle(b);
 			}
 			
-			if(sConfig.GetString(ConfigParameter.createDiagnosticReportsFromObservations).equals("true")) {
+			String par=sConfig.GetString(ConfigParameter.createDiagnosticReportsFromObservations);
+			if(par!=null && par.equals("true")) {
 				logger.trace("createDiagnosticReportsFromObservations");
 				b=DiagnosticReportGenerator.generateAndAddDiagnosticReports(b);
 			}else{

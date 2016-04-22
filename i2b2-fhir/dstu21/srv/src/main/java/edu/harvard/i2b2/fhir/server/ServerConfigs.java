@@ -65,7 +65,7 @@ public class ServerConfigs {
 					configC.addConfiguration(new PropertiesConfiguration("confidential.properties"));
 				} else {
 					logger.info("using application.properties");
-					configC.addConfiguration(new PropertiesConfiguration("application.properties"));
+					configC.addConfiguration(new PropertiesConfiguration("/application.properties"));
 
 				}
 
