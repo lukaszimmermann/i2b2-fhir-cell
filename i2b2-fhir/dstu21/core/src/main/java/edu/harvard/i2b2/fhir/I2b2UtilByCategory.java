@@ -42,7 +42,7 @@ public class I2b2UtilByCategory {
 		} else {
 			switch (resourceCategory) {
 			case "medications":
-				path = CoreConfig.getMedicationPath();
+				path = CoreConfig.getMedicationsPath();
 				break;
 			case "labs":
 				path = CoreConfig.getLabsPath();

@@ -99,7 +99,7 @@ public final class XQueryUtil {
 
 			new DropDB(dbName).execute(context);
 		} catch (BaseXException e1) {
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			logger.error("", e1);
 			throw new XQueryUtilException(e1);
 		}
@@ -135,7 +135,7 @@ public final class XQueryUtil {
 					// Store the pointer to the result in an iterator:
 					result = proc.execute().serialize();
 				} catch (QueryException | IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					throw new XQueryUtilException(e);
 
 				}
