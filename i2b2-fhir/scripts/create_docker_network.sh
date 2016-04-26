@@ -9,4 +9,7 @@ docker run --name=fhir-mariadb -d -p 3306:3306  -e "MYSQL_ROOT_PASSWORD=$MYSQL_P
 sleep 5;
 sudo docker exec -it fhir-mariadb bash -c "/i2b2fhir_db.sh $MYSQL_PASS; "
 exit
+sed -i "s/services.i2b2.org:9090/i2b2-wildfly/" $BASE/dstu21/srv/src/main/resources/application.properties
+sh $BASE/install.sh 
+
 
