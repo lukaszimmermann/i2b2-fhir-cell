@@ -23,7 +23,7 @@ public class CoreConfig {
 	
 	static CompositeConfiguration config;
 	static private String resourceCategoriesList ;//comma seperated
-	static private String medicationPath ;
+	static private String medicationsPath ;
 	static private String labsPath ;
 	static private String diagnosesPath ;
 	static private String reportsPath ;
@@ -57,7 +57,7 @@ public class CoreConfig {
 		
 		resourceCategoriesList  =config.getString("resourceCategoriesList");
 		labsPath  =config.getString("labsPath");
-		medicationPath  =config.getString("medicationPath");
+		medicationsPath  =config.getString("medicationsPath");
 		diagnosesPath  =config.getString("diagnosesPath");
 		reportsPath  =config.getString("reportsPath");
 
@@ -67,8 +67,8 @@ public class CoreConfig {
 
 
 
-	public static String getMedicationPath() {
-		return medicationPath;
+	public static String getMedicationsPath() {
+		return medicationsPath;
 	}
 
 
@@ -93,7 +93,7 @@ public class CoreConfig {
 
 	public static String toStaticString() {
 		return "resourceCategoriesList:"+resourceCategoriesList
-				+"\nmedicationPath:"+medicationPath
+				+"\nmedicationsPath:"+medicationsPath
 				+"\nlabsPath:"+labsPath
 				+"\ndiagnosesPath:"+diagnosesPath
 				+"\nreportsPath:"+reportsPath;

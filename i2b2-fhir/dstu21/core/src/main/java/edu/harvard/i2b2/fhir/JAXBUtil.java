@@ -51,9 +51,9 @@ import edu.harvard.i2b2.map.MapSystemSet;
 public class JAXBUtil {
 	private static HashMap<Class, JAXBContext> hmJaxbc = null;
 	static Logger logger = LoggerFactory.getLogger(JAXBUtil.class);
-	
+
 	public static JAXBContext getJaxBContext(Class c) throws JAXBException {
-		logger.trace("Call for class:"+c.getSimpleName());
+		logger.trace("Call for class:" + c.getSimpleName());
 		if (hmJaxbc == null) {
 			hmJaxbc = new HashMap<Class, JAXBContext>();
 		}
@@ -64,34 +64,33 @@ public class JAXBUtil {
 		return hmJaxbc.get(c);
 
 	}
-	
-	
-	static public <C> C fromXml(String xml,Class c) throws JAXBException{
+
+	static public <C> C fromXml(String xml, Class c) throws JAXBException {
 		if (xml.equals("") || xml == null)
 			return null;
-		C mr=null;
+		C mr = null;
 		try {
 			JAXBContext jc = getJaxBContext(c);
 			Unmarshaller unMarshaller = jc.createUnmarshaller();
 
 			mr = (C) unMarshaller.unmarshal(new StringReader(xml));
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			Throwable e2 = e.getLinkedException();
+			logger.error(e2.getMessage(), e);
+			throw e;
 		}
 		return mr;
 	}
-	
-	
-	
-	public static <C> String toXml(C c) throws JAXBException{
-		if(c==null) throw new IllegalArgumentException("input object is null");
+
+	public static <C> String toXml(C c) throws JAXBException {
+		if (c == null)
+			throw new IllegalArgumentException("input object is null");
 		StringWriter rwriter = new StringWriter();
 		JAXBContext jaxbContext = getJaxBContext(c.getClass());
 		Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-				Boolean.TRUE);
+		jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		jaxbMarshaller.marshal(c, rwriter);
 		return rwriter.toString();
 	}
-	
+
 }

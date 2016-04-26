@@ -19,6 +19,8 @@ import javax.ejb.Startup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.harvard.i2b2.fhir.server.ConfigParameter;
+import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.oauth2.core.ejb.AccessTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthTokenService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
@@ -48,10 +50,13 @@ public class StartupConfig {
 	@EJB
 	ProjectPatientMapManager projectPatientMapManager;
 
+	
+	
 	@PostConstruct
 	public void init() {
 
-		try {
+		try{
+			
 			configDbService.setup();
 			userService.setup();
 			clientService.setup();

@@ -86,7 +86,9 @@ public final class XQueryUtil {
 					resList.add(r);
 				}
 			} catch (QueryException | QueryIOException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error(e.getMessage(),e);
+				throw  new XQueryUtilException(e);
 			}
 
 			// System.out.println("\n* Drop the database.");
@@ -97,13 +99,15 @@ public final class XQueryUtil {
 
 			new DropDB(dbName).execute(context);
 		} catch (BaseXException e1) {
-			e1.printStackTrace();
+			//e1.printStackTrace();
 			logger.error("", e1);
 			throw new XQueryUtilException(e1);
 		}
 		context.close();
 		return resList;
 	}
+
+
 
 	public static String processXQuery(String query, String input) throws XQueryUtilException {
 		String result = null;
@@ -131,7 +135,7 @@ public final class XQueryUtil {
 					// Store the pointer to the result in an iterator:
 					result = proc.execute().serialize();
 				} catch (QueryException | IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 					throw new XQueryUtilException(e);
 
 				}

@@ -26,16 +26,17 @@ import org.slf4j.LoggerFactory;
 
 public class LoincMapper {
 	static Logger logger = LoggerFactory.getLogger(LoincMapper.class);
-
-
-	HashMap<String, String> loincCodeToNameMap;
+	
+	static HashMap<String, String> loincCodeToNameMap;
 
 	public LoincMapper() throws IOException {
 		init();
 	}
 
 	private void init() throws IOException {
-		loincCodeToNameMap=BinResourceFromLoincData.deSerializeLoincCodeToNameMap();
+		if(loincCodeToNameMap==null){
+			loincCodeToNameMap=BinResourceFromLoincData.deSerializeLoincCodeToNameMap();
+		}
 	}
 
 	

@@ -25,7 +25,7 @@ import edu.harvard.i2b2.fhir.server.ServerConfigs;
 public class HttpHelper {
 	static Logger logger = LoggerFactory.getLogger(HttpHelper.class);
 
-	static public URI getBasePath(HttpServletRequest request,ServerConfigs serverConfigs)
+	static public URI getBasePath(HttpServletRequest request)
 			throws URISyntaxException {
 		String uri = request.getScheme()
 				+ "://"
@@ -39,6 +39,7 @@ public class HttpHelper {
 				+ (request.getQueryString() != null ? "?"
 						+ request.getQueryString() : "");
 		if(uri.contains("?")) uri=uri.split("\\?")[0];
+		
 		logger.trace("full uri:" + uri);
 		uri = uri.substring(0, uri.lastIndexOf('/')) + "/";
 		logger.info("base uri:" + uri);
@@ -55,6 +56,16 @@ public class HttpHelper {
 		logger.info("request.getServletPath():" + request.getServletPath());
 		logger.info("request.getPathInfo():" + request.getPathInfo());
 		 */
+		//if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
+		//	uri=uri.toString().replaceAll("^http:", "https:");
+		//}
+		return new URI(uri);
+	}
+	
+	static public URI getBasePath(HttpServletRequest request,ServerConfigs serverConfigs )
+			throws URISyntaxException {
+		String uri=getBasePath(request).toString();
+		
 		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
 			uri=uri.toString().replaceAll("^http:", "https:");
 		}
@@ -72,6 +83,22 @@ public class HttpHelper {
 						&& request.getServerPort() == 443 ? "" : ":"
 						+ request.getServerPort())
 				+ request.getContextPath();
+		return new URI(uri);
+	}
+	
+	static public URI getServerUri(HttpServletRequest request,ServerConfigs serverConfigs)
+			throws URISyntaxException {
+		String uri = request.getScheme()
+				+ "://"
+				+ request.getServerName()
+				+ ("http".equals(request.getScheme())
+						&& request.getServerPort() == 80
+						|| "https".equals(request.getScheme())
+						&& request.getServerPort() == 443 ? "" : ":"
+						+ request.getServerPort());
+		if(serverConfigs.GetString(ConfigParameter.fhirbaseSSL).equals("true")){
+			uri=uri.toString().replaceAll("^http:", "https:");
+		}
 		return new URI(uri);
 	}
 }

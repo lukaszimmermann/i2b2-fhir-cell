@@ -32,6 +32,8 @@
 package edu.harvard.i2b2.fhir;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,6 +41,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -188,4 +192,46 @@ public class Utils {
 	}
 
 	
+	public static byte[] compress(final String data, final String encoding) throws IOException {
+		if (data == null || data.length() == 0) {
+			return null;
+		} else {
+			byte[] bytes = data.getBytes(encoding);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			GZIPOutputStream os = new GZIPOutputStream(baos);
+			os.write(bytes, 0, bytes.length);
+			os.close();
+			byte[] result = baos.toByteArray();
+			return result;
+		}
+	}
+
+	public static String unCompressString(final byte[] data, final String encoding)
+		    throws IOException
+		{
+		    if (data == null || data.length == 0)
+		    {
+		        return null;
+		    }
+		    else
+		    {
+		        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+		        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		        GZIPInputStream is = new GZIPInputStream(bais);
+		        byte[] tmp = new byte[256];
+		        while (true)
+		        {
+		            int r = is.read(tmp);
+		            if (r < 0)
+		            {
+		                break;
+		            }
+		            buffer.write(tmp, 0, r);
+		        }
+		        is.close();
+
+		        byte[] content = buffer.toByteArray();
+		        return new String(content, 0, content.length, encoding);
+		    }
+		}
 }

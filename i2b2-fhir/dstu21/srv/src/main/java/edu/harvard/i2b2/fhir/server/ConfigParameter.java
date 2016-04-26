@@ -14,7 +14,7 @@ public enum  ConfigParameter {
 	demoConfidentialClientId,
 	demoConfidentialClientSecret,
 	resourceCategoriesList,
-	medicationPath,
+	medicationsPath,
 	labsPath,
 	diagnosesPath,
 	reportsPath,
@@ -23,5 +23,7 @@ public enum  ConfigParameter {
 	patientBundleTimeOut,
 	enrichEnabled, 
 	fhirbaseSSL, 
-	patientFetchMin
+	patientFetchMin,
+	createDiagnosticReportsFromObservations, 
+	vitalsPath
 }

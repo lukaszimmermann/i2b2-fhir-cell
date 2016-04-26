@@ -100,7 +100,7 @@ public class QueryReferenceTest {
 		
 		String url="Patient?gender=female&birthdate=>1966-08-29&@Patient.maritalStatus.coding.code:exact=M";
 		qe = new QueryEngine(url);
-		logger.info(""+qe.search(s));	
+		logger.info(""+qe.search(s,db));	
 		
 		
 	}

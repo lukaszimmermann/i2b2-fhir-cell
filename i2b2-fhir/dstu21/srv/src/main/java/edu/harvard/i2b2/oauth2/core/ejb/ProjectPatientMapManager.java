@@ -151,7 +151,7 @@ public class ProjectPatientMapManager {
 			ProjectPatientMap p = getProjectPatientMap(token.getResourceUserId(),
 					token.getI2b2Token(), token.getI2b2Url(),
 					token.getI2b2Domain(), token.getI2b2Project());
-			logger.info("is patientId:"+patientId+" present in list"+ p.getPatientIdList());
+			//logger.info("is patientId:"+patientId+" present in list"+ p.getPatientIdList());
 		//	if(p.getPatientIdList().length()<2) {
 		//		logger.warn("list seems empty for the project");
 		//		return false;}
@@ -159,6 +159,10 @@ public class ProjectPatientMapManager {
 			logger.trace("list>:"+list);
 			return (list.contains(patientId))?true:false;
 			
+	}
+	
+	public void resetCache() {
+		service.deleteAll();
 	}
 
 }

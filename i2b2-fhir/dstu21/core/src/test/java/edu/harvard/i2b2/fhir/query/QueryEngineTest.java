@@ -89,7 +89,7 @@ public class QueryEngineTest {
 		// SetupExamples.getEGPatient().getMetaResource().get(0));
 		// logger.trace("Input:" + FhirUtil.toXml(p));
 
-		List<Resource> s2 = qe.search(s);
+		List<Resource> s2 = qe.search(s,null);
 		logger.info("Input:" + s.size());
 		logger.info("Result:" + s2.size());
 
@@ -121,7 +121,7 @@ public class QueryEngineTest {
 		String url="Patient?gender=M&birthdate=<1965-08-29";
 		qe = new QueryEngine(url);
 		logger.info(""+qe);
-		logger.info(""+qe.search(s));
+		logger.info(""+qe.search(s,null));
 	}
 	
 	@Test

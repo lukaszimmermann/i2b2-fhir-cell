@@ -74,8 +74,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
+import org.hl7.fhir.BundleLink;
 import org.hl7.fhir.BundleType;
 import org.hl7.fhir.BundleTypeList;
+import org.hl7.fhir.Code;
+import org.hl7.fhir.CodeableConcept;
+import org.hl7.fhir.Coding;
 import org.hl7.fhir.DiagnosticReport;
 import org.hl7.fhir.Id;
 import org.hl7.fhir.Instant;
@@ -173,7 +177,7 @@ public class FhirUtil {
 		return resourceClassList;
 	}
 
-	public static String getValidatorErrorMessageForProfile(String input,String profile) {
+	public static String getValidatorErrorMessageForProfile(String input, String profile) {
 		String msg = "";
 		logger.trace("running validator for input:" + input);
 		try {
@@ -188,7 +192,7 @@ public class FhirUtil {
 
 			v.setSource(temp.getPath());
 			v.setProfile(profile);
-			logger.trace("source" + v.getSource() +" \n profile:"+profile);
+			logger.trace("source" + v.getSource() + " \n profile:" + profile);
 			v.process();
 
 			temp.delete();
@@ -201,9 +205,9 @@ public class FhirUtil {
 		return msg;
 
 	}
-		
+
 	public static String getValidatorErrorMessage(String input) {
-		return getValidatorErrorMessageForProfile(input,null);
+		return getValidatorErrorMessageForProfile(input, null);
 	}
 
 	public static boolean isValid(String xml) {
@@ -243,8 +247,6 @@ public class FhirUtil {
 		}
 
 	}
-	
-	
 
 	public List<Class> getResourceClasses() {
 		List<Class> classList = new ArrayList<Class>();
@@ -492,8 +494,10 @@ public class FhirUtil {
 
 	public static Reference getReference(Resource r) {
 		Reference pRef = new Reference();
+		Class resourceClass = FhirUtil.getResourceClass(r);
 		org.hl7.fhir.String str1 = new org.hl7.fhir.String();
-		str1.setValue(r.getId().getValue());
+		// str1.setValue(r.getId().getValue());
+		str1.setValue(resourceClass.getSimpleName() + "/" + r.getId().getValue());
 		pRef.setReference(str1);
 		return pRef;
 	}
@@ -504,18 +508,18 @@ public class FhirUtil {
 		return s2;
 	}
 
-	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url)  {
+	public static Bundle getResourceBundle(List<Resource> s, String basePath, String url) {
 		Bundle b = new Bundle();
 		for (Resource r : s) {
-			if(r.getMeta()==null){
+			if (r.getMeta() == null) {
 				r.setMeta(FhirUtil.createMeta());
 			}
 			BundleEntry be = FhirUtil.newBundleEntryForResource(r);
 			b.getEntry().add(be);
-			
+
 		}
-		
-		BundleType value=new BundleType();
+
+		BundleType value = new BundleType();
 		value.setValue(BundleTypeList.SEARCHSET);
 		b.setType(value);
 		UnsignedInt total = new UnsignedInt();
@@ -524,27 +528,26 @@ public class FhirUtil {
 
 		Uri u = new Uri();
 		u.setValue(basePath);
-		
+
 		FhirUtil.setId(b, Long.toHexString(new Random().nextLong()));
-		
-		
+
 		b.setMeta(FhirUtil.createMeta());
-		
+
 		// b.setBase(u);
 		return b;
 	}
 
 	private static Meta createMeta() {
-		Meta meta= new Meta();
+		Meta meta = new Meta();
 		Id vId = new Id();
 		vId.setValue("1");
 		meta.setVersionId(vId);
-		Instant instantVal= new Instant();
+		Instant instantVal = new Instant();
 		XMLGregorianCalendar xmlGregvalue;
 		try {
 			xmlGregvalue = DatatypeFactory.newInstance().newXMLGregorianCalendar(new GregorianCalendar());
 		} catch (DatatypeConfigurationException e) {
-			logger.error(e.getMessage(),e);
+			logger.error(e.getMessage(), e);
 			throw new RuntimeException(e);
 		}
 		instantVal.setValue(xmlGregvalue);
@@ -701,13 +704,46 @@ public class FhirUtil {
 
 	}
 
-	// makes copy of child and puts in a container in p
-	public static Resource containResource(Resource p, Resource c) throws JAXBException {
+	@Deprecated // TODO
+	public static Resource containResourceBySearchParameterName(Resource p, String searchParamName)
+			throws JAXBException {
+
+		Class parentClass = FhirUtil.getResourceClass(p);
+		/*
+		 * <code value="result"/> <base value="DiagnosticReport"/> <type
+		 * value="reference"/> <description value=
+		 * "Link to an atomic result (observation resource)"/> <xpath
+		 * value="f:DiagnosticReport/f:result"/>
+		 */
+		String paramterPath = null;
 		try {
+			paramterPath = new SearchParameterMap().getParameterPath(parentClass, searchParamName);
+		} catch (FhirCoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		logger.trace("paramterPath:" + paramterPath);
+
+		String[] set = paramterPath.split("/");
+		String methodName = set[set.length - 1];
+		logger.trace("MethodName:" + methodName);
+		// XXXnot working
+		return p;
+
+	}
+
+	// makes copy of child and puts in a container in p
+	public static Resource containResource(Resource p, Resource c, String searchParamName) throws JAXBException {
+		try {
+
+			logger.trace("containing :" + c.getId().getValue() + " in " + p.getId().getValue());
+			logger.trace("parent before :" + JAXBUtil.toXml(p));
+
 			Class parentClass = FhirUtil.getResourceClass(p);
 			Class childClass = FhirUtil.getResourceClass(c);
-			
-			if(childClass==null || parentClass==null) throw new RuntimeException("unknown resource class for child or parent");
+
+			if (childClass == null || parentClass == null)
+				throw new RuntimeException("unknown resource class for child or parent");
 
 			String xml = JAXBUtil.toXml(p);
 			// add # prefix to reference of contained resource?
@@ -716,48 +752,67 @@ public class FhirUtil {
 			// p = JAXBUtil.fromXml(xml, parentClass);
 			logger.trace(
 					"getting path to parent:" + parentClass + "\nchild:" + childClass.getSimpleName().toLowerCase());
-			
-			//get path from profile
-			
-			String path = new SearchParameterMap().getParameterPath(parentClass,
-					childClass.getSimpleName().toLowerCase());
-			
-			
+
+			// get path from profile
+
+			String path = new SearchParameterMap().getParameterPath(parentClass, searchParamName.toLowerCase());
+
 			logger.trace("SEARCH PATH:" + path);
 			String childPath = path.replaceAll("^" + parentClass.getSimpleName() + "/", "");
 			logger.trace("MchildPath:" + childPath);
 
-			Reference childRef = (Reference) FhirUtil.getChild(p, childPath);
-			String childId = childRef.getReference().getValue();
+			// Reference childRef = (Reference) FhirUtil.getChild(p, childPath);
+			Object obj = FhirUtil.getChild(p, childPath);
+			List<Reference> refList = new ArrayList();
+			if (java.util.ArrayList.class.isInstance(obj)) {
+				ArrayList<Object> childList = (ArrayList<Object>) obj;
+				for (Object objA : childList)
+					refList.add((Reference) objA);
+			} else {
+				Reference ref = (Reference) obj;
+				refList.add(ref);
+			}
+			for (Reference childRef : refList) {
+				String childId = childRef.getReference().getValue();
 
-			childRef.getReference().setValue("#" // + childClass.getSimpleName()
-													// + "-"
-					+ childId);
+				String expectedId = childClass.getSimpleName() + "/" + c.getId().getValue();
+				logger.trace("childRef.getReference().getValue():" + childRef.getReference().getValue()
+						+ "\n c.getId().getValue(): <" + expectedId + ">");
+				if (!childId.equals(expectedId))
+					continue;
 
-			Id cId = c.getId();
-			c = FhirUtil.clone(c, childClass.getSimpleName() + "/" + cId.getValue());
+				childRef.getReference().setValue("#" // +
+														// childClass.getSimpleName()
+														// + "-"
+						+ childId);
 
-			// Id cId = c.getId();
-			// cId.setValue(childClass.getSimpleName() + "-" + cId.getValue());
-			// c.setId(cId);
-			ResourceContainer childRc = FhirUtil.getResourceContainer(c);
+				Id cId = c.getId();
+				c = FhirUtil.clone(c, childClass.getSimpleName() + "/" + cId.getValue());
 
-			Method method;
-			Object o;
+				// Id cId = c.getId();
+				// cId.setValue(childClass.getSimpleName() + "-" +
+				// cId.getValue());
+				// c.setId(cId);
+				ResourceContainer childRc = FhirUtil.getResourceContainer(c);
 
-			method = parentClass.getMethod("getContained", null);
-			o = method.invoke(parentClass.cast(p));
-			List<ResourceContainer> listRC = (List<ResourceContainer>) o;
+				Method method;
+				Object o;
 
-			listRC.add(childRc);
-			logger.debug("added " + c.getId() + " into " + p.getId());
-			logger.trace(JAXBUtil.toXml(p));
+				method = parentClass.getMethod("getContained", null);
+				o = method.invoke(parentClass.cast(p));
+				List<ResourceContainer> listRC = (List<ResourceContainer>) o;
 
+				listRC.add(childRc);
+				logger.debug("added " + c.getId() + " into " + p.getId());
+				logger.trace("p during:" + JAXBUtil.toXml(p));
+			}
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | FhirCoreException e) {
 			e.printStackTrace();
 			logger.error(e.getMessage(), e);
 		}
+
+		logger.trace("p after:" + JAXBUtil.toXml(p));
 		return p;
 
 	}
@@ -765,9 +820,7 @@ public class FhirUtil {
 	private static Resource clone(Resource i, String newId) throws JAXBException {
 		Class rClass = FhirUtil.getResourceClass(i);
 		Resource c = JAXBUtil.fromXml(JAXBUtil.toXml(i), rClass);
-		Id cId = c.getId();
-		cId.setValue(newId);
-		c.setId(cId);
+		FhirUtil.setId(c, newId);
 		return c;
 	}
 
@@ -826,7 +879,7 @@ public class FhirUtil {
 		}
 		if (id.equals(resourceName))
 			id = null;
-		
+
 		return id;
 	}
 
@@ -843,9 +896,216 @@ public class FhirUtil {
 	}
 
 	public static Id generateId(String idString) {
-		Id id= new Id();
+		Id id = new Id();
 		id.setValue(idString);
 		return id;
+	}
+
+	public static Bundle createBundle(List<Object> list) {
+		Bundle b = new Bundle();
+
+		for (Object o : list) {
+			Resource r = (Resource) o;
+			b.getEntry().add(FhirUtil.newBundleEntryForResource(r));
+		}
+
+		UnsignedInt ustotal = new UnsignedInt();
+		BigInteger bigInt = new BigInteger(Integer.toString(list.size()));
+		ustotal.setValue(bigInt);
+		b.setTotal(ustotal);
+		return b;
+
+	}
+
+	static public Bundle addResourceToBundle(Bundle b, Resource r) {
+		BundleEntry be = FhirUtil.newBundleEntryForResource(r);
+		b.getEntry().add(be);
+		setBundleTotal(b);
+		return b;
+	}
+
+	static public Bundle setBundleTotal(Bundle b) {
+		int tot = 0;
+		if (b.getEntry() != null) {
+			tot = b.getEntry().size();
+		}
+		UnsignedInt ustotal = new UnsignedInt();
+		BigInteger bigInt = new BigInteger(Integer.toString(tot));
+		ustotal.setValue(bigInt);
+		b.setTotal(ustotal);
+		return b;
+	}
+
+	public static Bundle addBundles(Bundle b1, Bundle b2) {
+		Bundle b = new Bundle();
+		List<Resource> list1 = FhirUtil.getResourceListFromBundle(b1);
+		List<Resource> list2 = FhirUtil.getResourceListFromBundle(b2);
+		for (Resource r : list1)
+			FhirUtil.addResourceToBundle(b, r);
+		for (Resource r : list2)
+			FhirUtil.addResourceToBundle(b, r);
+		return b;
+	}
+
+	public static CodeableConcept generateCodeableConcept(String code, String codeSystem, String display) {
+
+		
+		Coding coding = createCoding(code,codeSystem,display);
+		CodeableConcept codeableConcept = new CodeableConcept();
+		codeableConcept.getCoding().add(coding);
+		return codeableConcept;
+	}
+	
+	public static Coding createCoding(String code, String codeSystem, String display) {
+
+		Code ccode = new Code();
+		ccode.setValue(code);
+
+		Coding coding = new Coding();
+		coding.setCode(ccode);
+
+		Uri uri = new Uri();
+		uri.setValue(codeSystem);
+		coding.setSystem(uri);
+
+		if (display != null) {
+			coding.setDisplay(FhirUtil.generateFhirString(display));
+		}
+		return coding;
+	}
+
+	public static List<Object> getChildrenThruParPath(Resource r, String pathStr, MetaResourceDb db)
+			throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
+
+		List<Object> children = new ArrayList<Object>();
+		List<Object> resolvedChildren = new ArrayList<Object>();
+		List<Resource> s = db.getAll();
+
+		logger.trace("got obj:" + r);
+		Class c = FhirUtil.getResourceClass(r);
+
+		String suffix = null;
+		String prefix = pathStr;
+		logger.trace("pathStr:" + pathStr);
+
+		if (pathStr.indexOf('.') > -1) {
+			suffix = pathStr.substring(pathStr.indexOf('.') + 1);
+			prefix = pathStr.substring(0, pathStr.indexOf('.'));
+		}
+
+		String methodName = prefix.substring(0, 1).toUpperCase() + prefix.subSequence(1, prefix.length());
+		Method method = c.getMethod("get" + methodName, null);
+		Object o = method.invoke(c.cast(r));
+
+		if (List.class.isInstance(o)) {
+			children.addAll((List<Object>) o);
+		} else {
+			children.add(o);
+		}
+
+		if (suffix == null) {
+			return children;
+
+		} else {
+
+			for (Object child : children) {
+
+				// if it is a reference resolve the reference
+				if (Reference.class.isInstance(child)) {
+					Reference rr = Reference.class.cast(child);
+					logger.trace("gotc:" + child.getClass());
+					Resource r1 = FhirUtil.findResourceById(rr.getReference().getValue(), s);
+					resolvedChildren.add(getChildrenThruChain(r1, suffix, s));
+
+				} else {
+					resolvedChildren.add(getChildrenThruChain(r, suffix, s));
+				}
+
+			}
+		}
+		return resolvedChildren;
+	}
+
+	// Takes a bundle, and given the maxEntries and page Number,
+	// generates the page for the bundle which includes links for related pages
+	public static Bundle pageBundle(Bundle b, int maxEntries, int pageNum) {
+		Bundle pagedB = new Bundle();
+		FhirUtil.setId(pagedB, Long.toHexString(new Random().nextLong()));
+		pagedB.setMeta(FhirUtil.createMeta());
+		
+		if (maxEntries <= 0)
+			throw new IllegalArgumentException("max Entries should be >0 ");
+		if (pageNum < 1)
+			throw new IllegalArgumentException("page NUmber should be >=1 ");
+
+		int sob = b.getEntry().size();// size of Bundle
+		int lowIdx = maxEntries * (pageNum - 1);// index of lowest entry in
+												// selected page
+		int highIdx = (maxEntries * pageNum) ;// index of highest entry in
+													// selected page
+
+		int lastPageNum = (int) Math.ceil(sob / maxEntries);
+
+		// if low and high index of
+		if (lowIdx > sob) {
+			return pagedB;
+		}
+		List<Object> listBE = new ArrayList<>();
+		for (int i = lowIdx; i < highIdx; i++) {
+			if (i < sob) {
+				Resource r=FhirUtil.getResourceFromContainer(b.getEntry().get(i).getResource());
+				listBE.add(r);
+			}
+		}
+		pagedB = createBundle(listBE);
+
+		// create links
+		// get link for self from inputBundle if it exits
+
+		String baseUrlValue = null;
+		for (BundleLink link : b.getLink()) {
+			if (link.getRelation() != null & link.getRelation().getValue() != null
+					& link.getRelation().getValue().equals("self")
+					& link.getUrl() != null) {
+				baseUrlValue = link.getUrl().getValue().replaceAll("&{0,1}page=\\d+", "").replaceAll("\\?$","");
+			}
+		}
+
+		if (baseUrlValue == null) {
+			throw new RuntimeException("the self link is null ");
+		}
+
+		// self
+		pagedB.getLink().add(createBundleLink("self", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+"page=" + pageNum));
+		// first page
+		pagedB.getLink().add(createBundleLink("first", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + 1));
+
+		// previous
+		if(pageNum>1){
+			pagedB.getLink().add(createBundleLink("previous", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + (pageNum-1)));
+		}
+		
+		// next
+		if(pageNum<lastPageNum){
+			pagedB.getLink().add(createBundleLink("next", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + (pageNum+1)));
+		}
+		// last page
+		pagedB.getLink().add(createBundleLink("last", baseUrlValue + (baseUrlValue.contains("?")?"&":"?")+ "page=" + lastPageNum));
+		
+
+		return pagedB;
+	}
+
+	public static BundleLink createBundleLink(String relation, String url) {
+		BundleLink link = new BundleLink();
+		org.hl7.fhir.String relString = new org.hl7.fhir.String();
+		relString.setValue(relation);
+		link.setRelation(relString);
+		Uri uri = new Uri();
+		uri.setValue(url);
+		link.setUrl(uri);
+		return link;
 	}
 
 }

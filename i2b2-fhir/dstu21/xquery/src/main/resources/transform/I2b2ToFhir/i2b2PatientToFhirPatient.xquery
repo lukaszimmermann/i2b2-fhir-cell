@@ -121,6 +121,14 @@ declare function local:fnPatient($zip as xs:string?,
 ) as node()?{
 let $birthdateDate:=local:fnGetDate($birthdate)
 let $maritalStatusDisplay:=local:fnMaritalStatusDisplay($marital_status)
+
+let $marital_status_codeSystem:=
+if ($marital_status="UNK") then "http://hl7.org/fhir/v3/NullFlavor"
+else "http://hl7.org/fhir/v3/MaritalStatus"
+
+let $ethnicity_codeSystem:="http://hl7.org/fhir/v3/NullFlavor"
+(: "http://hl7.org/fhir/v3/Ethnicity":)
+
 return 
 <Patient  namespace="http://hl7.org/fhir"  >
   <id value="{$id}"/>
@@ -134,11 +142,13 @@ return
             <td>Id</td>
             <td>{$id}</td>
           </tr>
-          {local:fnTxt('Zip',$zip)}
           {local:fnTxt('Gender',$gender_expanded)}
-          {local:fnTxt('BirthDate',$birthdate)}
+         
+           <!--  {local:fnTxt('Zip',$zip)}
           {local:fnTxt('Marital Status',$maritalStatusDisplay)}
-   
+   		-->
+   {local:fnTxt('BirthDate',$birthdate)}
+          
         </tbody>
       </table>
     </div>
@@ -177,6 +187,7 @@ return
   </birthDate>
   <deceasedBoolean value="false"/>
   
+  <!--
   <extension url="http://hl7.org/fhir/StructureDefinition/us-core-race">
     <valueCodeableConcept>
       <coding>
@@ -190,7 +201,7 @@ return
   <extension url="http://hl7.org/fhir/StructureDefinition/us-core-ethnicity">
     <valueCodeableConcept>
       <coding>
-        <system value="http://hl7.org/fhir/v3/Ethnicity"/>
+        <system value="{$ethnicity_codeSystem}"/>
         <code value="UNK"/>
         <primary value="true"/>
       </coding>
@@ -200,18 +211,22 @@ return
     <use value="home"/>
     <zip value="{$zip}"/>
   </address>
+  
+  <maritalStatus>
+    <coding>
+      <system value= "{$marital_status_codeSystem}"/>
+      <code value="{$marital_status}"/>
+      <display value="{$maritalStatusDisplay}"/>
+    </coding>
+   </maritalStatus>
+  
+  -->
 
   <managingOrganization>
     <reference value="Organization/1"/>
   </managingOrganization>
   
-  <maritalStatus>
-    <coding>
-      <system value="http://hl7.org/fhir/v3/MaritalStatus"/>
-      <code value="{$marital_status}"/>
-      <display value="{$maritalStatusDisplay}"/>
-    </coding>
-   </maritalStatus>
+  
    
    
   <active value="true"/>

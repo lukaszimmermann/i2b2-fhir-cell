@@ -42,7 +42,7 @@ public class I2b2UtilByCategory {
 		} else {
 			switch (resourceCategory) {
 			case "medications":
-				path = CoreConfig.getMedicationPath();
+				path = CoreConfig.getMedicationsPath();
 				break;
 			case "labs":
 				path = CoreConfig.getLabsPath();
@@ -92,6 +92,9 @@ public class I2b2UtilByCategory {
 		case "reports":
 			functionString = "{local:processReportObs(<A>{$reportObs}</A>)/entry}";
 			break;
+		case "vitals":
+			functionString = "{local:processLabObs(<A>{$vitalObs}</A>)/entry}";
+			break;
 
 		default:
 			throw new FhirCoreException("resourceCategory not known:" + resourceCategory);
@@ -127,7 +130,9 @@ public class I2b2UtilByCategory {
 
 				String i2b2ResponseXml = getI2b2ResponseXmlForAResourceCategory(i2b2User, i2b2Token, i2b2Url,
 						I2b2Domain, project, patientId, rc, path);
-				logger.trace("i2b2ResponseXml" + i2b2ResponseXml);
+				String i2b2ResponseXmlPart=i2b2ResponseXml;
+				if(i2b2ResponseXmlPart.length()>50000) i2b2ResponseXmlPart=i2b2ResponseXmlPart.substring(0, 50000);
+				logger.trace("i2b2ResponseXml in Part" + i2b2ResponseXmlPart);
 
 				if (p == null) {
 					p = FhirUtil.getPatientResource(i2b2ResponseXml);

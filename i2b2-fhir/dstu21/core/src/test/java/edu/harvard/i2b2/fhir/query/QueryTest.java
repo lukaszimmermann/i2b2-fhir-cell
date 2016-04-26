@@ -70,17 +70,17 @@ public class QueryTest {
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<2015-05-15").build();
 		logger.trace("Q:"+q);
-		logger.trace("RES:"+q.match(xmlPatient,null,null));
-		assertTrue(q.match(xmlPatient,null,null));
+		logger.trace("RES:"+q.match(xmlPatient,null,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue(">1941-05-15").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
 		//assertTrue(q.match(xmlPatient));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("<1941-05-15").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 		q=qb.setResourceClass(Patient.class).setRawParameter("birthdate").setRawValue("=<1944-11-17").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 	}
 	
 	
@@ -88,66 +88,66 @@ public class QueryTest {
 	public void testTokenCode() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException {
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("M").build();
 		//logger.trace("RES:"+q.match(xmlPatient));
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("M").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("F").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 		
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("F").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|M").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|Male").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 	
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender:text").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 	
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("language").setRawValue("urn:ietf:bcp:47|nl").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("language:text").setRawValue("Dutch").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("http://hl7.org/fhir/v3/AdministrativeGender|F").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 	
 		
 		
 		String xml=Utils.getFile("example/fhir/singlePatientWithoutCodeSystemForGender.xml");
 		p=(Patient) JAXBUtil.fromXml(xml,Patient.class);
 		q=qb.setResourceClass(Patient.class).setRawParameter("gender").setRawValue("|M").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 	}
 	
 	@Test
 	public void testTokenIdentifier() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472983").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("738472981").build();
-		assertFalse(q.match(xmlPatient,null,null));
+		assertFalse(q.match(xmlPatient,null,null,null));
 		
 		
 		q=qb.setResourceClass(Patient.class).setRawParameter("identifier").setRawValue("urn:oid:2.16.840.1.113883.2.4.6.3|738472983").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 	}
 	
 	@Test
 	public void testTokenSimpleElements() throws QueryParameterException, QueryValueException, FhirCoreException, XQueryUtilException, QueryException {
 	
 		q=qb.setResourceClass(Patient.class).setRawParameter("active").setRawValue("true").build();
-		assertTrue(q.match(xmlPatient,null,null));
+		assertTrue(q.match(xmlPatient,null,null,null));
 	}	
 	
 	

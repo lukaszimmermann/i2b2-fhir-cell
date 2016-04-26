@@ -1,5 +1,19 @@
 package edu.harvard.i2b2.oauth2.core.ejb;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipException;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -16,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.oauth2.core.entity.PatientBundleRecord;
+import edu.harvard.i2b2.oauth2.register.entity.User;
 
 @Singleton
 @Startup
@@ -48,15 +63,16 @@ public class PatientBundleService {
 		PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
 		if (r == null)
 			return null;
+		logger.debug("r.getBundleXml()" + r.getBundleXml());
 		String bundleXml = r.getBundleXml();
+		
 		Bundle b = null;
 		try {
 			b = JAXBUtil.fromXml(bundleXml, Bundle.class);
 		} catch (JAXBException e) {
 			logger.error(e.getMessage(), e);
 		}
-		logger.trace("found PatientBundleRecord:" + r.toString() + "\n"
-				+ b.getEntry().size());
+		logger.trace("found PatientBundleRecord:" + r.toString() + "\n" + b.getEntry().size());
 		return b;
 	}
 
@@ -68,8 +84,9 @@ public class PatientBundleService {
 	}
 
 	@Remove
-	public void remove() {
-		// patientBundleHm=null;
+	public void remove(PatientBundleRecord r) {
+		em.remove(em.contains(r) ? r : em.merge(r));
+		logger.info("removed client");
 	}
 
 	@Lock
@@ -87,4 +104,25 @@ public class PatientBundleService {
 		return r;
 	}
 
+	@Lock
+	public List<String> getIdList() {
+		List<String> idList = new ArrayList<String>();
+		List<PatientBundleRecord> pbList = em.createQuery(" SELECT s FROM PatientBundleRecord s").getResultList();
+		String msg = "";
+		for (Object x : pbList) {
+			idList.add(((PatientBundleRecord) x).getPatientId());
+		}
+
+		return idList;
+	}
+
+	@Lock
+	public void deleteAll() {
+		for (String patientId : getIdList()) {
+			PatientBundleRecord r = em.find(PatientBundleRecord.class, patientId);
+			remove(r);
+		}
+	}
+
+	
 }

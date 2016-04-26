@@ -67,7 +67,11 @@
 			<artifactId>icd9Mapper</artifactId>
 			<version>0.1</version>
 		</dependency>
-
+		<dependency>
+			<groupId>edu.harvard.i2b2.fhir</groupId>
+			<artifactId>icd9ToSnomedCTMapper</artifactId>
+			<version>0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -117,7 +121,7 @@
 
 
 	<build>
-	<plugins>
+		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>

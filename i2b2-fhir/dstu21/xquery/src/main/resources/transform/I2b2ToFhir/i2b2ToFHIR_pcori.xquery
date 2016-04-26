@@ -99,7 +99,7 @@ return <Medication xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/199
     </text>
   <code>
     <coding>
-      <system value="http://../NDC"/>
+      <system value="http://hl7.org/fhir/sid/ndc"/>
       <code value="{$cid}"/>
       {$cn_display_str}
       <primary value="true"/>
@@ -117,14 +117,17 @@ declare function local:fnFhirObservation( $sd as xs:string?, $ed as xs:string?,$
     if($ed != "") then
     <end value="{$ed}"/>
   else ()
-
+ let $cn_display_str:=
+  if(local:all-whitespace($cn)) then ""
+        else   <display value="{$cn}"/> 
 return
   <Observation xmlns="http://hl7.org/fhir"  xmlns:ns2="http://www.w3.org/1999/xhtml">
  <id value="{$pid}-{$count}"/>
     <text>
         <status value="generated"/>
         <div xmlns="http://www.w3.org/1999/xhtml">
-        <p>{$cn}</p>
+         <p>name:{$cn}</p>
+        <p>code:{$cid}</p>
         </div>
     </text>
   
@@ -132,7 +135,7 @@ return
         <coding>
            <system value="http://loinc.org"/>
            <code value="{$cid}"/>
-           <display value="{$cn}"/>
+           {$cn_display_str}
            <primary value="true"/>
         </coding>
     </code>
@@ -154,12 +157,14 @@ return
 declare function local:fnFhirValueQuantity($val as xs:string?,$unit as xs:string?) as node(){    
 let $unitStr:=
        if(local:all-whitespace($unit)) then ""
-        else   <units value="{$unit}"/> 
+        else $unit
  
 return <valueQuantity>
     <value value="{$val}"/>    
     <system value="http://unitsofmeasure.org"/>
-    {$unitStr}
+    <unit value="{$unitStr}"/>  
+    <code value="{$unitStr}"/> 
+    
     
   </valueQuantity>
 };
@@ -201,7 +206,7 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
      <reference value="Patient/{$pid}"/>
   </patient>
   
-  <onsetdateTime value="{$sd}"/>
+  <onsetDateTime value="{$sd}"/>
   <verificationStatus value="confirmed"/>
  
   <code>
@@ -218,6 +223,13 @@ declare function local:fnFhirDiagCondition($sd as xs:string?, $ed as xs:string?,
       <display value="Diagnosis"/>
     </coding>
   </category>
+  <severity>
+        <coding>
+            <system value="http://snomed.info/sct"/>
+            <code value="6736007"/>
+            <display value="Moderate"/>
+        </coding>
+    </severity>
   <clinicalStatus value="active"/>
   </Condition>
 };
@@ -298,7 +310,7 @@ declare function local:fnFhirMedicationStatement($count as xs:integer?,$doseQuan
  <id value="{$pid}-{$count}"/>
  
    
-   <effectivedateTime value="{$sd}"/>
+   <effectiveDateTime value="{$sd}"/>
    
   <text>
     <status value="generated"/>
@@ -700,6 +712,7 @@ let $medObs:= $distObs//observation[modifier_cd="@" and valuetype_cd="N" and pan
 let $medDis:= $distObs//observation[modifier_cd="@" and valuetype_cd="M" and panel_name="medications"]
 let $diagObs:= $distObs//observation[panel_name="diagnoses"]
 let $reportObs:= $distObs//observation[panel_name="reports"]
+let $vitalObs:= $distObs//observation[panel_name="vitals"]
 
 let $concepts:=$I//concept
 
@@ -710,6 +723,7 @@ return <Bundle xmlns="http://hl7.org/fhir" xmlns:ns3="http://i2b2.harvard.edu/fh
 {local:processDiagObs(<A>{$diagObs}</A>,<C>{$concepts}</C>)/entry}
 
 {local:processLabObs(<A>{$labObs}</A>,<C>{$concepts}</C>)/entry}
+{local:processLabObs(<A>{$vitalObs}</A>,<C>{$concepts}</C>)/entry}
 
 {local:processMedDispense(<A>{$medDis}</A>,<C>{$concepts}</C>)/entry}
 {local:processMedObs(<A>{$medObs}</A>,<C>{$concepts}</C>)/entry}

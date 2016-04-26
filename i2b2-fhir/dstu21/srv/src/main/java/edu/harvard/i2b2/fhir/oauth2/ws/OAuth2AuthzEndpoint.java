@@ -102,8 +102,9 @@ public class OAuth2AuthzEndpoint {
 	@EJB
 	ClientService clientService;
 	
+	
 	@EJB
-	ServerConfigs serverConfig;
+	ServerConfigs serverConfigs;
 	
 	// http://localhost:8080/srv-dstu2-0.2/api/authz/authorize?scope=launch%3A1000000005%2BPatient%2F*&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fclient-dstu2-0.2%2Foauth2%2FgetAuthCode&client_id=fcclient1
 	@GET
@@ -173,7 +174,7 @@ public class OAuth2AuthzEndpoint {
 	// is there an i2b2 AuthorizationCode record associated with the submitted
 	// AuthorizationCode
 	boolean isClientIdValid(String clientId, String redirectUri) {
-		if(serverConfig.GetString(ConfigParameter.openClientId)!=null && serverConfig.GetString(ConfigParameter.openClientId).equals(clientId)) return true;
+		if(serverConfigs.GetString(ConfigParameter.openClientId)!=null && serverConfigs.GetString(ConfigParameter.openClientId).equals(clientId)) return true;
 		Client client=clientService.find(clientId);
 		if (client==null) {
 			logger.warn("client not found for id:"+clientId);
@@ -387,7 +388,11 @@ public class OAuth2AuthzEndpoint {
 					+ " in session " + session.getId());
 
 		}
-		final OAuthResponse Oresponse = builder.location(redirectURI)
+		URI fhirBase = HttpHelper.getBasePath(request,serverConfigs);
+		String uri=fhirBase.toString();
+		uri = uri.substring(0, uri.length()-1);//chopping of last /
+		uri = uri.substring(0, uri.lastIndexOf('/')) + "/"; 
+		OAuthResponse Oresponse = builder.location(redirectURI).setParam("aud",uri)
 				.buildQueryMessage();
 		URI url = new URI(Oresponse.getLocationUri());
 
