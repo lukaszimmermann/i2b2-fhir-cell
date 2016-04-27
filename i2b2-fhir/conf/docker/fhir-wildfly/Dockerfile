@@ -1,9 +1,10 @@
 FROM jboss/wildfly
 MAINTAINER <Kavishwar (Kavi)  Wagholikar waghsk@gmail.com>
 
-ADD srv-dstu21-0.3.war  /opt/jboss/wildfly/standalone/deployments/
+#ADD srv-dstu21-0.3.war  /opt/jboss/wildfly/standalone/deployments/
+ADD wildfly-fhir.tar.bz2 /opt/jboss/wildfly/
 
-ADD jbh/standalone/deploy.tar.bz2  /opt/jboss/wildfly/standalone/
+#ADD jbh/standalone/deploy.tar.bz2  /opt/jboss/wildfly/standalone/
 
 RUN /opt/jboss/wildfly/bin/add-user.sh admin demoadmin --silent
 

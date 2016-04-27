@@ -1,5 +1,5 @@
 I2B2_QS=$1
-source $I2B2_QS/install.sh
+source $I2B2_QS/scripts/install/install.sh
 
 export MAVEN_HOME=$LOCAL/mvn
 
@@ -65,4 +65,15 @@ check_homes_for_install
 install_maven
 #configure_wildfly
 compile_fhir_cell
+
+cd $JBOSS_HOME/
+sed -i "s/localhost:3306/fhir-mariadb:3306/" standalone/configuration/standalone.xml
+tar -cvjf wildfly-fhir.tar.bz2 standalone/configuration* standalone/deployments* modules/system/layers/base/com/mysql/*  --exclude=*i2b2*
+#tar -cvjf standalone.tar.bz2 configuration* deployments* --exclude=*i2b2*
+
+DAP=$LOCAL/docker/fhir-wildfly
+[ -d $DAP ] || mkdir -p $DAP
+cp wildfly-fhir.tar.bz2 $DAP
+cp $BASE/conf/docker/fhir-wildfly/Dockerfile $DAP/
+ 
 
