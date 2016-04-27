@@ -68,6 +68,7 @@ compile_fhir_cell
 
 cd $JBOSS_HOME/
 sed -i "s/localhost:3306/fhir-mariadb:3306/" standalone/configuration/standalone.xml
+sed -i "s/offset:0/offset:1010/" standalone/configuration/standalone.xml
 tar -cvjf wildfly-fhir.tar.bz2 standalone/configuration* standalone/deployments* modules/system/layers/base/com/mysql/*  --exclude=*i2b2*
 #tar -cvjf standalone.tar.bz2 configuration* deployments* --exclude=*i2b2*
 
