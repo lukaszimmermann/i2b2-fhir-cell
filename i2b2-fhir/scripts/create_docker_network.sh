@@ -24,7 +24,8 @@ sed -i "s/services.i2b2.org:9090/i2b2-web/" $BASE/dstu21/srv/src/main/resources/
 sed -i "s/localhost:3306/fhir-mysql:3306/" $BASE/local/
 sh $BASE/scripts/install/install.sh $IFQS 
 
-
+cp -rv $BASE/conf/docker/fhir-wildfly/* $BASE/local/docker/fhir-wildfly/
 sudo docker stop fhir-wildfly; sudo docker rm fhir-wildfly;
 docker build -t i2b2/fhir-wildfly $BASE/local/docker/fhir-wildfly/;
 docker run --name=fhir-wildfly -d -p 9090:9090 -p 11000:11000 --net i2b2-net i2b2/fhir-wildfly
+docker exec -it fhir-wildfly bash -c /confI2b2Url.sh  "http://192.168.254.144/i2b2"
