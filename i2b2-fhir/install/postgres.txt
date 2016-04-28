@@ -1,0 +1,23 @@
+create database i2b2fhir;
+CREATE USER ifcu WITH PASSWORD 'ifcp';
+GRANT ALL PRIVILEGES ON  database i2b2fhir TO ifcu;
+https://jdbc.postgresql.org/download/postgresql-9.4.1208.jar 
+
+sh i2b2-fhir-installdir/wildfly-9.0.1.Final/bin/jboss-cli.sh --connect controller=127.0.0.1
+module add --name=org.postgresql --slot=main --resources=/home/user1/postgresql-9.4.1208.jar --dependencies=javax.api,javax.transaction.api
+/subsystem=datasources/jdbc-driver=postgresql:add(driver-name="postgresql",driver-module-name="org.postgresql",driver-class-name=org.postgresql.Driver)
+
+<?xml version="1.0" ?>
+
+<module xmlns="urn:jboss:module:1.1" name="org.postgresql" slot="main">
+
+    <resources>
+        <resource-root path="postgresql-9.4.1208.jar"/>
+    </resources>
+
+    <dependencies>
+        <module name="javax.api"/>
+        <module name="javax.transaction.api"/>
+    </dependencies>
+</module>
+~            
