@@ -26,6 +26,7 @@ sudo docker exec -it fhir-mariadb bash -c "/i2b2fhir_db.sh $MYSQL_PASS; "
 sh $BASE/scripts/install/install.sh $IFQS 
 
 cp -rv $BASE/conf/docker/fhir-wildfly/* $BASE/local/docker/fhir-wildfly/
+cp $IFQS/packages/jdk-8u60-linux-x64.tar.gz $BASE/local/docker/fhir-wildfly/
 sudo docker stop fhir-wildfly; sudo docker rm fhir-wildfly;
 docker build -t i2b2/fhir-wildfly $BASE/local/docker/fhir-wildfly/;
 docker run --name=fhir-wildfly -d -p 9090:9090 -p 11000:11000 --net i2b2-net i2b2/fhir-wildfly
