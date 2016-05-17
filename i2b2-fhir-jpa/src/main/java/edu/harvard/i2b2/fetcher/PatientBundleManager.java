@@ -13,12 +13,12 @@ import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.IOUtils;
-
+import org.hl7.fhir.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ranges.RangeException;
 
-import ca.uhn.fhir.model.api.BaseBundle;
+
 /*
 import edu.harvard.i2b2.fhir.DiagnosticReportGenerator;
 import edu.harvard.i2b2.fhir.FhirEnrich;
@@ -27,7 +27,8 @@ import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.ObservationCategoryGenerator;
 */
-import ca.uhn.fhir.model.dstu2.resource.Bundle;
+
+import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.server.config.ConfigDbService;
 import edu.harvard.i2b2.fhir.server.config.ConfigParameter;
 import edu.harvard.i2b2.fhir.server.config.ServerConfigs;

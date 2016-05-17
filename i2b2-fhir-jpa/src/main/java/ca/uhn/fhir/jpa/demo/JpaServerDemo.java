@@ -29,6 +29,7 @@ import ca.uhn.fhir.rest.server.EncodingEnum;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.RestfulServer;
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
+import interceptor.FetchingInterceptor;
 
 public class JpaServerDemo extends RestfulServer {
 
@@ -146,7 +147,7 @@ public class JpaServerDemo extends RestfulServer {
 		for (IServerInterceptor interceptor : interceptorBeans) {
 			this.registerInterceptor(interceptor);
 		}
-
+		this.registerInterceptor(new FetchingInterceptor());
 		/*
 		 * If you are hosting this server at a specific DNS name, the server will try to 
 		 * figure out the FHIR base URL based on what the web container tells it, but

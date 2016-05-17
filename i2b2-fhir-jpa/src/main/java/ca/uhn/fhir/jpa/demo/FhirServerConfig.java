@@ -21,6 +21,7 @@ import ca.uhn.fhir.jpa.util.SubscriptionsRequireManualActivationInterceptorDstu2
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
+import interceptor.FetchingInterceptor;
 
 @Configuration
 @EnableTransactionManagement()
@@ -96,6 +97,12 @@ public class FhirServerConfig extends BaseJavaConfigDstu2 {
 		return retVal;
 	}
 
+	
+	public IServerInterceptor fetchingInterceptor() {
+		FetchingInterceptor retVal = new FetchingInterceptor();
+		return retVal;
+	}
+	
 	/**
 	 * This interceptor adds some pretty syntax highlighting in responses when a browser is detected
 	 */
@@ -110,6 +117,8 @@ public class FhirServerConfig extends BaseJavaConfigDstu2 {
 		SubscriptionsRequireManualActivationInterceptorDstu2 retVal = new SubscriptionsRequireManualActivationInterceptorDstu2();
 		return retVal;
 	}
+	
+	
 
 	@Bean()
 	public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
