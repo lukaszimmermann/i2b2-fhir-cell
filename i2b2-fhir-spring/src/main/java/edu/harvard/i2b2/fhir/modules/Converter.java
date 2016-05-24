@@ -1,4 +1,6 @@
-package edu.harvard.i2b2.converter;
+package edu.harvard.i2b2.fhir.modules;
+
+import edu.harvard.i2b2.converter.ConverterException;
 
 public interface Converter {
 

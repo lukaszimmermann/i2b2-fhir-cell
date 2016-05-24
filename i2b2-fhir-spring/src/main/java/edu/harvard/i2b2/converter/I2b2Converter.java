@@ -15,6 +15,7 @@ import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
 import edu.harvard.i2b2.fhir.JAXBUtil;
 import edu.harvard.i2b2.fhir.XQueryUtilException;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
+import edu.harvard.i2b2.fhir.modules.Converter;
 
 @Repository
 public class I2b2Converter implements Converter {
@@ -36,16 +37,17 @@ public class I2b2Converter implements Converter {
 			String pmResponseXml=I2b2Util.getPmResponseXml(i2b2UserId,i2b2UserPassword, i2b2Url, i2b2Domain);
 			 i2b2Token=I2b2Util.getToken(pmResponseXml);
 			
-			 System.out.println("pmResponseXml:"+pmResponseXml);
+			// System.out.println("pmResponseXml:"+pmResponseXml);
+			 logger.info("pmResponseXml:"+pmResponseXml);
 
 			HashMap<String, String> map = new HashMap<String, String>();
 
 			map.put("labs", "\\\\i2b2_LABS\\i2b2\\Labtests\\");
 			Bundle b = I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(i2b2UserId, i2b2Token,
 					i2b2Url, i2b2Domain, i2b2Project, pid, map, i2b2OntologyType);
-			//fhirXmlBundle=JAXBUtil.toXml(b);
+			fhirXmlBundle=JAXBUtil.toXml(b);
 			
-		} catch (XQueryUtilException |IOException | FhirCoreException  e) {
+		} catch (XQueryUtilException |IOException | FhirCoreException | JAXBException   e) {
 			throw new ConverterException(e);
 		}
 		return fhirXmlBundle;

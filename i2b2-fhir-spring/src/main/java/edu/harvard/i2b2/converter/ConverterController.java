@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import edu.harvard.i2b2.fhir.I2b2UtilByCategory;
+import edu.harvard.i2b2.fhir.modules.Converter;
 import edu.harvard.i2b2.fhir.oauth2.AccessToken;
 import spittr.Spittle;
 import spittr.data.SpittleRepository;
@@ -41,15 +42,15 @@ public class ConverterController {
 	@RequestMapping(value = "/fetch/{pid}", method = RequestMethod.GET)
 	public String getBundleBlocking(@PathVariable("pid") String pid) throws InterruptedException, ConverterException {
 		
-		System.out.println("...fetch:" + pid);
+		logger.debug("...fetch:" + pid);
 		if (repository.findOne(pid) != null) {
-			System.out.println("...found one:" + pid);
+			logger.debug("...found one:" + pid);
 			while (repository.isProcessing(pid)) {
-				System.out.println("..sleeping as status is processing:" + pid);
+				logger.debug("..sleeping as status is processing:" + pid);
 				Thread.sleep(2000);
 			}
 		} else {
-			System.out.println("...found NONE:" + pid);
+			logger.debug("...found NONE:" + pid);
 			repository.markProcessing(pid);
 			// if (fetchBundle(pid)) {
 			AccessToken t=new AccessToken();
@@ -60,14 +61,14 @@ public class ConverterController {
 				repository.markComplete(pid);
 			}
 		}
-		System.out.println("...redirecting:" + pid);
+		logger.debug("...redirecting:" + pid);
 		return "redirect:/bs/" + pid;
 	}
 
 	private boolean fetchBundle(String pid) throws InterruptedException {
 		for (int x = 0; x < 50; x++) {
 			Thread.sleep(50000);
-			System.out.println("FETCH sleep:" + pid);
+			logger.debug("FETCH sleep:" + pid);
 		}
 		return true;
 	}
@@ -122,8 +123,8 @@ public class ConverterController {
 			String outputXml=converter.getFhirXmlBundle(pid);
 			
 
-			Bundle b = I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(),
-					tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map, "default");
+			//Bundle b = I2b2UtilByCategory.getAllDataForAPatientAsFhirBundle(tok.getResourceUserId(), tok.getI2b2Token(),
+				//	tok.getI2b2Url(), tok.getI2b2Domain(), tok.getI2b2Project(), pid, map, "default");
 			
 			/*
 			 * if
