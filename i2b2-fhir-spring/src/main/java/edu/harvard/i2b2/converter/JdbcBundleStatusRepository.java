@@ -4,6 +4,7 @@ package edu.harvard.i2b2.converter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -18,6 +19,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
+
 
 
 @Repository
@@ -43,23 +46,27 @@ public class JdbcBundleStatusRepository implements BundleStatusRepository {
 	    }
 	  }
 	public boolean isComplete(String pid) {
-		return findOne(pid).getBundleStatusLevel().equals("COMPLETE");
+		BundleStatus bs=findOne(pid);
+		return bs==null?false:bs.getBundleStatusLevel().equals("COMPLETE");
 	}
 
 	public BundleStatus findOne(String pid){
-		return (BundleStatus) jdbc.query(
+		 ArrayList<BundleStatus> list= (ArrayList<BundleStatus>) jdbc.query(
 		        "select * " +
 		        " from bundle_status where patient_id="+pid+";",
-		        new BundleStatusMapper()).get(0);
+		        new BundleStatusMapper());
+		 logger.info("found:"+list.size());
+		 return list.size()>0?list.get(0):null;
 	}
 
 	public boolean isProcessing(String pid) {
-		
-		return findOne(pid).getBundleStatusLevel().equals("PROCESSING");
+		BundleStatus bs=findOne(pid);
+		return bs==null?false:bs.getBundleStatusLevel().equals("PROCESSING");
 	}
 
 	public  boolean isFailed(String pid) {
-		return findOne(pid).getBundleStatusLevel().equals("FAILED");
+		BundleStatus bs=findOne(pid);
+		return bs==null?false:bs.getBundleStatusLevel().equals("FAILED");
 	}
 
 	public void markProcessing(String pid) {
