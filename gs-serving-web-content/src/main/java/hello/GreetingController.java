@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import hello.CustomerRepository;
 
 @Controller
+@RequestMapping("/greeting")
 public class GreetingController {
 
 	
@@ -18,10 +19,7 @@ public class GreetingController {
 	@Autowired
 	CustomerRepository repository;
 	
-	
-
-	
-    @RequestMapping("/a")
+	 @RequestMapping("/a")
     public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
     	System.out.println(">>>CALLED");
         model.addAttribute("name", name);
