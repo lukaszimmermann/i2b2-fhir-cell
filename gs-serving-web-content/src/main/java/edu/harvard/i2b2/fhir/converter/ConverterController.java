@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import edu.harvard.i2b2.fhir.Utils;
+import edu.harvard.i2b2.fhir.cache.Cache;
 import hello.CustomerRepository;
 import hello.GreetingController;
+import javassist.bytecode.analysis.Util;
 
 @Controller
 @RequestMapping("/bs")
@@ -31,6 +36,9 @@ public class ConverterController {
 
 	@Autowired
 	BundleStatusRepository repository;
+	
+	@Autowired
+	Cache cache;
 
 	@RequestMapping(value = "/view/{pid}", method = RequestMethod.GET)
 	public String viewBundleStatus(@PathVariable("pid") String pid, Model model) {
@@ -49,7 +57,7 @@ public class ConverterController {
 	}
 
 	@RequestMapping(value = "/fetch/{pid}", method = RequestMethod.GET)
-	public String getBundleBlocking(@PathVariable("pid") String pid) throws InterruptedException, ConverterException {
+	public ResponseEntity getBundleBlocking(@PathVariable("pid") String pid) throws InterruptedException, ConverterException {
 
 		logger.debug("...fetch:" + pid);
 		if (findOne(pid) != null) {
@@ -57,6 +65,8 @@ public class ConverterController {
 			while (isProcessing(pid)) {
 				logger.debug("..sleeping as status is processing:" + pid);
 				Thread.sleep(2000);
+				
+		
 			}
 		} else {
 			BundleStatus bs = new BundleStatus();
@@ -71,10 +81,21 @@ public class ConverterController {
 			}
 		}
 		logger.debug("...redirecting:" + pid);
-		return "redirect:/bs/view/" + pid;
+		return new ResponseEntity<>(cache.get("http://localhost:8090//hapi-fhir-jpaserver-example/baseDstu2/Patient/example"),HttpStatus.OK);
+		//return "redirect:/bs/view/" + pid;
 	}
 
 	private boolean fetchPatientBundle(String pid) {
+		try {
+			(
+					new I2b2Converter()).getFhirXmlBundle(pid);
+		} catch (ConverterException e1) {
+			logger.error(e1.getMessage(),e1);
+			return false;
+		}
+		
+		cache.put(Utils.getFile("/examples/singlePatient.xml"));
+		
 		for (int i = 0; i < 3; i++) {
 			try {
 				logger.info("fetch....sleep:"+pid);
