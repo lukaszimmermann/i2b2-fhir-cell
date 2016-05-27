@@ -7,9 +7,12 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,9 @@ public class ConverterController {
 	
 	@Autowired
 	Cache cache;
+	
+	@Value("${cache.url}")
+	String cacheUrl;
 
 	@RequestMapping(value = "/view/{pid}", method = RequestMethod.GET)
 	public String viewBundleStatus(@PathVariable("pid") String pid, Model model) {
@@ -55,6 +61,17 @@ public class ConverterController {
 		List<BundleStatus> list = repository.findByPatientId(pid);
 		return list.size() > 0 ? list.get(0) : null;
 	}
+	
+	@RequestMapping(value = "/fhir/{path:.*}", method = RequestMethod.GET)
+	public ResponseEntity fhirEndpoint(HttpServletRequest request, @PathVariable String path){
+		logger.debug("path:"+path+"?"+request.getQueryString());
+		//return new ResponseEntity<>(request.getRequestURI(),HttpStatus.OK);
+		logger.debug("getContextPath()"+request.getContextPath());
+		String basePath=request.getRequestURL().toString().replace(path,"");
+		logger.debug("basePath:"+basePath);
+		return new ResponseEntity<>(cache.get(cacheUrl+"/"+path+"?"+request.getQueryString()).replace(cacheUrl, basePath),HttpStatus.OK);
+		
+	}
 
 	@RequestMapping(value = "/fetch/{pid}", method = RequestMethod.GET)
 	public ResponseEntity getBundleBlocking(@PathVariable("pid") String pid) throws InterruptedException, ConverterException {
@@ -65,8 +82,6 @@ public class ConverterController {
 			while (isProcessing(pid)) {
 				logger.debug("..sleeping as status is processing:" + pid);
 				Thread.sleep(2000);
-				
-		
 			}
 		} else {
 			BundleStatus bs = new BundleStatus();
@@ -81,7 +96,8 @@ public class ConverterController {
 			}
 		}
 		logger.debug("...redirecting:" + pid);
-		return new ResponseEntity<>(cache.get("http://localhost:8090//hapi-fhir-jpaserver-example/baseDstu2/Patient/example"),HttpStatus.OK);
+		logger.debug("");
+		return new ResponseEntity<>(cache.get(cacheUrl+"/Patient/example"),HttpStatus.OK);
 		//return "redirect:/bs/view/" + pid;
 	}
 

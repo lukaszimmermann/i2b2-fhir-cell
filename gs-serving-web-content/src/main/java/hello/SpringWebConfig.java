@@ -3,6 +3,7 @@ import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.view.JstlView;
 @EnableJpaRepositories({ "hello*","edu.harvard.i2b2.fhir.converter*" })
 @ComponentScan( { "hello*","edu.harvard*" })
 @EntityScan({ "hello*","edu.harvard*" }) 
+@PropertySource(value = { "classpath:application.properties" })
 public class SpringWebConfig extends WebMvcConfigurerAdapter {
  
 	@Override
