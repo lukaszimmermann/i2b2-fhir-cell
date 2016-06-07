@@ -75,7 +75,6 @@ public class QueryEngine {
 		}
 		queryUrl=queryUrl.replace( "PLUS","+").replace("MINUS","-");
 		logger.debug("queryUrl:" + queryUrl);
-		this.db = db;
 		queryList = new ArrayList<Query>();
 		this.queryUrl = queryUrl;
 		String fhirClassExp = "("
@@ -104,8 +103,9 @@ public class QueryEngine {
 				String prefix = m.group(1);
 				suffix = m.group(2);
 				if(suffix.length()>0) suffix=suffix.substring(1);//to drop preceding&
-				if (!prefix.matches("^_id.*") && prefix.matches("^_.*")) {
-					logger.info("excluding paramerters begining with _: except _id:"
+				if ((!prefix.matches("^_id.*") && prefix.matches("^_.*"))||
+						prefix.matches("^page.*")) {
+					logger.info("excluding paramerters (begining with _: except _id:) or page"
 							+ prefix);
 				} else {
 					Query q=null ;
@@ -133,7 +133,7 @@ public class QueryEngine {
 		queryList = new ArrayList<Query>();
 
 		for (String k1 : queryParamMap.keySet()) {
-			if (k1.matches("^_")) {
+			if (k1.matches("^_") || k1.matches("page")) {
 				continue;
 			}
 			logger.info("queryParamMap:" + queryParamMap.toString());
@@ -146,7 +146,7 @@ public class QueryEngine {
 		}
 	}
 
-	public List<Resource> search(List<Resource> s) throws FhirCoreException,
+	public List<Resource> search(List<Resource> s,MetaResourceDb db) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
 		List<Resource> resultS = new ArrayList<Resource>();
 		logger.trace("running query");
@@ -178,7 +178,7 @@ public class QueryEngine {
 			for (Query q : this.queryList) {
 				
 				//if match fails on a query skip other queries
-				if (matchF == true && (q.match(resourceXml,r,s)==false)){
+				if (matchF == true && (q.match(resourceXml,r,s,db)==false)){
 						matchF = false;
 						
 				}
@@ -200,12 +200,12 @@ public class QueryEngine {
 				+ rawQuery + "]\n";
 	}
 
-	public List<Resource> search(Resource r1) throws FhirCoreException,
+	public List<Resource> search(Resource r1,MetaResourceDb db) throws FhirCoreException,
 			JAXBException, XQueryUtilException, QueryException {
 		List<Resource> s1 = new ArrayList<Resource>();
 			logger.trace("running subquery");
 			s1.add(r1);
-			return search(s1);
+			return search(s1,db);
 	}
 
 }

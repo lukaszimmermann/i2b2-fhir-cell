@@ -66,7 +66,7 @@ public class QueryService {
 		List<Resource> list = FhirUtil.getResourceListFromBundle(b);
 		logger.trace("list size:" + list.size());
 		Bundle res = FhirUtil
-				.getResourceBundle(qe.search(list), basePath, "url");
+				.getResourceBundle(qe.search(list,null), basePath, "url");
 		return res;
 		}catch(XQueryUtilException | QueryParameterException | QueryValueException | FhirCoreException | JAXBException | QueryException e){
 			logger.error(e.getMessage(),e);

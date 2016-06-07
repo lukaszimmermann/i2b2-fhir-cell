@@ -85,7 +85,7 @@ public class QueryCustom extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml,Resource r, List<Resource> s) throws XQueryUtilException  {
+	public boolean match(String resourceXml,Resource r, List<Resource> s, MetaResourceDb db) throws XQueryUtilException  {
 			//logger.trace("resourceXml:"+resourceXml);
 		List<String> xmlList;
 		

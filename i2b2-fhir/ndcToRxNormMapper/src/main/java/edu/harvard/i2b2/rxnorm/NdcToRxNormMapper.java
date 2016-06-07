@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 public class NdcToRxNormMapper {
 	static Logger logger = LoggerFactory.getLogger(NdcToRxNormMapper.class);
 
-	HashMap<String, Integer> Ndc2CuiMap;
-	HashMap<Integer, String> rxCuiMap;
+	static HashMap<String, Integer> Ndc2CuiMap;
+	static HashMap<Integer, String> rxCuiMap;
 
 	public NdcToRxNormMapper() throws IOException {
 		init();
@@ -40,12 +40,17 @@ public class NdcToRxNormMapper {
 	}
 
 	private void initRxCuiMap() throws IOException {
-		rxCuiMap=BinResourceFromRXNormData.deSerializeRxCuiMap();
-	
+		if (rxCuiMap == null) {
+			logger.trace("initializing rxCuiMap");
+			rxCuiMap = BinResourceFromRXNormData.deSerializeRxCuiMap();
+		} else {
+			logger.trace("reusing rxCuiMap");
+		}
 	}
 
 	private void initNdc2CuiMap() throws IOException {
-		Ndc2CuiMap=BinResourceFromRXNormData.deSerializeNdc2CuiMap();
+		if (Ndc2CuiMap == null)
+			Ndc2CuiMap = BinResourceFromRXNormData.deSerializeNdc2CuiMap();
 	}
 
 	public String getRxCui(String ndcString) {
@@ -56,15 +61,14 @@ public class NdcToRxNormMapper {
 			return null;
 		}
 	}
-	
+
 	public String getRxCuiName(String rxCuiStr) {
-		Integer rxCui=Integer.parseInt(rxCuiStr);
-		if (rxCui!= null) {
+		Integer rxCui = Integer.parseInt(rxCuiStr);
+		if (rxCui != null) {
 			return rxCuiMap.get(rxCui);
 		} else {
 			return null;
 		}
 	}
-	
-	
+
 }

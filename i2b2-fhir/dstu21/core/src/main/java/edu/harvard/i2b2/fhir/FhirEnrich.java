@@ -67,23 +67,25 @@ public class FhirEnrich {
 				Resource re = FhirUtil.getResourceFromContainer(rc);
 				enrich(re);
 			}
-		}
+		}else
 		// Medication rxnorm
 		if (Medication.class.isInstance(r)) {
 			Medication m = Medication.class.cast(r);
-			rxNormAdapter.addRxCui(m);
+			rxNormAdapter.translateNdcToRxNorm(m);
+			rxNormAdapter.addRxNormDisplayName(m);
 
-		}
+		}else
 
 		if (Observation.class.isInstance(r)) {
 			Observation ob = Observation.class.cast(r);
 			loincAdapter.addLoincName(ob);
 			
-		}
+		}else 
 		
 		if (Condition.class.isInstance(r)) {
 			Condition cond = Condition.class.cast(r);
 			 icd9Adapter.addIcd9Name(cond);
+			 icd9Adapter.translateIcd9ToSnomedCT(cond);
 		}
 
 		// Labs loinc

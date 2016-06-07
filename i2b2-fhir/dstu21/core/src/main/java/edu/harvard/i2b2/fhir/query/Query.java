@@ -148,7 +148,8 @@ public abstract class Query {
 	/*
 	 * provide either resourceXml or resource and MetaResourceSet is optional
 	 */
-	abstract public boolean match(String resourceXml, Resource r, List<Resource> s) throws  XQueryUtilException, QueryException;
+	//XXX Can s be replaced by db??
+	abstract public boolean match(String resourceXml, Resource r, List<Resource> s, MetaResourceDb db) throws  XQueryUtilException, QueryException;
 
 	abstract public void validateParameter() throws QueryParameterException;
 

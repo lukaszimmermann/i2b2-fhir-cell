@@ -102,7 +102,7 @@ public class QueryDate extends Query {
 	}
 
 	@Override
-	public boolean match(String resourceXml, Resource r, List<Resource> s) throws XQueryUtilException {
+	public boolean match(String resourceXml, Resource r, List<Resource> s, MetaResourceDb db) throws XQueryUtilException {
 		List<String> pathArr = Arrays.asList(this.getParameterPath().split("\\|"));
 		for (String path : pathArr) {
 			ArrayList<String> list;

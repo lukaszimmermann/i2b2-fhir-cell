@@ -1,12 +1,15 @@
 package edu.harvard.i2b2.oauth2.core.entity;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipException;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.sun.mail.iap.ByteArray;
 
+import edu.harvard.i2b2.fhir.Utils;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleService;
 
 @Entity
@@ -27,7 +31,7 @@ public class PatientBundleRecord {
 	String patientId;
 
 	@Lob
-	String bundleXml;
+	byte[] bundleXml;
 
 	public String getPatientId() {
 		return patientId;
@@ -37,59 +41,29 @@ public class PatientBundleRecord {
 		this.patientId = patientId;
 	}
 
-	public String getBundleXml()  {
-		return //unzip(
-				bundleXml;
-				//);
+	public String getBundleXml() {
+		try {
+			return Utils.unCompressString(bundleXml,"UTF-8");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	public void setBundleXml(String bundleXml) {
-		this.bundleXml = //zip(
-					bundleXml;
-				    //);
-	}
-
-	private String zip(String str) {
-		if (str == null || str.length() == 0) {
-            return str;
-        }
 		try {
-			 
-		        //System.out.println("String length : " + str.length());
-		        ByteArrayOutputStream obj=new ByteArrayOutputStream();
-		        GZIPOutputStream gzip = new GZIPOutputStream(obj);
-		        gzip.write(str.getBytes("UTF-8"));
-		        gzip.close();
-		        String outStr = obj.toString("UTF-8");
-		        logger.trace("zipped:"+outStr);
-		        //System.out.println("Output String length : " + outStr.length());
-		        return outStr;
+			this.bundleXml = Utils.compress(bundleXml,"UTF-8");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return e.getMessage();
 		}
 
 	}
+	
 
-	private String unzip(String str) {
-		if (str == null || str.length() == 0) {
-            return str;
-        }
-		try {
-			GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(str.getBytes("UTF-8")));
-			BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
-			String outStr = "";
-			String line;
-			while ((line = bf.readLine()) != null) {
-				outStr += line;
-			}
-			logger.trace("unzipped:"+outStr);
-			return outStr;
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return e.getMessage();
-		}
-
+	@Override
+	public String toString() {
+		return "PatientBundleRecord [patientId=" + patientId + ", bundleXml=" + this.getBundleXml() + "]";
 	}
 
+	
 }

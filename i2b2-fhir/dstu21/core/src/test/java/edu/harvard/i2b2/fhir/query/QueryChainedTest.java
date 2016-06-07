@@ -61,62 +61,67 @@ public class QueryChainedTest {
 	String xmlPatient;
 	String xmlMedicationStatement;
 	MedicationStatement ms;
-	
+
 	QueryBuilder qb;
 	Query q;
 	MetaResourceDb db;
 	QueryEngine qe;
 	List<Resource> s;
+
 	@Before
 	public void setup() throws FhirCoreException, JAXBException, IOException {
 		xmlPatient = Utils.getFile("example/fhir/DSTU2/singlePatient.xml");
-		p = (Patient) JAXBUtil.fromXml(xmlPatient,Patient.class);
+		p = (Patient) JAXBUtil.fromXml(xmlPatient, Patient.class);
 		qb = new QueryBuilder();
 		xmlMedicationStatement = Utils.getFile("example/fhir/DSTU2/MedicationStatement.xml");
-		ms = (MedicationStatement) JAXBUtil.fromXml(xmlMedicationStatement,MedicationStatement.class);
-		FhirUtil.setId(ms,"1-1");
+		ms = (MedicationStatement) JAXBUtil.fromXml(xmlMedicationStatement, MedicationStatement.class);
+		FhirUtil.setId(ms, "1-1");
 		qb = new QueryBuilder();
-		db=new MetaResourceDb();
-		//db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
+		db = new MetaResourceDb();
+		// db.addMetaResource(FhirUtil.getMetaResource(p), Patient.class);
 		db.addResource(ms);
-		s=db.getAll();
+		s = db.getAll();
 	}
 
 	@Test
-	public void testChainedMulipleObjects() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, JAXBException, FhirCoreException, QueryParameterException, QueryValueException, XQueryUtilException, QueryException 
-	{
+	public void testChainedMulipleObjects() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, JAXBException, FhirCoreException,
+			QueryParameterException, QueryValueException, XQueryUtilException, QueryException {
 		String xmlPatientMultiIdentifier = Utils.getFile("example/fhir/DSTU2/singlePatientMultiIdentifiers.xml");
-		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier,Patient.class);
-		logger.trace("id:"+FhirUtil.getChildrenThruChain(p,"identifier", s));
-		
+		p = (Patient) JAXBUtil.fromXml(xmlPatientMultiIdentifier, Patient.class);
+		logger.trace("id:" + FhirUtil.getChildrenThruChain(p, "identifier", s));
+
 		db.addResource(p);
-		s=db.getAll();
-		String url="MedicationStatement?MedicationStatement.Patient.identifier=738472983-2";
-		//String url="Patient?identifier=738472983-2";
+		s = db.getAll();
+		String url = "MedicationStatement?MedicationStatement.Patient.identifier=738472983-2";
+		// String url="Patient?identifier=738472983-2";
 		qe = new QueryEngine(url);
-		logger.trace("qe:"+qe);
-		List<Resource> resSet=qe.search(s);
+		logger.trace("qe:" + qe);
+		List<Resource> resSet = qe.search(s,null);
 	}
-	
-	//@Test
-	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException, XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		//logger.trace("ms:"+JAXBUtil.toXml(ms));
-		//logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));
-		String url="MedicationStatement?MedicationStatement.Patient.name:exact=Pieter";
+
+	// @Test
+	public void testSingle() throws QueryParameterException, QueryValueException, FhirCoreException, JAXBException,
+			XQueryUtilException, QueryException, NoSuchMethodException, SecurityException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
+		// logger.trace("ms:"+JAXBUtil.toXml(ms));
+		// logger.trace("id:"+FhirUtil.getChildThruChain(ms,"Patient.id", s));
+		String url = "MedicationStatement?MedicationStatement.Patient.name:exact=Pieter";
 		qe = new QueryEngine(url);
-		logger.trace("qe:"+qe);
-		List<Resource> resSet=qe.search(s);
-		//logger.info("res:"+JAXBUtil.toXml(resSet));	
-		assertTrue(resSet.size()>0);
-		
-		url="MedicationStatement?MedicationStatement.Patient.name:exact=Pi3eter";
-		//String url="Patient?name:exact=Pieter";
+		logger.trace("qe:" + qe);
+		List<Resource> resSet = qe.search(s,null);
+		// logger.info("res:"+JAXBUtil.toXml(resSet));
+		assertTrue(resSet.size() > 0);
+
+		url = "MedicationStatement?MedicationStatement.Patient.name:exact=Pi3eter";
+		// String url="Patient?name:exact=Pieter";
 		qe = new QueryEngine(url);
-		logger.trace("qe:"+qe);
-		resSet=qe.search(s);
-		//logger.info("res:"+JAXBUtil.toXml(resSet));	
-		assertTrue(resSet.size()==0);
-		
+		logger.trace("qe:" + qe);
+		resSet = qe.search(s,null);
+		// logger.info("res:"+JAXBUtil.toXml(resSet));
+		assertTrue(resSet.size() == 0);
+
+	}
+
 	
-		}
 }

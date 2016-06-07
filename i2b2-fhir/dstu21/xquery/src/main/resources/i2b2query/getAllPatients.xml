@@ -60,7 +60,7 @@
 </input_list>
 <filter_list/>
 <output_option>
-	<patient_set select="using_input_list" onlykeys="false" techdata = "true"/>
+	<patient_set select="using_input_list" onlykeys="false" techdata= "true"/>
 </output_option>
 		</ns3:request>
 	</message_body>

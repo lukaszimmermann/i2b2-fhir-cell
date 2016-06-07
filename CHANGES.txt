@@ -1,0 +1,4 @@
+supports validate function:
+POST Observation/$validate
+Text of resource to be validated is in body of POST
+GET Observation/[id]/$validate
