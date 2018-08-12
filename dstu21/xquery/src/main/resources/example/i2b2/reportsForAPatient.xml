@@ -1,0 +1,107 @@
+<ns5:response xmlns:ns5="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/" xmlns:ns9="http://www.i2b2.org/xsd/cell/ont/1.1/" xmlns:ns6="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/" xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" xmlns:ns10="http://www.i2b2.org/xsd/hive/msg/result/1.1/" xmlns:ns8="http://www.i2b2.org/xsd/cell/pm/1.1/">
+    <message_header>
+        <i2b2_version_compatible>1.1</i2b2_version_compatible>
+        <hl7_version_compatible>2.4</hl7_version_compatible>
+        <sending_application>
+            <application_name>CRC Cell</application_name>
+            <application_version>1.7</application_version>
+        </sending_application>
+        <sending_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </sending_facility>
+        <receiving_application>
+            <application_name>i2b2_QueryTool</application_name>
+            <application_version>1.6</application_version>
+        </receiving_application>
+        <receiving_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </receiving_facility>
+        <message_control_id>
+            <instance_num>1</instance_num>
+        </message_control_id>
+        <project_id>Demo</project_id>
+    </message_header>
+    <response_header>
+        <info>Log information</info>
+        <result_status>
+            <status type="DONE">DONE</status>
+            <polling_url interval_ms="100" />
+        </result_status>
+    </response_header>
+    <message_body>
+        <ns3:response xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:patient_data_responseType">
+            <ns2:patient_data>
+                <ns2:patient_set>
+                    <patient>
+                        <patient_id>1000000005</patient_id>
+                        <param type="string" column_descriptor="Date Accuracy Code" column="vital_status_cd" />
+                        <param type="string" column_descriptor="Language" column="language_cd">english</param>
+                        <param type="dateTime" column="birth_date">1973-06-25T00:00:00.000Z</param>
+                        <param type="string" column_descriptor="Race" column="race_cd">hispanic</param>
+                        <param type="string" column_descriptor="Religion" column="religion_cd">roman catholic</param>
+                        <param type="string" column_descriptor="Income" column="income_cd">Medium</param>
+                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\North Reading\01889\</param>
+                        <param type="string" column_descriptor="Zip Code" column="zip_cd">01889</param>
+                        <param type="string" column_descriptor="Marital Status" column="marital_status_cd">single</param>
+                        <param type="int" column_descriptor="Age" column="age_in_years_num">37</param>
+                        <param type="string" column_descriptor="Gender" column="sex_cd">F</param>
+                    </patient>
+                </ns2:patient_set>
+                <ns2:observation_set panel_name="\\i2b2_REP\i2b2\Reports\">
+                    <observation upload_id="5" sourcesystem_cd="DEMO" import_date="2010-09-28T11:40:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-09-28T11:15:00.000Z">
+                        <event_id>475950</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>LCS-I2B2:MRI_RPT</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109062</observer_cd>
+                        <start_date>2003-09-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>B</valuetype_cd>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd>X</valueflag_cd>
+                        <end_date>2003-09-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                        <observation_blob>AM9M6FUP9IUFK32RJBUSCE0G98FTLOP65DDCHKP4J4U57EGGQ199E047JV5OERLFEETGMS371QUHK79IUQ032UB11JA3R4F6HP96GFPGBRH2QMHQGALMN37GSJ2JKKED93F2904TIM1AFPDDKV1ET9H96R2SERU7CP18QHMQN5OVIQFQCFLEMF7T8RB5CA5V4FAA8TVJ5M8JBP7!DOB9GICKH2DDV2BU9C67BTNQF32OC57L230VVDU776LP9INLVE1CF824MGQULI9RB67794EVDC6RNB26BPRD1PL3CSMFBQC02URFN10RBVMSTNOFOC70DFUQ75V7H22HHBDRU40K8IQGI6TE1OC7MCJHQ76AEFT5AQMF39TFMDUHGDA9RH048J3359JCCPQA8U1BS559N8ICK44J2QI1UH0969PRF5S1KN5KSDG6S121LETC6O6I7HU6F3I87MV2LS2!A5PID44ED7VAEF7PEC2N2K1RN185ITP5Q8U49O47HTFN253RQ7R85ENR85LO818DEBJ0F8BCQ21U1F14F90J3C58LM!125NQR9435FG!117073UUP861K3IDHQI9Q28PL8FFLOH6AASBF41982K9T5LPVU9146OUNNUDE6CGM3V62K8EB5O8IJ6I3KDSRQ3AC6D655O62PCRV98B9H1437N5RS9DPG8S5DGNE6FMM!3504P2HCNORRE65VG4FR1H0DPRA12FUQUQI4GIRAUCLP87S16BP89R50O9U4VQHA5CE1B042U6RM0GACLSB24RCFL6BCTFDA4OOTGSEJ9F0SOF0EBIHDOB46G4ERVBMFICFEMG6RG8MOSI!1ICP0BLBKBDC47IDQQQF5U7AJMBE4Q2RT2MDVEADM1GL310EB9TPDGA9ASALMN19OC5MC967VL0MNMETJKB4S73GGEA8B9IJLEK36DNM753E9P3OCD17GDR29T6IN2G7DM3HAP0R3IUS8Q81HQB3SGNEL6ES6JAFK8D3MEU7EDCGQOEMBMVIH5EIM0VCS9HO8LRB2A1DM7OAJPD!7QLT5N1IB31OODRTDBMJKTS8CPESO8ED6RM0PBT4T3DPPMK5C6P0US3J1REQBMNG!POJN2LDJ5TND!HFB71DT9D60!!CK1HQKPFDJI15B0SCUGFPP8H4U8V1H8BVRLT5KC4DASRR9DDCM7OBEUT0INQDJ0U24ANJ8D28M1QUU2FO041FK4I0KE2BMQ7TA0RUF15F80SQ5S1PKDS7399ICMTME2E2N2EDIJFMEM2IB55N963Q61FROCUFPP0VQ32EFNK6D3GUKF7NJ0GGE1BQLDJBV7ME9S81RSH4HNA82VIFKB3TR49UOPB01A2V556EMJ2S25L2JJSPDA0TPAF9OJ5H10OU3VT</observation_blob>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2011-12-19T00:00:00.000Z" download_date="2011-12-19T00:00:00.000Z" update_date="2011-12-19T00:00:00.000Z">
+                        <event_id>475950</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>LCS-I2B2:MRI_RPT_DID</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109062</observer_cd>
+                        <start_date>2003-09-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>B</valuetype_cd>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2003-09-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                        <observation_blob>Radiology: MRI
+
+Report Status: Final
+Exam: MRI LoExtJt W/O
+Ordering Provider: Burns, Frank M.D.
+
+HISTORY: 
+Questioning arthritis right ankle/foot
+
+REPORT:
+TECHNIQUE: Multiplanar MR of the right ankle was obtained per standard departmental protocol, without administration of Gadolinium.
+
+COMPARISON: There are no prior studies available for comparison.
+
+FINDINGS:
+There are multifocal findings of narrowed joint spaces, subchondral cyst formation, marginal and central erosions involving many of the bony interfaces, consistent with an inflammatory arthropathy. There is diffuse soft tissue edema, as well as edematous changes of the muscles around the ankle joint, consistent with an inflammatory versus infections process. 
+
+IMPRESSION:
+Finding consistent with inflammatory arthritis.
+
+[report_end]</observation_blob>
+                    </observation>
+                </ns2:observation_set>
+            </ns2:patient_data>
+        </ns3:response>
+    </message_body>
+</ns5:response>

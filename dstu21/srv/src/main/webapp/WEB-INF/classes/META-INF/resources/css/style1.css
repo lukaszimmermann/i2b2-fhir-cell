@@ -1,0 +1,18 @@
+body {
+	margin: 50px 0px;
+	padding: 0px;
+	text-align: center;
+	align: center;
+}
+
+form {
+	display: inline-block;
+	text-align: center;
+}
+
+.header {
+	background-color: black;
+	color: white;
+	text-align: center;
+	padding: 15px;
+}

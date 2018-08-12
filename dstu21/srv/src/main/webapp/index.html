@@ -1,0 +1,51 @@
+<html>
+<head></head>
+<body>
+
+
+	<a
+		href="./api/authz/authorize?scope=user*.read&response_type=code&state=state234&client_id=webclient&redirect_uri=http://localhost:8080">
+		auth</a>
+	<br>
+	<a
+		href="./api/authz/authorize?scope=launch/patient&response_type=code&state=state234&client_id=webclient&redirect_uri=http://localhost:8080">
+		launch_patient</a>
+	<br>
+	<a
+		href="./fhir-app1/launch.html?scope=launch/patient&response_type=code&state=state234&client_id=my_web_app&redirect_uri="+fhirServerBase+"/sof/patient/fhir-app/">
+		public smartapp</a>
+
+
+<a
+		href="./fhir-app1/launch.html?scope=launch/patient&response_type=code&state=state234&client_id=my_web_app&redirect_uri="+fhirServerBase+"/smart-app1/">example</a>
+
+	<div id="nav1" />
+
+	<script>
+		var path = window.location.pathname;
+		path = RemoveLastDirectoryPartOf(path);
+		path = RemoveLastDirectoryPartOf(path);// + ' / ';
+		//var basePath=path.split("/")[1];
+		//var fhirServerBase="http://"+location.host+"/"+basePath;
+		var fhirServerBase = window.location.protocol + "//" + location.host
+				+ path ;//+ "api/open";
+//fhirServerBase=fhirServerBase.replace("https:","http:");
+
+		function addlink(url, text) {
+			var theDiv = document.getElementById("nav1");
+			theDiv.innerHTML = theDiv.innerHTML + '<br><a href='+url+'>' + text
+					+ '</a>';
+		};
+		addlink('./sof/patient/fhir-app/launch.html?iss=' + fhirServerBase
+				+ '/srv-dstu21-0.3/api', 'local pat launch');
+	addlink('./smart-app1/launch.html?iss=' + fhirServerBase
+				+ '/srv-dstu21-0.3/api', 'sample ');
+
+		function RemoveLastDirectoryPartOf(the_url) {
+			var the_arr = the_url.split('/');
+			the_arr.pop();
+			return (the_arr.join('/'));
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:form>
+	<h1>
+		<h:outputText value="JavaBeat JSF 2.2 Examples" />
+	</h1>
+	<h2>
+		<h:outputText value="SelectOneRadio Example" />
+	</h2>
+	<h:outputText value="Select Tutorials:" />
+	<h:selectOneRadio value="#{selectOneRadioBean.selectedTutorial}">
+		<f:selectItems var="tutorial" value="#{selectOneRadioBean.tutorials}"
+						itemValue="#{tutorial.tutorialId}" itemLabel="#{tutorial.tutorialDescription}"/>
+	</h:selectOneRadio>
+	<h:commandButton value="Register"
+		action="#{selectOneRadioBean.register}"></h:commandButton>
+</h:form>
+</html>

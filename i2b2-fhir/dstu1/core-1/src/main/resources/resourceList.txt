@@ -1,6 +1,0 @@
-Patient
-MedicationStatement
-MedicationPrescription
-Medication
-Observation
-Condition

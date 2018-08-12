@@ -1,4 +1,0 @@
-Patient
-MedicationStatement
-Medication
-Observation

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>List Clients Title</title>
+</h:head>
+<h:body>
+	<h:form>
+		<h2>Edit Clients</h2>
+
+		<h:dataTable value="#{clientManager.list()}" var="c">
+			<h:column>#{c.clientId}</h:column>
+			<h:column>#{c}</h:column>
+			<h:column>
+				<h:commandButton action="edit" value="#{c.clientId}">
+					<f:setPropertyActionListener target="#{clientManager.client}"
+						value="#{c}" />
+				</h:commandButton>
+			</h:column>
+		</h:dataTable>
+
+
+		<h:commandButton id="submit" value="Submit" action="register">
+		</h:commandButton>
+		<h:commandButton id="reset" value="Reset" type="reset">
+		</h:commandButton>
+		<p>
+			<h:commandLink value="Create Client" action="/client/new" />
+		</p>
+		<p>
+			<h:commandLink value="Logout" action="#{userManager.logout()}" />
+		</p>
+	</h:form>
+</h:body>
+</html>
+

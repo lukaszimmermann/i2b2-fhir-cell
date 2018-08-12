@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="fhir-client.js"></script>
+    <script>
+    var path= window.location.pathname;
+    var fhirServerBase="http://"+location.host+"/persist-ex-dstu2-0.2/api";
+      FHIR.oauth2.authorize({
+        "server": fhirServerBase,//"http://localhost:8080/srv-dstu2-0.2/api",
+        "client": {
+          "client_id": "my_web_app",
+          "scope":  "user/*.*",
+          patientId: "1000000005"
+           
+         ,"redirect_uri" : "http://localhost:8080/persist-ex-dstu2-0.2/fhir-app2/index.html"
+        }
+      });
+    </script>
+  </head>
+  Launching...
+</html>

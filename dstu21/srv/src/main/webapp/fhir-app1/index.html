@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="fhir-client.js"></script>
+    <script type="text/javascript" src="jquery-2.1.4.js"></script>
+  </head>
+
+  <body>
+  <h4>SMART Dashboard</h4>
+<form id="target" action="destination.html">
+  MRN:<input id="patientId" type="text" value="1000000005">
+  <input type="submit" value="Go">
+</form>
+  <span id="display1"></span><br>
+    <h1>Medications for <span id="name"></span></h1>
+
+<br>
+<table id="demo_list"></table>
+<br>
+    <ul id="med_list"></ul>
+
+    <script type="text/javascript">
+    
+    var demo = {
+  //  serviceUrl: "https://fhir-open-api-dstu2.smarthealthit.org",
+     serviceUrl: 'http://localhost:8080/persist-ex-dstu2-0.2/api/open',
+   // patientId: "1137192"
+     patientId: '1000000005'
+};
+
+//http://docs.smarthealthit.org/clients/javascript/
+FHIR.oauth2.ready(function(smart){
+    // now do something cool
+    var patientIdInput=$("#patientId").val();
+smart.api.search({type: "Patient", query: {_id:patientIdInput}}).then(function(ptl){
+	ptl.data.entry.forEach(function(p){
+	
+	
+	document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
+
+	var row = $("<tr>");
+	// document.getElementById("display").innerHTML=JSON.stringify(p,null,4);
+	row.append( '<tr><td>Gender:</td><td>'+p.gender+'</td></tr>');
+	row.append( '<tr><td>BirthDate:</td><td>'+p.birthDate.split("T")[0]+'</td></tr>');
+	row.append( '<tr><td>MaritalStatus:</td><td>'+p.maritalStatus.coding[0].display +'</td></tr>');
+	$('#demo_list').attr("cellspacing", 5).attr("cellpadding", 0).attr("frame","box");
+	$("#demo_list").append('<th align="left"">Demographics</th>');
+	$("#demo_list").append(row);
+		});
+	});
+ 
+	
+});
+   
+    </script>
+  </body>
+</html>

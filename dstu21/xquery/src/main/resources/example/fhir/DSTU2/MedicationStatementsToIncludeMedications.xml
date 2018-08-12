@@ -1,0 +1,64 @@
+
+<Bundle xmlns:ns3="http://i2b2.harvard.edu/fhir/core" xmlns="http://hl7.org/fhir">
+	<entry>
+		<resource>
+			<Medication xmlns="http://hl7.org/fhir">
+				<id value="1" />
+				<name
+					value="CLONIDINE HYDROCHLORIDE 0.5 mg in 1 mL EPIDURAL INJECTION, SOLUTION [Duraclon]" />
+				<code>
+					<coding>
+						<system value="http://www.nlm.nih.gov/research/umls/rxnorm" />
+						<code value="884227" />
+						<display
+							value="CLONIDINE HYDROCHLORIDE 0.5 mg in 1 mL EPIDURAL INJECTION, SOLUTION [Duraclon]" />
+					</coding>
+				</code>
+			</Medication>
+		</resource>
+	</entry>
+
+	<entry>
+		<resource>
+			<Patient xmlns="http://hl7.org/fhir">
+				<id value="example" />
+
+			</Patient>
+		</resource>
+	</entry>
+	<entry>
+		<resource>
+			<MedicationStatement xmlns="http://hl7.org/fhir">
+				<id value="1" />
+				
+				<patient>
+					<reference value="Patient/example" />
+				</patient>
+				<dateAsserted value="2015-02-22" />
+				<status value="completed" />
+				<medicationReference> <!-- Linked to a RESOURCE Medication -->
+					<reference value="Medication/1" />
+				</medicationReference>
+				
+			</MedicationStatement>
+		</resource>
+	</entry>
+	<entry>
+		<resource>
+			<MedicationStatement xmlns="http://hl7.org/fhir">
+				<id value="2" />
+				
+				<patient>
+					<reference value="Patient/example" />
+				</patient>
+				<dateAsserted value="2015-02-22" />
+				<status value="completed" />
+				<medicationReference> <!-- Linked to a RESOURCE Medication -->
+					<reference value="Medication/1" />
+				</medicationReference>
+				
+			</MedicationStatement>
+		</resource>
+	</entry>
+	
+</Bundle> 

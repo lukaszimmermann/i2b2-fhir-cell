@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<!--
+	<absolute-ordering>
+		<name>PublicClientFilter</name>
+		<name>AuthenticationFilter</name>
+		<name>OpenEndpointUrlFilter</name>
+		
+	</absolute-ordering>
+	-->
+		<listener>
+		<listener-class>edu.harvard.i2b2.fhirserver.ws.SessionListener</listener-class>
+	</listener>
+	
+	
+	
+	<session-config>
+		<session-timeout>600</session-timeout>
+	</session-config>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	
+</web-app>

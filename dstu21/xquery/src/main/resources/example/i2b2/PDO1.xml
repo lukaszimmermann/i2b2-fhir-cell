@@ -1,0 +1,896 @@
+<ns5:response xmlns:ns5="http://www.i2b2.org/xsd/hive/msg/1.1/" xmlns:ns2="http://www.i2b2.org/xsd/hive/pdo/1.1/" xmlns:ns4="http://www.i2b2.org/xsd/cell/crc/psm/1.1/" xmlns:ns3="http://www.i2b2.org/xsd/cell/crc/pdo/1.1/" xmlns:ns9="http://www.i2b2.org/xsd/cell/ont/1.1/" xmlns:ns6="http://www.i2b2.org/xsd/cell/crc/psm/querydefinition/1.1/" xmlns:ns7="http://www.i2b2.org/xsd/cell/crc/psm/analysisdefinition/1.1/" xmlns:ns10="http://www.i2b2.org/xsd/hive/msg/result/1.1/" xmlns:ns8="http://www.i2b2.org/xsd/cell/pm/1.1/">
+    <message_header>
+        <i2b2_version_compatible>1.1</i2b2_version_compatible>
+        <hl7_version_compatible>2.4</hl7_version_compatible>
+        <sending_application>
+            <application_name>CRC Cell</application_name>
+            <application_version>1.7</application_version>
+        </sending_application>
+        <sending_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </sending_facility>
+        <receiving_application>
+            <application_name>i2b2_QueryTool</application_name>
+            <application_version>1.6</application_version>
+        </receiving_application>
+        <receiving_facility>
+            <facility_name>i2b2 Hive</facility_name>
+        </receiving_facility>
+        <message_control_id>
+            <instance_num>1</instance_num>
+        </message_control_id>
+        <project_id>Demo</project_id>
+    </message_header>
+    <response_header>
+        <info>Log information</info>
+        <result_status>
+            <status type="DONE">DONE</status>
+            <polling_url interval_ms="100" />
+        </result_status>
+    </response_header>
+    <message_body>
+        <ns3:response xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:patient_data_responseType">
+            <ns2:patient_data>
+                <ns2:patient_set>
+                    <patient>
+                        <patient_id>1000000005</patient_id>
+                        <param type="string" column_descriptor="Date Accuracy Code" column="vital_status_cd" />
+                        <param type="string" column_descriptor="Language" column="language_cd">english</param>
+                        <param type="dateTime" column="birth_date">1973-06-25T00:00:00.000Z</param>
+                        <param type="string" column_descriptor="Race" column="race_cd">hispanic</param>
+                        <param type="string" column_descriptor="Religion" column="religion_cd">roman catholic</param>
+                        <param type="string" column_descriptor="Income" column="income_cd">Medium</param>
+                        <param type="string" column_descriptor="Zip code hierarchy" column="statecityzip_path">Zip codes\Massachusetts\North Reading\01889\</param>
+                        <param type="string" column_descriptor="Zip Code" column="zip_cd">01889</param>
+                        <param type="string" column_descriptor="Marital Status" column="marital_status_cd">single</param>
+                        <param type="int" column_descriptor="Age" column="age_in_years_num">37</param>
+                        <param type="string" column_descriptor="Gender" column="sex_cd">F</param>
+                    </patient>
+                </ns2:patient_set>
+                <ns2:observation_set panel_name="\\i2b2_MEDS\i2b2\Medications\">
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>475566</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00054823401</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2003-05-12T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2003-05-12T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>475566</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00054823401</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2003-05-12T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>500</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mcg/ml</units_cd>
+                        <end_date>2003-05-12T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>475566</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00054823401</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2003-05-12T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2003-05-12T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>476266</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00074246124</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2004-01-02T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2004-01-02T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>476266</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00074246124</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2004-01-02T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>400</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mcg</units_cd>
+                        <end_date>2004-01-02T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>476266</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00074246124</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2004-01-02T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>BID</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2004-01-02T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>477465</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:53014067870</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2005-03-29T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2005-03-29T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>477465</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:53014067870</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2005-03-29T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>20</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg/ml</units_cd>
+                        <end_date>2005-03-29T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>477465</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:53014067870</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2005-03-29T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2005-03-29T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>5</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:INST</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>B</valuetype_cd>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                        <observation_blob>Take 1 (one)  5 mg tablet every night before bedtime</observation_blob>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00006027531</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:SIG</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>1 TABLET (5 MG) PO QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>0.2</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg/inh</units_cd>
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:INST</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>B</valuetype_cd>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                        <observation_blob>Inhale 2 (two) puffs every 6 (six) to 8 (eight) hours for shortness of breath</observation_blob>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>inhalation</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00089081710</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:SIG</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>2 Puff IN Q6-8H Shortness of Breath</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00173049800</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00173049800</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>110</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mcg/inh</units_cd>
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00173049800</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00173049800</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>inhalation</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00182102101</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00182102101</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>75</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00182102101</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00182102101</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:51285057628</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:51285057628</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>479111</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:51285057628</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2006-11-09T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2006-11-09T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005450709</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005450709</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>2.5</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005450709</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005450709</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00028020501</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00028020501</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>100</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00028020501</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00028020501</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00058287505</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00058287505</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>0.125</nval_num>
+                        <valueflag_cd />
+                        <units_cd>%</units_cd>
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00058287505</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481070</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00058287505</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-05-08T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>topical</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-05-08T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481318</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00025138131</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-07-24T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-07-24T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481318</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00025138131</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-07-24T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>600</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2008-07-24T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481318</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00025138131</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-07-24T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-07-24T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481318</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00025138131</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-07-24T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-07-24T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-08-18T09:50:00.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481386</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005306343</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-08-06T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-08-06T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481386</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005306343</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-08-06T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>4</nval_num>
+                        <valueflag_cd />
+                        <units_cd>mg</units_cd>
+                        <end_date>2008-08-06T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481386</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005306343</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-08-06T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>QD</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-08-06T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2010-10-29T11:50:00.000Z" download_date="2010-10-25T10:40:54.000Z" update_date="2010-10-28T11:00:00.000Z">
+                        <event_id>481386</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00005306343</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109076</observer_cd>
+                        <start_date>2008-08-06T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>PO</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2008-08-06T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2011-06-02T11:00:00.000Z" download_date="2011-06-02T11:00:00.000Z" update_date="2011-06-02T11:00:00.000Z">
+                        <event_id>483569</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00364246533</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109060</observer_cd>
+                        <start_date>2010-06-22T00:00:00.000Z</start_date>
+                        <modifier_cd>@</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <tval_char />
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2010-06-22T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2011-06-02T11:00:00.000Z" download_date="2011-06-02T11:00:00.000Z" update_date="2011-06-02T11:00:00.000Z">
+                        <event_id>483569</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00364246533</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109060</observer_cd>
+                        <start_date>2010-06-22T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:DOSE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>N</valuetype_cd>
+                        <tval_char>E</tval_char>
+                        <nval_num>5</nval_num>
+                        <valueflag_cd />
+                        <units_cd>gm</units_cd>
+                        <end_date>2010-06-22T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2011-06-02T11:00:00.000Z" download_date="2011-06-02T11:00:00.000Z" update_date="2011-06-02T11:00:00.000Z">
+                        <event_id>483569</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00364246533</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109060</observer_cd>
+                        <start_date>2010-06-22T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:FREQ</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>TID</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2010-06-22T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                    <observation sourcesystem_cd="DEMO" import_date="2011-06-02T11:00:00.000Z" download_date="2011-06-02T11:00:00.000Z" update_date="2011-06-02T11:00:00.000Z">
+                        <event_id>483569</event_id>
+                        <patient_id>1000000005</patient_id>
+                        <concept_cd>NDC:00364246533</concept_cd>
+                        <observer_cd>LCS-I2B2:D000109060</observer_cd>
+                        <start_date>2010-06-22T00:00:00.000Z</start_date>
+                        <modifier_cd>MED:ROUTE</modifier_cd>
+                        <instance_num>1</instance_num>
+                        <valuetype_cd>T</valuetype_cd>
+                        <tval_char>IV</tval_char>
+                        <nval_num />
+                        <valueflag_cd />
+                        <end_date>2010-06-22T00:00:00.000Z</end_date>
+                        <location_cd>@</location_cd>
+                    </observation>
+                </ns2:observation_set>
+            </ns2:patient_data>
+        </ns3:response>
+    </message_body>
+</ns5:response>
