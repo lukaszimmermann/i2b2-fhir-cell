@@ -1,4 +1,4 @@
-FROM jboss/wildfly:10.0.0.Final as build
+FROM jboss/wildfly:10.0.0.Final as build1
 LABEL maintainer="luk.zim91@gmail.com"
 
 ###############################################################################
@@ -7,17 +7,17 @@ LABEL maintainer="luk.zim91@gmail.com"
 USER root
 
 ###############################################################################
-# Copy all the sources into the container, for building
-###############################################################################
-COPY . /tmp/fhir-cell
-
-###############################################################################
 # Install Maven as build dependency
 ###############################################################################
 RUN yum install -y maven
 
 ###############################################################################
-# Use Maven to deploy the web archive
+# Copy all the sources into the container, for building
+###############################################################################
+COPY . /tmp/fhir-cell
+
+###############################################################################
+# Create the war archive in the  /tmp dir
 ###############################################################################
 WORKDIR /tmp/fhir-cell
 RUN mvn clean install
@@ -28,13 +28,23 @@ RUN mvn install:install-file \
       -Dfile=core/src/main/resources/org.hl7.fhir.validator.jar \
       -Dversion=1.0 \
       -Dpackaging=jar && \
-    mvn clean install -Dmaven.test.skip=true && sync && \
-    mkdir -p /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war && \
+    mvn clean install -Dmaven.test.skip=true && sync
+
+############################################################################
+FROM jboss/wildfly:10.0.0.Final as build2
+USER root
+COPY --from=build1 /tmp /tmp
+
+###############################################################################
+# Create deployment
+###############################################################################
+RUN mkdir -p /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war && \
     mv /tmp/fhir-cell/dstu21/srv/target/srv-dstu21-0.3.war \
        /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war/srv-dstu21-0.3.zip && \
-    touch /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war.dodeploy && sync
-WORKDIR /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war
-RUN unzip srv-dstu21-0.3.zip && rm srv-dstu21-0.3.zip && sync
+    touch /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war.dodeploy && \
+    cd /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war && \
+    unzip srv-dstu21-0.3.zip && rm srv-dstu21-0.3.zip && sync \
+    rm /opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war/WEB-INF/faces-config.xml && sync
 
 ############################################################################
 FROM jboss/wildfly:10.0.0.Final as production

@@ -4,7 +4,7 @@ set -e
 ##############################################################################
 # Setup the environment
 ##############################################################################
-APPCONF=/opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war/WEB-INF/classes/application.properties
+APP_CONF=/opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war/WEB-INF/classes/application.properties
 
 ##############################################################################
 # Startup of Hive fails if the hist of the postgres database has not been set
@@ -21,7 +21,7 @@ exit 1
 fi
 
 
-if [ ! -f ${APPCONF+x} ]; then
+if [ ! -f "${APP_CONF}" ]; then
 
   cat << EOF
   #############################################################################
