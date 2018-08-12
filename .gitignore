@@ -24,3 +24,15 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+loincMapper/target
+icd9Mapper/target
+ndcToRxNormMapper/target
+loincMapper/target
+
+
+loincMapper/target/
+icd9Mapper/target/
+ndcToRxNormMapper/target/
+loincMapper/target/
+ndcToRxNormMapper/target
