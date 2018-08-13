@@ -36,3 +36,6 @@ icd9Mapper/target/
 ndcToRxNormMapper/target/
 loincMapper/target/
 ndcToRxNormMapper/target
+
+*/target/* 
+*/target/**
