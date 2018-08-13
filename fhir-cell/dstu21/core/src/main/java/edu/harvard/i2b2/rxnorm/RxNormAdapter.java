@@ -31,17 +31,12 @@
  */
 package edu.harvard.i2b2.rxnorm;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 
 import javax.xml.bind.JAXBException;
 
+import edu.harvard.i2b2.lib.mapper.rxnorm.BinResourceFromRXNormData;
 import org.hl7.fhir.Boolean;
 import org.hl7.fhir.Code;
 import org.hl7.fhir.Coding;
@@ -51,8 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.fhir.JAXBUtil;
-import edu.harvard.i2b2.fhir.Utils;
-import edu.harvard.i2b2.fhir.query.QueryBuilder;
 
 public class RxNormAdapter {
 	static Logger logger = LoggerFactory.getLogger(RxNormAdapter.class);

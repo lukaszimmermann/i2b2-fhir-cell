@@ -26,6 +26,8 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import edu.harvard.i2b2.loinc.LoincFhirAdapter;
+import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Medication;
@@ -37,8 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.harvard.i2b2.icd9.Icd9FhirAdapter;
-import edu.harvard.i2b2.loinc.LoincFhirAdapter;
-import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class FhirEnrich {
 	static Logger logger = LoggerFactory.getLogger(FhirEnrich.class);

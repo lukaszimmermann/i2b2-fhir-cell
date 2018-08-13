@@ -88,7 +88,7 @@ import org.w3._1999.xhtml.Div;
 import org.xml.sax.SAXException;
 
 import ca.uhn.fhir.model.dstu2.resource.Patient;
-import edu.harvard.i2b2.Icd9.Icd9Mapper;
+import edu.harvard.i2b2.lib.Icd9.Icd9Mapper;
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
@@ -96,12 +96,12 @@ import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.operation.CdsHook;
 import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
 import edu.harvard.i2b2.fhir.server.ws.operation.Validate;
-import edu.harvard.i2b2.loinc.LoincMapper;
+import edu.harvard.i2b2.lib.loinc.LoincMapper;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
-import edu.harvard.i2b2.rxnorm.NdcToRxNormMapper;
+import edu.harvard.i2b2.lib.rxnorm.NdcToRxNormMapper;
 
 /*
  * to use accessToken for authentication

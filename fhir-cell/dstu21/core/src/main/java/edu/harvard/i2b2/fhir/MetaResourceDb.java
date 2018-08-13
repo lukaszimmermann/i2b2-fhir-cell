@@ -32,7 +32,6 @@
 package edu.harvard.i2b2.fhir;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -44,18 +43,14 @@ import javax.xml.bind.JAXBException;
 import org.hl7.fhir.Bundle;
 import org.hl7.fhir.BundleEntry;
 import org.hl7.fhir.Id;
-import org.hl7.fhir.Patient;
 import org.hl7.fhir.Resource;
 import org.hl7.fhir.Reference;
-import org.hl7.fhir.Medication;
 import org.hl7.fhir.ResourceContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.harvard.i2b2.fhir.FhirUtil;
 import edu.harvard.i2b2.fhir.core.FhirCoreException;
 import edu.harvard.i2b2.fhir.query.SearchParameterMap;
-import edu.harvard.i2b2.rxnorm.RxNormAdapter;
 
 public class MetaResourceDb {
 	static Logger logger = LoggerFactory.getLogger(MetaResourceDb.class);

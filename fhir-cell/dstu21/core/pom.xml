@@ -52,26 +52,6 @@
 			<version>${my-project-version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>edu.harvard.i2b2.fhir</groupId>
-			<artifactId>ndcToRxNormMapper</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.harvard.i2b2.fhir</groupId>
-			<artifactId>loincMapper</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.harvard.i2b2.fhir</groupId>
-			<artifactId>icd9Mapper</artifactId>
-			<version>0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.harvard.i2b2.fhir</groupId>
-			<artifactId>icd9ToSnomedCTMapper</artifactId>
-			<version>0.1</version>
-		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -96,6 +76,7 @@
 			<groupId>org.hl7.fhir.tools</groupId>
 			<artifactId>validator</artifactId>
 			<version>1.0</version>
+
 			<!-- <scope>system</scope> <systemPath>${project.basedir}/lib/org.hl7.fhir.validator.jar</systemPath> -->
 		</dependency>
 

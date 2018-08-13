@@ -19,7 +19,7 @@ COPY . /tmp/fhir-cell
 ###############################################################################
 # Create the war archive in the  /tmp dir
 ###############################################################################
-WORKDIR /tmp/fhir-cell
+WORKDIR /tmp/fhir-cell/library
 RUN mvn clean install
 WORKDIR /tmp/fhir-cell/dstu21
 RUN mvn install:install-file \

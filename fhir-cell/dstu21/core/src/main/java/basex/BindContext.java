@@ -35,11 +35,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.basex.core.*;
-import org.basex.data.*;
-import org.basex.io.serial.Serializer;
 import org.basex.query.*;
-import org.basex.query.iter.Iter;
-import org.basex.query.value.item.Item;
 
 /**
  * This example demonstrates how items can be bound as context item of

@@ -32,29 +32,19 @@
  */
 package edu.harvard.i2b2.icd9;
 
-import java.io.IOException;
 import javax.xml.bind.JAXBException;
+
+import edu.harvard.i2b2.lib.mapper.Icd9.Icd9Mapper;
+import edu.harvard.i2b2.lib.mapper.Icd9ToSnomedCT.Icd9ToSnomedCTMapper;
 import org.hl7.fhir.Coding;
 import org.hl7.fhir.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import edu.harvard.i2b2.fhir.FhirUtil;
-import edu.harvard.i2b2.Icd9.Icd9Mapper;
-import edu.harvard.i2b2.Icd9ToSnomedCT.Icd9ToSnomedCTMapper;
 
 public class Icd9FhirAdapter {
 	static Logger logger = LoggerFactory.getLogger(Icd9FhirAdapter.class);
 
-	Icd9Mapper Icd9Mapper;
-	Icd9ToSnomedCTMapper Icd9ToSnomedCTMapper;
-
-	public Icd9FhirAdapter() throws IOException {
-		Icd9Mapper = new Icd9Mapper();
-		Icd9ToSnomedCTMapper = new Icd9ToSnomedCTMapper();
-	}
-
-	public void init() throws IOException {
-	}
 
 	public void addIcd9Name(Condition ob) throws JAXBException {
 		for (Coding coding : ob.getCode().getCoding()) {
