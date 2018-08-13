@@ -13,25 +13,16 @@ package edu.harvard.i2b2.fhir.server.ws;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
@@ -44,51 +35,32 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.NumberUtils;
-import org.apache.commons.lang.StringUtils;
+import edu.harvard.i2b2.lib.mapper.Icd9.Icd9Mapper;
+import edu.harvard.i2b2.lib.mapper.LoincMapper;
+import edu.harvard.i2b2.lib.mapper.rxnorm.NdcToRxNormMapper;
 import org.hl7.fhir.Bundle;
-import org.hl7.fhir.BundleLink;
 import org.hl7.fhir.Code;
 import org.hl7.fhir.Conformance;
-import org.hl7.fhir.ConformanceInteraction;
-import org.hl7.fhir.ConformanceResource;
-import org.hl7.fhir.ConformanceRest;
-import org.hl7.fhir.ConformanceSearchParam;
-import org.hl7.fhir.ConformanceSecurity;
 import org.hl7.fhir.ConformanceStatementKind;
 import org.hl7.fhir.ConformanceStatementKindList;
-import org.hl7.fhir.Extension;
-import org.hl7.fhir.Id;
-import org.hl7.fhir.IssueSeverity;
 import org.hl7.fhir.IssueSeverityList;
-import org.hl7.fhir.IssueType;
 import org.hl7.fhir.IssueTypeList;
-import org.hl7.fhir.Narrative;
-import org.hl7.fhir.NarrativeStatusList;
 import org.hl7.fhir.OperationOutcome;
-import org.hl7.fhir.OperationOutcomeIssue;
 import org.hl7.fhir.Parameters;
 import org.hl7.fhir.ParametersParameter;
 import org.hl7.fhir.Resource;
-import org.hl7.fhir.TypeRestfulInteraction;
-import org.hl7.fhir.TypeRestfulInteractionList;
 import org.hl7.fhir.UnknownContentCode;
 import org.hl7.fhir.UnknownContentCodeList;
-import org.hl7.fhir.Uri;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3._1999.xhtml.Div;
 import org.xml.sax.SAXException;
 
 import ca.uhn.fhir.model.dstu2.resource.Patient;
-import edu.harvard.i2b2.lib.Icd9.Icd9Mapper;
 import edu.harvard.i2b2.fhir.*;
 import edu.harvard.i2b2.fhir.oauth2.ws.AuthenticationFilter;
 import edu.harvard.i2b2.fhir.oauth2.ws.HttpHelper;
@@ -96,12 +68,10 @@ import edu.harvard.i2b2.fhir.server.ServerConfigs;
 import edu.harvard.i2b2.fhir.server.ws.operation.CdsHook;
 import edu.harvard.i2b2.fhir.server.ws.operation.DSSEvaluate;
 import edu.harvard.i2b2.fhir.server.ws.operation.Validate;
-import edu.harvard.i2b2.lib.loinc.LoincMapper;
 import edu.harvard.i2b2.oauth2.core.ejb.AuthenticationService;
 import edu.harvard.i2b2.oauth2.core.ejb.PatientBundleManager;
 import edu.harvard.i2b2.oauth2.core.ejb.ProjectPatientMapManager;
 import edu.harvard.i2b2.oauth2.core.ejb.QueryService;
-import edu.harvard.i2b2.lib.rxnorm.NdcToRxNormMapper;
 
 /*
  * to use accessToken for authentication
@@ -713,18 +683,15 @@ public class I2b2FhirWS {
 					throws IOException, JAXBException, URISyntaxException, ParserConfigurationException, SAXException {
 		Resource r = null;
 		if (system.equals("http://loinc.org")) {
-			LoincMapper loincMapper = new LoincMapper();
-			String display = loincMapper.getLoincName(code);
+			String display = LoincMapper.getLoincName(code);
 			if (display != null)
 				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
 		} else if (system.equals("http://hl7.org/fhir/sid/icd-9-cm")) {
-			Icd9Mapper icd9Mapper = new Icd9Mapper();
-			String display = icd9Mapper.getIcd9Name(code);
+			String display = Icd9Mapper.getIcd9Name(code);
 			if (display != null)
 				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
 		} else if (system.equals("http://www.nlm.nih.gov/research/umls/rxnorm")) {
-			NdcToRxNormMapper rxMapper = new NdcToRxNormMapper();
-			String display = rxMapper.getRxCuiName(code);
+			String display = NdcToRxNormMapper.getRxCuiName(code);
 			if (display != null)
 				r = FhirHelper.generateConceptLookUpOutput(display, null, display, false, null, code);
 		} else {
