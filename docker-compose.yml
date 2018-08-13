@@ -1,0 +1,29 @@
+version: "3.6"
+
+
+services:
+  mariadb:
+    image: mariadb:10.1.35-bionic
+    restart: always
+    hostname: mariadb
+    volumes:
+      - i2b2_fhir_mariadb:/var/lib/mysql
+
+  fhircell:
+    build: fhir-cell
+    hostname: fhircell
+    environment:
+      - HIVE_HOST=hive:9090
+      - MARIADB_HOST=mariadb:3306
+    depends_on:
+      - mariadb
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+volumes:
+  i2b2_fhir_mariadb:
+    external: true
