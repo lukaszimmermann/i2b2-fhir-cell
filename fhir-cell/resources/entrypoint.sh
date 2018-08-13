@@ -6,8 +6,6 @@ set -e
 ##############################################################################
 APP_CONF=/opt/jboss/wildfly/standalone/deployments/srv-dstu21-0.3.war/WEB-INF/classes/application.properties
 
-
-
 ##############################################################################
 # Startup of Hive fails if the host of the Hive database has not been set
 ##############################################################################
@@ -46,10 +44,8 @@ EOF
 exit 2
 fi
 
-
 # Setup the application conf
 cat >"${APP_CONF}" <<EOL
-
 i2b2Url=http://${HIVE_HOST}/i2b2
 i2b2Domain=i2b2demo
 openAccess=true
@@ -92,11 +88,12 @@ reportsPath=\\\\i2b2_REP\\i2b2\\Reports\\
 EOL
 
 ##############################################################################
-# Wait for MariaDB to come up
+# Wait for MariaDB and Hive to come up
 ##############################################################################
 /opt/bin/dockerize -wait "tcp://${MARIADB_HOST}" \
                    -wait "tcp://${HIVE_HOST}"
 
+sleep 15
 
 ##############################################################################
 # Start the Wildfly standalone server
