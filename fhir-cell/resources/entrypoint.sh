@@ -93,7 +93,7 @@ EOL
 /opt/bin/dockerize -wait "tcp://${MARIADB_HOST}" \
                    -wait "tcp://${HIVE_HOST}"
 
-sleep 15
+sleep 20
 
 ##############################################################################
 # Start the Wildfly standalone server
